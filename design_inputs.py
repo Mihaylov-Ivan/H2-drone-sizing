@@ -36,7 +36,7 @@ class DesignInputs:
 
     payload_fraction_hist: float = 0.33  # W_payload / W0
 
-    inventor_xml_path: str = "C:/Users/User/OneDrive/Work/Hydrogenera/R&D/Drone/CAD Model/parameters.xml"
+    inventor_xml_path: str = "C:/Users/User/OneDrive/Work/Hydrogenera/R&D/H2 Drone/CAD Model/parameters.xml"
 
     cruise_endurance_min: float = 10.0  # [min] desired endurance at cruise power
 
