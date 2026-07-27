@@ -1,0 +1,18 @@
+{
+  // Python interpreter path - update this to point to Python 3.9 or higher
+  // Example: "python.defaultInterpreterPath": "C:\\Applications\\Python\\Python39\\python.exe"
+  //
+  // To find your Python 3.9+ installation:
+  // 1. Click "Change Python Interpreter" in the error dialog, OR
+  // 2. Press Ctrl+Shift+P and type "Python: Select Interpreter"
+  // 3. Browse to your Python 3.9+ installation folder
+
+  "python.defaultInterpreterPath": "",
+
+  // Enable Python linting and formatting
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+
+  // Terminal settings
+  "python.terminal.activateEnvironment": true
+}

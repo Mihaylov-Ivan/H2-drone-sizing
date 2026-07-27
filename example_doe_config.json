@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "base_inputs": {
+    "payload_mass": 1.4,
+    "wing_loading": 240.0,
+    "speed": 28.0,
+    "fuselage_length": 0.7,
+    "fuselage_OD": 0.14,
+    "tail_volume_ratio": 0.3,
+    "vertical_tail_volume_ratio": 0.05,
+    "use_hardcoded_values": true
+  },
+  "vary": {
+    "wing_loading": {
+      "mode": "range_step",
+      "min": 200.0,
+      "max": 300.0,
+      "step": 20.0
+    },
+    "speed": {
+      "mode": "range_points",
+      "min": 24.0,
+      "max": 32.0,
+      "points": 3
+    },
+    "tail_volume_ratio": {
+      "mode": "list",
+      "values": [
+        0.25,
+        0.3,
+        0.35
+      ]
+    }
+  },
+  "objective": {
+    "metric": "aircraft.W0_mass_kg",
+    "direction": "min"
+  },
+  "constraints": [
+    {
+      "metric": "aircraft.static_margin_percent_MAC",
+      "op": ">=",
+      "value": 5.0
+    },
+    {
+      "metric": "wing.geometry.span_m",
+      "op": "<=",
+      "value": 2.5
+    }
+  ],
+  "options": {
+    "include_derived_inputs": false,
+    "auto_refresh_linked_inputs": true,
+    "reload_modules_before_run": true
+  }
+}

@@ -1,0 +1,281 @@
+﻿=== CONCEPTUAL SUAV DESIGN SUMMARY ===
+MTOW mass           : 6.032 kg
+MTOW weight         : 59.2 N
+payload mass        : 2.000 kg
+
+Mass breakdown:
+  Payload           : 2.000 kg
+  Wings (horizontal): 0.275 kg
+  Tails (horizontal): 0.103 kg
+  Tails (vertical) : 0.108 kg
+  Fuselage          : 1.791 kg
+  Battery           : 0.750 kg
+  Propulsion        : 0.460 kg
+  Avionics+Electrics: 0.268 kg
+
+=== WING ===
+Geometry:
+  Wing area S         : 0.340 m▓
+  Wing span b         : 1.445 m (144.5 cm)
+  Aspect ratio AR     : 6.132
+  Root chord c_root   : 0.250 m (25.0 cm)
+  Tip chord c_tip     : 0.221 m (22.1 cm)
+  Mean Geometric Chord: 0.236 m (23.6 cm)
+  Mean Aerodynamic Chord: 0.236 m (23.6 cm)
+  MAC y-position      : 0.354 m from centerline
+  AC on MAC           : 0.059 m from LE
+  AC x-position       : 0.551 m
+
+Aerodynamics:
+  CL_cruise           : 0.133
+  CL_max              : 1.154
+  CD0                 : 0.0064
+  CD0_fuselage        : 0.0100
+  CD_cruise           : 0.0164
+  L/D at cruise       : 8.1
+  Stall speed V_stall : 16.99 m/s
+  Alpha cruise        : -0.54 deg
+  Re at cruise        : 786391
+  Airfoil max t/c     : 10.0%
+
+Structure:
+  Structural height h : 25.00 mm
+  Skin thickness (root): 2.000 mm
+  Skin thickness (tip)  : 2.000 mm
+  Web thickness (root)  : 2.211 mm
+  Web thickness (tip)  : 2.000 mm
+  Spar area (root)     : 6.45 mm▓
+  Spar area (tip)      : 6.45 mm▓
+  Number of ribs       : 8
+  Bending moment       : 60.2 N╖m
+  Torsion moment       : -8.4 N╖m
+
+Mass breakdown:
+  Skin mass           : 0.205 kg
+  Web mass            : 0.035 kg
+  Spars mass          : 0.017 kg
+  Ribs mass           : 0.018 kg
+  Total wing mass     : 0.275 kg
+
+=== TAILPLANE ===
+Geometry:
+  Tail Lift_N         : -8.854 N
+  Tail area S         : 0.064 m▓
+  Tail span b         : 0.644 m (64.4 cm)
+  Aspect ratio AR     : 6.444
+  Root chord c_root   : 0.100 m (10.0 cm)
+  Tip chord c_tip     : 0.100 m (10.0 cm)
+  Mean Geometric Chord: 0.100 m (10.0 cm)
+  Mean Aerodynamic Chord: 0.100 m (10.0 cm)
+  MAC y-position      : 0.161 m from centerline
+  AC on MAC           : 0.025 m from LE
+  AC x-position       : 1.025 m
+  V_h                 : 0.380
+Aerodynamics & Trim:
+  CL_cruise           : -0.173
+  CL_max              : 0.563
+  CD0                 : 0.0034
+  CD_cruise           : 0.0055
+  L/D at cruise       : -19.6
+  Built-in incidence  : -1.09 deg
+  Cruise elevator     : 0.00 deg (limit ▒3.0)
+  Elevator chord ratio: 0.30
+  Alpha body          : -0.54 deg
+  Alpha equivalent    : -1.36 deg
+  Re at cruise        : 333333
+  Airfoil max t/c     : 6.0%
+
+Structure:
+  Structural height h : 6.00 mm
+  Skin thickness (root): 2.000 mm
+  Skin thickness (tip)  : 2.000 mm
+  Web thickness (root)  : 2.000 mm
+  Web thickness (tip)  : 2.000 mm
+  Spar area (root)     : 6.45 mm▓
+  Spar area (tip)      : 6.45 mm▓
+  Number of ribs       : 8
+  Bending moment       : 34.0 N╖m
+  Torsion moment       : 0.5 N╖m
+
+Mass breakdown:
+  Skin mass           : 0.038 kg
+  Web mass            : 0.004 kg
+  Spars mass          : 0.007 kg
+  Ribs mass           : 0.002 kg
+  Total tail mass (one): 0.052 kg
+  Total tail mass (both): 0.103 kg
+
+=== VERTICAL TAIL (NACA0006) ===
+Geometry:
+  Tail area S         : 0.068 m▓
+  Tail span b         : 0.677 m (67.7 cm)
+  Aspect ratio AR     : 6.766
+  Root chord c_root   : 0.100 m (10.0 cm)
+  Tip chord c_tip     : 0.100 m (10.0 cm)
+  Mean Geometric Chord: 0.100 m (10.0 cm)
+  Mean Aerodynamic Chord: 0.100 m (10.0 cm)
+  MAC y-position      : 0.169 m from centerline
+  AC on MAC           : 0.025 m from LE
+  AC x-position       : 1.025 m
+
+Aerodynamics:
+  CL_cruise           : 0.000 (no lift in cruise)
+  CL_max              : 0.570
+  CD0                 : 0.0034
+  CD_cruise           : 0.0034
+  L/D at cruise       : 0.0
+  Stall speed V_stall : 6.57 m/s
+  Alpha cruise        : 0.00 deg
+  Re at cruise        : 333333
+  Airfoil max t/c     : 6.0%
+
+Structure:
+  Structural height h : 6.00 mm
+  Skin thickness (root): 2.000 mm
+  Skin thickness (tip)  : 2.000 mm
+  Web thickness (root)  : 2.000 mm
+  Web thickness (tip)  : 2.000 mm
+  Spar area (root)     : 6.45 mm▓
+  Spar area (tip)      : 6.45 mm▓
+  Number of ribs       : 8
+  Bending moment       : 0.0 N╖m
+  Torsion moment       : 0.2 N╖m
+
+Mass breakdown:
+  Skin mass           : 0.040 kg
+  Web mass            : 0.004 kg
+  Spars mass          : 0.008 kg
+  Ribs mass           : 0.002 kg
+  Total vertical tail mass (one): 0.054 kg
+  Total vertical tail mass (both): 0.108 kg
+
+=== FUSELAGE ===
+Geometry:
+  Length              : 1.200 m (120.0 cm)
+  Outer diameter (OD) : 0.200 m (20.0 cm)
+  Outer radius (OR)   : 0.100 m (10.0 cm)
+  Shell thickness     : 2.000 mm
+  Inner diameter (ID) : 0.196 m (19.6 cm)
+  Inner radius (IR)   : 0.098 m (9.8 cm)
+  Cross-sectional area: 0.0314 m▓
+
+Structure:
+  Shell thickness     : 2.000 mm
+  Fuselage mass       : 1.791 kg
+
+=== PROPULSION ===
+drag_cruise_N       : 9.256 N
+cruise_power_W      : 462.795 W
+cruise_power_elec_W : 578.494 W
+
+n_propellers        : 4
+combo               : U3_700kV_13x4.4_4S
+prop_diameter       : 13.0 in
+prop_pitch          : 4.4 in
+motor_kv            : 700 rpm/V
+max_thrust/motor    : 20.00 N
+required_thrust/motor: 2.78 N
+max_power/motor     : 500.0 W
+required_power/motor: 173.5 W
+meets_thrust_req    : True
+meets_power_req     : True
+ESC sizing W/motor  : 296.5 W
+ESC cont A/motor    : 21.09 A
+Est. current@cruise : 9.77 A/motor
+Motor mass          : 0.090 kg/motor
+Prop mass           : 0.025 kg/motor
+Total propulsion    : 0.460 kg
+
+=== BATTERY ===
+Specifications:
+  Name               : LiPo_4S_8000mAh_30C
+  Voltage            : 14.8 V
+  Capacity           : 8000 mAh
+  Mass               : 0.750 kg
+  Usable energy      : 106.6 Wh
+
+Dimensions:
+  Length             : 0.165 m (16.5 cm)
+  Width              : 0.055 m (5.5 cm)
+  Height             : 0.038 m (3.8 cm)
+  Volume             : 0.000345 m│
+
+Performance:
+  Endurance@cruise   : 12.8 min
+  C-rate at cruise  : 4.23 C
+  Meets endurance req: True
+
+=== AVIONICS / ELECTRONICS ===
+Autopilot          : Pixhawk4 (0.016 kg)
+GPS                : 0.025 kg
+Airspeed sensor    : 0.022 kg
+RC Receiver        : 0.010 kg
+Telemetry          : 0.020 kg
+Power module       : 0.040 kg
+Servos             : 0.048 kg
+ESCs (total)       : 0.067 kg
+Misc electronics   : 0.020 kg
+TOTAL avionics+elec: 0.268 kg
+
+=== CG SUMMARY ===
+x_cg_m                 : 0.589 m
+x_cg/fuselage_length   : 0.491
+x_ac_wing_m            : 0.551 m
+
+=== STATIC STABILITY (LONGITUDINAL) ===
+Neutral point x_np_m        : 0.590 m
+Static margin               : 0.0047 [-]
+Static margin (%MAC)        : 0.47 %
+SM * MAC (m)                : 0.0011 m
+
+=== Directional Stability ===
+Cn_beta                     : 0.2065 [-]
+V_v                         : 0.0600 [-]
+
+=== ELEVATOR CONTROL & MANEUVER CAPABILITY ===
+Analysis Conditions:
+  Maneuver speed V_man      : 30.00 m/s
+
+Elevator Control Derivatives:
+  Tail lift curve slope     : 4.527 /rad
+=== ERROR PRINTING MANEUVER RESULTS ===
+Error: UnicodeEncodeError: 'charmap' codec can't encode character '\u03c4' in position 25: character maps to <undefined>
+Continuing with remaining sections...
+
+=== RUDDER CONTROL & DIRECTIONAL CAPABILITY ===
+Analysis Conditions:
+  Rudder analysis speed V_rud: 40.00 m/s
+
+Rudder Control Derivatives (Clean Flow):
+  VT lift curve slope a_v    : 4.588 /rad
+  VT moment arm l_v          : 0.436 m
+  Rudder chord ratio cR/cV   : 0.300 [-]
+=== ERROR PRINTING RUDDER RESULTS ===
+Error: UnicodeEncodeError: 'charmap' codec can't encode character '\u03c4' in position 23: character maps to <undefined>
+Continuing with remaining sections...
+
+=== FLIGHT PROFILE / ENVELOPE (BATTERY-AWARE) ===
+handoff_speed_mps            : 20.39 m/s
+total_time_min               : 10.65 min
+total_energy_Wh              : 106.56 Wh
+peak_elec_power_W            : 988.3 W
+peak_elec_power_per_motor_W  : 247.1 W
+peak_thrust_total_N          : 74.7 N
+peak_thrust_per_motor_N      : 18.7 N
+
+usable_energy_Wh              : 106.56 Wh
+energy_precruise_Wh            : 14.19 Wh
+energy_remaining_for_cruise_Wh : 92.37 Wh
+cruise_time_requested_min      : 10.00 min
+cruise_time_max_min            : 9.58 min (battery-limited)
+mission_energy_if_requested_Wh : 110.61 Wh
+
+Stage breakdown:
+Stage                                   t[s]      E[Wh]    Pavg[W]   Ppeak[W]    Ttot[N]        Notes
+VTOL takeoff / hover                    2.00       0.46      826.1      826.1       71.1             
+Vertical climb to height               27.00       6.92      922.4      988.3       74.7      h=50.0m
+Transition to handoff speed            15.00       3.93      942.5      942.5       71.8 handoff=20.4
+=== ERROR PRINTING MISSION PROFILE ===
+Error: UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 93: character maps to <undefined>
+Continuing with remaining sections...
+

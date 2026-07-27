@@ -1,0 +1,395 @@
+=== CONCEPTUAL SUAV DESIGN SUMMARY ===
+MTOW mass           : 6.356 kg
+MTOW weight         : 62.4 N
+payload mass        : 2.000 kg
+
+Mass breakdown:
+  Payload           : 2.000 kg
+  Wings (horizontal): 0.750 kg
+  Tails (horizontal): 0.186 kg
+  Tails (vertical) : 0.145 kg
+  Fuselage          : 1.791 kg
+  Battery           : 0.750 kg
+  Propulsion        : 0.460 kg
+  Avionics+Electrics: 0.274 kg
+
+=== WING ===
+Geometry:
+  Wing area S         : 0.367 m²
+  Wing span b         : 1.556 m (155.6 cm)
+  Aspect ratio AR     : 6.604
+  Root chord c_root   : 0.250 m (25.0 cm)
+  Tip chord c_tip     : 0.221 m (22.1 cm)
+  Mean Geometric Chord: 0.236 m (23.6 cm)
+  Mean Aerodynamic Chord: 0.236 m (23.6 cm)
+  MAC y-position      : 0.381 m from centerline
+  AC on MAC           : 0.059 m from LE
+  AC x-position       : 0.571 m
+
+Aerodynamics:
+  CL_cruise           : 0.133
+  CL_max              : 1.175
+  CD0                 : 0.0064
+  CD0_fuselage        : 0.0093
+  CD_cruise           : 0.0156
+  L/D at cruise       : 8.5
+  Stall speed V_stall : 16.84 m/s
+  Alpha cruise        : -0.57 deg
+  Re at cruise        : 786391
+  Airfoil max t/c     : 0.10
+
+Structure:
+  Structural height h : 25.00 mm
+  Skin thickness (root): 2.000 mm
+  Skin thickness (tip)  : 2.000 mm
+  Web thickness (root)  : 2.382 mm
+  Web thickness (tip)  : 2.000 mm
+  Spar area (root)     : 62.61 mm²
+  Spar area (tip)      : 6.45 mm²
+  Number of ribs       : 8
+  Bending moment       : 69.9 N·m
+  Torsion moment       : -9.1 N·m
+
+Mass breakdown:
+  Skin mass           : 0.221 kg
+  Web mass            : 0.040 kg
+  Spars mass          : 0.097 kg
+  Ribs mass           : 0.018 kg
+  Total wing mass     : 0.750 kg
+
+=== WING SPAR TUBE SIZING ===
+  L_spar_m                = 0.7781 m
+  M_max_Nm                = 69.8711 N*m
+  sigma_allow_MPa         = 1000.0 MPa
+  sigma_root_MPa          = 1000.0 MPa
+  OD_root_m               = 0.00893 m  (8.93 mm)
+  ID_root_m               = 0.00000 m  (0.00 mm)
+  OD_tip_m                = 0.00287 m  (2.87 mm)
+  ID_tip_m                = 0.00000 m  (0.00 mm)
+  A_root_mm2              = 62.61 mm^2
+  A_tip_mm2               = 6.45 mm^2
+  I_root_mm4              = 311.91 mm^4
+  I_tip_mm4               = 3.31 mm^4
+  W_spar_kg (per surface) = 0.0967 kg
+  N_ribs                  = 8
+  rib_contact_L_m         = 0.0020 m
+  bearing_allow_MPa       = 14.5 MPa
+  bearing_stress_MPa      = 1.3 MPa
+  bearing_ok              = 1
+
+=== TAILPLANE ===
+Geometry:
+  Tail Lift_N         : -11.026 N
+  Tail area S         : 0.071 m²
+  Tail span b         : 0.743 m (74.3 cm)
+  Aspect ratio AR     : 7.741
+  Root chord c_root   : 0.096 m (9.6 cm)
+  Tip chord c_tip     : 0.096 m (9.6 cm)
+  Mean Geometric Chord: 0.096 m (9.6 cm)
+  Mean Aerodynamic Chord: 0.096 m (9.6 cm)
+  MAC y-position      : 0.186 m from centerline
+  AC on MAC           : 0.024 m from LE
+  AC x-position       : 1.026 m
+  V_h                 : 0.375
+Aerodynamics & Trim:
+  CL_cruise           : -0.157
+  CL_max              : 1.104
+  CD0                 : 0.0054
+  CD_cruise           : 0.0064
+  L/D at cruise       : -19.0
+  Built-in incidence  : -1.18 deg
+  Cruise elevator     : 0.00 deg (limit ±3.0)
+  Elevator chord ratio: 0.30
+  Alpha body          : -0.57 deg
+  Alpha equivalent    : -1.46 deg
+  Re at cruise        : 320000
+  Airfoil max t/c     : 0.12
+
+Structure:
+  Structural height h : 11.52 mm
+  Skin thickness (root): 2.000 mm
+  Skin thickness (tip)  : 2.000 mm
+  Web thickness (root)  : 2.000 mm
+  Web thickness (tip)  : 2.000 mm
+  Spar area (root)     : 42.62 mm²
+  Spar area (tip)      : 6.45 mm²
+  Number of ribs       : 10
+  Bending moment       : 39.3 N·m
+  Torsion moment       : 0.7 N·m
+
+Mass breakdown:
+  Skin mass           : 0.043 kg
+  Web mass            : 0.008 kg
+  Spars mass          : 0.033 kg
+  Ribs mass           : 0.004 kg
+  Total tail mass (one): 0.093 kg
+  Total tail mass (both): 0.186 kg
+
+=== TAIL SPAR TUBE SIZING ===
+  L_spar_m                = 0.3716 m
+  M_max_Nm                = 39.2515 N*m
+  sigma_allow_MPa         = 1000.0 MPa
+  sigma_root_MPa          = 1000.0 MPa
+  OD_root_m               = 0.00737 m  (7.37 mm)
+  ID_root_m               = 0.00000 m  (0.00 mm)
+  OD_tip_m                = 0.00287 m  (2.87 mm)
+  ID_tip_m                = 0.00000 m  (0.00 mm)
+  A_root_mm2              = 42.62 mm^2
+  A_tip_mm2               = 6.45 mm^2
+  I_root_mm4              = 144.58 mm^4
+  I_tip_mm4               = 3.31 mm^4
+  W_spar_kg (per surface) = 0.0328 kg
+  N_ribs                  = 10
+  rib_contact_L_m         = 0.0020 m
+  bearing_allow_MPa       = 14.5 MPa
+  bearing_stress_MPa      = 0.2 MPa
+  bearing_ok              = 1
+
+=== ELEVATOR TORQUE TUBE / HINGE ROD SIZING ===
+  span_frac               = 0.800
+  L_rod_m                 = 0.5945 m
+  F_elev_N                = 13.24 N
+  M_max_rod_Nm            = 0.9838 N*m
+  sigma_allow_MPa         = 1000.0 MPa
+  sigma_rod_MPa           = 1000.0 MPa
+  OD_m                    = 0.00216 m  (2.16 mm)
+  ID_m                    = 0.00000 m  (0.00 mm)
+  A_rod_mm2               = 3.65 mm^2
+  I_rod_mm4               = 1.06 mm^4
+  W_rod_kg (per surface)  = 0.0039 kg
+  N_support               = 2
+  rod_contact_L_m         = 0.0080 m
+  rod_bearing_allow_MPa    = 14.5 MPa
+
+=== VERTICAL TAIL (NACA0012) ===
+Geometry:
+  Tail area S         : 0.081 m²
+  Tail span b         : 0.840 m (84.0 cm)
+  Aspect ratio AR     : 8.753
+  Root chord c_root   : 0.096 m (9.6 cm)
+  Tip chord c_tip     : 0.096 m (9.6 cm)
+  Mean Geometric Chord: 0.096 m (9.6 cm)
+  Mean Aerodynamic Chord: 0.096 m (9.6 cm)
+  MAC y-position      : 0.210 m from centerline
+  AC on MAC           : 0.024 m from LE
+  AC x-position       : 1.026 m
+
+Aerodynamics:
+  CL_cruise           : 0.000 (no lift in cruise)
+  CL_max              : 1.131
+  CD0                 : 0.0054
+  CD_cruise           : 0.0054
+  L/D at cruise       : 0.0
+  Stall speed V_stall : 4.27 m/s
+  Alpha cruise        : 0.00 deg
+  Re at cruise        : 320000
+  Airfoil max t/c     : 0.12
+
+Structure:
+  Structural height h : 11.52 mm
+  Skin thickness (root): 2.000 mm
+  Skin thickness (tip)  : 2.000 mm
+  Web thickness (root)  : 2.000 mm
+  Web thickness (tip)  : 2.000 mm
+  Spar area (root)     : 6.45 mm²
+  Spar area (tip)      : 6.45 mm²
+  Number of ribs       : 10
+  Bending moment       : 0.0 N·m
+  Torsion moment       : 0.4 N·m
+
+Mass breakdown:
+  Skin mass           : 0.049 kg
+  Web mass            : 0.010 kg
+  Spars mass          : 0.010 kg
+  Ribs mass           : 0.004 kg
+  Total vertical tail mass (one): 0.073 kg
+  Total vertical tail mass (both): 0.145 kg
+
+=== FUSELAGE ===
+Geometry:
+  Length              : 1.200 m (120.0 cm)
+  Outer diameter (OD) : 0.200 m (20.0 cm)
+  Outer radius (OR)   : 0.100 m (10.0 cm)
+  Shell thickness     : 2.000 mm
+  Inner diameter (ID) : 0.196 m (19.6 cm)
+  Inner radius (IR)   : 0.098 m (9.8 cm)
+  Cross-sectional area: 0.0314 m²
+
+Structure:
+  Shell thickness     : 2.000 mm
+  Fuselage mass       : 1.791 kg
+
+=== PROPULSION ===
+drag_cruise_N       : 9.937 N
+cruise_power_W      : 496.857 W
+cruise_power_elec_W : 621.071 W
+
+n_propellers        : 4
+combo               : U3_700kV_13x4.4_4S
+prop_diameter       : 13.0 in
+prop_pitch          : 4.4 in
+motor_kv            : 700 rpm/V
+max_thrust/motor    : 20.00 N
+required_thrust/motor: 2.98 N
+max_power/motor     : 500.0 W
+required_power/motor: 186.3 W
+meets_thrust_req    : True
+meets_power_req     : True
+ESC sizing W/motor  : 319.1 W
+ESC cont A/motor    : 22.70 A
+Est. current@cruise : 10.49 A/motor
+Motor mass          : 0.090 kg/motor
+Prop mass           : 0.025 kg/motor
+Total propulsion    : 0.460 kg
+
+=== BATTERY ===
+Specifications:
+  Name               : LiPo_4S_8000mAh_30C
+  Voltage            : 14.8 V
+  Capacity           : 8000 mAh
+  Mass               : 0.750 kg
+  Usable energy      : 106.6 Wh
+
+Dimensions:
+  Length             : 0.165 m (16.5 cm)
+  Width              : 0.055 m (5.5 cm)
+  Height             : 0.038 m (3.8 cm)
+  Volume             : 0.000345 m³
+
+Performance:
+  Endurance@cruise   : 12.8 min
+  C-rate at cruise  : 4.23 C
+  Meets endurance req: True
+
+=== AVIONICS / ELECTRONICS ===
+Autopilot          : Pixhawk4 (0.016 kg)
+GPS                : 0.025 kg
+Airspeed sensor    : 0.022 kg
+RC Receiver        : 0.010 kg
+Telemetry          : 0.020 kg
+Power module       : 0.040 kg
+Servos             : 0.048 kg
+ESCs (total)       : 0.073 kg
+Misc electronics   : 0.020 kg
+TOTAL avionics+elec: 0.274 kg
+
+=== CG SUMMARY ===
+x_cg_m                 : 0.602 m
+x_cg/fuselage_length   : 0.501
+x_ac_wing_m            : 0.571 m
+
+=== STATIC STABILITY (LONGITUDINAL) ===
+Neutral point x_np_m        : 0.610 m
+Static margin               : 0.0371 [-]
+Static margin (%MAC)        : 3.71 %
+SM * MAC (m)                : 0.0087 m
+
+=== Directional Stability ===
+Cn_beta                     : 0.2199 [-]
+V_v                         : 0.0600 [-]
+
+=== ELEVATOR CONTROL & MANEUVER CAPABILITY ===
+Analysis Conditions:
+  Maneuver speed V_man      : 30.00 m/s
+
+Elevator Control Derivatives:
+  Tail lift curve slope     : 4.749 /rad
+  Elevator effectiveness τ_e: 0.4800 [-]
+  Elevator span ratio bE/bh (geom): 0.800 [-]
+  Elevator span ratio bE/bh (eff) : 0.836 [-]
+  Tail efficiency η_h       : 1.000 [-]
+  Tail moment arm l_h       : 0.424 m
+  Tail volume ratio V_H     : 0.350 [-]
+  Cm_deltaE                 : -0.6666 /rad
+  CL_deltaE                 : 0.3706 /rad
+  CLh_deltaE                : 2.2797 /rad
+
+Maximum Load Factor (Elevator-Limited):
+  Maximum load factor n_max : 3.945 [-]
+  Max bank angle (level turn): 75.32 deg
+
+  At maximum load factor:
+    Wing angle of attack     : 12.52 deg
+    Wing lift coefficient   : 1.175 [-]
+    Wing lift               : 232.7 N
+    Wing moment @ AC        : -1.26 N·m
+    Wing moment @ CG        : 5.65 N·m
+    Required tail lift      : 13.3 N
+    Required tail CL        : 0.346 [-]
+    Elevator deflection     : -2.28 deg
+    Downwash                : 6.26 deg
+    Tail geometric AoA      : 6.26 deg
+    Effective tail stall AoA: 12.82 deg
+
+=== RUDDER CONTROL & DIRECTIONAL CAPABILITY ===
+Analysis Conditions:
+  Rudder analysis speed V_rud: 40.00 m/s
+
+Rudder Control Derivatives (Clean Flow):
+  VT lift curve slope a_v    : 4.887 /rad
+  VT moment arm l_v          : 0.424 m
+  Rudder chord ratio cR/cV   : 0.300 [-]
+  Rudder effectiveness τ_R   : 0.4800 [-]
+  Rudder span ratio bR/bV (geom): 1.000 [-]
+  Rudder span ratio bR/bV (eff) : 1.000 [-]
+  VT efficiency η_v          : 1.000 [-]
+  Sidewash gradient dσ/dβ   : 0.0000 [-]
+  Effective VT area S_v_eff : 0.0807 m²
+  Effective VT volume V_Ve   : 0.0600 [-]
+  Cn_deltaR                  : -0.1408 /rad
+  CY_deltaR                  : 0.5161 /rad
+  CY_beta_v                  : -1.0752 /rad
+
+Asymmetric Thrust Capability:
+  Engine lateral position    : 0.472 m
+  Test thrust asymmetry      : 14.00 N
+  Required yaw moment         : 6.60 N·m
+  Required rudder deflection  : -4.91 deg
+  Max trimmable asymmetry     : 71.34 N
+  Status                     : FEASIBLE
+
+Spin Recovery Capability:
+  Spin speed V_spin          : 18.53 m/s
+  Aircraft mass               : 6.356 kg
+  Yaw moment of inertia Izz  : 2.0453 kg·m²
+  Spin rate                   : 1.00 rev/s
+  Initial yaw rate r0        : 6.28 rad/s
+  Recovery time target       : 2.00 s
+  Required yaw decel rdot_req: 3.14 rad/s²
+  Required yaw moment         : 6.43 N·m
+  Required rudder deflection  : -61.83 deg
+  Max achievable rdot        : 1.27 rad/s²
+  Best-case recovery time     : 4.95 s
+  Status                     : NOT FEASIBLE
+  Reason                     : rudder_deflection_limit
+
+Coordinated Turn Characteristics:
+  Directional stability Cn_beta: 0.2199 /rad
+  Max trimmable sideslip      : 16.00 deg
+  Max yaw moment authority     : 33.64 N·m
+  Max rudder deflection        : 25.00 deg
+
+=== FLIGHT PROFILE / ENVELOPE (BATTERY-AWARE) ===
+handoff_speed_mps            : 20.21 m/s
+total_time_min               : 9.89 min
+total_energy_Wh              : 106.56 Wh
+peak_elec_power_W            : 1063.7 W
+peak_elec_power_per_motor_W  : 265.9 W
+peak_thrust_total_N          : 78.6 N
+peak_thrust_per_motor_N      : 19.6 N
+
+usable_energy_Wh              : 106.56 Wh
+energy_precruise_Wh            : 15.19 Wh
+energy_remaining_for_cruise_Wh : 91.37 Wh
+cruise_time_requested_min      : 10.00 min
+cruise_time_max_min            : 8.83 min (battery-limited)
+mission_energy_if_requested_Wh : 118.70 Wh
+
+Stage breakdown:
+Stage                                   t[s]      E[Wh]    Pavg[W]   Ppeak[W]    Ttot[N]        Notes
+VTOL takeoff / hover                    2.00       0.50      891.4      891.4       74.8             
+Vertical climb to height               27.00       7.45      992.9     1063.7       78.6      h=50.0m
+Transition to handoff speed            15.00       4.22     1012.1     1012.1       75.5 handoff=20.2
+Accelerate to cruise speed             20.00       3.03      545.9      838.9       13.4 20.2→50.0 m/
+Cruise                                529.61      91.37      621.1      621.1        9.9 battery-limi
+
