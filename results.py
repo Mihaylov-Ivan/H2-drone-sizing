@@ -293,7 +293,7 @@ class FuselageResults:
 
 @dataclass
 class BatteryResults:
-    """Battery selection results."""
+    """Hybrid energy-system results; legacy fields still describe the buffer battery."""
     name: str
     voltage_V: float
     capacity_mAh: float
@@ -305,11 +305,30 @@ class BatteryResults:
     endurance_min_at_cruise: float
     C_at_cruise: float
     meets_endurance_req: bool
+    nominal_energy_Wh: float = 0.0
+    initial_soc: float = 1.0
+    minimum_soc: float = 0.0
+    final_soc: float = 0.0
+    peak_power_W: float = 0.0
+    peak_C: float = 0.0
+    fuel_cell_name: str = ""
+    fuel_cell_rated_power_W: float = 0.0
+    fuel_cell_max_bus_power_W: float = 0.0
+    fuel_cell_system_mass_kg: float = 0.0
+    fuel_cell_usable_energy_Wh: float = 0.0
+    hydrogen_storage_name: str = ""
+    hydrogen_pressure_bar: float = 0.0
+    hydrogen_nominal_mass_kg: float = 0.0
+    hydrogen_usable_mass_kg: float = 0.0
+    hydrogen_used_kg: float = 0.0
+    hydrogen_tank_mass_kg: float = 0.0
+    hydrogen_regulator_mass_kg: float = 0.0
+    total_energy_system_mass_kg: float = 0.0
 
 
 @dataclass
 class PropulsionResults:
-    """Propulsion system results."""
+    """Separate lift and cruise propulsion results with legacy cruise aliases."""
     n_propellers: int
     name: str
     prop_diameter_in: float
@@ -327,6 +346,37 @@ class PropulsionResults:
     meets_thrust_req: bool
     meets_power_req: bool
     est_current_A_per_motor_at_cruise: Optional[float] = None
+    architecture: str = "legacy_single_propulsion"
+    n_lift_propellers: int = 0
+    lift_name: str = ""
+    lift_prop_diameter_in: float = 0.0
+    lift_prop_pitch_in: float = 0.0
+    lift_motor_kv: float = 0.0
+    lift_motor_mass_kg: float = 0.0
+    lift_prop_mass_kg: float = 0.0
+    lift_max_thrust_per_motor_N: float = 0.0
+    lift_required_thrust_per_motor_N: float = 0.0
+    lift_max_power_per_motor_W: float = 0.0
+    lift_required_power_per_motor_W: float = 0.0
+    lift_meets_thrust_req: bool = False
+    lift_meets_power_req: bool = False
+    lift_esc_sizing_power_per_motor_W: float = 0.0
+    lift_esc_cont_current_A_per_motor: float = 0.0
+    n_cruise_propellers: int = 0
+    cruise_name: str = ""
+    cruise_prop_diameter_in: float = 0.0
+    cruise_prop_pitch_in: float = 0.0
+    cruise_motor_kv: float = 0.0
+    cruise_motor_mass_kg: float = 0.0
+    cruise_prop_mass_kg: float = 0.0
+    cruise_max_thrust_per_motor_N: float = 0.0
+    cruise_required_thrust_per_motor_N: float = 0.0
+    cruise_max_power_per_motor_W: float = 0.0
+    cruise_required_power_per_motor_W: float = 0.0
+    cruise_meets_thrust_req: bool = False
+    cruise_meets_power_req: bool = False
+    cruise_esc_sizing_power_per_motor_W: float = 0.0
+    cruise_esc_cont_current_A_per_motor: float = 0.0
 
 
 @dataclass
@@ -346,6 +396,10 @@ class AvionicsResults:
     misc_electronics_mass_kg: float
     camera_mass_kg: float
     total_avionics_electrics_mass_kg: float
+    lift_esc_mass_total_kg: float = 0.0
+    cruise_esc_mass_total_kg: float = 0.0
+    lift_esc_cont_current_A: float = 0.0
+    cruise_esc_cont_current_A: float = 0.0
 
 
 @dataclass

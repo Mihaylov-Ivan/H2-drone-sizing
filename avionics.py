@@ -1,8 +1,8 @@
 # avionics.py
 
 from dataclasses import dataclass
-import math
 from typing import Any, Optional
+
 
 @dataclass
 class AvionicsEstimate:
@@ -19,21 +19,19 @@ class AvionicsEstimate:
     esc_mass_total_kg: float
     misc_electronics_mass_kg: float
     camera_mass_kg: float
-
     total_avionics_electrics_mass_kg: float
+    lift_esc_mass_total_kg: float = 0.0
+    cruise_esc_mass_total_kg: float = 0.0
+    lift_esc_cont_current_A: float = 0.0
+    cruise_esc_cont_current_A: float = 0.0
 
 
 def get_autopilot_database():
-    """
-    Representative autopilot boards with approximate mass and size.
-    Mass values are board+case only (no GPS).
-    """
-
     return [
         {
             "name": "Matek_F765_WING",
             "class": "small",
-            "mass_kg": 0.026,         # 26 g
+            "mass_kg": 0.026,
             "length_m": 0.054,
             "width_m": 0.036,
             "height_m": 0.013,
@@ -42,7 +40,7 @@ def get_autopilot_database():
         {
             "name": "Pixhawk4",
             "class": "standard",
-            "mass_kg": 0.016,         # 15.8 g
+            "mass_kg": 0.016,
             "length_m": 0.084,
             "width_m": 0.044,
             "height_m": 0.012,
@@ -51,8 +49,8 @@ def get_autopilot_database():
         {
             "name": "CubeOrangePlus_StandardSet",
             "class": "redundant",
-            "mass_kg": 0.073,         # 73 g (cube + carrier)
-            "length_m": 0.095,        # carrier footprint
+            "mass_kg": 0.073,
+            "length_m": 0.095,
             "width_m": 0.045,
             "height_m": 0.022,
             "pwm_outputs": 14,
@@ -61,133 +59,114 @@ def get_autopilot_database():
 
 
 def select_autopilot(autopilot_class: str):
-    """
-    Pick an autopilot from the DB based on class string.
-    Fallback to 'standard' if class not found.
-    """
     db = get_autopilot_database()
-
-    # exact match first
     for fc in db:
         if fc["class"] == autopilot_class:
             return fc
-
-    # fallback: standard
     for fc in db:
         if fc["class"] == "standard":
             return fc
-
-    # extreme fallback: first entry
     return db[0]
 
 
 def estimate_single_esc_mass_kg(I_cont_A: float) -> float:
+    """Concept-level ESC mass correlation: m_ESC [kg] ~= 0.0008 I_cont [A]."""
+    return 0.0008 * max(0.0, float(I_cont_A))
+
+
+def estimate_avionics_and_electrics(
+    W0_mass_kg: float,
+    n_motors: int,
+    esc_cont_current_A: float,
+    autopilot_class: str,
+    n_servos: int,
+    inputs: Optional[Any] = None,
+    *,
+    n_lift_motors: Optional[int] = None,
+    n_cruise_motors: Optional[int] = None,
+    lift_esc_cont_current_A: Optional[float] = None,
+    cruise_esc_cont_current_A: Optional[float] = None,
+) -> AvionicsEstimate:
     """
-    Very rough ESC mass model for single ESCs:
+    Estimate avionics and electrical mass.
 
-        m_ESC [kg] ≈ 0.0008 * I_cont_A
-
-    Example:
-        30 A -> 0.024 kg
-        40 A -> 0.032 kg
-        60 A -> 0.048 kg
+    The legacy n_motors / esc_cont_current_A interface remains valid. For the new
+    lift-plus-cruise configuration, optional lift/cruise ESC counts and currents allow
+    the four lift ESCs and one cruise ESC to be sized independently.
     """
-    return 0.0008 * I_cont_A
-
-
-def estimate_avionics_and_electrics(W0_mass_kg: float,
-                                    n_motors: int,
-                                    esc_cont_current_A: float,
-                                    autopilot_class: str,
-                                    n_servos: int,
-                                    inputs: Optional[Any] = None) -> AvionicsEstimate:
-    """
-    Bundle all avionics + low-voltage electronics into one estimate.
-
-    Inputs:
-        W0_mass_kg         : MTOW mass (from your sizing loop)
-        n_motors           : number of propulsors (4 for your cruciform)
-        esc_cont_current_A : assumed continuous A-rating per ESC
-        autopilot_class    : 'small', 'standard', 'redundant'
-        n_servos           : number of control servos
-
-    Returns:
-        AvionicsEstimate dataclass with component masses and total.
-    """
-
-    # 1) Autopilot
     fc = select_autopilot(autopilot_class)
-    m_fc = fc["mass_kg"]
+    m_fc = float(fc["mass_kg"])
+    m_gps = 0.025
+    m_airspeed = 0.022
+    m_rc_rx = 0.010
+    m_telemetry = 0.020
+    m_power_module = 0.040
+    m_servos = max(0, int(n_servos)) * 0.012
 
-    # 2) Navigation & comms (fixed assumed masses)
-    m_gps = 0.025   # 25 g M8N GPS+compass
-    m_airspeed = 0.022  # 22 g MS4525DO kit
-    m_rc_rx = 0.010     # 10 g for receiver + antenna
-    m_telemetry = 0.020 # 20 g for 433/915 MHz telemetry radio
+    if n_lift_motors is not None and n_cruise_motors is not None:
+        n_lift = max(0, int(n_lift_motors))
+        n_cruise = max(0, int(n_cruise_motors))
+        I_lift = float(lift_esc_cont_current_A if lift_esc_cont_current_A is not None else esc_cont_current_A)
+        I_cruise = float(cruise_esc_cont_current_A if cruise_esc_cont_current_A is not None else esc_cont_current_A)
+        m_lift_esc = n_lift * estimate_single_esc_mass_kg(I_lift)
+        m_cruise_esc = n_cruise * estimate_single_esc_mass_kg(I_cruise)
+        m_esc_total = m_lift_esc + m_cruise_esc
+    else:
+        I_lift = float(esc_cont_current_A)
+        I_cruise = 0.0
+        m_lift_esc = max(0, int(n_motors)) * estimate_single_esc_mass_kg(esc_cont_current_A)
+        m_cruise_esc = 0.0
+        m_esc_total = m_lift_esc
 
-    # 3) Power module
-    m_power_module = 0.040  # 40 g PM07-class board
-
-    # 4) Servos
-    m_servo_each = 0.012    # 12 g mini metal gear servo
-    m_servos = n_servos * m_servo_each
-
-    # 5) ESCs
-    m_esc_each = estimate_single_esc_mass_kg(esc_cont_current_A)
-    m_esc_total = n_motors * m_esc_each
-
-    # 6) Misc wiring, regulators, connectors
-    #    simple scaling with aircraft size:
-    m_misc = 0.02 + 0.01 * W0_mass_kg
+    # Larger hybrid aircraft has additional HV/LV harnessing and power-management wiring.
+    m_misc = 0.035 + 0.012 * max(0.0, float(W0_mass_kg))
     m_bec = 0.0
     m_autopilot_powerbrick = 0.0
-
-    # 7) Camera / imaging payload (default mass; CG from inputs.cg_x_camera in script)
     m_camera = 0.028
 
-    # Apply hardcoded overrides whenever enabled and values are provided.
     if inputs is not None and getattr(inputs, "use_hardcoded_values", False):
-        hard_autopilot = getattr(inputs, "hardcode_autopilot_mass", None)
-        hard_rc_rx = getattr(inputs, "hardcode_rc_rx_mass", None)
-        hard_telemetry = getattr(inputs, "hardcode_telemetry_mass", None)
-        hard_power_module = getattr(inputs, "hardcode_power_module_mass", None)
-        hard_servos = getattr(inputs, "hardcode_servos_mass", None)
-        hard_esc = getattr(inputs, "hardcode_esc_mass", None)
-        hard_misc = getattr(inputs, "hardcode_misc_electronics_mass", None)
-        hard_bec = getattr(inputs, "hardcode_BEC_mass", None)
-        hard_autopilot_powerbrick = getattr(inputs, "hardcode_autopilot_powerbrick_mass", None)
-        hard_camera = getattr(inputs, "hardcode_camera_mass", None)
-        hard_gps = getattr(inputs, "hardcode_gps_mass", None)
-        hard_airspeed = getattr(inputs, "hardcode_airspeed_mass", None)
+        overrides = {
+            "hardcode_autopilot_mass": "m_fc",
+            "hardcode_rc_rx_mass": "m_rc_rx",
+            "hardcode_telemetry_mass": "m_telemetry",
+            "hardcode_power_module_mass": "m_power_module",
+            "hardcode_servos_mass": "m_servos",
+            "hardcode_misc_electronics_mass": "m_misc",
+            "hardcode_BEC_mass": "m_bec",
+            "hardcode_autopilot_powerbrick_mass": "m_autopilot_powerbrick",
+            "hardcode_camera_mass": "m_camera",
+            "hardcode_gps_mass": "m_gps",
+            "hardcode_airspeed_mass": "m_airspeed",
+        }
+        values = locals()
+        for attr, local_name in overrides.items():
+            val = getattr(inputs, attr, None)
+            if val is not None:
+                values[local_name] = float(val)
+        m_fc = values["m_fc"]
+        m_rc_rx = values["m_rc_rx"]
+        m_telemetry = values["m_telemetry"]
+        m_power_module = values["m_power_module"]
+        m_servos = values["m_servos"]
+        m_misc = values["m_misc"]
+        m_bec = values["m_bec"]
+        m_autopilot_powerbrick = values["m_autopilot_powerbrick"]
+        m_camera = values["m_camera"]
+        m_gps = values["m_gps"]
+        m_airspeed = values["m_airspeed"]
 
-        if hard_autopilot is not None:
-            m_fc = float(hard_autopilot)
-        if hard_rc_rx is not None:
-            m_rc_rx = float(hard_rc_rx)
-        if hard_telemetry is not None:
-            m_telemetry = float(hard_telemetry)
-        if hard_power_module is not None:
-            m_power_module = float(hard_power_module)
-        if hard_servos is not None:
-            m_servos = float(hard_servos)
+        hard_esc = getattr(inputs, "hardcode_esc_mass", None)
         if hard_esc is not None:
             m_esc_total = float(hard_esc)
-        if hard_misc is not None:
-            m_misc = float(hard_misc)
-        if hard_bec is not None:
-            m_bec = float(hard_bec)
-        if hard_autopilot_powerbrick is not None:
-            m_autopilot_powerbrick = float(hard_autopilot_powerbrick)
-        if hard_camera is not None:
-            m_camera = float(hard_camera)
-        if hard_gps is not None:
-            m_gps = float(hard_gps)
-        if hard_airspeed is not None:
-            m_airspeed = float(hard_airspeed)
+            # Preserve the calculated split ratio for reporting.
+            split_denom = max(m_lift_esc + m_cruise_esc, 1e-12)
+            m_lift_esc = m_esc_total * m_lift_esc / split_denom
+            m_cruise_esc = m_esc_total - m_lift_esc
 
-    total = (m_fc + m_gps + m_airspeed + m_rc_rx +
-             m_telemetry + m_power_module + m_bec + m_autopilot_powerbrick + m_servos +
-             m_esc_total + m_misc + m_camera)
+    total = (
+        m_fc + m_gps + m_airspeed + m_rc_rx + m_telemetry + m_power_module
+        + m_bec + m_autopilot_powerbrick + m_servos + m_esc_total + m_misc + m_camera
+    )
 
     return AvionicsEstimate(
         autopilot_name=fc["name"],
@@ -204,4 +183,8 @@ def estimate_avionics_and_electrics(W0_mass_kg: float,
         misc_electronics_mass_kg=m_misc,
         camera_mass_kg=m_camera,
         total_avionics_electrics_mass_kg=total,
+        lift_esc_mass_total_kg=m_lift_esc,
+        cruise_esc_mass_total_kg=m_cruise_esc,
+        lift_esc_cont_current_A=I_lift,
+        cruise_esc_cont_current_A=I_cruise,
     )

@@ -8,26 +8,72 @@ class DesignInputs:
     payload_mass: float = 1.2      # [kg]
     payload_length: float = 0.053 # [m] length of payload
     # PLA
-    wing_loading: float = 260.0     # [N/m²] design W/S (MAIN WING ONLY)
+    wing_loading: float = 165.0     # [N/m²] provisional endurance-oriented design point
     # ASA Aero
     # wing_loading: float = 238.0     # [N/m²] design W/S (MAIN WING ONLY)
-    speed: float = 28.0              # [m/s] cruise speed
+    speed: float = 20.0              # [m/s] provisional economical cruise speed
     dive_speed: float = 50.0         # [m/s] (derived: 1.5*speed)
-    fuselage_length: float = 0.7     # [m] length of fuselage
-    fuselage_OD: float = 0.14         # [m] outer diameter of fuselage
-    fuselage_nose_length: float = 0.1         # [m] length of fuselage nose
-    fuselage_tail_length: float = 0.16         # [m] length of fuselage tail (KEEP AS INPUT)
+    fuselage_length: float = 1.15    # [m] overall longitudinal reference length (nose to tail)
+    fuselage_OD: float = 0.18        # [m] central pod maximum outer diameter / equivalent diameter
+    fuselage_nose_length: float = 0.14        # [m] central pod nose length
+    fuselage_tail_length: float = 0.25        # [m] aft pod / pusher-support reference section
     fuselage_nonopt_factor: float = 1.2       # [-] non-optimum factor to approximate total fuselage (structure + fittings)
     fuselage_body_length: float = fuselage_length - fuselage_nose_length - fuselage_tail_length         # [m] length of fuselage body
-    tail_c_root: float = 0.096            # [m] tail root chord (design input)
+    tail_c_root: float = 0.18             # [m] horizontal/vertical tail reference root chord
     # PLA
-    tail_volume_ratio: float = 0.3      # [-]
-    vertical_tail_volume_ratio: float = 0.051   # [-] Vv = (Sv * l_vt) / (S * b)
+    tail_volume_ratio: float = 0.50     # [-] provisional conventional-tail horizontal volume coefficient
+    vertical_tail_volume_ratio: float = 0.045  # [-] total of both fins: Vv = Sv_total*l_v/(S*b)
     # ASA Aero
     # tail_volume_ratio: float = 0.313      # [-]
     # vertical_tail_volume_ratio: float = 0.05   # [-] Vv = (Sv * l_vt) / (S * b)
-    c_root: float = 0.2
+    c_root: float = 0.28                # [m] main-wing root chord
     # --END MAIN DRIVING VARIABLES--
+
+    # =========================================================
+    # AIRCRAFT ARCHITECTURE (new configuration)
+    # =========================================================
+    aircraft_configuration: str = "high_wing_twin_boom_lift_plus_cruise"
+    energy_architecture: str = "pem_fuel_cell_hybrid"
+    vtol_configuration: str = "separate_lift_and_cruise_propulsion"
+
+    n_lift_propellers: int = 4
+    n_cruise_propellers: int = 1
+    n_horizontal_tail_surfaces: int = 1
+    n_vertical_tail_surfaces: int = 2
+    n_booms: int = 2
+
+    # Central pod and twin-boom reference geometry.
+    # The old variable fuselage_length remains the global x-reference length so
+    # existing CG logic stays usable until the fuselage/boom structural model is replaced.
+    central_pod_length_m: float = 0.78
+    central_pod_width_m: float = 0.18
+    central_pod_height_m: float = 0.18
+    boom_length_m: float = 0.76
+    boom_outer_diameter_m: float = 0.035
+    boom_inner_diameter_m: float = 0.031
+    boom_lateral_spacing_m: float = 0.70
+    boom_x_start_m: float = 0.34
+    boom_x_end_m: float = 1.10
+    boom_specific_mass_kg_per_m: float = 0.13
+    wing_z_above_cg_m: float = 0.10
+    tailplane_z_above_cg_m: float = 0.03
+
+    # Four dedicated vertical-lift units. Coordinates are aircraft axes:
+    # x from nose, y from centreline (left negative), z positive upwards.
+    lift_prop_x_positions_m: tuple = (0.31, 0.31, 0.69, 0.69)
+    lift_prop_y_positions_m: tuple = (-0.48, 0.48, -0.48, 0.48)
+    lift_prop_z_positions_m: tuple = (0.10, 0.10, 0.10, 0.10)
+    lift_prop_rotation_directions: tuple = ("CCW", "CW", "CW", "CCW")
+
+    # One aft pusher for wing-borne flight.
+    cruise_prop_x_m: float = 0.94
+    cruise_prop_y_m: float = 0.0
+    cruise_prop_z_m: float = 0.02
+    cruise_prop_is_pusher: bool = True
+
+    # Surface-count factors used later in geometry, mass and drag accounting.
+    # The current code assumes two horizontal tail panels; that assumption will
+    # be replaced with n_horizontal_tail_surfaces in the structure/reporting step.
     
     export_inventor_xml: bool = True
 
@@ -38,17 +84,17 @@ class DesignInputs:
 
     inventor_xml_path: str = "C:/Users/User/OneDrive/Work/Hydrogenera/R&D/H2 Drone/CAD Model/parameters.xml"
 
-    cruise_endurance_min: float = 10.0  # [min] desired endurance at cruise power
+    cruise_endurance_min: float = 90.0  # [min] mission target; fuel-cell energy model will satisfy this
 
     n_ult: float = 3.0        # [-] max load factor in 45° banked turn
 
     carbon_fiber_safety_factor: float = 1.5       # [-] safety factor for spar
 
     airfoil_n_points: int = 241
-    horizontal_NACA_code: int = 2410
+    horizontal_NACA_code: int = 2410   # provisional; dedicated low-Re airfoil selection follows later
     vertical_NACA_code: int = 6
 
-    sweep_angle_deg: float = 0.0     # [deg] sweep angle of wing leading edge
+    sweep_angle_deg: float = 3.0     # [deg] mild leading-edge sweep
 
     fuselage_longeron_boss_height: float = 0.018 # [m] height of longeron boss
     fuselage_longeron_boss_thickness: float = 0.002 # [m] width of longeron boss
@@ -62,11 +108,11 @@ class DesignInputs:
 
     fuselage_axial_restraint_bolt_length: float = 0.0215 # [m] length of M3 axial restraint bolt
 
-    tail_taper_ratio: float = 1.0       # [-] lambda = c_tip / c_root
+    tail_taper_ratio: float = 0.65      # [-] lambda = c_tip / c_root
     tail_elevator_chord_ratio: float = 3/10       # [-]
     tail_e_oswald: float = 0.8          # [-] Oswald efficiency factor
     tail_sweep_angle_deg: float = 0.0   # [deg]
-    tail_efficiency_factor: float = 0.85 # [-] efficiency factor for x-wing tail
+    tail_efficiency_factor: float = 0.90 # [-] conventional tailplane efficiency
 
     # --- Tail trim / incidence targets ---
     tail_target_elevator_deg: float = 0.0
@@ -172,7 +218,7 @@ class DesignInputs:
     NACA0012_zero_lift_angle_of_attack_deg: float = 0.0  # [deg]
     NACA0015_zero_lift_angle_of_attack_deg: float = 0.0  # [deg]
 
-    taper_ratio: float = 1.0
+    taper_ratio: float = 0.55
     wing_plain_flap_chord_ratio: float = 3/10
     e_oswald: float = 0.8
 
@@ -278,10 +324,10 @@ class DesignInputs:
 
     snap_fit_extension_length: float = 0.03 # [m] length of snap fit extension
 
-    propeller_efficiency: float = 0.65
-    n_propellers: int = 4
-    propulsion_margin: float = 1.3
-    propulsion_power_margin: float = 1.3
+    propeller_efficiency: float = 0.72  # cruise propeller efficiency; lift efficiency is separate
+    n_propellers: int = 4              # legacy alias; kept equal to n_lift_propellers in __post_init__
+    propulsion_margin: float = 1.30     # legacy cruise-thrust margin
+    propulsion_power_margin: float = 1.20  # legacy cruise-power margin
 
     prop_clearance_from_wing_LE: float = 0.005 # [m] clearance from fuselage OD
 
@@ -356,40 +402,143 @@ class DesignInputs:
     nose_axial_restraint_bolt_lenght: float = 0.008 # [m] length of M6 nose axial restraint bolt
 
     # --- Propulsion location and clearance ---
-    prop_y_position_fraction: float = 1.0
-    prop_x_position_fraction: float = 1.0
+    prop_y_position_fraction: float = 0.55  # legacy single-value approximation for lift-prop structural loading
+    prop_x_position_fraction: float = 0.50  # legacy single-value approximation
     prop_fuselage_clearance_min_m: float = 0.02
+    tail_mounted_propulsion: bool = False  # lift motors are on wing/booms; pusher is aft of the pod
 
     # --- Avionics / electronics assumptions ---
     autopilot_class: str = "standard"
-    n_servos: int = 4
-    n_motors: int = 4
+    n_servos: int = 5  # 2 ailerons + 1 elevator + 2 rudders
+    n_motors: int = 5  # derived again in __post_init__: 4 lift + 1 cruise
     esc_efficiency: float = 0.95
     motor_mechanical_efficiency: float = 0.85
 
-    # --- VTOL / tailsitter mode ---
+    # --- VTOL / separate lift-plus-cruise mode ---
     vtol_enabled: bool = True
     hover_accel_mps2: float = 0.5
-    hover_thrust_margin: float = 1.5
-    hover_eta: float = 0.50
-    hover_power_margin: float = 1.5
+    hover_thrust_margin: float = 1.50
+    hover_eta: float = 0.62  # combined induced/profile/electrical estimate for lift system
+    hover_power_margin: float = 1.15
 
-    # Tailsitter VTOL mission profile
-    vtol_takeoff_hover_time_s: float = 2.0
-    vtol_climb_height_m: float = 50.0
-    vtol_climb_accel_mps2: float = 0.5
-    vtol_climb_vmax_mps: float = 2.0
+    # Lift-plus-cruise VTOL mission profile
+    vtol_takeoff_hover_time_s: float = 10.0
+    vtol_climb_height_m: float = 30.0
+    vtol_climb_accel_mps2: float = 0.75
+    vtol_climb_vmax_mps: float = 3.0
 
-    transition_stall_margin: float = 1.2
-    transition_min_speed_mps: float = 15.0
-    transition_time_s: float = 15.0
+    transition_stall_margin: float = 1.30
+    transition_min_speed_mps: float = 12.0
+    transition_time_s: float = 8.0
 
-    accel_to_cruise_time_s: float = 50.0
+    accel_to_cruise_time_s: float = 20.0
 
-    battery_energy_reserve_factor: float = 1.08
+    battery_energy_reserve_factor: float = 1.15
     mission_profile_steps: int = 30
 
     assembly_fit_factor: float = 1.05
+
+    # =========================================================
+    # HYBRID POWER SYSTEM — provisional component values
+    # =========================================================
+    dc_bus_nominal_voltage_V: float = 22.2
+    power_management_efficiency: float = 0.97
+    fuel_cell_dc_dc_efficiency: float = 0.95
+
+    fuel_cell_enabled: bool = True
+    fuel_cell_name: str = "Placeholder_PEM_FC_800W_net"
+    fuel_cell_rated_net_power_W: float = 800.0
+    fuel_cell_max_continuous_fraction: float = 0.95
+    fuel_cell_min_stable_fraction: float = 0.10
+    fuel_cell_system_efficiency_LHV: float = 0.50
+    fuel_cell_stack_mass_kg: float = 0.85
+    fuel_cell_bop_mass_kg: float = 0.35
+    fuel_cell_dc_dc_mass_kg: float = 0.15
+    fuel_cell_system_mass_kg: float = 0.0       # derived in __post_init__
+    fuel_cell_length_m: float = 0.26
+    fuel_cell_width_m: float = 0.16
+    fuel_cell_height_m: float = 0.12
+    fuel_cell_startup_time_s: float = 30.0
+    fuel_cell_ramp_rate_W_per_s: float = 100.0
+
+    hydrogen_storage_enabled: bool = True
+    hydrogen_storage_name: str = "Placeholder_300bar_120g_H2_composite_system"
+    hydrogen_storage_pressure_bar: float = 300.0
+    hydrogen_mass_nominal_kg: float = 0.120
+    hydrogen_usable_fraction: float = 0.90
+    hydrogen_tank_mass_kg: float = 1.10
+    hydrogen_regulator_and_valves_mass_kg: float = 0.18
+    hydrogen_tank_length_m: float = 0.45
+    hydrogen_tank_outer_diameter_m: float = 0.12
+    hydrogen_LHV_kWh_per_kg: float = 33.33
+    hydrogen_usable_mass_kg: float = 0.0         # derived in __post_init__
+    hydrogen_chemical_energy_Wh: float = 0.0     # derived in __post_init__
+    fuel_cell_usable_electrical_energy_Wh: float = 0.0  # derived in __post_init__
+
+    # Buffer battery provides VTOL/transition peak power and covers FC transients.
+    buffer_battery_usable_fraction: float = 0.90
+    buffer_battery_min_soc: float = 0.20
+    buffer_battery_takeoff_min_soc: float = 0.80
+    buffer_battery_target_soc_cruise: float = 0.70
+    fuel_cell_cruise_power_control_mode: str = "load_follow_with_soc_trim"
+    fuel_cell_ready_at_takeoff: bool = True  # stack is started and warmed before launch
+    continuous_auxiliary_power_W: float = 35.0  # avionics, pumps, control electronics and payload hotel load
+
+    buffer_battery_initial_soc: float = 1.00
+    buffer_battery_discharge_margin: float = 0.80  # use 80% of nameplate C-rate for sizing
+
+    # Transition and recovery approximations used by the hybrid mission model.
+    transition_average_lift_fraction: float = 0.55
+    include_landing_sequence: bool = True
+    transition_to_hover_time_s: float = 8.0
+    vtol_descent_height_m: float = 30.0
+    vtol_descent_vmax_mps: float = 2.0
+    vtol_descent_power_factor: float = 0.75
+    vtol_landing_hover_time_s: float = 10.0
+
+    hardcode_buffer_battery: Optional[Dict[str, Any]] = field(default_factory=lambda: {
+        "name": "Placeholder_LiPo_6S_5000mAh_50C_buffer",
+        "voltage_V": 22.2,
+        "capacity_mAh": 5000,
+        "mass_kg": 0.75,
+        "max_discharge_C": 50,
+        "length_m": 0.160,
+        "width_m": 0.050,
+        "height_m": 0.050,
+    })
+
+    hardcode_lift_propulsion: Optional[Dict[str, Any]] = field(default_factory=lambda: {
+        "name": "MAD_4014_370kV_15x5_6S_placeholder",
+        "motor_kv": 370,
+        "voltage_min_V": 18.0,
+        "voltage_max_V": 25.2,
+        "max_power_W": 500.0,
+        "max_thrust_N": 28.0,
+        "prop_diameter_in": 15.0,
+        "prop_pitch_in": 5.0,
+        "motor_mass_kg": 0.142,
+        "prop_mass_kg": 0.035,
+    })
+
+    hardcode_cruise_propulsion: Optional[Dict[str, Any]] = field(default_factory=lambda: {
+        "name": "Placeholder_4008_380kV_15x8_6S_pusher",
+        "motor_kv": 380,
+        "voltage_min_V": 18.0,
+        "voltage_max_V": 25.2,
+        "max_power_W": 800.0,
+        "max_thrust_N": 35.0,
+        "prop_diameter_in": 15.0,
+        "prop_pitch_in": 8.0,
+        "motor_mass_kg": 0.160,
+        "prop_mass_kg": 0.040,
+    })
+
+    lift_thrust_margin: float = 1.50
+    lift_power_margin: float = 1.15
+    cruise_thrust_margin: float = 1.30
+    cruise_power_margin: float = 1.20
+    lift_propeller_efficiency: float = 0.62
+    cruise_propeller_efficiency: float = 0.72
 
     battery_location_adjustment_length: float = 0.03 # [m] adjustment length for battery location
     battery_location_adjustment_gap: float = 0.003 # [m] gap for battery location adjustment
@@ -402,14 +551,14 @@ class DesignInputs:
     # When use_hardcoded_values is True, all hardcoded values that are not None are used instead of calculated values
     # If a hardcoded value is None, it is calculated as usual
     # =========================================================
-    use_hardcoded_values: bool = True  # Master toggle: if True, use all non-None hardcoded values below
+    use_hardcoded_values: bool = False  # Start from analytical sizing; enable only verified component overrides
     
     hardcode_wing_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
     # hardcode_wing_weight_kg: Optional[float] = 0.8 * print_weight_reduction  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
     # hardcode_tail_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
-    hardcode_tail_weight_kg: Optional[float] = 0.1473 * print_weight_reduction  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
+    hardcode_tail_weight_kg: Optional[float] = None  # one complete horizontal tailplane
     # hardcode_vertical_tail_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
-    hardcode_vertical_tail_weight_kg: Optional[float] = 0.1473 * print_weight_reduction  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
+    hardcode_vertical_tail_weight_kg: Optional[float] = None  # total for both fins will be handled by surface count
     hardcode_fuselage_A_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
     # hardcode_fuselage_A_weight_kg: Optional[float] = 0.190 * print_weight_reduction  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
     hardcode_fuselage_B_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
@@ -417,9 +566,9 @@ class DesignInputs:
     hardcode_fuselage_C_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
     # hardcode_fuselage_C_weight_kg: Optional[float] = 0.204 * print_weight_reduction  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
     # hardcode_fuselage_nose_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
-    hardcode_fuselage_nose_weight_kg: Optional[float] = 0.140 * print_weight_reduction  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
+    hardcode_fuselage_nose_weight_kg: Optional[float] = None
     # hardcode_fuselage_tail_weight_kg: Optional[float] = None  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
-    hardcode_fuselage_tail_weight_kg: Optional[float] = 0.226 * print_weight_reduction  # [kg] if not None and use_hardcoded_values is True, use this value instead of calculated
+    hardcode_fuselage_tail_weight_kg: Optional[float] = None
     # Total fuselage mass = sum of nose + A + B + C + tail when all five are set (see script._fuselage_total_and_segments).
 
     tail_wing_spar_specific_weight_kg_per_m: float = 0.025 # 6mm OD
@@ -443,13 +592,13 @@ class DesignInputs:
 
     # hardcode_wing_span: Optional[float] = None
     # low AR
-    hardcode_wing_span: Optional[float] = 1.18244  # if not None and use_hardcoded_values is True, span is not sized from wing_loading
+    hardcode_wing_span: Optional[float] = None  # let wing loading, root chord and taper size the span
     # high AR
     # hardcode_wing_span: Optional[float] = 1.41613  # if not None and use_hardcoded_values is True, span is not sized from wing_loading
     # hardcode_tail_span: Optional[float] = None
-    hardcode_tail_span: Optional[float] = 0.620  # if not None and use_hardcoded_values is True, span is not sized from tail_volume_ratio
+    hardcode_tail_span: Optional[float] = None
     # hardcode_vertical_tail_span: Optional[float] = None
-    hardcode_vertical_tail_span: Optional[float] = 0.619  # if not None and use_hardcoded_values is True, span is not sized from vertical_tail_volume_ratio
+    hardcode_vertical_tail_span: Optional[float] = None
 
     # Optional wetted areas for drag [m²]. If None, code uses its estimates (fuselage: π·OD·L;
     # wing / horiz. tail / vertical tail: 2× planform for profile-drag scaling). When set and
@@ -460,69 +609,49 @@ class DesignInputs:
     hardcode_vertical_tail_wetted_area_m2: Optional[float] = None
 
     # hardcode_wing_spar_OD: Optional[float] = None  # [m]
-    hardcode_wing_spar_OD: Optional[float] = 0.008 + transition_fit_clearance_coated_carbon  # [m]
+    hardcode_wing_spar_OD: Optional[float] = None  # [m]
     # hardcode_wing_secondary_spar_OD: Optional[float] = None  # [m]
-    hardcode_wing_secondary_spar_OD: Optional[float] = 0.004 + transition_fit_clearance_coated_carbon  # [m]
+    hardcode_wing_secondary_spar_OD: Optional[float] = None  # [m]
     # hardcode_tail_wing_spar_OD: Optional[float] = None  # [m]
-    hardcode_tail_wing_spar_OD: Optional[float] = 0.006 + transition_fit_clearance_coated_carbon  # [m]
+    hardcode_tail_wing_spar_OD: Optional[float] = None  # [m]
     # hardcode_elevator_rod_OD: Optional[float] = None  # [m]
-    hardcode_elevator_rod_OD: Optional[float] = 0.003 + transition_fit_clearance_coated_carbon  # [m]
+    hardcode_elevator_rod_OD: Optional[float] = None  # [m]
 
     # Skin / shell thickness [m]. Root thickness for lifting surfaces; tip follows MATERIAL.tip_thickness_ratio
     # (same as sized surfaces). Fuselage uses monocoque shell thickness. None = use structural sizing.
     hardcode_fuselage_skin_thickness_m: Optional[float] = None
     hardcode_wing_skin_root_thickness_m: Optional[float] = None
-    hardcode_tail_wing_skin_root_thickness_m: Optional[float] = 0.001
-    hardcode_vertical_tail_skin_root_thickness_m: Optional[float] = 0.001
+    hardcode_tail_wing_skin_root_thickness_m: Optional[float] = None
+    hardcode_vertical_tail_skin_root_thickness_m: Optional[float] = None
 
     # hardcode_esc_mass: Optional[float] = None  # [kg]
-    hardcode_esc_mass: Optional[float] = 0.027 * n_motors  # [kg]
-    hardcode_BEC_mass: Optional[float] = 0.051  # [kg]
-    hardcode_power_module_mass: Optional[float] = 0.155  # [kg]
-    hardcode_rc_rx_mass: Optional[float] = 0.0055  # [kg]
-    hardcode_telemetry_mass: Optional[float] = 0.00175  # [kg]
-    hardcode_autopilot_mass: Optional[float] = 0.051  # [kg]
-    hardcode_autopilot_powerbrick_mass: Optional[float] = 0.035  # [kg]
-    hardcode_servos_mass: Optional[float] = 0.006 * n_servos  # [kg]
-    hardcode_camera_mass: Optional[float] = 0.028  # [kg]
+    hardcode_esc_mass: Optional[float] = None  # [kg], total for five ESCs when set
+    hardcode_BEC_mass: Optional[float] = None  # [kg]
+    hardcode_power_module_mass: Optional[float] = None  # [kg]
+    hardcode_rc_rx_mass: Optional[float] = None  # [kg]
+    hardcode_telemetry_mass: Optional[float] = None  # [kg]
+    hardcode_autopilot_mass: Optional[float] = None  # [kg]
+    hardcode_autopilot_powerbrick_mass: Optional[float] = None  # [kg]
+    hardcode_servos_mass: Optional[float] = None  # [kg]
+    hardcode_camera_mass: Optional[float] = None  # [kg]
     # TO EDIT:
-    hardcode_gps_mass: Optional[float] = 0.025  # [kg]
-    hardcode_airspeed_mass: Optional[float] = 0.022  # [kg]
-    hardcode_misc_electronics_mass: Optional[float] = 0.05  # [kg]
+    hardcode_gps_mass: Optional[float] = None  # [kg]
+    hardcode_airspeed_mass: Optional[float] = None  # [kg]
+    hardcode_misc_electronics_mass: Optional[float] = None  # [kg]
 
     # Mutable defaults require default_factory so each instance gets its own dict.
-    hardcode_battery: Optional[Dict[str, Any]] = field(default_factory=lambda:
-        {
-            "name": "Lipo Battery Pack 5500mAh/22.2V 30/60C 177.6Wh",
-            "voltage_V": 22.2,
-            "capacity_mAh": 5500,
-            "mass_kg": 0.8165,
-            "max_discharge_C": 60,
-            "length_m": 0.163,
-            "width_m": 0.046,
-            "height_m": 0.051,
-        }    
-    ) # e.g. {"name": "LiPo_4S_8000mAh_30C", "voltage_V": 14.8, "capacity_mAh": 8000, "mass_kg": 0.75, "max_discharge_C": 30, "length_m": 0.165, "width_m": 0.055, "height_m": 0.038}
+    # Legacy battery field retained so unmodified modules still import.
+    # __post_init__ mirrors hardcode_buffer_battery into this field.
+    hardcode_battery: Optional[Dict[str, Any]] = None
     # hardcode_battery: Optional[Dict[str, Any]] = None
 
     battery_length: float = 0.0
     battery_width: float = 0.0
     battery_height: float = 0.0
 
-    hardcode_propulsion: Optional[Dict[str, Any]] = field(default_factory=lambda:
-        {
-            "name": "GEPRC EM2812 900Kv",
-            "motor_kv": 900,
-            "voltage_min_V": 23.7,
-            "voltage_max_V": 24.0,
-            "max_power_W": 1010.0,
-            "max_thrust_N": 25.0,
-            "prop_diameter_in": 9.0,
-            "prop_pitch_in": 5.0,
-            "motor_mass_kg": 0.0805,
-            "prop_mass_kg": 0.020,
-        }
-    ) # e.g. {"name": "BrotherHobby_AvengerV2_2507_1200kV_HQ7x3p5x3_6S", "motor_kv": 1200, "voltage_min_V": 14.8, "voltage_max_V": 25.2, "max_power_W": 650.0, "max_thrust_N": 19.81, "prop_diameter_in": 7.0, "prop_pitch_in": 3.5, "motor_mass_kg": 0.040, "prop_mass_kg": 0.010}
+    # Legacy single-propulsion field. It is intentionally None because the new
+    # aircraft has independent lift and cruise systems.
+    hardcode_propulsion: Optional[Dict[str, Any]] = None
     # hardcode_propulsion: Optional[Dict[str, Any]] = None
 
     # =========================================================
@@ -559,6 +688,17 @@ class DesignInputs:
     cg_x_misc: float = 0.0
     cg_x_payload: float = 0.0
 
+    # New component CGs for the hybrid twin-boom configuration.
+    cg_x_fuel_cell: float = 0.0
+    cg_x_hydrogen_tank: float = 0.0
+    cg_x_hydrogen_regulator: float = 0.0
+    cg_x_lift_propulsion_front: float = 0.0
+    cg_x_lift_propulsion_rear: float = 0.0
+    cg_x_cruise_propulsion: float = 0.0
+    cg_x_booms: float = 0.0
+    cg_x_landing_gear: float = 0.0
+    landing_gear_mass_kg: float = 0.18
+
     # --- Derived fuselage geometry (computed in __post_init__) ---
     fuselage_OR: float = 0.0
     fuselage_cs_area: float = 0.0
@@ -570,6 +710,51 @@ class DesignInputs:
     def __post_init__(self) -> None:
         # Derived speeds
         self.dive_speed = float(self.speed) * 1.5
+
+        # Keep legacy counters consistent while the downstream modules are migrated.
+        self.n_propellers = int(self.n_lift_propellers)
+        self.n_motors = int(self.n_lift_propellers + self.n_cruise_propellers)
+
+        # Validate the four lift-prop layout.
+        layout_lengths = {
+            len(self.lift_prop_x_positions_m),
+            len(self.lift_prop_y_positions_m),
+            len(self.lift_prop_z_positions_m),
+            len(self.lift_prop_rotation_directions),
+        }
+        if layout_lengths != {int(self.n_lift_propellers)}:
+            raise ValueError(
+                "Lift-prop coordinate and rotation tuples must each contain "
+                f"{self.n_lift_propellers} entries."
+            )
+        if self.n_horizontal_tail_surfaces != 1:
+            raise ValueError("This baseline assumes one continuous horizontal tailplane.")
+        if self.n_vertical_tail_surfaces != 2:
+            raise ValueError("This baseline assumes two vertical fins, one on each boom.")
+
+        # Fuel-cell and hydrogen derived quantities.
+        self.fuel_cell_system_mass_kg = (
+            float(self.fuel_cell_stack_mass_kg)
+            + float(self.fuel_cell_bop_mass_kg)
+            + float(self.fuel_cell_dc_dc_mass_kg)
+        )
+        self.hydrogen_usable_mass_kg = (
+            float(self.hydrogen_mass_nominal_kg) * float(self.hydrogen_usable_fraction)
+        )
+        self.hydrogen_chemical_energy_Wh = (
+            self.hydrogen_usable_mass_kg * float(self.hydrogen_LHV_kWh_per_kg) * 1000.0
+        )
+        self.fuel_cell_usable_electrical_energy_Wh = (
+            self.hydrogen_chemical_energy_Wh
+            * float(self.fuel_cell_system_efficiency_LHV)
+            * float(self.fuel_cell_dc_dc_efficiency)
+            * float(self.power_management_efficiency)
+        )
+
+        # Mirror the new buffer battery into the legacy field until propulsion_system.py
+        # is split into lift, cruise, fuel-cell and battery selections.
+        if self.hardcode_buffer_battery is not None:
+            self.hardcode_battery = dict(self.hardcode_buffer_battery)
 
         # Derived fuselage geometry
         self.fuselage_OR = float(self.fuselage_OD) / 2.0
@@ -607,7 +792,7 @@ class DesignInputs:
 
         # PLA
         # low AR
-        set_if_zero("cg_x_wing", 0.31)
+        set_if_zero("cg_x_wing", 0.43)
         # high AR
         # set_if_zero("cg_x_wing", 0.333)
         # ASA Aero
@@ -640,11 +825,11 @@ class DesignInputs:
             + float(self.fuselage_body_section_B_length)
             + float(self.fuselage_body_section_C_length)
         )
-        set_if_zero("cg_x_tail", 0.61)
-        set_if_zero("cg_x_vertical_tail", 0.625)
+        set_if_zero("cg_x_tail", 1.05)
+        set_if_zero("cg_x_vertical_tail", 1.05)
         # battery can move 40mm back
-        set_if_zero("cg_x_battery", self.fuselage_nose_length + 0.5 * self.battery_length)
-        set_if_zero("cg_x_payload", self.fuselage_nose_length - 0.5 * self.payload_length - 0.002)
+        set_if_zero("cg_x_battery", 0.39)
+        set_if_zero("cg_x_payload", 0.16)
 
         set_if_zero("cg_x_nose", 0.5 * self.fuselage_nose_length)
         set_if_zero(
@@ -666,13 +851,13 @@ class DesignInputs:
         )
 
         # Propulsion CG default: tail region (mass = W_propulsion from propulsion sizing / overrides).
-        set_if_zero("cg_x_propulsion", self.cg_x_fuselage_tail - 0.5 * self.tail_c_root)
+        set_if_zero("cg_x_propulsion", 0.59)  # legacy mass-lumped average of all five propulsors
 
         set_if_zero("cg_x_autopilot", self.cg_x_body_section_C)
         set_if_zero("cg_x_power_module", self.cg_x_battery)
         set_if_zero("cg_x_bec", self.cg_x_body_section_A)
         set_if_zero("cg_x_autopilot_powerbrick", self.cg_x_body_section_C)
-        set_if_zero("cg_x_esc", self.cg_x_tail)
+        set_if_zero("cg_x_esc", 0.55)
 
         set_if_zero("cg_x_gps", self.cg_x_body_section_B)
         set_if_zero("cg_x_airspeed", 0.2 * self.fuselage_nose_length)
@@ -680,9 +865,18 @@ class DesignInputs:
         set_if_zero("cg_x_tel", 0.5 * self.cg_x_body_section_A)
         set_if_zero("cg_x_camera", self.camera_lens_length + self.camera_body_length)
 
-        set_if_zero("cg_x_servos", self.cg_x_tail)
+        set_if_zero("cg_x_servos", 0.88)
         # TO EDIT:
         set_if_zero("cg_x_misc", 0.5 * self.fuselage_length)
+
+        set_if_zero("cg_x_fuel_cell", 0.57)
+        set_if_zero("cg_x_hydrogen_tank", 0.34)
+        set_if_zero("cg_x_hydrogen_regulator", 0.56)
+        set_if_zero("cg_x_lift_propulsion_front", 0.31)
+        set_if_zero("cg_x_lift_propulsion_rear", 0.69)
+        set_if_zero("cg_x_cruise_propulsion", self.cruise_prop_x_m)
+        set_if_zero("cg_x_booms", 0.5 * (self.boom_x_start_m + self.boom_x_end_m))
+        set_if_zero("cg_x_landing_gear", 0.48)
 
         def _check_span_segment(name: str, a: float, b: float) -> None:
             if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
@@ -724,6 +918,14 @@ CG_X_COMPONENT_FIELDS = (
     "cg_x_servos",
     "cg_x_misc",
     "cg_x_payload",
+    "cg_x_fuel_cell",
+    "cg_x_hydrogen_tank",
+    "cg_x_hydrogen_regulator",
+    "cg_x_lift_propulsion_front",
+    "cg_x_lift_propulsion_rear",
+    "cg_x_cruise_propulsion",
+    "cg_x_booms",
+    "cg_x_landing_gear",
 )
 
 

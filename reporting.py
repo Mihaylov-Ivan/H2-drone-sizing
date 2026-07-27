@@ -34,7 +34,9 @@ def print_design_summary(results: DesignResults, inputs: DesignInputs) -> None:
     print(f"    - Section A     : {getattr(results.fuselage, 'W_fuselage_section_A_kg', 0.0):.3f} kg")
     print(f"    - Tail          : {getattr(results.fuselage, 'W_fuselage_tail_kg', 0.0):.3f} kg")
     if results.battery is not None:
-        print(f"  Battery           : {results.battery.mass_kg:.3f} kg")
+        energy_mass = getattr(results.battery, "total_energy_system_mass_kg", results.battery.mass_kg)
+        print(f"  Hybrid energy sys.: {energy_mass:.3f} kg")
+        print(f"    - Buffer battery: {results.battery.mass_kg:.3f} kg")
     if results.propulsion is not None:
         print(f"  Propulsion        : {results.propulsion.total_propulsion_mass_kg:.3f} kg")
     if results.avionics is not None:
@@ -587,67 +589,90 @@ def print_fuselage_results(results: DesignResults, inputs: DesignInputs) -> None
 
 
 def print_propulsion_results(results: DesignResults) -> None:
-    print("=== PROPULSION ===")
+    print("=== PROPULSION — SEPARATE LIFT + CRUISE ===")
     a = results.aircraft
     print(f"drag_cruise_N       : {a.drag_cruise_N:.3f} N")
     print(f"cruise_power_W      : {a.cruise_power_W:.3f} W")
     print(f"cruise_power_elec_W : {a.cruise_power_elec_W:.3f} W")
     print()
 
-    if results.propulsion is not None:
-        p = results.propulsion
+    if results.propulsion is None:
+        print("No propulsion system selected")
+        print()
+        return
+
+    p = results.propulsion
+    if getattr(p, "architecture", "") == "separate_lift_and_cruise":
+        print("Lift propulsion:")
+        print(f"  Number of units         : {p.n_lift_propellers}")
+        print(f"  Combination             : {p.lift_name}")
+        print(f"  Propeller               : {p.lift_prop_diameter_in:.1f} x {p.lift_prop_pitch_in:.1f} in")
+        print(f"  Motor Kv                : {p.lift_motor_kv:.0f} rpm/V")
+        print(f"  Max thrust per motor    : {p.lift_max_thrust_per_motor_N:.2f} N")
+        print(f"  Required thrust/motor   : {p.lift_required_thrust_per_motor_N:.2f} N")
+        print(f"  Max power per motor     : {p.lift_max_power_per_motor_W:.1f} W")
+        print(f"  Required power/motor    : {p.lift_required_power_per_motor_W:.1f} W")
+        print(f"  ESC sizing/motor        : {p.lift_esc_sizing_power_per_motor_W:.1f} W, {p.lift_esc_cont_current_A_per_motor:.1f} A")
+        print(f"  Meets thrust / power    : {p.lift_meets_thrust_req} / {p.lift_meets_power_req}")
+        print()
+        print("Cruise propulsion:")
+        print(f"  Number of units         : {p.n_cruise_propellers}")
+        print(f"  Combination             : {p.cruise_name}")
+        print(f"  Propeller               : {p.cruise_prop_diameter_in:.1f} x {p.cruise_prop_pitch_in:.1f} in")
+        print(f"  Motor Kv                : {p.cruise_motor_kv:.0f} rpm/V")
+        print(f"  Max thrust per motor    : {p.cruise_max_thrust_per_motor_N:.2f} N")
+        print(f"  Required thrust/motor   : {p.cruise_required_thrust_per_motor_N:.2f} N")
+        print(f"  Max power per motor     : {p.cruise_max_power_per_motor_W:.1f} W")
+        print(f"  Required power/motor    : {p.cruise_required_power_per_motor_W:.1f} W")
+        print(f"  ESC sizing/motor        : {p.cruise_esc_sizing_power_per_motor_W:.1f} W, {p.cruise_esc_cont_current_A_per_motor:.1f} A")
+        print(f"  Meets thrust / power    : {p.cruise_meets_thrust_req} / {p.cruise_meets_power_req}")
+        print()
+        print(f"Total motor mass          : {p.total_motor_mass_kg:.3f} kg")
+        print(f"Total propeller mass      : {p.total_prop_mass_kg:.3f} kg")
+        print(f"Total propulsion mass     : {p.total_propulsion_mass_kg:.3f} kg")
+    else:
         print(f"n_propellers        : {p.n_propellers}")
         print(f"combo               : {p.name}")
         print(f"prop_diameter       : {p.prop_diameter_in:.1f} in")
-        print(f"prop_pitch          : {p.prop_pitch_in:.1f} in")
-        print(f"motor_kv            : {p.motor_kv:.0f} rpm/V")
-        print(f"max_thrust/motor    : {p.max_thrust_per_motor_N:.2f} N")
-        print(f"required_thrust/motor: {p.required_thrust_per_motor_N:.2f} N")
-        print(f"max_power/motor     : {p.max_power_per_motor_W:.1f} W")
         print(f"required_power/motor: {p.required_power_per_motor_W:.1f} W")
-        print(f"meets_thrust_req    : {p.meets_thrust_req}")
-        print(f"meets_power_req     : {p.meets_power_req}")
-        if hasattr(p, "esc_sizing_power_per_motor_W") and p.esc_sizing_power_per_motor_W is not None:
-            print(f"ESC sizing W/motor  : {p.esc_sizing_power_per_motor_W:.1f} W")
-        if hasattr(p, "esc_cont_current_A_per_motor") and p.esc_cont_current_A_per_motor is not None:
-            print(f"ESC cont A/motor    : {p.esc_cont_current_A_per_motor:.2f} A")
-        if p.est_current_A_per_motor_at_cruise is not None:
-            print(f"Est. current@cruise : {p.est_current_A_per_motor_at_cruise:.2f} A/motor")
-        print(f"Motor mass          : {p.motor_mass_kg:.3f} kg/motor")
-        print(f"Prop mass           : {p.prop_mass_kg:.3f} kg/motor")
         print(f"Total propulsion    : {p.total_propulsion_mass_kg:.3f} kg")
-    else:
-        print("No propulsion system selected")
     print()
 
-
 def print_battery_results(results: DesignResults) -> None:
-    print("=== BATTERY ===")
+    print("=== HYBRID ENERGY SYSTEM ===")
     if results.battery is None:
-        print("No battery selected")
+        print("No hybrid energy system selected")
         print()
         return
 
     b = results.battery
-    print("Specifications:")
-    print(f"  Name               : {b.name}")
-    print(f"  Voltage            : {b.voltage_V:.1f} V")
-    print(f"  Capacity           : {b.capacity_mAh:.0f} mAh")
-    print(f"  Mass               : {b.mass_kg:.3f} kg")
-    print(f"  Usable energy      : {b.usable_energy_Wh:.1f} Wh")
+    print("Buffer battery:")
+    print(f"  Name                    : {b.name}")
+    print(f"  Voltage / capacity      : {b.voltage_V:.1f} V / {b.capacity_mAh:.0f} mAh")
+    print(f"  Nominal / usable energy : {getattr(b, 'nominal_energy_Wh', 0.0):.1f} / {b.usable_energy_Wh:.1f} Wh")
+    print(f"  Initial / minimum SOC   : {getattr(b, 'initial_soc', 0.0):.1%} / {getattr(b, 'minimum_soc', 0.0):.1%}")
+    print(f"  Final mission SOC       : {getattr(b, 'final_soc', 0.0):.1%}")
+    print(f"  Peak battery power      : {getattr(b, 'peak_power_W', 0.0):.1f} W ({getattr(b, 'peak_C', 0.0):.1f} C)")
+    print(f"  Battery mass            : {b.mass_kg:.3f} kg")
     print()
-    print("Dimensions:")
-    print(f"  Length             : {b.length_m:.3f} m ({b.length_m*100:.1f} cm)")
-    print(f"  Width              : {b.width_m:.3f} m ({b.width_m*100:.1f} cm)")
-    print(f"  Height             : {b.height_m:.3f} m ({b.height_m*100:.1f} cm)")
-    print(f"  Volume             : {b.length_m * b.width_m * b.height_m:.6f} m³")
+    print("Fuel cell:")
+    print(f"  Name                    : {getattr(b, 'fuel_cell_name', '')}")
+    print(f"  Rated net power         : {getattr(b, 'fuel_cell_rated_power_W', 0.0):.1f} W")
+    print(f"  Max power at DC bus     : {getattr(b, 'fuel_cell_max_bus_power_W', 0.0):.1f} W")
+    print(f"  Usable electrical energy: {getattr(b, 'fuel_cell_usable_energy_Wh', 0.0):.1f} Wh")
+    print(f"  Fuel-cell system mass   : {getattr(b, 'fuel_cell_system_mass_kg', 0.0):.3f} kg")
     print()
-    print("Performance:")
-    print(f"  Endurance@cruise   : {b.endurance_min_at_cruise:.1f} min")
-    print(f"  C-rate at cruise  : {b.C_at_cruise:.2f} C")
-    print(f"  Meets endurance req: {b.meets_endurance_req}")
+    print("Hydrogen storage:")
+    print(f"  System                  : {getattr(b, 'hydrogen_storage_name', '')}")
+    print(f"  Pressure                : {getattr(b, 'hydrogen_pressure_bar', 0.0):.0f} bar")
+    print(f"  Nominal / usable H2     : {getattr(b, 'hydrogen_nominal_mass_kg', 0.0)*1000:.1f} / {getattr(b, 'hydrogen_usable_mass_kg', 0.0)*1000:.1f} g")
+    print(f"  H2 used in mission      : {getattr(b, 'hydrogen_used_kg', 0.0)*1000:.1f} g")
+    print(f"  Tank + regulator mass   : {getattr(b, 'hydrogen_tank_mass_kg', 0.0) + getattr(b, 'hydrogen_regulator_mass_kg', 0.0):.3f} kg")
     print()
-
+    print(f"Total energy-system mass  : {getattr(b, 'total_energy_system_mass_kg', b.mass_kg):.3f} kg")
+    print(f"Maximum cruise endurance  : {b.endurance_min_at_cruise:.1f} min")
+    print(f"Meets requested endurance : {b.meets_endurance_req}")
+    print()
 
 def print_avionics_results(results: DesignResults) -> None:
     print("=== AVIONICS / ELECTRONICS ===")
@@ -747,49 +772,40 @@ def print_cg_summary(results: DesignResults, inputs: DesignInputs) -> None:
 
 
 def print_mission_profile(results: DesignResults) -> None:
-    print("=== FLIGHT PROFILE / ENVELOPE (BATTERY-AWARE) ===")
+    print("=== FLIGHT PROFILE / HYBRID POWER ALLOCATION ===")
 
     profile = None
-    # Check multiple locations where mission_profile might be stored
     if results.propulsion is not None and hasattr(results.propulsion, "mission_profile"):
         profile = results.propulsion.mission_profile
     elif results.battery is not None and hasattr(results.battery, "mission_profile"):
         profile = results.battery.mission_profile
-    elif results.inputs is not None and "mission_profile" in results.inputs:
-        profile = results.inputs["mission_profile"]
 
     if profile is None:
-        print("No mission profile data found (mission_profile not attached).")
+        print("No mission profile data found.")
         print()
         return
 
-    print(f"handoff_speed_mps            : {profile['handoff_speed_mps']:.2f} m/s")
-    a4 = profile.get("accel_to_cruise_a4_mps2")
-    if a4 is not None:
-        print(f"accelel_handoff_to_cruise: {a4:.4f} m/s²")
-    print(f"total_time_min               : {profile['total_time_min']:.2f} min")
-    print(f"total_energy_Wh              : {profile['total_energy_Wh']:.2f} Wh")
-    print(f"peak_elec_power_W            : {profile['peak_elec_power_W']:.1f} W")
-    print(f"peak_elec_power_per_motor_W  : {profile['peak_elec_power_per_motor_W']:.1f} W")
-    print(f"peak_thrust_total_N          : {profile['peak_thrust_total_N']:.1f} N")
-    print(f"peak_thrust_per_motor_N      : {profile['peak_thrust_per_motor_N']:.1f} N")
+    print(f"Architecture                    : {profile.get('architecture', '')}")
+    print(f"Handoff speed                  : {profile['handoff_speed_mps']:.2f} m/s")
+    print(f"Requested / max cruise         : {profile['cruise_time_requested_min']:.1f} / {profile['cruise_time_max_min']:.1f} min")
+    print(f"Cruise flown in reported mission: {profile.get('cruise_time_flown_min', profile['cruise_time_max_min']):.1f} min")
+    print(f"Meets requested endurance      : {profile.get('meets_requested_endurance', False)}")
+    print(f"Total mission time / energy    : {profile['total_time_min']:.1f} min / {profile['total_energy_Wh']:.1f} Wh")
+    print(f"Peak electrical power          : {profile['peak_elec_power_W']:.1f} W")
+    print(f"Peak lift / cruise motor power : {profile.get('peak_lift_power_per_motor_W', 0.0):.1f} / {profile.get('peak_cruise_power_per_motor_W', 0.0):.1f} W")
+    print(f"Battery final SOC / peak C     : {profile.get('battery_final_soc', 0.0):.1%} / {profile.get('battery_peak_C', 0.0):.1f} C")
+    print(f"Fuel-cell energy used          : {profile.get('fuel_cell_energy_used_Wh', 0.0):.1f} Wh")
+    print(f"Hydrogen used                  : {profile.get('hydrogen_used_kg', 0.0)*1000:.1f} g")
     print()
 
-    if profile["usable_energy_Wh"] is not None:
-        print(f"usable_energy_Wh              : {profile['usable_energy_Wh']:.2f} Wh")
-        print(f"energy_precruise_Wh            : {profile['energy_precruise_Wh']:.2f} Wh")
-        print(f"energy_remaining_for_cruise_Wh : {profile['energy_remaining_for_cruise_Wh']:.2f} Wh")
-        print(f"cruise_time_requested_min      : {profile['cruise_time_requested_min']:.2f} min")
-        print(f"cruise_time_max_min            : {profile['cruise_time_max_min']:.2f} min ({profile['cruise_time_source']})")
-        print(f"mission_energy_if_requested_Wh : {profile['mission_energy_if_requested_Wh']:.2f} Wh")
-        if profile["battery_deficit_Wh"] is not None and profile["battery_deficit_Wh"] > 0:
-            print(f"battery_deficit_Wh             : {profile['battery_deficit_Wh']:.2f} Wh (pre-cruise exceeds battery!)")
-        print()
-
     print("Stage breakdown:")
-    print(f"{'Stage':35s} {'t[s]':>8s} {'E[Wh]':>10s} {'Pavg[W]':>10s} {'Ppeak[W]':>10s} {'Ttot[N]':>10s} {'Notes':>12s}")
+    print(f"{'Stage':31s} {'t[s]':>7s} {'Load[W]':>9s} {'FC[W]':>8s} {'Batt[W]':>9s} {'E[Wh]':>8s} {'SOC end':>8s}")
     for s in profile["stages"]:
-        print(f"{s['stage'][:35]:35s} {s['time_s']:8.2f} {s['energy_Wh']:10.2f} {s['avg_elec_power_W']:10.1f} {s['peak_elec_power_W']:10.1f} {s['thrust_total_N']:10.1f} {s['notes'][:12]:>12s}")
+        print(
+            f"{s['stage'][:31]:31s} {s['time_s']:7.1f} {s['avg_elec_power_W']:9.1f} "
+            f"{s.get('fuel_cell_power_W', 0.0):8.1f} {s.get('battery_power_W', 0.0):9.1f} "
+            f"{s.get('energy_Wh', 0.0):8.2f} {s.get('battery_soc_end', 0.0):8.1%}"
+        )
     print()
 
 def print_static_stability(results: DesignResults, inputs: DesignInputs) -> None:

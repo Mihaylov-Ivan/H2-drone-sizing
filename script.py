@@ -500,14 +500,21 @@ def _calculate_tail_system(
 
     L_tail = wing_M_cg / arm
 
-    # --- Prop clearance check; span includes fuselage OD, so half-span is extent from centerline on each side
-    prop_R = _get_prop_radius_m(propulsion_selection)
-    clearance_met = _prop_clearance_met(
-        prop_radius_m=prop_R,
-        y_fraction=float(inputs.prop_y_position_fraction),
-        span_m=float(b_tail_nom),
-        clearance_m=float(getattr(inputs, "prop_fuselage_clearance_m", 0.02)),
-    )
+    # --- Prop clearance check
+    # The legacy tailsitter mounted propellers adjacent to the tail. The new aircraft has
+    # four wing/boom-mounted lift propellers and one central aft pusher, so tail-span
+    # sizing must not be driven by this old clearance rule.
+    if bool(getattr(inputs, "tail_mounted_propulsion", True)):
+        prop_R = _get_prop_radius_m(propulsion_selection)
+        clearance_met = _prop_clearance_met(
+            prop_radius_m=prop_R,
+            y_fraction=float(inputs.prop_y_position_fraction),
+            span_m=float(b_tail_nom),
+            clearance_m=float(getattr(inputs, "prop_fuselage_clearance_m", 0.02)),
+        )
+    else:
+        prop_R = 0.0
+        clearance_met = True
 
     # if not clearance_met:
     #     raise ValueError(f"Prop clearance not met. Try increasing tail volume ratio.\n"
@@ -1613,8 +1620,8 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
 
         W0_mass = W0_mass_new
 
-    # Check prop clearance on last iteration
-    if not clearance_met:
+    # Check the legacy tail-mounted-prop clearance only for configurations that use it.
+    if bool(getattr(inputs, "tail_mounted_propulsion", True)) and not clearance_met:
         raise ValueError(f"Prop clearance not met. Try increasing tail volume ratio.\n"
             f"  half_b_tail_nom = {b_tail_nom_final/2:.2f} m < {(getattr(inputs, 'prop_fuselage_clearance_m', 0.02) + prop_R_final) / inputs.prop_y_position_fraction:.2f} m\n"
             f"  prop_R = {prop_R_final:.2f} m\n"

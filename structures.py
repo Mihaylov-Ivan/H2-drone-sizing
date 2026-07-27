@@ -1256,7 +1256,7 @@ def calculate_tail_structure(
     Total mass is for both cruciform tail surfaces (2x single tail)
     """
     propulsion_loads = None
-    if propulsion_selection is not None:
+    if propulsion_selection is not None and bool(getattr(inputs, "tail_mounted_propulsion", True)):
         propulsion_loads = calculate_propulsion_loads(
             propulsion_selection=propulsion_selection,
             prop_y_position_fraction=inputs.prop_y_position_fraction,
