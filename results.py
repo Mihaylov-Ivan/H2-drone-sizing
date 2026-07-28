@@ -434,6 +434,17 @@ class CgLocations:
     cg_x_servos: float
     cg_x_misc: float
     cg_x_payload: float
+    cg_x_fuel_cell: float
+    cg_x_hydrogen_tank: float
+    cg_x_hydrogen_regulator: float
+    cg_x_lift_propulsion_front: float
+    cg_x_lift_propulsion_rear: float
+    cg_x_cruise_propulsion: float
+    cg_x_lift_esc_front: float
+    cg_x_lift_esc_rear: float
+    cg_x_cruise_esc: float
+    cg_x_booms: float
+    cg_x_landing_gear: float
     wing_le_x_m: float
     tail_le_x_m: float
     vertical_tail_le_x_m: float
@@ -472,6 +483,22 @@ def build_cg_locations(
         **component,
         **derived,
     )
+
+
+@dataclass
+class MassPropertiesResults:
+    """Detailed longitudinal mass table and fuel-burn CG excursion."""
+    items: Dict[str, Dict[str, float]]
+    takeoff_mass_kg: float
+    end_mass_kg: float
+    takeoff_moment_kgm: float
+    end_moment_kgm: float
+    x_cg_takeoff_m: float
+    x_cg_end_m: float
+    cg_shift_m: float
+    hydrogen_takeoff_kg: float = 0.0
+    hydrogen_end_kg: float = 0.0
+
 
 
 @dataclass
@@ -589,6 +616,7 @@ class DesignResults:
     maneuver: Optional[ManeuverResults] = None
     rudder: Optional[RudderResults] = None
     cg_locations: Optional[CgLocations] = None
+    mass_properties: Optional[MassPropertiesResults] = None
     inputs: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
@@ -613,6 +641,17 @@ class DesignResults:
             result['cg_x_body_section_C'] = cg.cg_x_body_section_C
             result['cg_x_fuselage_tail'] = cg.cg_x_fuselage_tail
             result['cg_x_propulsion'] = cg.cg_x_propulsion
+            result['cg_x_fuel_cell'] = cg.cg_x_fuel_cell
+            result['cg_x_hydrogen_tank'] = cg.cg_x_hydrogen_tank
+            result['cg_x_hydrogen_regulator'] = cg.cg_x_hydrogen_regulator
+            result['cg_x_lift_propulsion_front'] = cg.cg_x_lift_propulsion_front
+            result['cg_x_lift_propulsion_rear'] = cg.cg_x_lift_propulsion_rear
+            result['cg_x_cruise_propulsion'] = cg.cg_x_cruise_propulsion
+            result['cg_x_lift_esc_front'] = cg.cg_x_lift_esc_front
+            result['cg_x_lift_esc_rear'] = cg.cg_x_lift_esc_rear
+            result['cg_x_cruise_esc'] = cg.cg_x_cruise_esc
+            result['cg_x_booms'] = cg.cg_x_booms
+            result['cg_x_landing_gear'] = cg.cg_x_landing_gear
             result['cg_x_autopilot'] = cg.cg_x_autopilot
             result['cg_x_power_module'] = cg.cg_x_power_module
             result['cg_x_bec'] = cg.cg_x_bec
@@ -636,6 +675,15 @@ class DesignResults:
             result['x_primary_vertical_tail_spar_m'] = cg.x_primary_vertical_tail_spar_m
             result['x_secondary_vertical_tail_spar_m'] = cg.x_secondary_vertical_tail_spar_m
             result['x_longerons_center_m'] = cg.x_longerons_center_m
+        if self.mass_properties is not None:
+            mp = self.mass_properties
+            result['mass_takeoff_kg'] = mp.takeoff_mass_kg
+            result['mass_end_kg'] = mp.end_mass_kg
+            result['x_cg_takeoff_m'] = mp.x_cg_takeoff_m
+            result['x_cg_end_m'] = mp.x_cg_end_m
+            result['cg_shift_m'] = mp.cg_shift_m
+            result['hydrogen_takeoff_kg'] = mp.hydrogen_takeoff_kg
+            result['hydrogen_end_kg'] = mp.hydrogen_end_kg
         result['drag_cruise_N'] = self.aircraft.drag_cruise_N
         result['cruise_power_W'] = self.aircraft.cruise_power_W
         result['cruise_power_elec_W'] = self.aircraft.cruise_power_elec_W

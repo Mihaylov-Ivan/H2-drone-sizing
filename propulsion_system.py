@@ -775,42 +775,183 @@ def select_propulsion_system(
 # Mass aggregation and conversion to result dataclasses
 # ============================================================
 
+# ============================================================
+# Detailed component mass breakdown for longitudinal CG
+# ============================================================
+
+def _split_lift_propulsor_counts(inputs: DesignInputs) -> Tuple[int, int]:
+    """Return the number of front and rear lift propulsors from their x coordinates."""
+    n = int(inputs.n_lift_propellers)
+    xs = [float(x) for x in inputs.lift_prop_x_positions_m]
+    if n <= 1:
+        return n, 0
+    xmin, xmax = min(xs), max(xs)
+    if abs(xmax - xmin) < 1e-9:
+        n_front = n // 2
+    else:
+        split_x = 0.5 * (xmin + xmax)
+        n_front = sum(1 for x in xs if x <= split_x)
+        if n_front <= 0 or n_front >= n:
+            n_front = n // 2
+    return n_front, n - n_front
+
+
+def _scale_mass_group(
+    values: Dict[str, float],
+    keys: Tuple[str, ...],
+    target_total_kg: Optional[float],
+) -> float:
+    """Scale a group proportionally to a legacy aggregate hardcode and return the factor."""
+    if target_total_kg is None:
+        return 1.0
+    target = max(0.0, float(target_total_kg))
+    current = sum(max(0.0, float(values.get(k, 0.0))) for k in keys)
+    if current <= 1e-12:
+        if keys:
+            values[keys[0]] = target
+        return 1.0
+    factor = target / current
+    for key in keys:
+        values[key] = max(0.0, float(values.get(key, 0.0))) * factor
+    return factor
+
+
+def calculate_component_mass_breakdown(
+    battery_selection: Optional[Dict[str, Any]],
+    propulsion_selection: Optional[Dict[str, Any]],
+    avionics_selection: Optional[Any],
+    inputs: DesignInputs,
+) -> Dict[str, float]:
+    """
+    Detailed mass buckets used by the longitudinal CG model.
+
+    The legacy aggregate hardcodes remain supported. When enabled, the relevant
+    detailed masses are scaled proportionally so total mass and CG accounting stay consistent.
+    """
+    out: Dict[str, float] = {
+        "buffer_battery_kg": 0.0,
+        "fuel_cell_system_kg": 0.0,
+        "hydrogen_tank_kg": 0.0,
+        "hydrogen_regulator_kg": 0.0,
+        "hydrogen_takeoff_kg": 0.0,
+        "hydrogen_end_kg": 0.0,
+        "lift_front_propulsion_kg": 0.0,
+        "lift_rear_propulsion_kg": 0.0,
+        "cruise_propulsion_kg": 0.0,
+        "lift_front_esc_kg": 0.0,
+        "lift_rear_esc_kg": 0.0,
+        "cruise_esc_kg": 0.0,
+        "avionics_non_esc_kg": 0.0,
+        "n_lift_front": 0.0,
+        "n_lift_rear": 0.0,
+        "avionics_scale_factor": 1.0,
+    }
+
+    if battery_selection is not None:
+        out["buffer_battery_kg"] = float(battery_selection["battery"]["mass_kg"])
+        out["fuel_cell_system_kg"] = float(inputs.fuel_cell_system_mass_kg)
+        out["hydrogen_tank_kg"] = float(inputs.hydrogen_tank_mass_kg)
+        out["hydrogen_regulator_kg"] = float(inputs.hydrogen_regulator_and_valves_mass_kg)
+        h2_takeoff = float(inputs.hydrogen_mass_nominal_kg)
+        profile = battery_selection.get("mission_profile", {})
+        h2_used = max(0.0, float(profile.get("hydrogen_used_kg", 0.0)))
+        out["hydrogen_takeoff_kg"] = h2_takeoff
+        out["hydrogen_end_kg"] = max(0.0, h2_takeoff - h2_used)
+
+    if propulsion_selection is not None:
+        lift = propulsion_selection["lift"]
+        cruise = propulsion_selection["cruise"]
+        lift_combo = lift["combo"]
+        cruise_combo = cruise["combo"]
+        n_front, n_rear = _split_lift_propulsor_counts(inputs)
+        lift_unit_mass = float(lift_combo["motor_mass_kg"]) + float(lift_combo["prop_mass_kg"])
+        cruise_unit_mass = float(cruise_combo["motor_mass_kg"]) + float(cruise_combo["prop_mass_kg"])
+        out["n_lift_front"] = float(n_front)
+        out["n_lift_rear"] = float(n_rear)
+        out["lift_front_propulsion_kg"] = n_front * lift_unit_mass
+        out["lift_rear_propulsion_kg"] = n_rear * lift_unit_mass
+        out["cruise_propulsion_kg"] = int(cruise["n_propellers"]) * cruise_unit_mass
+
+    if avionics_selection is not None:
+        n_front = int(out["n_lift_front"])
+        n_rear = int(out["n_lift_rear"])
+        n_lift = max(1, n_front + n_rear)
+        lift_esc_total = float(getattr(avionics_selection, "lift_esc_mass_total_kg", 0.0))
+        cruise_esc_total = float(getattr(avionics_selection, "cruise_esc_mass_total_kg", 0.0))
+        out["lift_front_esc_kg"] = lift_esc_total * n_front / n_lift
+        out["lift_rear_esc_kg"] = lift_esc_total * n_rear / n_lift
+        out["cruise_esc_kg"] = cruise_esc_total
+        out["avionics_non_esc_kg"] = max(
+            0.0,
+            float(avionics_selection.total_avionics_electrics_mass_kg)
+            - lift_esc_total
+            - cruise_esc_total,
+        )
+
+    energy_keys = (
+        "buffer_battery_kg",
+        "fuel_cell_system_kg",
+        "hydrogen_tank_kg",
+        "hydrogen_regulator_kg",
+        "hydrogen_takeoff_kg",
+    )
+    propulsion_keys = (
+        "lift_front_propulsion_kg",
+        "lift_rear_propulsion_kg",
+        "cruise_propulsion_kg",
+    )
+    avionics_keys = (
+        "avionics_non_esc_kg",
+        "lift_front_esc_kg",
+        "lift_rear_esc_kg",
+        "cruise_esc_kg",
+    )
+
+    if bool(getattr(inputs, "use_hardcoded_values", False)):
+        energy_factor = _scale_mass_group(
+            out, energy_keys, getattr(inputs, "hardcode_battery_weight_kg", None)
+        )
+        _scale_mass_group(
+            out, propulsion_keys, getattr(inputs, "hardcode_propulsion_weight_kg", None)
+        )
+        avionics_factor = _scale_mass_group(
+            out, avionics_keys, getattr(inputs, "hardcode_avionics_weight_kg", None)
+        )
+        out["avionics_scale_factor"] = avionics_factor
+        # Preserve the mission fuel fraction after an aggregate energy-system mass override.
+        nominal_unscaled = float(inputs.hydrogen_mass_nominal_kg)
+        remaining_fraction = (
+            out["hydrogen_end_kg"] / max(nominal_unscaled, 1e-12)
+            if nominal_unscaled > 0.0 else 0.0
+        )
+        out["hydrogen_end_kg"] = out["hydrogen_takeoff_kg"] * max(0.0, min(1.0, remaining_fraction))
+    else:
+        out["avionics_scale_factor"] = 1.0
+
+    out["energy_system_total_kg"] = sum(out[k] for k in energy_keys)
+    out["propulsion_total_kg"] = sum(out[k] for k in propulsion_keys)
+    out["avionics_total_kg"] = sum(out[k] for k in avionics_keys)
+    return out
+
+
 def calculate_component_masses(
     battery_selection: Optional[Dict[str, Any]],
     propulsion_selection: Optional[Dict[str, Any]],
     avionics_selection: Optional[Any],
     inputs: DesignInputs,
 ) -> Tuple[float, float, float]:
-    """
-    Returns the same three legacy mass buckets expected by script.py.
-
-    W_battery is now the complete energy-system mass bucket (buffer battery + fuel cell
-    + tank + regulator + stored hydrogen), so the MTOW iteration includes the new system.
-    A later CG step should split these masses at their individual x-locations.
-    """
-    W_energy_system = 0.0
-    if battery_selection is not None:
-        W_energy_system = (
-            float(battery_selection["battery"]["mass_kg"])
-            + float(inputs.fuel_cell_system_mass_kg)
-            + float(inputs.hydrogen_tank_mass_kg)
-            + float(inputs.hydrogen_regulator_and_valves_mass_kg)
-            + float(inputs.hydrogen_mass_nominal_kg)
-        )
-
-    W_propulsion = 0.0
-    if propulsion_selection is not None:
-        lift = propulsion_selection["lift"]
-        cruise = propulsion_selection["cruise"]
-        lift_combo = lift["combo"]
-        cruise_combo = cruise["combo"]
-        W_propulsion = (
-            int(lift["n_propellers"]) * (float(lift_combo["motor_mass_kg"]) + float(lift_combo["prop_mass_kg"]))
-            + int(cruise["n_propellers"]) * (float(cruise_combo["motor_mass_kg"]) + float(cruise_combo["prop_mass_kg"]))
-        )
-
-    W_avionics = avionics_selection.total_avionics_electrics_mass_kg if avionics_selection is not None else 0.0
-    return W_energy_system, W_propulsion, W_avionics
+    """Backward-compatible aggregate totals derived from the detailed mass breakdown."""
+    breakdown = calculate_component_mass_breakdown(
+        battery_selection,
+        propulsion_selection,
+        avionics_selection,
+        inputs,
+    )
+    return (
+        float(breakdown["energy_system_total_kg"]),
+        float(breakdown["propulsion_total_kg"]),
+        float(breakdown["avionics_total_kg"]),
+    )
 
 
 def convert_to_results(

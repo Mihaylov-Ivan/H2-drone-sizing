@@ -37,6 +37,10 @@ def print_design_summary(results: DesignResults, inputs: DesignInputs) -> None:
         energy_mass = getattr(results.battery, "total_energy_system_mass_kg", results.battery.mass_kg)
         print(f"  Hybrid energy sys.: {energy_mass:.3f} kg")
         print(f"    - Buffer battery: {results.battery.mass_kg:.3f} kg")
+        print(f"    - Fuel-cell sys.: {getattr(results.battery, 'fuel_cell_system_mass_kg', 0.0):.3f} kg")
+        print(f"    - H2 tank       : {getattr(results.battery, 'hydrogen_tank_mass_kg', 0.0):.3f} kg")
+        print(f"    - Regulator     : {getattr(results.battery, 'hydrogen_regulator_mass_kg', 0.0):.3f} kg")
+        print(f"    - Stored H2     : {getattr(results.battery, 'hydrogen_nominal_mass_kg', 0.0):.3f} kg")
     if results.propulsion is not None:
         print(f"  Propulsion        : {results.propulsion.total_propulsion_mass_kg:.3f} kg")
     if results.avionics is not None:
@@ -698,6 +702,33 @@ def print_avionics_results(results: DesignResults) -> None:
     print()
 
 
+def print_mass_properties(results: DesignResults) -> None:
+    print("=== MASS PROPERTIES & LONGITUDINAL CG ===")
+    mp = getattr(results, "mass_properties", None)
+    if mp is None:
+        print("Detailed mass-properties data are not available.")
+        print()
+        return
+
+    print(f"Take-off mass                  : {mp.takeoff_mass_kg:.3f} kg")
+    print(f"End-of-mission mass            : {mp.end_mass_kg:.3f} kg")
+    print(f"Take-off CG                    : {mp.x_cg_takeoff_m:.4f} m")
+    print(f"End-of-mission CG              : {mp.x_cg_end_m:.4f} m")
+    print(f"CG shift (end - take-off)      : {mp.cg_shift_m*1000.0:+.2f} mm")
+    print(f"Stored H2, take-off / end      : {mp.hydrogen_takeoff_kg*1000.0:.1f} / {mp.hydrogen_end_kg*1000.0:.1f} g")
+    print()
+    print(f"{'Component':30s} {'m_TO[kg]':>10s} {'m_end[kg]':>10s} {'x[m]':>8s} {'M_TO[kgm]':>11s}")
+    for name, item in mp.items.items():
+        if item.get("mass_takeoff_kg", 0.0) <= 1e-9 and item.get("mass_end_kg", 0.0) <= 1e-9:
+            continue
+        print(
+            f"{name[:30]:30s} "
+            f"{item['mass_takeoff_kg']:10.4f} {item['mass_end_kg']:10.4f} "
+            f"{item['x_m']:8.3f} {item['moment_takeoff_kgm']:11.4f}"
+        )
+    print()
+
+
 def _print_cg_location_line(label: str, value_m: float) -> None:
     print(f"{label:40s}: {value_m:.3f} m")
 
@@ -720,7 +751,10 @@ def print_cg_summary(results: DesignResults, inputs: DesignInputs) -> None:
         )
 
     print("Aircraft CG (computed):")
-    _print_cg_location_line("x_cg_m", cg.x_cg_m)
+    _print_cg_location_line("x_cg_m (take-off)", cg.x_cg_m)
+    if getattr(results, "mass_properties", None) is not None:
+        _print_cg_location_line("x_cg_end_m", results.mass_properties.x_cg_end_m)
+        print(f"{'CG shift end - take-off':40s}: {results.mass_properties.cg_shift_m*1000.0:+.2f} mm")
     print(f"{'x_cg/fuselage_length':40s}: {cg.x_cg_over_fuselage_length:.3f}")
     print()
 
@@ -741,7 +775,16 @@ def print_cg_summary(results: DesignResults, inputs: DesignInputs) -> None:
     _print_cg_location_line("cg_x_body_section_B", cg.cg_x_body_section_B)
     _print_cg_location_line("cg_x_body_section_A", cg.cg_x_body_section_A)
     _print_cg_location_line("cg_x_fuselage_tail", cg.cg_x_fuselage_tail)
-    _print_cg_location_line("cg_x_propulsion", cg.cg_x_propulsion)
+    _print_cg_location_line("cg_x_propulsion (legacy only)", cg.cg_x_propulsion)
+    _print_cg_location_line("cg_x_fuel_cell", cg.cg_x_fuel_cell)
+    _print_cg_location_line("cg_x_hydrogen_tank", cg.cg_x_hydrogen_tank)
+    _print_cg_location_line("cg_x_hydrogen_regulator", cg.cg_x_hydrogen_regulator)
+    _print_cg_location_line("cg_x_lift_propulsion_front", cg.cg_x_lift_propulsion_front)
+    _print_cg_location_line("cg_x_lift_propulsion_rear", cg.cg_x_lift_propulsion_rear)
+    _print_cg_location_line("cg_x_cruise_propulsion", cg.cg_x_cruise_propulsion)
+    _print_cg_location_line("cg_x_lift_esc_front", cg.cg_x_lift_esc_front)
+    _print_cg_location_line("cg_x_lift_esc_rear", cg.cg_x_lift_esc_rear)
+    _print_cg_location_line("cg_x_cruise_esc", cg.cg_x_cruise_esc)
     _print_cg_location_line("cg_x_payload", cg.cg_x_payload)
     _print_cg_location_line("cg_x_autopilot", cg.cg_x_autopilot)
     _print_cg_location_line("cg_x_power_module", cg.cg_x_power_module)
@@ -969,6 +1012,7 @@ def print_all_results(results: DesignResults, inputs: DesignInputs) -> None:
     """Print all results sections with error handling to ensure all sections print."""
     sections = [
         ("Design Summary", lambda: print_design_summary(results, inputs)),
+        ("Mass Properties", lambda: print_mass_properties(results)),
         ("Wing Results", lambda: print_wing_results(results)),
         ("Wing Spar Results", lambda: print_wing_spar_results(results)),
         ("Wing Stiffener Results", lambda: print_wing_stiffener_results(results, inputs)),

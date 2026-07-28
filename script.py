@@ -35,6 +35,7 @@ from structures import calculate_wing_structure, calculate_tail_structure, calcu
 from propulsion_system import (
     select_propulsion_system,
     calculate_component_masses,
+    calculate_component_mass_breakdown,
     convert_to_results,
 )
 from maneuvering import elevator_control_derivatives, max_load_factor_from_elevator
@@ -60,6 +61,7 @@ from results import (
     AvionicsResults,
     ManeuverResults,
     RudderResults,
+    MassPropertiesResults,
     build_cg_locations,
 )
 from reporting import print_all_results
@@ -221,9 +223,8 @@ def _fuselage_total_and_segments(
     return w_total + longeron_add, wn, wc, wb, wa, wt
 
 
-def _calculate_cg_position(
+def _calculate_mass_properties(
     W_wings: float,
-    # W_vertical_wings: float,
     W_nose: float,
     W_body_section_C: float,
     W_body_section_B: float,
@@ -231,136 +232,167 @@ def _calculate_cg_position(
     W_fuselage_tail: float,
     W_tails: float,
     W_vertical_tails: float,
-    W_battery: float,
-    W_propulsion: float,
+    component_masses: Dict[str, float],
+    avionics_selection: Any,
+    inputs: DesignInputs,
+) -> Dict[str, Any]:
+    """Build a detailed take-off/end-of-mission longitudinal mass table."""
+    tube_wing_secondary = tube_wing_primary = 0.0
+    tube_tail_secondary = tube_tail_primary = 0.0
+    tube_vertical_tail_secondary = tube_vertical_tail_primary = 0.0
+    longeron_add = 0.0
+
+    if bool(getattr(inputs, "use_hardcoded_values", False)):
+        tube_wing_secondary = float(getattr(inputs, "hardcode_wing_secondary_spar_weight_kg", 0.0) or 0.0)
+        tube_wing_primary = float(getattr(inputs, "hardcode_wing_spar_weight_kg", 0.0) or 0.0)
+        tube_tail_primary = float(getattr(inputs, "hardcode_tail_wing_spar_weight_kg", 0.0) or 0.0)
+        tube_tail_secondary = float(getattr(inputs, "hardcode_elevator_rod_weight_kg", 0.0) or 0.0)
+        tube_vertical_tail_primary = float(getattr(inputs, "hardcode_vertical_tail_wing_spar_weight_kg", 0.0) or 0.0)
+        tube_vertical_tail_secondary = float(getattr(inputs, "hardcode_rudder_rod_weight_kg", 0.0) or 0.0)
+        longeron_add = 4.0 * float(getattr(inputs, "hardcode_fuselage_longeron_weight_kg", 0.0) or 0.0)
+
+    c_MGC_wing = float(inputs.c_root) * (1.0 + float(inputs.taper_ratio)) / 2.0
+    c_MGC_tail = float(inputs.tail_c_root) * (1.0 + float(inputs.tail_taper_ratio)) / 2.0
+    wing_le_x = float(inputs.cg_x_wing) - 0.5 * c_MGC_wing
+    tail_le_x = float(inputs.cg_x_tail) - 0.5 * c_MGC_tail
+    vertical_tail_le_x = float(inputs.cg_x_vertical_tail) - 0.5 * c_MGC_tail
+
+    x_primary_wing = wing_le_x + 0.3 * c_MGC_wing
+    x_secondary_wing = wing_le_x + 0.7 * c_MGC_wing
+    x_primary_tail = tail_le_x + 0.3 * c_MGC_tail
+    x_secondary_tail = tail_le_x + 0.7 * c_MGC_tail
+    x_primary_vertical_tail = vertical_tail_le_x + 0.3 * c_MGC_tail
+    x_secondary_vertical_tail = vertical_tail_le_x + 0.7 * c_MGC_tail
+
+    wing_other = max(0.0, W_wings - tube_wing_primary - tube_wing_secondary)
+    tail_other = max(0.0, W_tails - tube_tail_primary - tube_tail_secondary)
+    vertical_tail_other = max(0.0, W_vertical_tails - tube_vertical_tail_primary - tube_vertical_tail_secondary)
+
+    items: Dict[str, Dict[str, float]] = {}
+
+    def add(name: str, mass_takeoff: float, x_m: float, mass_end: Optional[float] = None) -> None:
+        m0 = max(0.0, float(mass_takeoff))
+        m1 = m0 if mass_end is None else max(0.0, float(mass_end))
+        x = float(x_m)
+        items[name] = {
+            "mass_takeoff_kg": m0,
+            "mass_end_kg": m1,
+            "x_m": x,
+            "moment_takeoff_kgm": m0 * x,
+            "moment_end_kgm": m1 * x,
+        }
+
+    # Airframe and payload.
+    add("wing_structure", wing_other, inputs.cg_x_wing)
+    add("wing_primary_spar", tube_wing_primary, x_primary_wing)
+    add("wing_secondary_spar", tube_wing_secondary, x_secondary_wing)
+    add("fuselage_nose", W_nose, inputs.cg_x_nose)
+    add("fuselage_section_C", W_body_section_C, inputs.cg_x_body_section_C)
+    add("fuselage_section_B", W_body_section_B, inputs.cg_x_body_section_B)
+    add("fuselage_section_A", W_body_section_A, inputs.cg_x_body_section_A)
+    add("fuselage_tail", W_fuselage_tail, inputs.cg_x_fuselage_tail)
+    add("fuselage_longerons", longeron_add, 0.5 * float(inputs.fuselage_length))
+    add("horizontal_tail_structure", tail_other, inputs.cg_x_tail)
+    add("horizontal_tail_spar", tube_tail_primary, x_primary_tail)
+    add("elevator_hinge_rod", tube_tail_secondary, x_secondary_tail)
+    add("vertical_tail_structure", vertical_tail_other, inputs.cg_x_vertical_tail)
+    add("vertical_tail_spar", tube_vertical_tail_primary, x_primary_vertical_tail)
+    add("rudder_hinge_rod", tube_vertical_tail_secondary, x_secondary_vertical_tail)
+    add("payload", inputs.payload_mass, inputs.cg_x_payload)
+
+    # Hybrid energy system, each at its own position.
+    add("buffer_battery", component_masses.get("buffer_battery_kg", 0.0), inputs.cg_x_battery)
+    add("fuel_cell_system", component_masses.get("fuel_cell_system_kg", 0.0), inputs.cg_x_fuel_cell)
+    add("hydrogen_tank", component_masses.get("hydrogen_tank_kg", 0.0), inputs.cg_x_hydrogen_tank)
+    add("hydrogen_regulator", component_masses.get("hydrogen_regulator_kg", 0.0), inputs.cg_x_hydrogen_regulator)
+    add(
+        "stored_hydrogen",
+        component_masses.get("hydrogen_takeoff_kg", 0.0),
+        inputs.cg_x_hydrogen_tank,
+        component_masses.get("hydrogen_end_kg", 0.0),
+    )
+
+    # Propulsion groups at actual front/rear/pusher stations.
+    add("lift_propulsion_front", component_masses.get("lift_front_propulsion_kg", 0.0), inputs.cg_x_lift_propulsion_front)
+    add("lift_propulsion_rear", component_masses.get("lift_rear_propulsion_kg", 0.0), inputs.cg_x_lift_propulsion_rear)
+    add("cruise_propulsion", component_masses.get("cruise_propulsion_kg", 0.0), inputs.cg_x_cruise_propulsion)
+
+    # ESCs are separated from the rest of avionics.
+    add("lift_ESC_front", component_masses.get("lift_front_esc_kg", 0.0), inputs.cg_x_lift_esc_front)
+    add("lift_ESC_rear", component_masses.get("lift_rear_esc_kg", 0.0), inputs.cg_x_lift_esc_rear)
+    add("cruise_ESC", component_masses.get("cruise_esc_kg", 0.0), inputs.cg_x_cruise_esc)
+
+    scale = float(component_masses.get("avionics_scale_factor", 1.0))
+    add("autopilot", avionics_selection.autopilot_mass_kg * scale, inputs.cg_x_autopilot)
+    add("gps", avionics_selection.gps_mass_kg * scale, inputs.cg_x_gps)
+    add("airspeed_sensor", avionics_selection.airspeed_mass_kg * scale, inputs.cg_x_airspeed)
+    add("rc_receiver", avionics_selection.rc_rx_mass_kg * scale, inputs.cg_x_rx)
+    add("telemetry", avionics_selection.telemetry_mass_kg * scale, inputs.cg_x_tel)
+    add("power_module", avionics_selection.power_module_mass_kg * scale, inputs.cg_x_power_module)
+    add("BEC", avionics_selection.bec_mass_kg * scale, inputs.cg_x_bec)
+    add("autopilot_powerbrick", avionics_selection.autopilot_powerbrick_mass_kg * scale, inputs.cg_x_autopilot_powerbrick)
+    add("servos", avionics_selection.servos_mass_kg * scale, inputs.cg_x_servos)
+    add("misc_electronics", avionics_selection.misc_electronics_mass_kg * scale, inputs.cg_x_misc)
+    add("camera", avionics_selection.camera_mass_kg * scale, inputs.cg_x_camera)
+
+    listed_non_esc = sum(
+        items[k]["mass_takeoff_kg"] for k in (
+            "autopilot", "gps", "airspeed_sensor", "rc_receiver", "telemetry",
+            "power_module", "BEC", "autopilot_powerbrick", "servos",
+            "misc_electronics", "camera",
+        )
+    )
+    residual = max(0.0, float(component_masses.get("avionics_non_esc_kg", 0.0)) - listed_non_esc)
+    add("avionics_unallocated_residual", residual, inputs.cg_x_misc)
+
+    takeoff_mass = sum(v["mass_takeoff_kg"] for v in items.values())
+    end_mass = sum(v["mass_end_kg"] for v in items.values())
+    takeoff_moment = sum(v["moment_takeoff_kgm"] for v in items.values())
+    end_moment = sum(v["moment_end_kgm"] for v in items.values())
+    x_takeoff = takeoff_moment / max(takeoff_mass, 1e-12)
+    x_end = end_moment / max(end_mass, 1e-12)
+
+    return {
+        "items": items,
+        "takeoff_mass_kg": takeoff_mass,
+        "end_mass_kg": end_mass,
+        "takeoff_moment_kgm": takeoff_moment,
+        "end_moment_kgm": end_moment,
+        "x_cg_takeoff_m": x_takeoff,
+        "x_cg_end_m": x_end,
+        "cg_shift_m": x_end - x_takeoff,
+        "hydrogen_takeoff_kg": float(component_masses.get("hydrogen_takeoff_kg", 0.0)),
+        "hydrogen_end_kg": float(component_masses.get("hydrogen_end_kg", 0.0)),
+    }
+
+
+def _calculate_cg_position(
+    W_wings: float,
+    W_nose: float,
+    W_body_section_C: float,
+    W_body_section_B: float,
+    W_body_section_A: float,
+    W_fuselage_tail: float,
+    W_tails: float,
+    W_vertical_tails: float,
+    component_masses: Dict[str, float],
     avionics_selection: Any,
     inputs: DesignInputs,
 ) -> float:
-    """
-    Calculate center of gravity position.
-    Fuselage mass is split (nose, section C, B, A, tail cone) using inputs.cg_x_nose,
-    cg_x_body_section_*, and cg_x_fuselage_tail.
-    """
-    # --- Hardcoded tube component masses (used for chord-fraction CG placement) ---
-    # If use_hardcoded_values is off or the relevant hardcodes are None, treat tubes as 0.
-    tube_wing_secondary = 0.0
-    tube_wing_primary = 0.0
-    tube_tail_secondary = 0.0
-    tube_tail_primary = 0.0
-    tube_vertical_tail_secondary = 0.0
-    tube_vertical_tail_primary = 0.0
-    longeron_add = 0.0
-
-    if getattr(inputs, "use_hardcoded_values", False):
-        hard_wing_secondary = getattr(inputs, "hardcode_wing_secondary_spar_weight_kg", None)
-        hard_wing_primary = getattr(inputs, "hardcode_wing_spar_weight_kg", None)
-        hard_tail_primary = getattr(inputs, "hardcode_tail_wing_spar_weight_kg", None)
-        hard_tail_secondary = getattr(inputs, "hardcode_elevator_rod_weight_kg", None)
-        hard_vertical_tail_primary = getattr(inputs, "hardcode_vertical_tail_wing_spar_weight_kg", None)
-        hard_vertical_tail_secondary = getattr(inputs, "hardcode_rudder_rod_weight_kg", None)
-        hard_longeron = getattr(inputs, "hardcode_fuselage_longeron_weight_kg", None)
-
-        tube_wing_secondary = float(hard_wing_secondary) if hard_wing_secondary is not None else 0.0
-        tube_wing_primary = float(hard_wing_primary) if hard_wing_primary is not None else 0.0
-        # Horizontal tail uses elevator rod + tail spar hardcoded masses.
-        tube_tail_secondary = float(hard_tail_secondary) if hard_tail_secondary is not None else 0.0
-        tube_tail_primary = float(hard_tail_primary) if hard_tail_primary is not None else 0.0
-        tube_vertical_tail_primary = float(hard_vertical_tail_primary) if hard_vertical_tail_primary is not None else 0.0
-        tube_vertical_tail_secondary = float(hard_vertical_tail_secondary) if hard_vertical_tail_secondary is not None else 0.0
-        longeron_add = 4.0 * float(hard_longeron) if hard_longeron is not None else 0.0  # 4 longerons
-
-    # Wing chord "c_MGC" is mean geometric chord (area/span). It equals (c_root + c_tip)/2.
-    c_MGC_wing = float(inputs.c_root) * (1.0 + float(inputs.taper_ratio)) / 2.0
-    c_MGC_tail = float(inputs.tail_c_root) * (1.0 + float(inputs.tail_taper_ratio)) / 2.0
-
-    # Leading edge x locations for chord-fraction mapping.
-    wing_le_x = inputs.cg_x_wing - 0.5 * c_MGC_wing
-    tail_le_x = inputs.cg_x_tail - 0.5 * c_MGC_tail
-    vertical_tail_le_x = inputs.cg_x_vertical_tail - 0.5 * c_MGC_tail
-
-    # Tube CG x locations along chord fractions.
-    x_secondary_wing = wing_le_x + 0.7 * c_MGC_wing
-    x_primary_wing = wing_le_x + 0.3 * c_MGC_wing
-
-    x_secondary_tail = tail_le_x + 0.7 * c_MGC_tail
-    x_primary_tail = tail_le_x + 0.3 * c_MGC_tail
-
-    x_secondary_vertical_tail = vertical_tail_le_x + 0.7 * c_MGC_tail
-    x_primary_vertical_tail = vertical_tail_le_x + 0.3 * c_MGC_tail
-
-    # --- Build CG numerator with tube masses at chord-fraction lever arms ---
-    # Remaining wing/tail mass (excluding the 2 tube masses) stays lumped at inputs.cg_x_*.
-    wing_other_mass = W_wings - tube_wing_primary - tube_wing_secondary
-    tails_other_mass = W_tails - tube_tail_primary - tube_tail_secondary
-    vertical_tails_other_mass = W_vertical_tails - tube_vertical_tail_primary - tube_vertical_tail_secondary
-
-    # Fuselage longerons act at fuselage center (per request).
-    x_longerons_center = 0.5 * float(inputs.fuselage_length)
-
-    avionics_mass_sum = (
-        avionics_selection.autopilot_mass_kg
-        + avionics_selection.gps_mass_kg
-        + avionics_selection.airspeed_mass_kg
-        + avionics_selection.rc_rx_mass_kg
-        + avionics_selection.telemetry_mass_kg
-        + avionics_selection.power_module_mass_kg
-        + avionics_selection.bec_mass_kg
-        + avionics_selection.autopilot_powerbrick_mass_kg
-        + avionics_selection.esc_mass_total_kg
-        + avionics_selection.servos_mass_kg
-        + avionics_selection.misc_electronics_mass_kg
-        + avionics_selection.camera_mass_kg
-    )
-
-    num = (
-        wing_other_mass * inputs.cg_x_wing
-        + tube_wing_secondary * x_secondary_wing
-        + tube_wing_primary * x_primary_wing
-        + W_nose * inputs.cg_x_nose
-        + W_body_section_C * inputs.cg_x_body_section_C
-        + W_body_section_B * inputs.cg_x_body_section_B
-        + W_body_section_A * inputs.cg_x_body_section_A
-        + W_fuselage_tail * inputs.cg_x_fuselage_tail
-        + tails_other_mass * inputs.cg_x_tail
-        + tube_tail_secondary * x_secondary_tail
-        + tube_tail_primary * x_primary_tail
-        + vertical_tails_other_mass * inputs.cg_x_vertical_tail
-        + tube_vertical_tail_secondary * x_secondary_vertical_tail
-        + tube_vertical_tail_primary * x_primary_vertical_tail
-        + W_battery * inputs.cg_x_battery
-        + W_propulsion * inputs.cg_x_propulsion
-        + inputs.payload_mass * inputs.cg_x_payload
-        + avionics_selection.autopilot_mass_kg * inputs.cg_x_autopilot
-        + avionics_selection.gps_mass_kg * inputs.cg_x_gps
-        + avionics_selection.airspeed_mass_kg * inputs.cg_x_airspeed
-        + avionics_selection.rc_rx_mass_kg * inputs.cg_x_rx
-        + avionics_selection.telemetry_mass_kg * inputs.cg_x_tel
-        + avionics_selection.power_module_mass_kg * inputs.cg_x_power_module
-        + avionics_selection.bec_mass_kg * inputs.cg_x_bec
-        + avionics_selection.autopilot_powerbrick_mass_kg * inputs.cg_x_autopilot_powerbrick
-        + avionics_selection.esc_mass_total_kg * inputs.cg_x_esc
-        + avionics_selection.servos_mass_kg * inputs.cg_x_servos
-        + avionics_selection.misc_electronics_mass_kg * inputs.cg_x_misc
-        + avionics_selection.camera_mass_kg * inputs.cg_x_camera
-        + longeron_add * x_longerons_center
-    )
-
-    denom_mass = (
-        W_wings
-        + W_nose
-        + W_body_section_C
-        + W_body_section_B
-        + W_body_section_A
-        + W_fuselage_tail
-        + W_tails
-        + W_vertical_tails
-        + W_battery
-        + W_propulsion
-        + inputs.payload_mass
-        + avionics_mass_sum
-        + longeron_add
-    )
-    return num / max(denom_mass, 1e-12)
+    """Backward-compatible wrapper returning take-off CG."""
+    return float(_calculate_mass_properties(
+        W_wings,
+        W_nose,
+        W_body_section_C,
+        W_body_section_B,
+        W_body_section_A,
+        W_fuselage_tail,
+        W_tails,
+        W_vertical_tails,
+        component_masses,
+        avionics_selection,
+        inputs,
+    )["x_cg_takeoff_m"])
 
 
 def _calculate_wing_system(
@@ -993,6 +1025,7 @@ def _assemble_results(
     battery_results: Optional[Any],
     propulsion_results: Optional[Any],
     avionics_results: AvionicsResults,
+    mass_properties: Dict[str, Any],
     inputs: DesignInputs,
     fuselage_details: Optional[Dict[str, float]] = None,
 ) -> DesignResults:
@@ -1257,6 +1290,8 @@ def _assemble_results(
 
     )
 
+    mass_properties_results = MassPropertiesResults(**mass_properties)
+
     cg_locations = build_cg_locations(
         inputs,
         x_cg_m=x_cg,
@@ -1278,6 +1313,7 @@ def _assemble_results(
         propulsion=propulsion_results,
         avionics=avionics_results,
         cg_locations=cg_locations,
+        mass_properties=mass_properties_results,
         inputs=asdict(inputs),
     )
 
@@ -1389,15 +1425,15 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             tail_CD_cruise=aero_tail_dict.get("CD_cruise", 0.0),
         )
 
-        W_battery_calc, W_propulsion_calc, W_avionics_calc = calculate_component_masses(
+        component_masses = calculate_component_mass_breakdown(
             battery_selection,
             propulsion_selection,
             avionics_selection,
             inputs,
         )
-        W_battery = _get_hardcoded_value(inputs, 'hardcode_battery_weight_kg', W_battery_calc)
-        W_propulsion = _get_hardcoded_value(inputs, 'hardcode_propulsion_weight_kg', W_propulsion_calc)
-        W_avionics = _get_hardcoded_value(inputs, 'hardcode_avionics_weight_kg', W_avionics_calc)
+        W_battery = float(component_masses["energy_system_total_kg"])
+        W_propulsion = float(component_masses["propulsion_total_kg"])
+        W_avionics = float(component_masses["avionics_total_kg"])
 
         # Now the actual inner trim loop
         # Track convergence for plotting
@@ -1441,7 +1477,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
                 W_wings,
                 W_fn, W_fc, W_fb, W_fa, W_ft,
                 W_tails, W_vertical_tails,
-                W_battery, W_propulsion,
+                component_masses,
                 avionics_selection, inputs
             )
 
@@ -1520,12 +1556,15 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
                 tail_CD_cruise=aero_tail_dict.get("CD_cruise", 0.0),
             )
 
-            W_battery, W_propulsion, W_avionics = calculate_component_masses(
+            component_masses = calculate_component_mass_breakdown(
                 battery_selection,
                 propulsion_selection,
                 avionics_selection,
                 inputs,
             )
+            W_battery = float(component_masses["energy_system_total_kg"])
+            W_propulsion = float(component_masses["propulsion_total_kg"])
+            W_avionics = float(component_masses["avionics_total_kg"])
 
             # Convergence check on L_tail
             dL = abs(L_tail_new - L_tail_inner)
@@ -1590,25 +1629,27 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             S_tail_m2=S_tail,
             tail_CD_cruise=aero_tail_dict.get("CD_cruise", 0.0),
         )
-        W_battery_calc, W_propulsion_calc, W_avionics_calc = calculate_component_masses(
+        component_masses = calculate_component_mass_breakdown(
             battery_selection,
             propulsion_selection,
             avionics_selection,
             inputs,
         )
-        W_battery = _get_hardcoded_value(inputs, 'hardcode_battery_weight_kg', W_battery_calc)
-        W_propulsion = _get_hardcoded_value(inputs, 'hardcode_propulsion_weight_kg', W_propulsion_calc)
-        W_avionics = _get_hardcoded_value(inputs, 'hardcode_avionics_weight_kg', W_avionics_calc)
+        W_battery = float(component_masses["energy_system_total_kg"])
+        W_propulsion = float(component_masses["propulsion_total_kg"])
+        W_avionics = float(component_masses["avionics_total_kg"])
 
-        # Now compute NEW MTOW mass using the *current* tail masses (the key fix)
-        W0_mass_new = (
-            inputs.payload_mass
-            + W_battery + W_propulsion + W_avionics
-            + W_fuselage + W_wings + 
-            # VERTICAL MAIN WING REMOVED FOR NOW
-            # W_vertical_wings +
-            W_tails + W_vertical_tails
+        # Recompute take-off/end-of-mission mass properties with the final selections.
+        mass_properties_current = _calculate_mass_properties(
+            W_wings,
+            W_fn, W_fc, W_fb, W_fa, W_ft,
+            W_tails, W_vertical_tails,
+            component_masses,
+            avionics_selection,
+            inputs,
         )
+        x_cg = float(mass_properties_current["x_cg_takeoff_m"])
+        W0_mass_new = float(mass_properties_current["takeoff_mass_kg"])
 
         mass_history.append(W0_mass_new)
         iteration_numbers.append(i + 1)
@@ -1629,7 +1670,17 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             f"  inputs.prop_y_position_fraction = {inputs.prop_y_position_fraction:.2f}\n"
         )
 
-    # Build final DesignResults using the latest solved state
+    # Build final DesignResults using the latest solved state.
+    mass_properties_final = _calculate_mass_properties(
+        W_wings,
+        W_fn, W_fc, W_fb, W_fa, W_ft,
+        W_tails, W_vertical_tails,
+        component_masses,
+        avionics_selection,
+        inputs,
+    )
+    W0_mass = float(mass_properties_final["takeoff_mass_kg"])
+    x_cg = float(mass_properties_final["x_cg_takeoff_m"])
     W0_N = W0_mass * ATMOSPHERIC.g
     L_wing = W0_N - L_tail
     
@@ -1693,6 +1744,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
         battery_results=battery_results,
         propulsion_results=propulsion_results,
         avionics_results=avionics_results,
+        mass_properties=mass_properties_final,
         inputs=inputs,
         fuselage_details=fuselage_details,
     )

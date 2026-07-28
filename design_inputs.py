@@ -695,6 +695,10 @@ class DesignInputs:
     cg_x_lift_propulsion_front: float = 0.0
     cg_x_lift_propulsion_rear: float = 0.0
     cg_x_cruise_propulsion: float = 0.0
+    # ESC locations are independent so they can be mounted beside the motors or inside the pod.
+    cg_x_lift_esc_front: float = 0.0
+    cg_x_lift_esc_rear: float = 0.0
+    cg_x_cruise_esc: float = 0.0
     cg_x_booms: float = 0.0
     cg_x_landing_gear: float = 0.0
     landing_gear_mass_kg: float = 0.18
@@ -875,6 +879,9 @@ class DesignInputs:
         set_if_zero("cg_x_lift_propulsion_front", 0.31)
         set_if_zero("cg_x_lift_propulsion_rear", 0.69)
         set_if_zero("cg_x_cruise_propulsion", self.cruise_prop_x_m)
+        set_if_zero("cg_x_lift_esc_front", self.cg_x_lift_propulsion_front)
+        set_if_zero("cg_x_lift_esc_rear", self.cg_x_lift_propulsion_rear)
+        set_if_zero("cg_x_cruise_esc", 0.82)  # provisional: aft equipment bay, ahead of pusher motor
         set_if_zero("cg_x_booms", 0.5 * (self.boom_x_start_m + self.boom_x_end_m))
         set_if_zero("cg_x_landing_gear", 0.48)
 
@@ -924,6 +931,9 @@ CG_X_COMPONENT_FIELDS = (
     "cg_x_lift_propulsion_front",
     "cg_x_lift_propulsion_rear",
     "cg_x_cruise_propulsion",
+    "cg_x_lift_esc_front",
+    "cg_x_lift_esc_rear",
+    "cg_x_cruise_esc",
     "cg_x_booms",
     "cg_x_landing_gear",
 )
