@@ -1,149 +1,156 @@
 """
-Aerodynamic coefficient calculations for wing and tail surfaces.
+Aerodynamic calculations for the twin-boom lift-plus-cruise VTOL.
+
+Step 5 scope:
+- Preserves the existing main-wing geometry and NACA 2410 polar model.
+- Retains NACA 0012 for horizontal and vertical tail calculations.
+- Adds a configuration-level cruise-drag build-up for the central pod, two booms,
+  stopped lift propellers, motor nacelles/mounts, cooling flow, and interference.
+- Treats vertical-tail geometry as one fin; total twin-fin area is accounted for
+  using inputs.n_vertical_tail_surfaces.
+
+The component drag values are conceptual estimates and are deliberately exposed
+through DesignInputs so they can later be replaced with CFD, wind-tunnel, CAD,
+or flight-test data without changing the model structure.
 """
 
-import math
-from typing import Dict
+from __future__ import annotations
 
-from design_inputs import DesignInputs
+import math
+from typing import Any, Dict, Optional
+
 from constants import ATMOSPHERIC
-from geometry import lifting_surface_wetted_area_estimated_m2
+from design_inputs import DesignInputs
 from airfoil_naca2410 import interpolate_by_alpha as interpolate_naca2410
 from airfoil_naca0012 import interpolate_by_alpha as interpolate_naca0012
 
 
-def _profile_drag_wetted_scale(
-    inputs: DesignInputs,
-    hardcode_attr: str,
-    planform_S_m2: float,
-) -> float:
-    """
-    Scale factor for airfoil profile CD when hardcoded wetted area is set (else 1.0).
-    Baseline wetted area = 2 × planform (upper + lower).
-    """
-    S_wet_est = lifting_surface_wetted_area_estimated_m2(planform_S_m2)
-    if S_wet_est <= 1e-18:
-        return 1.0
-    if getattr(inputs, "use_hardcoded_values", False):
-        hc = getattr(inputs, hardcode_attr, None)
-        if hc is not None:
-            return float(hc) / S_wet_est
-    return 1.0
+def _clamp(value: float, lower: float, upper: float) -> float:
+    return max(lower, min(upper, value))
 
 
-def effective_lifting_surface_wetted_area_m2(
-    inputs: DesignInputs,
-    hardcode_attr: str,
-    planform_S_m2: float,
+def _finite_wing_lift_slope(a0_per_rad: float, AR: float, e: float) -> float:
+    """Prandtl finite-wing lift-curve slope [1/rad]."""
+    return a0_per_rad / (1.0 + a0_per_rad / (math.pi * max(e, 1e-6) * max(AR, 1e-6)))
+
+
+def _polar_lift_slope_per_rad(interpolator, alpha0_deg: float) -> float:
+    """Estimate local 2-D lift slope from the supplied polar around alpha0."""
+    p_lo = interpolator(alpha0_deg - 1.0)
+    p_hi = interpolator(alpha0_deg + 1.0)
+    slope_per_deg = (float(p_hi["CL"]) - float(p_lo["CL"])) / 2.0
+    return max(1e-6, slope_per_deg * 180.0 / math.pi)
+
+
+def _alpha_for_required_cl(
+    CL_required: float,
+    alpha_zero_lift_deg: float,
+    CL_alpha_3D_per_rad: float,
 ) -> float:
-    """
-    Wetted area [m²] used for lifting-surface profile-drag scaling: hardcoded value if
-    enabled, otherwise 2 × planform area.
-    """
-    S_wet_est = lifting_surface_wetted_area_estimated_m2(planform_S_m2)
-    if getattr(inputs, "use_hardcoded_values", False):
-        hc = getattr(inputs, hardcode_attr, None)
-        if hc is not None:
-            return float(hc)
-    return S_wet_est
+    return float(alpha_zero_lift_deg) + math.degrees(float(CL_required) / max(CL_alpha_3D_per_rad, 1e-9))
+
+
+def _profile_and_induced_drag(
+    CL: float,
+    alpha_deg: float,
+    AR: float,
+    e: float,
+    interpolator,
+) -> Dict[str, float]:
+    polar = interpolator(alpha_deg)
+    CD_profile = max(0.0, float(polar["CD"]))
+    CD_induced = float(CL) ** 2 / (math.pi * max(e, 1e-6) * max(AR, 1e-6))
+    return {
+        "CD_profile": CD_profile,
+        "CD_induced": CD_induced,
+        "CD_total": CD_profile + CD_induced,
+        "CM": float(polar["CM"]),
+        "CM_max": max(abs(float(polar.get("CM_max", polar["CM"]))), abs(float(polar["CM"]))),
+        "polar": polar,
+    }
 
 
 def wing_aerodynamic_coeffs(
-    L_wing: float,
-    L_tail: float,
+    L_wing_N: float,
+    L_tail_N: float,
     S: float,
     MAC: float,
     AR: float,
     inputs: DesignInputs,
 ) -> Dict[str, float]:
+    """Main-wing aerodynamics using the existing NACA 2410 polar.
+
+    The main-wing planform inputs are intentionally unchanged in Step 5. The
+    configuration drag of the pod, booms and stopped VTOL propellers is added
+    separately by configuration_cruise_drag().
     """
-    Calculate wing aerodynamic coefficients at cruise.
-    
-    Cruciform assumptions:
-    - Only the horizontal wing carries vertical lift.
-    # VERTICAL MAIN WING REMOVED FOR NOW
-    # - The vertical wing contributes drag only (no vertical lift).
-    - S is the area of the horizontal wing and is the reference area.
-    
-    Args:
-        L_wing: Aircraft weight [N]
-        L_tail: Tail lift at cruise [N] (positive up, negative for downforce)
-        S: Wing area [m²]
-        MAC: Mean aerodynamic chord [m]
-        AR: Aspect ratio
-        inputs: Design inputs
-    
-    Returns:
-        Dictionary of aerodynamic coefficients and properties
-    """
-    V = inputs.speed
-    q = 0.5 * ATMOSPHERIC.rho * V**2
-    
-    # Aircraft lift coefficient referenced to horizontal wing area S
-    CL = L_wing / (q * S)
-    
-    # 3D finite-wing lift-curve slope
-    CL_alpha_2D = 2.0 * math.pi  # ~6.283 per rad
-    CL_alpha_3D = CL_alpha_2D / (1.0 + CL_alpha_2D / (math.pi * inputs.e_oswald * AR))
-    
-    alpha_L0_wing_deg = float(inputs.NACA2410_zero_lift_angle_of_attack_deg)  # for NACA2410
-    alpha_cruise_rad = CL / CL_alpha_3D
-    alpha_cruise_deg = alpha_L0_wing_deg + math.degrees(alpha_cruise_rad)
-    
-    # Airfoil data at cruise AoA and at 0 deg (NACA2410 for horizontal wing)
-    airfoil_data = interpolate_naca2410(alpha_cruise_deg)
-    airfoil_zero = interpolate_naca2410(inputs.NACA2410_zero_lift_angle_of_attack_deg)
-    
-    # 2D -> 3D CLmax
-    CLmax_2D = airfoil_data["CL_max_pos"]  # global 2D CLmax from polar
-    CL_max_3D = CLmax_2D * (AR / (AR + 2.0))  # simple finite-wing correction
-    
-    # Zero-lift CD of horizontal wing at 0 deg
-    CD0_wing = airfoil_zero["CD"]
+    del L_tail_N  # retained for API compatibility
 
-    # Horizontal wing profile drag at cruise AoA
-    CD_profile_h = airfoil_data["CD"]
+    rho = ATMOSPHERIC.rho
+    V = float(inputs.speed)
+    q = 0.5 * rho * V**2
+    CL_required = float(L_wing_N) / max(q * float(S), 1e-9)
 
-    wet_scale_w = _profile_drag_wetted_scale(inputs, "hardcode_wing_wetted_area_m2", S)
-    CD0_wing *= wet_scale_w
-    CD_profile_h *= wet_scale_w
+    alpha0 = float(inputs.NACA2410_zero_lift_angle_of_attack_deg)
+    a0 = _polar_lift_slope_per_rad(interpolate_naca2410, alpha0)
+    a3d = _finite_wing_lift_slope(a0, float(AR), float(inputs.e_oswald))
+    alpha = _alpha_for_required_cl(CL_required, alpha0, a3d)
 
-    # Induced drag (horizontal wing is the only lifting surface)
-    CD_induced_h = CL**2 / (math.pi * AR * inputs.e_oswald)
-    
-    # Fuselage parasite drag
-    CD0_fuselage = fuselage_parasite_drag(inputs, S, V)
+    drag = _profile_and_induced_drag(
+        CL=CL_required,
+        alpha_deg=alpha,
+        AR=AR,
+        e=float(inputs.e_oswald),
+        interpolator=interpolate_naca2410,
+    )
 
-    # Total horizontal wing CD at cruise, referenced to S (horizontal wing area)
-    # VERTICAL MAIN WING REMOVED FOR NOW
-    # Note: Vertical wing drag will be added separately in script.py
-    CD_total = CD_profile_h + CD_induced_h + CD0_fuselage
-    
-    # Aircraft L/D using same reference area S
-    L_over_D = CL / CD_total
-    
-    # Stall speed using 3D CLmax
-    V_stall = math.sqrt(2.0 * L_wing / (ATMOSPHERIC.rho * S * CL_max_3D))
-    
-    # Reynolds number at cruise (based on MAC)
-    Re = ATMOSPHERIC.rho * V * MAC / ATMOSPHERIC.mu
-    
+    polar_at_alpha0 = interpolate_naca2410(alpha0)
+    CL_max_2d = float(drag["polar"].get("CL_max", 1.1))
+    CL_max = CL_max_2d * float(getattr(inputs, "wing_CLmax_3D_factor", 0.95))
+    V_stall = math.sqrt(
+        2.0 * max(float(L_wing_N), 0.0)
+        / max(rho * float(S) * max(CL_max, 1e-6), 1e-9)
+    )
+
+    Re = rho * V * float(MAC) / max(ATMOSPHERIC.mu, 1e-12)
+    L_D = CL_required / max(drag["CD_total"], 1e-9)
+
     return {
-        "CL_cruise": CL,
-        "CL_max": CL_max_3D,  # 3D CLmax actually used for stall
-        "CL_alpha_3D_per_rad": CL_alpha_3D,
-        "CD0": CD0_wing,  # zero-lift CD of horizontal wing, ref S
-        "CD0_fuselage": CD0_fuselage,  # fuselage parasite drag
-        "CD_cruise": CD_total,  # horizontal wing CD at cruise, ref S
-        # VERTICAL MAIN WING REMOVED FOR NOW (vertical wing drag added separately)
-        "CM_cruise": airfoil_data["CM"],
-        "CM_max": airfoil_data["CM_max"],
-        "alpha_cruise": alpha_cruise_deg,
-        "L_over_D_cruise": L_over_D,
+        "CL_cruise": CL_required,
+        "CL_max": CL_max,
+        "CD0": max(0.0, float(polar_at_alpha0["CD"])),
+        "CD_cruise": drag["CD_total"],
+        "CD_profile": drag["CD_profile"],
+        "CD_induced": drag["CD_induced"],
+        "CD0_fuselage": 0.0,
+        "CM_cruise": drag["CM"],
+        "CM_max": drag["CM_max"],
+        "alpha_cruise": alpha,
+        "L_over_D_cruise": L_D,
         "V_stall": V_stall,
         "Re_cruise": Re,
-        "max_thickness_fraction_of_chord": airfoil_data["max_thickness_fraction_of_chord"],
+        "max_thickness_fraction_of_chord": float(
+            drag["polar"].get("max_thickness_fraction_of_chord", 0.10)
+        ),
+        "CL_alpha_3D_per_rad": a3d,
     }
+
+
+def _elevator_tau(ce_over_ch: float, inputs: DesignInputs) -> float:
+    override = float(getattr(inputs, "tail_elevator_tau_override", -1.0))
+    if override > 0.0:
+        return override
+    x = _clamp(float(ce_over_ch), 0.05, 0.80)
+    points = [
+        (0.10, 0.20), (0.20, 0.35), (0.30, 0.48), (0.40, 0.60),
+        (0.50, 0.68), (0.60, 0.75), (0.70, 0.80), (0.80, 0.84),
+    ]
+    for (x0, y0), (x1, y1) in zip(points[:-1], points[1:]):
+        if x0 <= x <= x1:
+            t = (x - x0) / max(x1 - x0, 1e-9)
+            return y0 + t * (y1 - y0)
+    return points[0][1] if x < points[0][0] else points[-1][1]
+
 
 def tail_aerodynamic_coeffs(
     L_required_N: float,
@@ -153,317 +160,106 @@ def tail_aerodynamic_coeffs(
     alpha_body_deg: float,
     downwash_deg: float,
     inputs: DesignInputs,
-) -> Dict[str, float]:
-    """
-    Tail trim at cruise using fixed/limited built-in incidence and elevator for residual trim.
+) -> Dict[str, Any]:
+    """Horizontal-tail trim and drag model using the existing NACA 0012 polar."""
+    rho = ATMOSPHERIC.rho
+    V = float(inputs.speed)
+    q = 0.5 * rho * V**2
+    CL_req = float(L_required_N) / max(q * float(S), 1e-9)
 
-    S and AR come from geometry.tail_geometry (horizontal tail span is fixed when
-    use_hardcoded_values and hardcode_tail_span are set).
+    alpha0 = float(inputs.NACA0012_zero_lift_angle_of_attack_deg)
+    a0 = _polar_lift_slope_per_rad(interpolate_naca0012, alpha0)
+    a3d = _finite_wing_lift_slope(a0, float(AR), float(inputs.tail_e_oswald))
+    alpha_req = _alpha_for_required_cl(CL_req, alpha0, a3d)
 
-    Logic:
-    - Built-in tail incidence is limited by tail_incidence_limit_deg
-    - Elevator provides the remaining trim authority
-    - Preferred cruise elevator limit is reported but not fatal
-    - Hard failure only if:
-        * elevator exceeds physical max up/down limits, or
-        * effective tail angle exceeds allowed/stall limits
-    """
-    V = inputs.speed
-    q = 0.5 * ATMOSPHERIC.rho * V**2
+    alpha_clean = float(alpha_body_deg) - float(downwash_deg)
+    incidence_required = alpha_req - alpha_clean
+    incidence_limit = abs(float(inputs.tail_incidence_limit_deg))
+    incidence = _clamp(incidence_required, -incidence_limit, incidence_limit)
 
-    eta_tail = inputs.tail_efficiency_factor
-    S_eff = S
+    tau_e = _elevator_tau(float(inputs.tail_elevator_chord_ratio), inputs)
+    remaining_alpha = alpha_req - (alpha_clean + incidence)
+    delta_e = remaining_alpha / max(tau_e, 1e-9)
+    elevator_limit = abs(float(inputs.tail_elevator_limit_deg))
+    delta_e_limited = _clamp(delta_e, -elevator_limit, elevator_limit)
 
-    CL_req = L_required_N / (q * S_eff * eta_tail)
-
-    # finite-tail lift-curve slope
-    CL_alpha_2D = 2.0 * math.pi
-    CL_alpha_3D = CL_alpha_2D / (1.0 + CL_alpha_2D / (math.pi * inputs.tail_e_oswald * AR))
-
-    alpha_L0_deg = inputs.NACA0012_zero_lift_angle_of_attack_deg
-    alpha_tail_geom_deg = alpha_body_deg - downwash_deg
-
-    # elevator effectiveness tau_e
-    elevator_chord_ratio = inputs.tail_elevator_chord_ratio
-    elevator_span_fraction = inputs.tail_elevator_span_end - inputs.tail_elevator_span_start
-
-    if inputs.tail_elevator_tau_override > 0.0:
-        tau_e = float(inputs.tail_elevator_tau_override)
-    else:
-        # simple but tunable first-order estimate
-        eta_f = max(0.05, 1.0 - 0.5 * elevator_chord_ratio)
-        tau_e = elevator_chord_ratio * eta_f * elevator_span_fraction
-
-    # ------------------------------------------------------------------
-    # Choose built-in incidence first, within the allowed hard limit
-    # ------------------------------------------------------------------
-    inc_limit = abs(float(inputs.tail_incidence_limit_deg))
-
-    # incidence that would achieve target elevator at cruise
-    target_delta_elev_deg = float(inputs.tail_target_elevator_deg)
-    required_total_deg = math.degrees(CL_req / CL_alpha_3D)
-    tail_incidence_ideal_deg = (
-        required_total_deg
-        - (alpha_tail_geom_deg - alpha_L0_deg + tau_e * target_delta_elev_deg)
-    )
-
-    # clamp to allowed mounting limit
-    tail_incidence_deg = max(-inc_limit, min(inc_limit, tail_incidence_ideal_deg))
-
-    # ------------------------------------------------------------------
-    # Now solve required elevator with that incidence fixed
-    # ------------------------------------------------------------------
-    alpha_no_elev_deg = alpha_tail_geom_deg + tail_incidence_deg - alpha_L0_deg
-    CL_no_elev = CL_alpha_3D * math.radians(alpha_no_elev_deg)
-
+    alpha_equiv = alpha_clean + incidence + tau_e * delta_e_limited
+    CL_no_elev = a3d * math.radians(alpha_clean + incidence - alpha0)
     dCL_required = CL_req - CL_no_elev
-    d_alpha_deg = math.degrees(dCL_required / CL_alpha_3D)
 
-    if abs(tau_e) > 1e-9:
-        delta_elev_deg = d_alpha_deg / tau_e
-    else:
-        delta_elev_deg = 0.0
-
-    # effective tail angle used for 2D polar sampling / stall check
-    alpha_equiv_deg = alpha_tail_geom_deg + tail_incidence_deg + tau_e * delta_elev_deg
-
-    # airfoil polar
-    airfoil_data = interpolate_naca0012(alpha_equiv_deg)
-    airfoil_zero = interpolate_naca0012(inputs.NACA0012_zero_lift_angle_of_attack_deg)
-
-    CLmax_2D = airfoil_data["CL_max_pos"]
-    CL_max_3D = CLmax_2D * (AR / (AR + 2.0))
-
-    CD0 = airfoil_zero["CD"]
-    CD_profile = airfoil_data["CD"]
-    wet_scale_t = _profile_drag_wetted_scale(inputs, "hardcode_tail_wetted_area_m2", S_eff)
-    CD0 *= wet_scale_t
-    CD_profile *= wet_scale_t
-    CD_induced = (CL_req**2) / (math.pi * AR * inputs.tail_e_oswald)
-
-    # empirical elevator drag
-    S_elevator = elevator_chord_ratio * S_eff * elevator_span_fraction
-    CD0_elevator = control_surface_drag_delta(
-        delta_deg=abs(delta_elev_deg),
-        S_control_m2=S_elevator,
-        S_ref_m2=S_eff,
-        k=inputs.control_surface_drag_k,
+    drag = _profile_and_induced_drag(
+        CL=CL_req,
+        alpha_deg=alpha_equiv,
+        AR=AR,
+        e=float(inputs.tail_e_oswald),
+        interpolator=interpolate_naca0012,
     )
-    CD_total = CD_profile + CD_induced + CD0_elevator
+    control_drag = float(getattr(inputs, "control_surface_drag_k", 0.015)) * math.radians(delta_e_limited) ** 2
+    CD_total = drag["CD_total"] + control_drag
 
-    Re = ATMOSPHERIC.rho * V * MAC / ATMOSPHERIC.mu
+    polar = drag["polar"]
+    CL_max_2d = float(polar.get("CL_max", 1.1))
+    CL_max = CL_max_2d * float(getattr(inputs, "tail_CLmax_3D_factor", 0.90))
+    V_stall = math.sqrt(
+        2.0 * abs(float(L_required_N))
+        / max(rho * float(S) * max(CL_max, 1e-6), 1e-9)
+    ) if abs(float(L_required_N)) > 1e-9 else 0.0
 
-    # ------------------------------------------------------------------
-    # Hard feasibility checks
-    # ------------------------------------------------------------------
-    elevator_hard_ok = (
-        inputs.tail_elevator_max_up_deg <= delta_elev_deg <= inputs.tail_elevator_max_down_deg
+    Re = rho * V * float(MAC) / max(ATMOSPHERIC.mu, 1e-12)
+    feasible = (
+        abs(delta_e) <= elevator_limit + 1e-9
+        and abs(incidence_required) <= incidence_limit + abs(tau_e * elevator_limit) + 1e-9
+        and abs(alpha_equiv) <= float(inputs.tail_effective_alpha_limit_deg) + 1e-9
     )
 
-    # polar range guard
-    alpha_polar_min = -14.0
-    alpha_polar_max = 14.0
-
-    alpha_limit = abs(float(inputs.tail_effective_alpha_limit_deg))
-    alpha_allowed_ok = abs(alpha_equiv_deg) <= alpha_limit
-
-    alpha_stall_ok = (
-        alpha_equiv_deg >= alpha_polar_min + inputs.tail_stall_margin_deg
-        and alpha_equiv_deg <= alpha_polar_max - inputs.tail_stall_margin_deg
+    elevator_area = float(S) * float(inputs.tail_elevator_chord_ratio)
+    elevator_chord = float(MAC) * float(inputs.tail_elevator_chord_ratio)
+    Ch_delta = float(getattr(inputs, "elevator_Ch_delta_per_rad", 0.03))
+    M_h = q * elevator_area * elevator_chord * Ch_delta * abs(math.radians(float(inputs.tail_elevator_max_deflection_deg)))
+    T_servo = M_h * float(inputs.elevator_horn_radius_m) / max(
+        float(inputs.servo_efficiency_eta) * float(inputs.servo_arm_radius_m), 1e-9
     )
 
-    feasible = elevator_hard_ok and alpha_allowed_ok and alpha_stall_ok
-
-    failure_reason = None
-    if not elevator_hard_ok:
+    failure_reason = ""
+    if not feasible:
         failure_reason = (
-            f"Required cruise elevator {delta_elev_deg:.1f} deg exceeds hard limits "
-            f"[{inputs.tail_elevator_max_up_deg:.1f}, {inputs.tail_elevator_max_down_deg:.1f}] deg."
+            f"Required incidence/elevator combination exceeds limits: incidence_required="
+            f"{incidence_required:.2f} deg, elevator_required={delta_e:.2f} deg, "
+            f"alpha_effective={alpha_equiv:.2f} deg."
         )
-    elif not alpha_allowed_ok:
-        failure_reason = (
-            f"Effective tail angle {alpha_equiv_deg:.1f} deg exceeds allowed limit "
-            f"±{alpha_limit:.1f} deg."
-        )
-    elif not alpha_stall_ok:
-        failure_reason = (
-            f"Effective tail angle {alpha_equiv_deg:.1f} deg is too close to/outside polar range "
-            f"with margin {inputs.tail_stall_margin_deg:.1f} deg."
-        )
-
-    # hinge moment estimate
-    S_e = S_elevator
-    c_e = elevator_chord_ratio * MAC
-    delta_max_rad = math.radians(abs(inputs.tail_elevator_max_deflection_deg))
-    Ch = inputs.elevator_Ch_delta_per_rad * delta_max_rad
-    q_max = 0.5 * ATMOSPHERIC.rho * inputs.dive_speed**2
-    M_h_Nm = q_max * S_e * c_e * Ch
-
-    r_servo = inputs.servo_arm_radius_m
-    r_horn = inputs.elevator_horn_radius_m
-    eta = inputs.servo_efficiency_eta
-    T_servo_Nm = (M_h_Nm * r_horn) / (eta * r_servo) if r_servo > 1e-9 else 0.0
-    T_servo_with_margin_Nm = T_servo_Nm * inputs.servo_torque_margin
 
     return {
-        "tail_incidence_ideal_deg": tail_incidence_ideal_deg,
-        "tail_incidence_deg": tail_incidence_deg,
-        "delta_elev_deg": delta_elev_deg,
-        "CL_req": CL_req,
-        "CL_alpha_3D_per_rad": CL_alpha_3D,
-        "CL_no_elev": CL_no_elev,
-        "dCL_required": dCL_required,
-        "alpha_body_deg": alpha_body_deg,
-        "downwash_deg": downwash_deg,
-        "alpha_tail_geom_deg": alpha_tail_geom_deg,
-        "alpha_equiv_deg": alpha_equiv_deg,
-        "elevator_chord_ratio": elevator_chord_ratio,
-        "tau_e": tau_e,
-        "CL_cruise": CL_req,
-        "CL_max": CL_max_3D,
-        "CD0": CD0,
-        "CD_cruise": CD_total,
-        "CM_cruise": airfoil_data["CM"],
-        "CM_max": airfoil_data["CM_max"],
-        "L_over_D_cruise": (CL_req / CD_total) if abs(CD_total) > 1e-12 else float("inf"),
-        "V_stall": math.sqrt(2.0 * abs(L_required_N) / (ATMOSPHERIC.rho * S_eff * max(1e-6, abs(CL_max_3D)))),
-        "Re_cruise": Re,
-        "max_thickness_fraction_of_chord": airfoil_data["max_thickness_fraction_of_chord"],
-        "preferred_cruise_elevator_ok": abs(delta_elev_deg) <= abs(inputs.tail_elevator_limit_deg),
-        "elevator_hard_ok": elevator_hard_ok,
-        "alpha_allowed_ok": alpha_allowed_ok,
-        "alpha_stall_ok": alpha_stall_ok,
         "feasible": feasible,
         "failure_reason": failure_reason,
-        "elevator_hinge_moment_M_h_Nm": M_h_Nm,
-        "elevator_area_S_e_m2": S_e,
-        "elevator_chord_c_e_m": c_e,
-        "servo_torque_T_servo_Nm": T_servo_Nm,
-        "servo_torque_with_margin_Nm": T_servo_with_margin_Nm,
+        "CL_cruise": CL_req,
+        "CL_req": CL_req,
+        "CL_no_elev": CL_no_elev,
+        "dCL_required": dCL_required,
+        "CL_max": CL_max,
+        "CD0": float(interpolate_naca0012(alpha0)["CD"]),
+        "CD_cruise": CD_total,
+        "CD_profile": drag["CD_profile"] + control_drag,
+        "CD_induced": drag["CD_induced"],
+        "CM_cruise": drag["CM"],
+        "CM_max": drag["CM_max"],
+        "alpha_body_deg": float(alpha_body_deg),
+        "downwash_deg": float(downwash_deg),
+        "tail_incidence_deg": incidence,
+        "delta_elev_deg": delta_e_limited,
+        "alpha_equiv_deg": alpha_equiv,
+        "elevator_chord_ratio": float(inputs.tail_elevator_chord_ratio),
+        "tau_e": tau_e,
+        "L_over_D_cruise": CL_req / max(CD_total, 1e-9),
+        "V_stall": V_stall,
+        "Re_cruise": Re,
+        "max_thickness_fraction_of_chord": float(polar.get("max_thickness_fraction_of_chord", 0.12)),
+        "CL_alpha_3D_per_rad": a3d,
+        "elevator_hinge_moment_M_h_Nm": M_h,
+        "elevator_area_S_e_m2": elevator_area,
+        "elevator_chord_c_e_m": elevator_chord,
+        "servo_torque_T_servo_Nm": T_servo,
+        "servo_torque_with_margin_Nm": T_servo * float(inputs.servo_torque_margin),
     }
-
-def fuselage_parasite_drag(inputs: DesignInputs, S_ref_m2: float, V_mps: float) -> float:
-    """
-    Estimate fuselage zero-lift drag coefficient using Scholz (HAW Hamburg) method.
-
-    C_D0_fuse = C_f * F_fuse * (S_wet_fuse / S_ref)
-
-    Args:
-        inputs: DesignInputs (with fuselage length & diameter)
-        S_ref_m2: reference wing area [m²]
-        V_mps: cruise speed [m/s]
-
-    Returns:
-        C_D0_fuse: parasite drag coefficient contribution of fuselage
-    """
-
-    L_D = inputs.fuselage_length / inputs.fuselage_OD
-
-    # Wetted area (approximate circular cylinder)
-    S_wet = inputs.fuselage_wetted_area
-
-    # Reynolds number based on length
-    Re = ATMOSPHERIC.rho * V_mps * inputs.fuselage_length / ATMOSPHERIC.mu
-
-    # Turbulent flat plate Cf
-    C_f = 0.455 / (math.log10(Re) ** 2.58)
-
-    # Form factor (Scholz / Torenbeek)
-    F_fuse = 1 + 60.0 / (L_D ** 3) + 0.0025 * L_D
-
-    # Fuselage parasite drag coefficient
-    C_D0_fuse = C_f * F_fuse * (S_wet / S_ref_m2)
-
-    return C_D0_fuse
-
-
-# VERTICAL MAIN WING REMOVED FOR NOW
-# def vertical_wing_aerodynamic_coeffs(
-#     S: float,
-#     MAC: float,
-#     AR: float,
-#     inputs: DesignInputs,
-# ) -> Dict[str, float]:
-#     """
-#     Calculate vertical wing aerodynamic coefficients at cruise.
-#     
-#     Vertical wings are assumed to operate at ~0 deg angle of attack (no lift),
-#     contributing only profile drag. Uses NACA0012 airfoil.
-#     
-#     Args:
-#         S: Vertical wing area [m²] (same as horizontal wing for now)
-#         MAC: Mean aerodynamic chord [m]
-#         AR: Aspect ratio
-#         inputs: Design inputs
-#     
-#     Returns:
-#         Dictionary of aerodynamic coefficients and properties
-#     """
-#     V = inputs.speed
-#     q = 0.5 * ATMOSPHERIC.rho * V**2
-#     
-#     # Vertical wing operates at ~0 deg AoA (no lift in cruise)
-#     alpha_vertical_deg = 0.0
-#     
-#     # Use NACA0012 airfoil for vertical wing
-#     airfoil_data = interpolate_naca0012(alpha_vertical_deg)
-#     airfoil_zero = interpolate_naca0012(inputs.NACA0012_zero_lift_angle_of_attack_deg)  # Zero lift at 0 deg for symmetric airfoil
-#     
-#     # No lift on vertical wing in cruise
-#     CL = 0.0
-#     
-#     # 2D -> 3D CLmax (for reference, though not used for lift)
-#     CLmax_2D = airfoil_data["CL_max_pos"]
-#     CL_max_3D = CLmax_2D * (AR / (AR + 2.0))
-#     
-#     # Profile drag at 0 deg AoA
-#     CD_profile = airfoil_data["CD"]
-#     
-#     # No induced drag (no lift)
-#     CD_induced = 0.0
-#     
-#     # Total drag coefficient
-#     CD_total = CD_profile + CD_induced
-#     
-#     # L/D is undefined (no lift), set to 0 or inf
-#     L_over_D = 0.0
-#     
-#     # Stall speed (not meaningful for vertical wing, but calculate for completeness)
-#     # Use a small reference lift for calculation
-#     # Validate inputs before square root
-#     if S <= 0:
-#         raise ValueError(
-#             f"Invalid vertical wing area: S = {S:.6f} m² (must be positive). "
-#             f"This indicates the horizontal wing area is negative, which occurs when "
-#             f"L_wing = W0_N - L_tail becomes negative (tail lift exceeds aircraft weight)."
-#         )
-#     
-#     denominator = ATMOSPHERIC.rho * S * max(1e-6, abs(CL_max_3D))
-#     if denominator <= 0:
-#         raise ValueError(
-#             f"Invalid denominator for V_stall calculation: rho*S*CL_max = {denominator:.6f}. "
-#             f"rho = {ATMOSPHERIC.rho}, S = {S:.6f}, CL_max_3D = {CL_max_3D:.6f}"
-#         )
-#     
-#     V_stall = math.sqrt(2.0 * 1.0 / denominator)
-#     
-#     # Reynolds number at cruise (based on MAC)
-#     Re = ATMOSPHERIC.rho * V * MAC / ATMOSPHERIC.mu
-#     
-#     return {
-#         "CL_cruise": CL,
-#         "CL_max": CL_max_3D,
-#         "CD0": airfoil_zero["CD"],
-#         "CD0_fuselage": 0.0,  # No fuselage drag contribution here
-#         "CD_cruise": CD_total,
-#         "CM_cruise": airfoil_data["CM"],
-#         "CM_max": airfoil_data["CM_max"],
-#         "alpha_cruise": alpha_vertical_deg,
-#         "L_over_D_cruise": L_over_D,
-#         "V_stall": V_stall,
-#         "Re_cruise": Re,
-#         "max_thickness_fraction_of_chord": airfoil_data["max_thickness_fraction_of_chord"],
-#     }
 
 
 def vertical_tail_aerodynamic_coeffs(
@@ -472,109 +268,219 @@ def vertical_tail_aerodynamic_coeffs(
     AR: float,
     inputs: DesignInputs,
 ) -> Dict[str, float]:
-    """
-    Calculate vertical tail aerodynamic coefficients at cruise.
-    
-    Vertical tail is assumed to operate at ~0 deg angle of attack (no lift in cruise),
-    contributing only profile drag. Uses NACA0012 airfoil.
-    S and AR come from geometry.vertical_tail_geometry (span may be fixed by
-    use_hardcoded_values + hardcode_vertical_tail_span).
-    
-    Args:
-        S: Vertical tail area [m²] (same as horizontal tail for now)
-        MAC: Mean aerodynamic chord [m]
-        AR: Aspect ratio
-        inputs: Design inputs
-    
-    Returns:
-        Dictionary of aerodynamic coefficients and properties
-    """
-    V = inputs.speed
-    q = 0.5 * ATMOSPHERIC.rho * V**2
-    
-    # Vertical tail operates at ~0 deg AoA (no lift in cruise)
-    alpha_vertical_deg = 0.0
-    
-    # Use NACA0012 airfoil for vertical tail
-    airfoil_data = interpolate_naca0012(alpha_vertical_deg)
-    airfoil_zero = interpolate_naca0012(inputs.NACA0012_zero_lift_angle_of_attack_deg)  # Zero lift at 0 deg for symmetric airfoil
-
-    # No lift on vertical tail in cruise
-    CL = 0.0
-
-    CL_alpha_2D = 2.0 * math.pi  # per rad
-    CL_alpha_3D = CL_alpha_2D / (1.0 + CL_alpha_2D / (math.pi * inputs.tail_e_oswald * AR))
-    
-    # 2D -> 3D CLmax (for reference, though not used for lift)
-    CLmax_2D = airfoil_data["CL_max_pos"]
-    CL_max_3D = CLmax_2D * (AR / (AR + 2.0))
-    
-    # Profile drag at 0 deg AoA
-    CD_profile = airfoil_data["CD"]
-    wet_scale_vt = _profile_drag_wetted_scale(inputs, "hardcode_vertical_tail_wetted_area_m2", S)
-    CD_profile *= wet_scale_vt
-    CD0_vertical = airfoil_zero["CD"] * wet_scale_vt
-
-    # No induced drag (no lift)
-    CD_induced = 0.0
-
-    # Rudder model (for control surface drag calculation)
-    rudder_chord_ratio = inputs.vertical_tail_rudder_chord_ratio
-    rudder_span_fraction = inputs.vertical_tail_rudder_span_end - inputs.vertical_tail_rudder_span_start
-    # At cruise with no sideslip, rudder deflection is 0 deg (sizing logic, not maneuvering)
-    delta_rudder_deg = 0.0
-    
-    # Control surface drag
-    # Rudder area accounts for chord ratio and span fraction
-    S_rudder = rudder_chord_ratio * S * rudder_span_fraction
-    CD0_rudder = control_surface_drag_delta(
-        delta_deg=abs(delta_rudder_deg),
-        S_control_m2=S_rudder,
-        S_ref_m2=S,
-        k=inputs.control_surface_drag_k,
-    )
-    
-    # Total drag coefficient
-    CD_total = CD_profile + CD_induced + CD0_rudder
-    
-    # L/D is undefined (no lift), set to 0
-    L_over_D = 0.0
-    
-    # Stall speed (not meaningful for vertical tail, but calculate for completeness)
-    V_stall = math.sqrt(2.0 * 1.0 / (ATMOSPHERIC.rho * S * max(1e-6, abs(CL_max_3D))))
-    
-    # Reynolds number at cruise (based on MAC)
-    Re = ATMOSPHERIC.rho * V * MAC / ATMOSPHERIC.mu
-    
+    """Zero-sideslip aerodynamic properties for one vertical fin."""
+    del S
+    rho = ATMOSPHERIC.rho
+    V = float(inputs.speed)
+    alpha0 = float(inputs.NACA0012_zero_lift_angle_of_attack_deg)
+    a0 = _polar_lift_slope_per_rad(interpolate_naca0012, alpha0)
+    a3d = _finite_wing_lift_slope(a0, float(AR), float(inputs.tail_e_oswald))
+    polar = interpolate_naca0012(0.0)
+    CL_max = float(polar.get("CL_max", 1.1)) * float(getattr(inputs, "tail_CLmax_3D_factor", 0.90))
+    Re = rho * V * float(MAC) / max(ATMOSPHERIC.mu, 1e-12)
     return {
-        "CL_cruise": CL,
-        "CL_max": CL_max_3D,
-        "CL_alpha_3D_per_rad": CL_alpha_3D,
-        "CD0": CD0_vertical,
-        "CD0_fuselage": 0.0,  # No fuselage drag contribution here
-        "CD0_rudder": CD0_rudder,
-        "CD_cruise": CD_total,
-        "CM_cruise": airfoil_data["CM"],
-        "CM_max": airfoil_data["CM_max"],
-        "alpha_cruise": alpha_vertical_deg,
-        "L_over_D_cruise": L_over_D,
-        "V_stall": V_stall,
+        "CL_cruise": 0.0,
+        "CL_max": CL_max,
+        "CD0": float(polar["CD"]),
+        "CD_cruise": float(polar["CD"]),
+        "CD0_fuselage": 0.0,
+        "CM_cruise": float(polar["CM"]),
+        "CM_max": max(abs(float(polar.get("CM_max", polar["CM"]))), abs(float(polar["CM"]))),
+        "alpha_cruise": 0.0,
+        "L_over_D_cruise": 0.0,
+        "V_stall": 0.0,
         "Re_cruise": Re,
-        "max_thickness_fraction_of_chord": airfoil_data["max_thickness_fraction_of_chord"],
-        "rudder_chord_ratio": rudder_chord_ratio,
-        "rudder_span_fraction": rudder_span_fraction,
-        "delta_rudder_deg": delta_rudder_deg,
+        "max_thickness_fraction_of_chord": float(polar.get("max_thickness_fraction_of_chord", 0.12)),
+        "CL_alpha_3D_per_rad": a3d,
     }
 
-def control_surface_drag_delta(
-    delta_deg: float,
-    S_control_m2: float,
-    S_ref_m2: float,
-    k: float = 0.015,
+
+def effective_lifting_surface_wetted_area_m2(
+    inputs: DesignInputs,
+    hardcode_attr: str,
+    planform_area_m2: float,
 ) -> float:
+    if bool(getattr(inputs, "use_hardcoded_values", False)):
+        value = getattr(inputs, hardcode_attr, None)
+        if value is not None:
+            return float(value)
+    return 2.0 * float(planform_area_m2)
+
+
+def _skin_friction_coefficient(Re: float, laminar_fraction: float = 0.0) -> float:
+    Re = max(float(Re), 1.0e3)
+    Cf_lam = 1.328 / math.sqrt(Re)
+    Cf_turb = 0.455 / max(math.log10(Re) ** 2.58, 1e-9)
+    f_lam = _clamp(float(laminar_fraction), 0.0, 1.0)
+    return f_lam * Cf_lam + (1.0 - f_lam) * Cf_turb
+
+
+def _body_form_factor(length_m: float, equivalent_diameter_m: float) -> float:
+    fineness = max(float(length_m) / max(float(equivalent_diameter_m), 1e-6), 1.0)
+    return 1.0 + 60.0 / fineness**3 + fineness / 400.0
+
+
+def _lift_prop_combo(propulsion_selection: Optional[Dict[str, Any]], inputs: DesignInputs) -> Dict[str, Any]:
+    if propulsion_selection:
+        lift = propulsion_selection.get("lift", {})
+        combo = lift.get("combo")
+        if combo:
+            return combo
+    return dict(getattr(inputs, "hardcode_lift_propulsion", {}) or {})
+
+
+def _lift_prop_drag_area_each_m2(
+    propulsion_selection: Optional[Dict[str, Any]],
+    inputs: DesignInputs,
+) -> float:
+    direct = getattr(inputs, "lift_prop_equivalent_drag_area_each_m2", None)
+    if direct is not None:
+        return max(0.0, float(direct))
+
+    combo = _lift_prop_combo(propulsion_selection, inputs)
+    diameter_in = float(combo.get("prop_diameter_in", 15.0))
+    radius_m = 0.5 * diameter_in * 0.0254
+    n_blades = max(1, int(getattr(inputs, "lift_prop_blade_count", 2)))
+    chord_ratio = max(0.005, float(getattr(inputs, "lift_prop_mean_blade_chord_ratio", 0.08)))
+    blade_planform_area = n_blades * radius_m * (chord_ratio * 2.0 * radius_m)
+
+    state = str(getattr(inputs, "lift_prop_cruise_state", "stopped_aligned")).strip().lower()
+    factors = {
+        "folded": 0.05,
+        "stopped_aligned": 0.15,
+        "stopped_random": 0.50,
+        "windmilling": 1.00,
+    }
+    factor = factors.get(state, float(getattr(inputs, "lift_prop_drag_area_factor", 0.15)))
+    return blade_planform_area * max(0.0, factor)
+
+
+def configuration_cruise_drag(
+    *,
+    wing_geometry: Any,
+    wing_aerodynamics: Any,
+    inputs: DesignInputs,
+    tail_geometry: Optional[Any] = None,
+    tail_aerodynamics: Optional[Any] = None,
+    vertical_tail_geometry: Optional[Any] = None,
+    vertical_tail_aerodynamics: Optional[Any] = None,
+    propulsion_selection: Optional[Dict[str, Any]] = None,
+) -> Dict[str, float]:
+    """Build up total cruise drag for the high-wing twin-boom VTOL.
+
+    Surface aerodynamic objects contain their own profile and induced drag. The
+    remaining components use wetted-area skin-friction or equivalent drag area.
     """
-    Empirical profile drag increment due to control surface deflection.
-    ΔCD0 ≈ k * (S_ctrl / S_ref) * δ^2
-    """
-    delta_rad = math.radians(delta_deg)
-    return k * (S_control_m2 / S_ref_m2) * delta_rad**2
+    rho = ATMOSPHERIC.rho
+    mu = ATMOSPHERIC.mu
+    V = float(inputs.speed)
+    q = 0.5 * rho * V**2
+    S_ref = max(float(wing_geometry.area_m2), 1e-9)
+
+    D_wing = q * S_ref * float(wing_aerodynamics.CD_cruise)
+    wing_induced_CD = float(wing_aerodynamics.CL_cruise) ** 2 / (
+        math.pi * max(float(inputs.e_oswald), 1e-6) * max(float(wing_geometry.AR), 1e-6)
+    )
+    D_induced_wing = q * S_ref * wing_induced_CD
+
+    D_tail = 0.0
+    D_induced_tail = 0.0
+    if tail_geometry is not None and tail_aerodynamics is not None:
+        S_tail = float(tail_geometry.area_m2)
+        D_tail = q * S_tail * float(tail_aerodynamics.CD_cruise)
+        tail_induced_CD = float(tail_aerodynamics.CL_cruise) ** 2 / (
+            math.pi * max(float(inputs.tail_e_oswald), 1e-6) * max(float(tail_geometry.AR), 1e-6)
+        )
+        D_induced_tail = q * S_tail * tail_induced_CD
+
+    D_vertical_tails = 0.0
+    if vertical_tail_geometry is not None and vertical_tail_aerodynamics is not None:
+        n_fins = max(1, int(inputs.n_vertical_tail_surfaces))
+        D_vertical_tails = (
+            q * n_fins * float(vertical_tail_geometry.area_m2) * float(vertical_tail_aerodynamics.CD_cruise)
+        )
+
+    roughness_mult = max(0.1, float(getattr(inputs, "printed_surface_drag_multiplier", 1.15)))
+    laminar_fraction = float(getattr(inputs, "body_laminar_fraction", 0.05))
+
+    # Rounded central pod.
+    L_pod = float(inputs.central_pod_length_m)
+    w_pod = float(inputs.central_pod_width_m)
+    h_pod = float(inputs.central_pod_height_m)
+    Swet_pod = 0.82 * 2.0 * (L_pod * w_pod + L_pod * h_pod + w_pod * h_pod)
+    if bool(getattr(inputs, "use_hardcoded_values", False)):
+        hard = getattr(inputs, "hardcode_central_pod_wetted_area_m2", None)
+        if hard is not None:
+            Swet_pod = float(hard)
+    d_eq_pod = math.sqrt(max(4.0 * w_pod * h_pod / math.pi, 1e-9))
+    Re_pod = rho * V * L_pod / max(mu, 1e-12)
+    Cf_pod = _skin_friction_coefficient(Re_pod, laminar_fraction) * roughness_mult
+    FF_pod = _body_form_factor(L_pod, d_eq_pod) * float(getattr(inputs, "central_pod_cross_section_form_factor", 1.10))
+    Q_pod = float(getattr(inputs, "central_pod_interference_factor", 1.05))
+    D_pod = q * Cf_pod * FF_pod * Q_pod * Swet_pod
+
+    # Two circular booms aligned with the flow.
+    n_booms = max(1, int(inputs.n_booms))
+    L_boom = float(inputs.boom_length_m)
+    D_boom_outer = float(inputs.boom_outer_diameter_m)
+    Swet_booms = n_booms * math.pi * D_boom_outer * L_boom
+    Re_boom = rho * V * L_boom / max(mu, 1e-12)
+    Cf_boom = _skin_friction_coefficient(Re_boom, laminar_fraction) * roughness_mult
+    FF_boom = _body_form_factor(L_boom, D_boom_outer)
+    Q_boom = float(getattr(inputs, "boom_interference_factor", 1.10))
+    D_booms = q * Cf_boom * FF_boom * Q_boom * Swet_booms
+
+    # Lift-motor nacelles, support pylons and stopped rotor blades.
+    n_lift = max(0, int(inputs.n_lift_propellers))
+    nacelle_d = float(getattr(inputs, "lift_motor_nacelle_diameter_m", 0.055))
+    nacelle_Cd = float(getattr(inputs, "lift_motor_nacelle_CD", 0.80))
+    nacelle_frontal_each = math.pi * (0.5 * nacelle_d) ** 2
+    D_lift_nacelles = q * n_lift * nacelle_Cd * nacelle_frontal_each
+
+    support_CdA_each = max(0.0, float(getattr(inputs, "lift_motor_support_CdA_each_m2", 0.0010)))
+    D_lift_supports = q * n_lift * support_CdA_each
+
+    prop_drag_area_each = _lift_prop_drag_area_each_m2(propulsion_selection, inputs)
+    prop_blade_Cd = float(getattr(inputs, "lift_prop_blade_section_CD", 1.10))
+    D_stopped_lift_props = q * n_lift * prop_blade_Cd * prop_drag_area_each
+
+    # Cooling, openings, antennae and local junction losses are entered as equivalent CdA.
+    cooling_CdA = max(0.0, float(getattr(inputs, "fuel_cell_cooling_CdA_m2", 0.0025)))
+    misc_CdA = max(0.0, float(getattr(inputs, "miscellaneous_CdA_m2", 0.0015)))
+    D_cooling = q * cooling_CdA
+    D_misc = q * misc_CdA
+
+    junction_CD0 = max(0.0, float(getattr(inputs, "configuration_junction_CD0", 0.0040)))
+    D_junction = q * S_ref * junction_CD0
+
+    D_total = (
+        D_wing + D_tail + D_vertical_tails + D_pod + D_booms
+        + D_lift_nacelles + D_lift_supports + D_stopped_lift_props
+        + D_cooling + D_misc + D_junction
+    )
+    D_induced_total = D_induced_wing + D_induced_tail
+    D_parasite_total = max(0.0, D_total - D_induced_total)
+
+    return {
+        "dynamic_pressure_Pa": q,
+        "wing_N": D_wing,
+        "horizontal_tail_N": D_tail,
+        "vertical_tails_N": D_vertical_tails,
+        "central_pod_N": D_pod,
+        "twin_booms_N": D_booms,
+        "lift_motor_nacelles_N": D_lift_nacelles,
+        "lift_motor_supports_N": D_lift_supports,
+        "stopped_lift_propellers_N": D_stopped_lift_props,
+        "fuel_cell_cooling_N": D_cooling,
+        "miscellaneous_N": D_misc,
+        "junction_interference_N": D_junction,
+        "induced_total_N": D_induced_total,
+        "parasite_total_N": D_parasite_total,
+        "total_N": D_total,
+        "CD0_aircraft": D_parasite_total / max(q * S_ref, 1e-9),
+        "CD_total_ref": D_total / max(q * S_ref, 1e-9),
+        "pod_wetted_area_m2": Swet_pod,
+        "booms_wetted_area_m2": Swet_booms,
+        "lift_prop_drag_area_each_m2": prop_drag_area_each,
+        "number_of_vertical_fins": float(max(1, int(inputs.n_vertical_tail_surfaces))),
+    }

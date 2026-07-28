@@ -16,10 +16,10 @@ def print_design_summary(results: DesignResults, inputs: DesignInputs) -> None:
     print(f"payload mass        : {inputs.payload_mass:.3f} kg")
     print()
     print("Wetted areas (cruise drag model) [m²]:")
-    print(f"  Fuselage            : {results.fuselage.wetted_area_m2:.4f}")
+    print(f"  Central pod + booms : {results.fuselage.wetted_area_m2:.4f}")
     print(f"  Wing (per ref. S)   : {results.wing.wetted_area_m2:.4f}  (2× planform est. or hardcoded)")
-    print(f"  Horiz. tail (panel) : {results.tail.wetted_area_m2:.4f}")
-    print(f"  Vertical tail (panel): {results.vertical_tail.wetted_area_m2:.4f}")
+    print(f"  Horizontal tailplane: {results.tail.wetted_area_m2:.4f}")
+    print(f"  Twin vertical fins  : {results.vertical_tail.wetted_area_m2:.4f}")
     print()
     print("Mass breakdown:")
     print(f"  Payload           : {inputs.payload_mass:.3f} kg")
@@ -27,12 +27,9 @@ def print_design_summary(results: DesignResults, inputs: DesignInputs) -> None:
     # print(f"  Wings (vertical)  : {results.vertical_wing.structure.W_total_kg * 2:.3f} kg")
     print(f"  Tails (horizontal): {results.tail.structure.W_total_kg * 2:.3f} kg")
     print(f"  Tails (vertical) : {results.vertical_tail.structure.W_total_kg * 2:.3f} kg")
-    print(f"  Fuselage          : {results.fuselage.W_fuselage_kg:.3f} kg")
-    print(f"    - Nose          : {getattr(results.fuselage, 'W_fuselage_nose_kg', 0.0):.3f} kg")
-    print(f"    - Section C     : {getattr(results.fuselage, 'W_fuselage_section_C_kg', 0.0):.3f} kg")
-    print(f"    - Section B     : {getattr(results.fuselage, 'W_fuselage_section_B_kg', 0.0):.3f} kg")
-    print(f"    - Section A     : {getattr(results.fuselage, 'W_fuselage_section_A_kg', 0.0):.3f} kg")
-    print(f"    - Tail          : {getattr(results.fuselage, 'W_fuselage_tail_kg', 0.0):.3f} kg")
+    print(f"  Central pod       : {results.fuselage.W_fuselage_kg:.3f} kg")
+    print(f"  Twin booms        : {results.booms.total_mass_kg:.3f} kg")
+    print("  Landing gear      : 0.000 kg (not fitted)")
     if results.battery is not None:
         energy_mass = getattr(results.battery, "total_energy_system_mass_kg", results.battery.mass_kg)
         print(f"  Hybrid energy sys.: {energy_mass:.3f} kg")
@@ -94,6 +91,14 @@ def print_wing_results(results: DesignResults) -> None:
     print(f"  Rib spacing          : {s.rib_spacing_m*1000:.2f} mm")
     print(f"  Bending moment       : {s.bending_moment_Nm:.1f} N·m ({s.bending_moment_type})")
     print(f"  Torsion moment       : {s.torsion_Nm:.1f} N·m")
+    if getattr(w, "lift_thrust_per_motor_structural_N", 0.0) > 0.0:
+        print("  Lift-propulsor concentrated loads (one half-wing):")
+        print(f"    Structural thrust/motor : {w.lift_thrust_per_motor_structural_N:.2f} N")
+        print(f"    Thrust root moment      : {w.lift_thrust_root_moment_Nm_half:.2f} N·m")
+        print(f"    Weight root moment      : {w.lift_weight_root_moment_Nm_half:.2f} N·m")
+        print(f"    Shaft-reaction torque   : {w.lift_shaft_torque_Nm_half:.2f} N·m")
+        print(f"    Thrust-offset torsion   : {w.lift_offset_torsion_Nm_half:.2f} N·m")
+        print(f"    Motor-mount mass total  : {w.lift_mount_mass_total_kg:.3f} kg")
     print()
     print("Mass breakdown (both wings):")
     print(f"  Skin mass           : {s.W_skin_kg * 2:.3f} kg")
@@ -168,14 +173,15 @@ def print_vertical_tail_results(results: DesignResults) -> None:
     s = vt.structure
 
     print("Geometry:")
-    print(f"  Tail area S         : {g.area_m2:.3f} m²")
-    print(f"  Tail span b         : {g.span_m:.3f} m ({g.span_m*100:.1f} cm)")
+    print(f"  Area per fin        : {g.area_m2:.3f} m²")
+    print(f"  Total twin-fin area : {2.0*g.area_m2:.3f} m²")
+    print(f"  Height per fin      : {g.span_m:.3f} m ({g.span_m*100:.1f} cm)")
     print(f"  Aspect ratio AR     : {g.AR:.3f}")
     print(f"  Root chord c_root   : {g.c_root_m:.3f} m ({g.c_root_m*100:.1f} cm)")
     print(f"  Tip chord c_tip     : {g.c_tip_m:.3f} m ({g.c_tip_m*100:.1f} cm)")
     print(f"  Mean Geometric Chord: {g.c_MGC_m:.3f} m ({g.c_MGC_m*100:.1f} cm)")
     print(f"  Mean Aerodynamic Chord: {g.MAC_m:.3f} m ({g.MAC_m*100:.1f} cm)")
-    print(f"  MAC y-position      : {g.y_MAC_from_centerline_m:.3f} m from centerline")
+    print(f"  MAC height station  : {g.y_MAC_from_centerline_m:.3f} m from fin root")
     print(f"  AC on MAC           : {g.ac_on_MAC_m:.3f} m from LE")
     print(f"  AC x-position       : {vt.x_ac_tail_m:.3f} m")
     print(f"  Wetted area (drag)  : {vt.wetted_area_m2:.4f} m²")
@@ -507,88 +513,53 @@ def print_elevator_rod_results(results: DesignResults) -> None:
 
 
 def print_fuselage_results(results: DesignResults, inputs: DesignInputs) -> None:
-    print("=== FUSELAGE ===")
+    print("=== CENTRAL POD AND TWIN BOOMS ===")
     f = results.fuselage
+    b = results.booms
 
-    # Calculate inner diameter
-    fuselage_ID = inputs.fuselage_OD - 2 * f.t_shell_m
+    pod_inner_w = max(0.0, inputs.central_pod_width_m - 2.0 * f.t_shell_m)
+    pod_inner_h = max(0.0, inputs.central_pod_height_m - 2.0 * f.t_shell_m)
 
-    print("Geometry:")
-    print(f"  Length              : {inputs.fuselage_length:.3f} m ({inputs.fuselage_length*100:.1f} cm)")
-    print(f"  Outer diameter (OD) : {inputs.fuselage_OD:.3f} m ({inputs.fuselage_OD*100:.1f} cm)")
-    print(f"  Outer radius (OR)   : {inputs.fuselage_OR:.3f} m ({inputs.fuselage_OR*100:.1f} cm)")
+    print("Central pod geometry:")
+    print(f"  Length              : {inputs.central_pod_length_m:.3f} m")
+    print(f"  External width      : {inputs.central_pod_width_m:.3f} m")
+    print(f"  External height     : {inputs.central_pod_height_m:.3f} m")
     print(f"  Shell thickness     : {f.t_shell_m*1000:.3f} mm")
-    print(f"  Inner diameter (ID) : {fuselage_ID:.3f} m ({fuselage_ID*100:.1f} cm)")
-    print(f"  Inner radius (IR)   : {fuselage_ID/2:.3f} m ({fuselage_ID*100/2:.1f} cm)")
-    print(f"  Cross-sectional area: {inputs.fuselage_cs_area:.4f} m²")
-    print(f"  Wetted area (drag)  : {f.wetted_area_m2:.4f} m²")
+    print(f"  Approx. inner width : {pod_inner_w:.3f} m")
+    print(f"  Approx. inner height: {pod_inner_h:.3f} m")
+    print(f"  Pod + boom wetted area used in drag: {f.wetted_area_m2:.4f} m²")
     print()
-    print("Structure:")
-    print(f"  Shell thickness     : {f.t_shell_m*1000:.3f} mm")
-    print(f"  Fuselage mass       : {f.W_fuselage_kg:.3f} kg")
-    print("  Segment masses      :")
-    print(f"    Nose              : {getattr(f, 'W_fuselage_nose_kg', 0.0):.3f} kg")
-    print(f"    Section C         : {getattr(f, 'W_fuselage_section_C_kg', 0.0):.3f} kg")
-    print(f"    Section B         : {getattr(f, 'W_fuselage_section_B_kg', 0.0):.3f} kg")
-    print(f"    Section A         : {getattr(f, 'W_fuselage_section_A_kg', 0.0):.3f} kg")
-    print(f"    Tail              : {getattr(f, 'W_fuselage_tail_kg', 0.0):.3f} kg")
-    print(f"  Nose longeron boss height : {f.fuselage_nose_longeron_boss_height_m*1000:.3f} mm (OD/2 - skin - payload_L/2)")
-    # Mass breakdown (from fuselage structure estimation)
-    W_shell = getattr(f, "W_shell_kg", 0.0)
-    W_frames = getattr(f, "W_frames_total_kg", 0.0)
-    W_stringers = getattr(f, "W_stringers_total_kg", 0.0)
-    W_longerons = getattr(f, "W_longerons_total_kg", 0.0)
-    if W_shell > 0 or W_frames > 0 or W_stringers > 0 or W_longerons > 0:
-        print()
-        print("Mass breakdown (estimated structure):")
-        print(f"  Shell               : {W_shell:.3f} kg")
-        print(f"  Frames (total)      : {W_frames:.3f} kg")
-        print(f"  Stringers (total)   : {W_stringers:.3f} kg")
-        print(f"  Longerons (total)   : {W_longerons:.3f} kg")
-        T_design = getattr(f, "T_design_Nm", 0.0)
-        if T_design != 0:
-            print(f"  Design torsion      : {T_design:.3f} N·m")
-    # Frames, stringers, longerons layout
-    N_frames = getattr(f, "N_frames", 0.0)
-    if N_frames > 0:
-        print()
-        print("Frames:")
-        print(f"  N_frames            : {N_frames:.0f}")
-        print(f"  frame_spacing_m     : {getattr(f, 'frame_spacing_m', 0):.4f} m")
-        print(f"  frame_annulus_area  : {getattr(f, 'frame_annulus_area_mm2', 0):.2f} mm²")
-    N_stringers = getattr(f, "N_stringers", 0.0)
-    if N_stringers > 0:
-        print()
-        print("Stringers:")
-        print(f"  N_stringers         : {N_stringers:.0f}")
-        print(f"  stringer_spacing_m  : {getattr(f, 'stringer_spacing_m', 0):.4f} m")
-        print(f"  stringer_thickness_m: {getattr(f, 'stringer_thickness_m', 0):.5f} m ({getattr(f, 'stringer_thickness_m', 0)*1e3:.2f} mm)")
-        print(f"  stringer_height_m   : {getattr(f, 'stringer_height_m', 0):.5f} m ({getattr(f, 'stringer_height_m', 0)*1e3:.2f} mm)")
-        print(f"  stringer_area_one   : {getattr(f, 'stringer_area_one_mm2', 0):.2f} mm²")
-    N_longerons = getattr(f, "N_longerons", 0.0)
-    if N_longerons > 0:
-        print()
-        print("Longerons:")
-        print(f"  N_longerons         : {N_longerons:.0f}")
-        print(f"  longeron_OD_m       : {getattr(f, 'longeron_OD_m', 0):.5f} m ({getattr(f, 'longeron_OD_m', 0)*1e3:.2f} mm)")
-        print(f"  longeron_ID_m       : {getattr(f, 'longeron_ID_m', 0):.5f} m ({getattr(f, 'longeron_ID_m', 0)*1e3:.2f} mm)")
-        print(f"  longeron_A_one_mm2  : {getattr(f, 'longeron_A_one_mm2', 0):.2f} mm²")
-    # Panel check (compression + shear buckling)
-    sigma_x = getattr(f, "sigma_x_MPa", 0.0)
-    tau_xy = getattr(f, "tau_xy_MPa", 0.0)
-    if sigma_x != 0 or tau_xy != 0:
-        print()
-        print("Skin panel check (compression + shear buckling):")
-        print(f"  sigma_x_MPa         : {sigma_x:.2f} MPa")
-        print(f"  tau_xy_MPa          : {tau_xy:.2f} MPa")
-        print(f"  sigma_cr_MPa        : {getattr(f, 'sigma_cr_MPa', 0):.2f} MPa")
-        print(f"  tau_cr_MPa          : {getattr(f, 'tau_cr_MPa', 0):.2f} MPa")
-        print(f"  q_torsion_N_per_m   : {getattr(f, 'q_torsion_N_per_m', 0):.2f} N/m")
-        print(f"  panel_aspect_ratio  : {getattr(f, 'panel_aspect_ratio', 0):.2f} [-]")
-        print(f"  panel_interaction_index : {getattr(f, 'panel_interaction_index', 0):.3f} [-]")
-        print(f"  panel_comp_ok       : {getattr(f, 'panel_comp_ok', 0):.0f}")
-        print(f"  panel_shear_ok      : {getattr(f, 'panel_shear_ok', 0):.0f}")
-        print(f"  panel_interaction_ok: {getattr(f, 'panel_interaction_ok', 0):.0f}")
+
+    print("Central pod structure:")
+    print(f"  Total pod mass      : {f.W_fuselage_kg:.3f} kg")
+    print(f"  Printed shell       : {getattr(f, 'W_shell_kg', 0.0):.3f} kg")
+    print(f"  Frames              : {getattr(f, 'W_frames_total_kg', 0.0):.3f} kg")
+    print(f"  Wing carry-through  : {getattr(f, 'W_longerons_total_kg', 0.0):.3f} kg")
+    print(f"  Number of frames    : {getattr(f, 'N_frames', 0.0):.0f}")
+    print(f"  Frame spacing       : {getattr(f, 'frame_spacing_m', 0.0)*1000:.1f} mm")
+    print(f"  Shell bending stress: {getattr(f, 'sigma_x_MPa', 0.0):.2f} MPa")
+    print(f"  Shell shear stress  : {getattr(f, 'tau_xy_MPa', 0.0):.2f} MPa")
+    print(f"  Bending check       : {'PASS' if getattr(f, 'panel_comp_ok', 0.0) > 0.5 else 'REVIEW'}")
+    print(f"  Shear check         : {'PASS' if getattr(f, 'panel_shear_ok', 0.0) > 0.5 else 'REVIEW'}")
+    print()
+
+    print("Twin-boom structure:")
+    print(f"  Number of booms     : {inputs.n_booms}")
+    print(f"  Boom length         : {b.length_m:.3f} m")
+    print(f"  Sized OD / ID       : {b.outer_diameter_m*1000:.1f} / {b.inner_diameter_m*1000:.1f} mm")
+    print(f"  Tube mass           : {b.tube_mass_kg:.3f} kg")
+    print(f"  Mount mass          : {b.mount_mass_kg:.3f} kg")
+    print(f"  Tail crossmember    : {b.tail_crossmember_mass_kg:.3f} kg")
+    print(f"  Total boom system   : {b.total_mass_kg:.3f} kg")
+    print(f"  Cruise M/root boom  : {b.bending_moment_cruise_Nm_per_boom:.2f} N·m")
+    print(f"  VTOL M/root boom    : {b.bending_moment_vtol_Nm_per_boom:.2f} N·m")
+    print(f"  Design M/root boom  : {b.bending_moment_design_Nm_per_boom:.2f} N·m")
+    print(f"  Combined stress     : {b.combined_stress_MPa:.2f} MPa")
+    print(f"  Allowable stress    : {b.allowable_stress_MPa:.2f} MPa")
+    print(f"  Strength check      : {'PASS' if b.strength_ok else 'FAIL'}")
+    print(f"  Tip deflection      : {b.tip_deflection_mm:.2f} mm")
+    print()
+    print("Landing gear: not fitted; no landing-gear mass is included.")
     print()
 
 
@@ -1008,10 +979,53 @@ def print_rudder_results(results: DesignResults, inputs: DesignInputs) -> None:
     print()
 
 
+def print_drag_breakdown(results: DesignResults, inputs: DesignInputs) -> None:
+    print("=== CRUISE DRAG BUILD-UP ===")
+    db = results.drag_breakdown
+    if db is None:
+        print("No configuration drag breakdown is available.")
+        print()
+        return
+
+    print(f"Cruise speed                : {inputs.speed:.2f} m/s")
+    print(f"Dynamic pressure            : {db.dynamic_pressure_Pa:.1f} Pa")
+    print(f"Aircraft CD0 (wing ref.)    : {db.CD0_aircraft:.4f}")
+    print(f"Aircraft CD at cruise       : {db.CD_total_ref:.4f}")
+    print(f"Total cruise drag           : {db.total_N:.2f} N")
+    print(f"Overall L/D (weight/drag)   : {results.aircraft.W0_weight_N/max(db.total_N, 1e-9):.1f}")
+    print()
+    print("Component drag:")
+    rows = [
+        ("Main wing", db.wing_N),
+        ("Horizontal tailplane", db.horizontal_tail_N),
+        ("Two vertical fins", db.vertical_tails_N),
+        ("Central pod", db.central_pod_N),
+        ("Twin booms", db.twin_booms_N),
+        ("Lift-motor nacelles", db.lift_motor_nacelles_N),
+        ("Lift-motor supports", db.lift_motor_supports_N),
+        ("Stopped lift propellers", db.stopped_lift_propellers_N),
+        ("Fuel-cell cooling", db.fuel_cell_cooling_N),
+        ("Junction interference", db.junction_interference_N),
+        ("Miscellaneous", db.miscellaneous_N),
+    ]
+    for name, value in rows:
+        pct = 100.0 * value / max(db.total_N, 1e-9)
+        print(f"  {name:<27}: {value:7.3f} N  ({pct:5.1f}%)")
+    print()
+    print(f"Induced drag total          : {db.induced_total_N:.3f} N")
+    print(f"Parasite drag total         : {db.parasite_total_N:.3f} N")
+    print(f"Pod wetted area             : {db.pod_wetted_area_m2:.4f} m²")
+    print(f"Boom wetted area            : {db.booms_wetted_area_m2:.4f} m²")
+    print(f"Lift-prop drag area each    : {db.lift_prop_drag_area_each_m2:.5f} m²")
+    print(f"Lift-prop cruise state      : {inputs.lift_prop_cruise_state}")
+    print()
+
+
 def print_all_results(results: DesignResults, inputs: DesignInputs) -> None:
     """Print all results sections with error handling to ensure all sections print."""
     sections = [
         ("Design Summary", lambda: print_design_summary(results, inputs)),
+        ("Cruise Drag Build-up", lambda: print_drag_breakdown(results, inputs)),
         ("Mass Properties", lambda: print_mass_properties(results)),
         ("Wing Results", lambda: print_wing_results(results)),
         ("Wing Spar Results", lambda: print_wing_spar_results(results)),
@@ -1024,7 +1038,7 @@ def print_all_results(results: DesignResults, inputs: DesignInputs) -> None:
         ("Vertical Tail Results", lambda: print_vertical_tail_results(results)),
         ("Vertical Tail Spar Results", lambda: print_vertical_tail_spar_results(results)),
         ("Vertical Tail Stiffener Results", lambda: print_vertical_tail_stiffener_results(results, inputs)),
-        ("Fuselage Results", lambda: print_fuselage_results(results, inputs)),
+        ("Central Pod and Twin Booms", lambda: print_fuselage_results(results, inputs)),
         ("Propulsion Results", lambda: print_propulsion_results(results)),
         ("Battery Results", lambda: print_battery_results(results)),
         ("Avionics Results", lambda: print_avionics_results(results)),

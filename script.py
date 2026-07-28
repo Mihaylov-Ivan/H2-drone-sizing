@@ -30,8 +30,14 @@ from aerodynamics import (
     # vertical_wing_aerodynamic_coeffs,
     vertical_tail_aerodynamic_coeffs,
     effective_lifting_surface_wetted_area_m2,
+    configuration_cruise_drag,
 )
-from structures import calculate_wing_structure, calculate_tail_structure, calculate_fuselage_structure
+from structures import (
+    calculate_wing_structure,
+    calculate_tail_structure,
+    calculate_central_pod_structure,
+    calculate_twin_boom_structure,
+)
 from propulsion_system import (
     select_propulsion_system,
     calculate_component_masses,
@@ -55,6 +61,7 @@ from results import (
     # VerticalWingResults,
     VerticalTailResults,
     FuselageResults,
+    BoomResults,
     Geometry,
     Aerodynamics,
     Structure,
@@ -62,6 +69,7 @@ from results import (
     ManeuverResults,
     RudderResults,
     MassPropertiesResults,
+    DragBreakdownResults,
     build_cg_locations,
 )
 from reporting import print_all_results
@@ -184,43 +192,15 @@ def _fuselage_total_and_segments(
     inputs: DesignInputs,
     W_fuselage_calc: float,
 ) -> Tuple[float, float, float, float, float, float]:
+    """Compatibility wrapper for the new central-pod mass model.
+
+    The returned segment fields are retained because ``FuselageResults`` and the
+    CAD/export path still expect them.  The complete pod mass is placed in the
+    central wing/equipment bay (section B); CG accounting uses the single
+    ``cg_x_central_pod`` location rather than these legacy segment locations.
     """
-    Total fuselage mass and segment masses for CG: nose, section C, B, A, tail cone.
-
-    Segment masses are estimated from segment specific weights [kg/m] by default.
-    When use_hardcoded_values is True, any non-None fuselage segment hardcode overrides
-    only its corresponding segment mass (nose, section C, B, A, tail).
-    """
-    _ = W_fuselage_calc  # retained in signature for compatibility with existing call sites
-    # Hardcoded longerons are treated as an extra fuselage component mass.
-    # CG placement for this mass is handled inside _calculate_cg_position.
-    longeron_add = 0.0
-    if getattr(inputs, "use_hardcoded_values", False):
-        hard_longeron = getattr(inputs, "hardcode_fuselage_longeron_weight_kg", None)
-        if hard_longeron is not None:
-            longeron_add = 4.0 * float(hard_longeron)  # 4 longerons
-    w_total, wn, wc, wb, wa, wt = _fuselage_mass_from_specific_weights(inputs)
-    if getattr(inputs, "use_hardcoded_values", False):
-        Wn = getattr(inputs, "hardcode_fuselage_nose_weight_kg", None)
-        Wa = getattr(inputs, "hardcode_fuselage_A_weight_kg", None)
-        Wb = getattr(inputs, "hardcode_fuselage_B_weight_kg", None)
-        Wc = getattr(inputs, "hardcode_fuselage_C_weight_kg", None)
-        Wt = getattr(inputs, "hardcode_fuselage_tail_weight_kg", None)
-
-        if Wn is not None:
-            wn = float(Wn)
-        if Wc is not None:
-            wc = float(Wc)
-        if Wb is not None:
-            wb = float(Wb)
-        if Wa is not None:
-            wa = float(Wa)
-        if Wt is not None:
-            wt = float(Wt)
-
-        w_total = wn + wc + wb + wa + wt
-
-    return w_total + longeron_add, wn, wc, wb, wa, wt
+    w_total = max(0.0, float(W_fuselage_calc))
+    return w_total, 0.0, 0.0, w_total, 0.0, 0.0
 
 
 def _calculate_mass_properties(
@@ -230,6 +210,7 @@ def _calculate_mass_properties(
     W_body_section_B: float,
     W_body_section_A: float,
     W_fuselage_tail: float,
+    W_booms: float,
     W_tails: float,
     W_vertical_tails: float,
     component_masses: Dict[str, float],
@@ -249,7 +230,7 @@ def _calculate_mass_properties(
         tube_tail_secondary = float(getattr(inputs, "hardcode_elevator_rod_weight_kg", 0.0) or 0.0)
         tube_vertical_tail_primary = float(getattr(inputs, "hardcode_vertical_tail_wing_spar_weight_kg", 0.0) or 0.0)
         tube_vertical_tail_secondary = float(getattr(inputs, "hardcode_rudder_rod_weight_kg", 0.0) or 0.0)
-        longeron_add = 4.0 * float(getattr(inputs, "hardcode_fuselage_longeron_weight_kg", 0.0) or 0.0)
+        longeron_add = 0.0  # obsolete single-fuselage longerons are not used on the twin-boom pod
 
     c_MGC_wing = float(inputs.c_root) * (1.0 + float(inputs.taper_ratio)) / 2.0
     c_MGC_tail = float(inputs.tail_c_root) * (1.0 + float(inputs.tail_taper_ratio)) / 2.0
@@ -264,7 +245,17 @@ def _calculate_mass_properties(
     x_primary_vertical_tail = vertical_tail_le_x + 0.3 * c_MGC_tail
     x_secondary_vertical_tail = vertical_tail_le_x + 0.7 * c_MGC_tail
 
-    wing_other = max(0.0, W_wings - tube_wing_primary - tube_wing_secondary)
+    lift_mount_unit = (
+        float(getattr(inputs, "lift_motor_mount_mass_each_kg", 0.0))
+        * float(getattr(inputs, "lift_motor_mount_reinforcement_factor", 1.0))
+    )
+    lift_xs = [float(x) for x in inputs.lift_prop_x_positions_m]
+    x_mid = 0.5 * (min(lift_xs) + max(lift_xs)) if lift_xs else 0.0
+    n_mount_front = sum(1 for x in lift_xs if x <= x_mid)
+    n_mount_rear = len(lift_xs) - n_mount_front
+    W_mount_front = n_mount_front * lift_mount_unit
+    W_mount_rear = n_mount_rear * lift_mount_unit
+    wing_other = max(0.0, W_wings - tube_wing_primary - tube_wing_secondary - W_mount_front - W_mount_rear)
     tail_other = max(0.0, W_tails - tube_tail_primary - tube_tail_secondary)
     vertical_tail_other = max(0.0, W_vertical_tails - tube_vertical_tail_primary - tube_vertical_tail_secondary)
 
@@ -286,12 +277,11 @@ def _calculate_mass_properties(
     add("wing_structure", wing_other, inputs.cg_x_wing)
     add("wing_primary_spar", tube_wing_primary, x_primary_wing)
     add("wing_secondary_spar", tube_wing_secondary, x_secondary_wing)
-    add("fuselage_nose", W_nose, inputs.cg_x_nose)
-    add("fuselage_section_C", W_body_section_C, inputs.cg_x_body_section_C)
-    add("fuselage_section_B", W_body_section_B, inputs.cg_x_body_section_B)
-    add("fuselage_section_A", W_body_section_A, inputs.cg_x_body_section_A)
-    add("fuselage_tail", W_fuselage_tail, inputs.cg_x_fuselage_tail)
-    add("fuselage_longerons", longeron_add, 0.5 * float(inputs.fuselage_length))
+    add("lift_motor_mounts_front", W_mount_front, inputs.cg_x_lift_propulsion_front)
+    add("lift_motor_mounts_rear", W_mount_rear, inputs.cg_x_lift_propulsion_rear)
+    W_central_pod = W_nose + W_body_section_C + W_body_section_B + W_body_section_A + W_fuselage_tail + longeron_add
+    add("central_pod_structure", W_central_pod, inputs.cg_x_central_pod)
+    add("twin_boom_structure", W_booms, inputs.cg_x_booms)
     add("horizontal_tail_structure", tail_other, inputs.cg_x_tail)
     add("horizontal_tail_spar", tube_tail_primary, x_primary_tail)
     add("elevator_hinge_rod", tube_tail_secondary, x_secondary_tail)
@@ -373,6 +363,7 @@ def _calculate_cg_position(
     W_body_section_B: float,
     W_body_section_A: float,
     W_fuselage_tail: float,
+    W_booms: float,
     W_tails: float,
     W_vertical_tails: float,
     component_masses: Dict[str, float],
@@ -387,6 +378,7 @@ def _calculate_cg_position(
         W_body_section_B,
         W_body_section_A,
         W_fuselage_tail,
+        W_booms,
         W_tails,
         W_vertical_tails,
         component_masses,
@@ -399,6 +391,7 @@ def _calculate_wing_system(
     W0_N: float,
     L_tail: float,
     inputs: DesignInputs,
+    propulsion_selection: Optional[Dict[str, Any]] = None,
 ) -> Tuple[Geometry, Aerodynamics, Structure, float, float, float, Dict[str, float]]:
     """
     Calculate complete wing system (geometry, aerodynamics, structure).
@@ -446,23 +439,14 @@ def _calculate_wing_system(
         max_thickness_fraction=aero_wing['max_thickness_fraction_of_chord'],
         CM_max=aero_wing['CM_max'],
         inputs=inputs,
+        propulsion_selection=propulsion_selection,
     )
-    W_wings_specific = _mass_from_specific_weight(
-        float(b) - float(inputs.fuselage_OD) - 2.0 * float(inputs.fuselage_wing_interface_length),
-        float(getattr(inputs, "wing_specific_weight_kg_per_m", 0.0)),
-    )
-    W_wings = _get_hardcoded_value(inputs, 'hardcode_wing_weight_kg', W_wings_specific)
-    # Add hardcoded tube components into the total wing weight used for CG.
-    tube_secondary = 0.0
-    tube_primary = 0.0
-    if getattr(inputs, "use_hardcoded_values", False):
-        tube_secondary = float(getattr(inputs, "hardcode_wing_secondary_spar_weight_kg", 0.0) or 0.0)
-        tube_primary = float(getattr(inputs, "hardcode_wing_spar_weight_kg", 0.0) or 0.0)
-    W_wings_total = W_wings + tube_primary + tube_secondary
-
-    wing_structure.W_total_kg = W_wings_total / 2.0  # structure stores one lifting surface mass
-    wing_structure.W_spars_kg = tube_primary + tube_secondary
-    wing_spar_results["W_spar_kg"] = tube_primary + tube_secondary
+    # The structural calculation is now the default mass model.  The aggregate
+    # hardcode remains available for later CAD-measured mass replacement.
+    W_wings_calc = 2.0 * float(wing_structure.W_total_kg)
+    W_wings_total = _get_hardcoded_value(inputs, 'hardcode_wing_weight_kg', W_wings_calc)
+    if abs(W_wings_total - W_wings_calc) > 1e-12:
+        wing_structure.W_total_kg = W_wings_total / 2.0
 
     # Wing AC position
     wing_le_x = inputs.cg_x_wing - c_MGC / 2.0
@@ -597,20 +581,10 @@ def _calculate_tail_system(
         inputs=inputs,
         propulsion_selection=propulsion_selection,
     )
-    W_tails_specific = _mass_from_specific_weight(
-        float(b_tail_nom) - float(inputs.fuselage_OD) - 2.0 * float(inputs.fuselage_wing_interface_length),
-        float(getattr(inputs, "tail_wing_specific_weight_kg_per_m", 0.0)),
-    )
-    W_tails = _get_hardcoded_value(inputs, 'hardcode_tail_weight_kg', W_tails_specific)
-    # Add hardcoded spar tube masses into total tail weight for CG.
-    tube_tail_primary = 0.0
-    tube_tail_secondary = 0.0
-    if getattr(inputs, "use_hardcoded_values", False):
-        tube_tail_primary = float(getattr(inputs, "hardcode_tail_wing_spar_weight_kg", 0.0) or 0.0)
-        tube_tail_secondary = float(getattr(inputs, "hardcode_elevator_rod_weight_kg", 0.0) or 0.0)
-    W_tails_total = W_tails + tube_tail_primary + tube_tail_secondary
-    tail_structure.W_total_kg = W_tails_total / 2.0  # structure stores one tail surface mass
-    tail_spar_results["W_spar_kg"] = tube_tail_primary + tube_tail_secondary
+    W_tails_calc = 2.0 * float(tail_structure.W_total_kg)
+    W_tails_total = _get_hardcoded_value(inputs, 'hardcode_tail_weight_kg', W_tails_calc)
+    if abs(W_tails_total - W_tails_calc) > 1e-12:
+        tail_structure.W_total_kg = W_tails_total / 2.0
 
     geometry = Geometry(
         area_m2=S_tail_nom,
@@ -753,20 +727,10 @@ def _calculate_vertical_tail_system(
         spar_primary_weight_hardcode_attr="hardcode_vertical_tail_wing_spar_weight_kg",
         spar_secondary_weight_hardcode_attr="hardcode_rudder_rod_weight_kg",
     )
-    W_vertical_tails_specific = _mass_from_specific_weight(
-        float(b_v) - float(inputs.fuselage_OD) - 2.0 * float(inputs.fuselage_wing_interface_length),
-        float(getattr(inputs, "vertical_tail_wing_specific_weight_kg_per_m", 0.0)),
-    )
-    W_vertical_tails = _get_hardcoded_value(inputs, 'hardcode_vertical_tail_weight_kg', W_vertical_tails_specific)
-    # Add hardcoded spar tube masses into total vertical tail weight for CG.
-    tube_tail_primary = 0.0
-    tube_tail_secondary = 0.0
-    if getattr(inputs, "use_hardcoded_values", False):
-        tube_tail_primary = float(getattr(inputs, "hardcode_vertical_tail_wing_spar_weight_kg", 0.0) or 0.0)
-        tube_tail_secondary = float(getattr(inputs, "hardcode_rudder_rod_weight_kg", 0.0) or 0.0)
-    W_vertical_tails_total = W_vertical_tails + tube_tail_primary + tube_tail_secondary
-    vertical_tail_structure.W_total_kg = W_vertical_tails_total / 2.0  # Update structure object (stores weight for one tail)
-    vertical_tail_spar_results["W_spar_kg"] = tube_tail_primary + tube_tail_secondary
+    W_vertical_tails_calc = 2.0 * float(vertical_tail_structure.W_total_kg)
+    W_vertical_tails_total = _get_hardcoded_value(inputs, 'hardcode_vertical_tail_weight_kg', W_vertical_tails_calc)
+    if abs(W_vertical_tails_total - W_vertical_tails_calc) > 1e-12:
+        vertical_tail_structure.W_total_kg = W_vertical_tails_total / 2.0
 
     x_ac_vertical_tail = inputs.cg_x_vertical_tail - 0.5 * c_root + ac_on_MAC
 
@@ -776,7 +740,7 @@ def _calculate_vertical_tail_system(
         x_ac_vertical_tail_m=x_ac_vertical_tail,
         wing_span_m=wing_geometry_obj.span_m,
         wing_S_m2=wing_geometry_obj.area_m2,
-        vertical_tail_S_m2=Sv,
+        vertical_tail_S_m2=float(inputs.n_vertical_tail_surfaces) * Sv,
         a_v_per_rad=aero_vertical_tail["CL_alpha_3D_per_rad"],
         inputs=inputs,
     )
@@ -992,6 +956,7 @@ def _assemble_results(
     drag_cruise: float,
     cruise_power: float,
     cruise_power_elec: float,
+    drag_breakdown: Dict[str, float],
     wing_geometry: Geometry,
     wing_aerodynamics: Aerodynamics,
     wing_structure: Structure,
@@ -1022,6 +987,8 @@ def _assemble_results(
     W_fuselage_section_B: float,
     W_fuselage_section_A: float,
     W_fuselage_tail: float,
+    W_booms: float,
+    boom_details: Dict[str, float],
     battery_results: Optional[Any],
     propulsion_results: Optional[Any],
     avionics_results: AvionicsResults,
@@ -1037,7 +1004,9 @@ def _assemble_results(
         inputs, "hardcode_tail_wetted_area_m2", tail_geometry.area_m2
     )
     vertical_tail_wetted_m2 = effective_lifting_surface_wetted_area_m2(
-        inputs, "hardcode_vertical_tail_wetted_area_m2", vertical_tail_geometry.area_m2
+        inputs,
+        "hardcode_vertical_tail_wetted_area_m2",
+        float(inputs.n_vertical_tail_surfaces) * vertical_tail_geometry.area_m2,
     )
     fuselage_wetted_m2 = float(inputs.fuselage_wetted_area)
 
@@ -1082,6 +1051,12 @@ def _assemble_results(
         wing_spar_root_slope_rad=wing_spar_results.get("root_slope_rad", 0.0),
         wing_spar_root_slope_deg=wing_spar_results.get("root_slope_deg", 0.0),
         wetted_area_m2=wing_wetted_m2,
+        lift_mount_mass_total_kg=wing_spar_results.get("lift_mount_mass_total_kg", 0.0),
+        lift_thrust_per_motor_structural_N=wing_spar_results.get("lift_thrust_per_motor_structural_N", 0.0),
+        lift_weight_root_moment_Nm_half=wing_spar_results.get("lift_weight_root_moment_Nm_half", 0.0),
+        lift_thrust_root_moment_Nm_half=wing_spar_results.get("lift_thrust_root_moment_Nm_half", 0.0),
+        lift_shaft_torque_Nm_half=wing_spar_results.get("lift_shaft_torque_Nm_half", 0.0),
+        lift_offset_torsion_Nm_half=wing_spar_results.get("lift_offset_torsion_Nm_half", 0.0),
     )
 
     tail_results = TailResults(
@@ -1249,6 +1224,28 @@ def _assemble_results(
         panel_interaction_ok=fd.get("panel_interaction_ok", 0.0),
     )
 
+    bd = boom_details or {}
+    boom_results = BoomResults(
+        total_mass_kg=float(W_booms),
+        tube_mass_kg=bd.get("W_tubes_kg", 0.0),
+        mount_mass_kg=bd.get("W_mounts_kg", 0.0),
+        tail_crossmember_mass_kg=bd.get("W_tail_crossmember_kg", 0.0),
+        outer_diameter_m=bd.get("OD_m", float(inputs.boom_outer_diameter_m)),
+        inner_diameter_m=bd.get("ID_m", float(inputs.boom_inner_diameter_m)),
+        length_m=float(inputs.boom_length_m),
+        bending_moment_cruise_Nm_per_boom=bd.get("M_cruise_Nm_per_boom", 0.0),
+        bending_moment_vtol_Nm_per_boom=bd.get("M_vtol_Nm_per_boom", 0.0),
+        bending_moment_design_Nm_per_boom=bd.get("M_design_Nm_per_boom", 0.0),
+        pusher_axial_load_N_per_boom=bd.get("pusher_axial_N_per_boom", 0.0),
+        bending_stress_MPa=bd.get("sigma_bending_MPa", 0.0),
+        axial_stress_MPa=bd.get("sigma_axial_MPa", 0.0),
+        combined_stress_MPa=bd.get("sigma_combined_MPa", 0.0),
+        allowable_stress_MPa=bd.get("sigma_allow_MPa", 0.0),
+        strength_ok=bool(bd.get("strength_ok", 0.0) > 0.5),
+        tip_deflection_m=bd.get("tip_deflection_m", 0.0),
+        tip_deflection_mm=bd.get("tip_deflection_mm", 0.0),
+    )
+
     sm = _compute_static_margin(
         x_cg_m=x_cg,
         x_ac_wing_m=x_ac_wing,
@@ -1268,7 +1265,7 @@ def _assemble_results(
         x_ac_vertical_tail_m=x_ac_vertical_tail,
         wing_span_m=wing_geometry.span_m,
         wing_S_m2=wing_geometry.area_m2,
-        vertical_tail_S_m2=vertical_tail_geometry.area_m2,
+        vertical_tail_S_m2=float(inputs.n_vertical_tail_surfaces) * vertical_tail_geometry.area_m2,
         a_v_per_rad=vertical_tail_aerodynamics.CL_alpha_3D_per_rad,
         inputs=inputs,
     )
@@ -1291,6 +1288,7 @@ def _assemble_results(
     )
 
     mass_properties_results = MassPropertiesResults(**mass_properties)
+    drag_breakdown_results = DragBreakdownResults(**drag_breakdown)
 
     cg_locations = build_cg_locations(
         inputs,
@@ -1309,9 +1307,11 @@ def _assemble_results(
         # vertical_wing=vertical_wing_results,
         vertical_tail=vertical_tail_results,
         fuselage=fuselage_results,
+        booms=boom_results,
         battery=battery_results,
         propulsion=propulsion_results,
         avionics=avionics_results,
+        drag_breakdown=drag_breakdown_results,
         cg_locations=cg_locations,
         mass_properties=mass_properties_results,
         inputs=asdict(inputs),
@@ -1328,10 +1328,13 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
 
     W_tails = 0.0
     W_vertical_tails = 0.0
+    W_booms = 0.0
+    boom_details: Dict[str, float] = {}
     L_tail = 0.0
 
     S_tail = 0.0
     aero_tail_dict = {"CD_cruise": 0.0, "CM_cruise": 0.0}
+    drag_breakdown: Dict[str, float] = {}
     if getattr(inputs, "use_hardcoded_values", False) and getattr(inputs, "hardcode_tail_span", None) is not None:
         tail_span_for_props_m = float(inputs.hardcode_tail_span)
     else:
@@ -1370,6 +1373,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
         # vertical_wing_geom = vertical_wing_aero = vertical_wing_struct = None
         fuselage_t_shell = None
         fuselage_details: Dict[str, float] = {}
+        boom_details = {}
         tail_geom = tail_aero = tail_struct = None
         vertical_tail_geom = vertical_tail_aero = vertical_tail_struct = None
         x_ac_wing = None
@@ -1383,28 +1387,32 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
 
         # First: do a quick wing pass so we can estimate fuselage thickness for fuselage_ID
         wing_geom, wing_aero, wing_struct, x_ac_wing, wing_M_cg, W_wings, wing_spar_results = _calculate_wing_system(
-            W0_N, L_tail_inner, inputs
+            W0_N, L_tail_inner, inputs, propulsion_selection
         )
         # vertical_wing_geom, vertical_wing_aero, vertical_wing_struct, x_ac_vertical_wing, W_vertical_wings = _calculate_vertical_wing_system(
         #     wing_geom, inputs
         # )
-        fuselage_t_shell, W_fuselage_calc, fuselage_details = calculate_fuselage_structure(
+        fuselage_t_shell, W_fuselage_calc, fuselage_details = calculate_central_pod_structure(
             wing_struct.bending_moment_Nm,
             inputs,
         )
         W_fuselage, W_fn, W_fc, W_fb, W_fa, W_ft = _fuselage_total_and_segments(inputs, W_fuselage_calc)
-        fuselage_ID = inputs.fuselage_OD - 2 * fuselage_t_shell
-
-        # Drag estimate uses previous tail CD if we don’t have a tail yet
-        # VERTICAL MAIN WING REMOVED FOR NOW
-        # vertical_wing_CD_contribution = vertical_wing_aero.CD_cruise * (vertical_wing_geom.area_m2 / wing_geom.area_m2) if wing_geom.area_m2 > 0 else 0.0
-        vertical_wing_CD_contribution = 0.0
-        drag_cruise = (
-            q * wing_geom.area_m2 * (wing_aero.CD_cruise + vertical_wing_CD_contribution)
-            + q * S_tail * aero_tail_dict.get("CD_cruise", 0.0)
+        W_booms, boom_details = calculate_twin_boom_structure(
+            L_tail_inner, W_tails, W_vertical_tails, propulsion_selection, inputs
         )
+        fuselage_ID = min(inputs.central_pod_width_m, inputs.central_pod_height_m) - 2 * fuselage_t_shell
+
+        # Configuration-level drag build-up. The main-wing definition remains
+        # unchanged; this adds the pod, booms, inactive lift units and cooling drag.
+        drag_breakdown = configuration_cruise_drag(
+            wing_geometry=wing_geom,
+            wing_aerodynamics=wing_aero,
+            inputs=inputs,
+            propulsion_selection=propulsion_selection,
+        )
+        drag_cruise = float(drag_breakdown["total_N"])
         cruise_power = drag_cruise * inputs.speed
-        cruise_power_elec = cruise_power / inputs.propeller_efficiency
+        cruise_power_elec = cruise_power / inputs.cruise_propeller_efficiency
 
         # Select propulsion/battery/avionics based on current aero estimate
         battery_selection, propulsion_selection, avionics_selection = select_propulsion_system(
@@ -1419,8 +1427,8 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             tail_span_m=tail_span_for_props_m,
             wing_S_m2=wing_geom.area_m2,
             wing_AR=wing_geom.AR,
-            wing_CD0=wing_aero.CD0,
-            wing_CD_cruise=wing_aero.CD_cruise + vertical_wing_CD_contribution,
+            wing_CD0=drag_breakdown["CD0_aircraft"],
+            wing_CD_cruise=drag_breakdown["CD_total_ref"],
             S_tail_m2=S_tail,
             tail_CD_cruise=aero_tail_dict.get("CD_cruise", 0.0),
         )
@@ -1443,7 +1451,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
         for j in range(DESIGN.trim_inner_max_iter):
             # 1) Wing system with current L_tail guess
             wing_geom, wing_aero, wing_struct, x_ac_wing, wing_M_cg_tmp, W_wings, wing_spar_results = _calculate_wing_system(
-                W0_N, L_tail_inner, inputs
+                W0_N, L_tail_inner, inputs, propulsion_selection
             )
 
             # 2) Vertical wing & fuselage (depend on wing sizing)
@@ -1454,11 +1462,14 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             # VERTICAL MAIN WING REMOVED FOR NOW
             W_vertical_wings = 0.0
 
-            fuselage_t_shell, W_fuselage_calc, fuselage_details = calculate_fuselage_structure(
+            fuselage_t_shell, W_fuselage_calc, fuselage_details = calculate_central_pod_structure(
                 wing_struct.bending_moment_Nm,
                 inputs,
             )
             W_fuselage, W_fn, W_fc, W_fb, W_fa, W_ft = _fuselage_total_and_segments(inputs, W_fuselage_calc)
+            W_booms, boom_details = calculate_twin_boom_structure(
+                L_tail_inner, W_tails, W_vertical_tails, propulsion_selection, inputs
+            )
 
             # 3) Need CG -> depends on tail masses, but tail masses depend on tail sizing.
             # We start with current tail mass estimates (W_tails, W_vertical_tails),
@@ -1476,6 +1487,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             x_cg = _calculate_cg_position(
                 W_wings,
                 W_fn, W_fc, W_fb, W_fa, W_ft,
+                W_booms,
                 W_tails, W_vertical_tails,
                 component_masses,
                 avionics_selection, inputs
@@ -1517,26 +1529,26 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             vertical_tail_geom, vertical_tail_aero, vertical_tail_struct, x_ac_vertical_tail, W_vertical_tails, dir_stab_dict, vertical_tail_spar_results = _calculate_vertical_tail_system(
                 x_cg, wing_geom, inputs
             )
-
-            # --- Update propulsion sizing using the NEW tail span (prop clearance loop) ---
-            # VERTICAL MAIN WING REMOVED FOR NOW
-            # vertical_wing_CD_contribution = (
-            #     vertical_wing_aero.CD_cruise * (vertical_wing_geom.area_m2 / wing_geom.area_m2)
-            #     if wing_geom.area_m2 > 0 else 0.0
-            # )
-            vertical_tail_CD_contribution = (
-                vertical_tail_aero.CD_cruise * (vertical_tail_geom.area_m2 / wing_geom.area_m2)
-                if wing_geom.area_m2 > 0 else 0.0
+            W_booms, boom_details = calculate_twin_boom_structure(
+                L_tail_new, W_tails, W_vertical_tails, propulsion_selection, inputs
             )
 
-            drag_cruise_inner = (
-                q * wing_geom.area_m2 * (wing_aero.CD_cruise + vertical_wing_CD_contribution + vertical_tail_CD_contribution)
-                + q * S_tail * aero_tail_dict.get("CD_cruise", 0.0)
+            # Update propulsion using the complete twin-boom configuration drag.
+            drag_breakdown_inner = configuration_cruise_drag(
+                wing_geometry=wing_geom,
+                wing_aerodynamics=wing_aero,
+                tail_geometry=tail_geom,
+                tail_aerodynamics=tail_aero,
+                vertical_tail_geometry=vertical_tail_geom,
+                vertical_tail_aerodynamics=vertical_tail_aero,
+                inputs=inputs,
+                propulsion_selection=propulsion_selection,
             )
+            drag_cruise_inner = float(drag_breakdown_inner["total_N"])
             cruise_power_inner = drag_cruise_inner * inputs.speed
-            cruise_power_elec_inner = cruise_power_inner / inputs.propeller_efficiency
+            cruise_power_elec_inner = cruise_power_inner / inputs.cruise_propeller_efficiency
 
-            fuselage_ID = inputs.fuselage_OD - 2 * fuselage_t_shell
+            fuselage_ID = min(inputs.central_pod_width_m, inputs.central_pod_height_m) - 2 * fuselage_t_shell
 
             battery_selection, propulsion_selection, avionics_selection = select_propulsion_system(
                 drag_cruise_inner,
@@ -1550,8 +1562,8 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
                 tail_span_m=tail_span_for_props_m,
                 wing_S_m2=wing_geom.area_m2,
                 wing_AR=wing_geom.AR,
-                wing_CD0=wing_aero.CD0,
-                wing_CD_cruise=wing_aero.CD_cruise + vertical_wing_CD_contribution + vertical_tail_CD_contribution,
+                wing_CD0=drag_breakdown_inner["CD0_aircraft"],
+                wing_CD_cruise=drag_breakdown_inner["CD_total_ref"],
                 S_tail_m2=S_tail,
                 tail_CD_cruise=aero_tail_dict.get("CD_cruise", 0.0),
             )
@@ -1565,6 +1577,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             W_battery = float(component_masses["energy_system_total_kg"])
             W_propulsion = float(component_masses["propulsion_total_kg"])
             W_avionics = float(component_masses["avionics_total_kg"])
+            drag_breakdown = drag_breakdown_inner
 
             # Convergence check on L_tail
             dL = abs(L_tail_new - L_tail_inner)
@@ -1597,21 +1610,23 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
         # End of INNER LOOP: now we have consistent wing<->CG<->tail for this W0
         # ---------------------------------------------------------------------
 
-        # With final aero (including tail), recompute cruise drag/power for reporting
-        # VERTICAL MAIN WING REMOVED FOR NOW
-        # vertical_wing_CD_contribution = vertical_wing_aero.CD_cruise * (vertical_wing_geom.area_m2 / wing_geom.area_m2)
-        vertical_wing_CD_contribution = 0.0
-        vertical_tail_CD_contribution = vertical_tail_aero.CD_cruise * (vertical_tail_geom.area_m2 / wing_geom.area_m2)
-
-        drag_cruise = (
-            q * wing_geom.area_m2 * (wing_aero.CD_cruise + vertical_wing_CD_contribution + vertical_tail_CD_contribution)
-            + q * S_tail * aero_tail_dict.get("CD_cruise", 0.0)
+        # With final aero (including both fins), recompute complete cruise drag.
+        drag_breakdown = configuration_cruise_drag(
+            wing_geometry=wing_geom,
+            wing_aerodynamics=wing_aero,
+            tail_geometry=tail_geom,
+            tail_aerodynamics=tail_aero,
+            vertical_tail_geometry=vertical_tail_geom,
+            vertical_tail_aerodynamics=vertical_tail_aero,
+            inputs=inputs,
+            propulsion_selection=propulsion_selection,
         )
+        drag_cruise = float(drag_breakdown["total_N"])
         cruise_power = drag_cruise * inputs.speed
-        cruise_power_elec = cruise_power / inputs.propeller_efficiency
+        cruise_power_elec = cruise_power / inputs.cruise_propeller_efficiency
 
         # Update propulsion selection (optional but recommended) now that tail is consistent
-        fuselage_ID = inputs.fuselage_OD - 2 * fuselage_t_shell
+        fuselage_ID = min(inputs.central_pod_width_m, inputs.central_pod_height_m) - 2 * fuselage_t_shell
         battery_selection, propulsion_selection, avionics_selection = select_propulsion_system(
             drag_cruise,
             cruise_power,
@@ -1624,8 +1639,8 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             tail_span_m=tail_span_for_props_m,
             wing_S_m2=wing_geom.area_m2,
             wing_AR=wing_geom.AR,
-            wing_CD0=wing_aero.CD0,
-            wing_CD_cruise=wing_aero.CD_cruise + vertical_wing_CD_contribution + vertical_tail_CD_contribution,
+            wing_CD0=drag_breakdown["CD0_aircraft"],
+            wing_CD_cruise=drag_breakdown["CD_total_ref"],
             S_tail_m2=S_tail,
             tail_CD_cruise=aero_tail_dict.get("CD_cruise", 0.0),
         )
@@ -1639,10 +1654,24 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
         W_propulsion = float(component_masses["propulsion_total_kg"])
         W_avionics = float(component_masses["avionics_total_kg"])
 
+        # Re-run the structural masses with the final lift/cruise selections for
+        # this outer iteration so concentrated motor loads are not one pass stale.
+        wing_geom, wing_aero, wing_struct, x_ac_wing, wing_M_cg_tmp, W_wings, wing_spar_results = _calculate_wing_system(
+            W0_N, L_tail, inputs, propulsion_selection
+        )
+        fuselage_t_shell, W_fuselage_calc, fuselage_details = calculate_central_pod_structure(
+            wing_struct.bending_moment_Nm, inputs
+        )
+        W_fuselage, W_fn, W_fc, W_fb, W_fa, W_ft = _fuselage_total_and_segments(inputs, W_fuselage_calc)
+        W_booms, boom_details = calculate_twin_boom_structure(
+            L_tail, W_tails, W_vertical_tails, propulsion_selection, inputs
+        )
+
         # Recompute take-off/end-of-mission mass properties with the final selections.
         mass_properties_current = _calculate_mass_properties(
             W_wings,
             W_fn, W_fc, W_fb, W_fa, W_ft,
+            W_booms,
             W_tails, W_vertical_tails,
             component_masses,
             avionics_selection,
@@ -1674,6 +1703,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
     mass_properties_final = _calculate_mass_properties(
         W_wings,
         W_fn, W_fc, W_fb, W_fa, W_ft,
+        W_booms,
         W_tails, W_vertical_tails,
         component_masses,
         avionics_selection,
@@ -1710,6 +1740,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
         drag_cruise=drag_cruise,
         cruise_power=cruise_power,
         cruise_power_elec=cruise_power_elec,
+        drag_breakdown=drag_breakdown,
         wing_geometry=wing_geom,
         wing_aerodynamics=wing_aero,
         wing_structure=wing_struct,
@@ -1741,6 +1772,8 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
         W_fuselage_section_B=W_fb,
         W_fuselage_section_A=W_fa,
         W_fuselage_tail=W_ft,
+        W_booms=W_booms,
+        boom_details=boom_details,
         battery_results=battery_results,
         propulsion_results=propulsion_results,
         avionics_results=avionics_results,
@@ -1864,7 +1897,7 @@ if __name__ == "__main__":
     rud_deriv = rudder_control_derivatives(
         wing_S_m2=results.wing.geometry.area_m2,
         wing_span_m=results.wing.geometry.span_m,
-        vertical_tail_S_m2=results.vertical_tail.geometry.area_m2,
+        vertical_tail_S_m2=float(inputs.n_vertical_tail_surfaces) * results.vertical_tail.geometry.area_m2,
         vertical_tail_AR=results.vertical_tail.geometry.AR,
         x_cg_m=results.aircraft.x_cg_m,
         x_ac_vertical_tail_m=results.vertical_tail.x_ac_tail_m,
@@ -1888,7 +1921,7 @@ if __name__ == "__main__":
     vt_struct_args = dict(
         l_v_m=rud_deriv["l_v_m"],
         vertical_tail_structure=vt_struct,
-        vertical_tail_S_m2=vt_geom.area_m2,
+        vertical_tail_S_m2=float(inputs.n_vertical_tail_surfaces) * vt_geom.area_m2,
         vt_span_m=vt_geom.span_m,
         vt_c_root_m=vt_geom.c_root_m,
         vt_taper_ratio=getattr(inputs, "tail_taper_ratio", 1.0),
@@ -1921,7 +1954,7 @@ if __name__ == "__main__":
     rud_deriv_spin = rudder_control_derivatives(
         wing_S_m2=results.wing.geometry.area_m2,
         wing_span_m=results.wing.geometry.span_m,
-        vertical_tail_S_m2=results.vertical_tail.geometry.area_m2,
+        vertical_tail_S_m2=float(inputs.n_vertical_tail_surfaces) * results.vertical_tail.geometry.area_m2,
         vertical_tail_AR=results.vertical_tail.geometry.AR,
         x_cg_m=results.aircraft.x_cg_m,
         x_ac_vertical_tail_m=results.vertical_tail.x_ac_tail_m,

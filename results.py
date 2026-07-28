@@ -108,6 +108,13 @@ class WingResults:
     wing_spar_root_slope_rad: float = 0.0
     wing_spar_root_slope_deg: float = 0.0
     wetted_area_m2: float = 0.0  # wetted area [m²] used in cruise drag (2×S est. or hardcoded)
+    # Concentrated lift-propulsor structural loads (one half-wing moments).
+    lift_mount_mass_total_kg: float = 0.0
+    lift_thrust_per_motor_structural_N: float = 0.0
+    lift_weight_root_moment_Nm_half: float = 0.0
+    lift_thrust_root_moment_Nm_half: float = 0.0
+    lift_shaft_torque_Nm_half: float = 0.0
+    lift_offset_torsion_Nm_half: float = 0.0
 
 
 @dataclass
@@ -186,7 +193,7 @@ class TailResults:
     tail_spar_tip_deflection_mm: float = 0.0
     tail_spar_root_slope_rad: float = 0.0
     tail_spar_root_slope_deg: float = 0.0
-    wetted_area_m2: float = 0.0  # one horizontal tail panel; drag model ref [m²]
+    wetted_area_m2: float = 0.0  # complete horizontal tailplane wetted area [m²]
 
 
 @dataclass
@@ -242,7 +249,7 @@ class VerticalTailResults:
     vertical_tail_spar_tip_deflection_mm: float = 0.0
     vertical_tail_spar_root_slope_rad: float = 0.0
     vertical_tail_spar_root_slope_deg: float = 0.0
-    wetted_area_m2: float = 0.0  # one vertical tail panel; drag model ref [m²]
+    wetted_area_m2: float = 0.0  # total wetted area of both vertical fins [m²]
 
 
 @dataclass
@@ -289,6 +296,30 @@ class FuselageResults:
     panel_comp_ok: float = 0.0
     panel_shear_ok: float = 0.0
     panel_interaction_ok: float = 0.0
+
+
+@dataclass
+class BoomResults:
+    """Twin-boom primary structure and load-check results."""
+    total_mass_kg: float
+    tube_mass_kg: float
+    mount_mass_kg: float
+    tail_crossmember_mass_kg: float
+    outer_diameter_m: float
+    inner_diameter_m: float
+    length_m: float
+    bending_moment_cruise_Nm_per_boom: float
+    bending_moment_vtol_Nm_per_boom: float
+    bending_moment_design_Nm_per_boom: float
+    pusher_axial_load_N_per_boom: float
+    bending_stress_MPa: float
+    axial_stress_MPa: float
+    combined_stress_MPa: float
+    allowable_stress_MPa: float
+    strength_ok: bool
+    tip_deflection_m: float
+    tip_deflection_mm: float
+
 
 
 @dataclass
@@ -444,6 +475,7 @@ class CgLocations:
     cg_x_lift_esc_rear: float
     cg_x_cruise_esc: float
     cg_x_booms: float
+    cg_x_central_pod: float
     cg_x_landing_gear: float
     wing_le_x_m: float
     tail_le_x_m: float
@@ -499,6 +531,32 @@ class MassPropertiesResults:
     hydrogen_takeoff_kg: float = 0.0
     hydrogen_end_kg: float = 0.0
 
+
+
+@dataclass
+class DragBreakdownResults:
+    """Configuration-level cruise drag build-up."""
+    dynamic_pressure_Pa: float
+    wing_N: float
+    horizontal_tail_N: float
+    vertical_tails_N: float
+    central_pod_N: float
+    twin_booms_N: float
+    lift_motor_nacelles_N: float
+    lift_motor_supports_N: float
+    stopped_lift_propellers_N: float
+    fuel_cell_cooling_N: float
+    miscellaneous_N: float
+    junction_interference_N: float
+    induced_total_N: float
+    parasite_total_N: float
+    total_N: float
+    CD0_aircraft: float
+    CD_total_ref: float
+    pod_wetted_area_m2: float
+    booms_wetted_area_m2: float
+    lift_prop_drag_area_each_m2: float
+    number_of_vertical_fins: float
 
 
 @dataclass
@@ -610,9 +668,11 @@ class DesignResults:
     # vertical_wing: VerticalWingResults
     vertical_tail: VerticalTailResults
     fuselage: FuselageResults
+    booms: BoomResults
     battery: Optional[BatteryResults]
     propulsion: Optional[PropulsionResults]
     avionics: AvionicsResults
+    drag_breakdown: Optional[DragBreakdownResults] = None
     maneuver: Optional[ManeuverResults] = None
     rudder: Optional[RudderResults] = None
     cg_locations: Optional[CgLocations] = None
@@ -628,6 +688,21 @@ class DesignResults:
         result['W0_weight_N'] = self.aircraft.W0_weight_N
         result['L_wing_N'] = self.aircraft.L_wing_N
         result['x_cg_m'] = self.aircraft.x_cg_m
+        result['W_booms_kg'] = self.booms.total_mass_kg
+        result['boom_OD_m'] = self.booms.outer_diameter_m
+        result['boom_ID_m'] = self.booms.inner_diameter_m
+        result['boom_strength_ok'] = self.booms.strength_ok
+        if self.drag_breakdown is not None:
+            db = self.drag_breakdown
+            result['drag_cruise_N'] = db.total_N
+            result['CD0_aircraft'] = db.CD0_aircraft
+            result['CD_total_ref'] = db.CD_total_ref
+            result['drag_wing_N'] = db.wing_N
+            result['drag_horizontal_tail_N'] = db.horizontal_tail_N
+            result['drag_vertical_tails_N'] = db.vertical_tails_N
+            result['drag_central_pod_N'] = db.central_pod_N
+            result['drag_twin_booms_N'] = db.twin_booms_N
+            result['drag_stopped_lift_propellers_N'] = db.stopped_lift_propellers_N
         if self.cg_locations is not None:
             cg = self.cg_locations
             result['x_cg_over_fuselage_length'] = cg.x_cg_over_fuselage_length
@@ -650,6 +725,8 @@ class DesignResults:
             result['cg_x_lift_esc_front'] = cg.cg_x_lift_esc_front
             result['cg_x_lift_esc_rear'] = cg.cg_x_lift_esc_rear
             result['cg_x_cruise_esc'] = cg.cg_x_cruise_esc
+            result['cg_x_booms'] = cg.cg_x_booms
+            result['cg_x_central_pod'] = cg.cg_x_central_pod
             result['cg_x_booms'] = cg.cg_x_booms
             result['cg_x_landing_gear'] = cg.cg_x_landing_gear
             result['cg_x_autopilot'] = cg.cg_x_autopilot

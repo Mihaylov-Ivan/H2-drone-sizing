@@ -55,8 +55,36 @@ class DesignInputs:
     boom_x_start_m: float = 0.34
     boom_x_end_m: float = 1.10
     boom_specific_mass_kg_per_m: float = 0.13
+    boom_auto_size: bool = True
+    boom_bending_safety_factor: float = 1.5
+    boom_forward_mount_mass_each_kg: float = 0.055
+    boom_tail_mount_mass_each_kg: float = 0.035
+    tail_crossmember_mass_kg: float = 0.080
+    hardcode_boom_mass_total_kg: Optional[float] = None
+
+    # Central pod structure: printed shell + frames + wing carry-through fittings.
+    central_pod_min_shell_thickness_m: float = 0.0012
+    central_pod_frame_spacing_m: float = 0.12
+    central_pod_frame_axial_thickness_m: float = 0.004
+    central_pod_frame_ring_width_m: float = 0.012
+    central_pod_wing_carrythrough_mass_kg: float = 0.16
+    central_pod_nonstructural_factor: float = 1.15
+    central_pod_bending_load_fraction: float = 0.25
+    central_pod_design_torsion_fraction: float = 0.20
+    hardcode_central_pod_mass_kg: Optional[float] = None
+
+    # Lift-motor mounts and structural load path.
+    lift_motor_mount_mass_each_kg: float = 0.045
+    lift_motor_mount_reinforcement_factor: float = 1.15
+    lift_motor_max_thrust_fraction_for_structure: float = 1.0
+    wing_primary_spar_chord_fraction: float = 0.30
+    use_lift_motor_loads_in_wing_structure: bool = True
+
     wing_z_above_cg_m: float = 0.10
     tailplane_z_above_cg_m: float = 0.03
+
+    # No landing gear is fitted; take-off and recovery are VTOL.
+    landing_gear_enabled: bool = False
 
     # Four dedicated vertical-lift units. Coordinates are aircraft axes:
     # x from nose, y from centreline (left negative), z positive upwards.
@@ -71,9 +99,47 @@ class DesignInputs:
     cruise_prop_z_m: float = 0.02
     cruise_prop_is_pusher: bool = True
 
-    # Surface-count factors used later in geometry, mass and drag accounting.
-    # The current code assumes two horizontal tail panels; that assumption will
-    # be replaced with n_horizontal_tail_surfaces in the structure/reporting step.
+    # =========================================================
+    # CONFIGURATION AERODYNAMICS / CRUISE-DRAG BUILD-UP
+    # =========================================================
+    # Step 5 deliberately preserves the current main-wing planform and the
+    # current NACA 2410 polar. Change the wing later through the existing
+    # wing_loading, c_root, taper_ratio, hardcode_wing_span and airfoil fields.
+    preserve_current_wing_definition: bool = True
+    wing_CLmax_3D_factor: float = 0.95
+    tail_CLmax_3D_factor: float = 0.90
+
+    # Printed surfaces generally have more skin-friction drag than smooth
+    # moulded/composite surfaces. Set to 1.0 for a smooth reference finish.
+    printed_surface_drag_multiplier: float = 1.15
+    body_laminar_fraction: float = 0.05
+
+    # Central pod and boom aerodynamic form/interference factors.
+    central_pod_cross_section_form_factor: float = 1.10
+    central_pod_interference_factor: float = 1.05
+    boom_interference_factor: float = 1.10
+    hardcode_central_pod_wetted_area_m2: Optional[float] = None
+
+    # Drag of the four inactive vertical-lift units during wing-borne cruise.
+    # Supported states: folded, stopped_aligned, stopped_random, windmilling.
+    lift_prop_cruise_state: str = "stopped_aligned"
+    lift_prop_blade_count: int = 2
+    lift_prop_mean_blade_chord_ratio: float = 0.08
+    lift_prop_blade_section_CD: float = 1.10
+    lift_prop_drag_area_factor: float = 0.15
+    lift_prop_equivalent_drag_area_each_m2: Optional[float] = None
+
+    # Motor nacelle and support drag. support_CdA is an equivalent drag area.
+    lift_motor_nacelle_diameter_m: float = 0.055
+    lift_motor_nacelle_CD: float = 0.80
+    lift_motor_support_CdA_each_m2: float = 0.0010
+
+    # Fuel-cell cooling openings and miscellaneous exposed hardware, as CdA.
+    fuel_cell_cooling_CdA_m2: float = 0.0025
+    miscellaneous_CdA_m2: float = 0.0015
+    configuration_junction_CD0: float = 0.0040
+
+    # Surface counts are explicit: one continuous horizontal tailplane and two fins.
     
     export_inventor_xml: bool = True
 
@@ -508,16 +574,18 @@ class DesignInputs:
     })
 
     hardcode_lift_propulsion: Optional[Dict[str, Any]] = field(default_factory=lambda: {
-        "name": "MAD_4014_370kV_15x5_6S_placeholder",
+        # Provisional only: increased from the earlier 15-inch placeholder because
+        # the converged twin-boom model requires roughly 46 N and 1.1 kW per lift unit.
+        "name": "Placeholder_5015_370kV_18x6_6S",
         "motor_kv": 370,
         "voltage_min_V": 18.0,
         "voltage_max_V": 25.2,
-        "max_power_W": 500.0,
-        "max_thrust_N": 28.0,
-        "prop_diameter_in": 15.0,
-        "prop_pitch_in": 5.0,
-        "motor_mass_kg": 0.142,
-        "prop_mass_kg": 0.035,
+        "max_power_W": 1600.0,
+        "max_thrust_N": 55.0,
+        "prop_diameter_in": 18.0,
+        "prop_pitch_in": 6.0,
+        "motor_mass_kg": 0.220,
+        "prop_mass_kg": 0.055,
     })
 
     hardcode_cruise_propulsion: Optional[Dict[str, Any]] = field(default_factory=lambda: {
@@ -700,8 +768,10 @@ class DesignInputs:
     cg_x_lift_esc_rear: float = 0.0
     cg_x_cruise_esc: float = 0.0
     cg_x_booms: float = 0.0
+    cg_x_central_pod: float = 0.0
+    # Kept only as compatibility aliases. No landing-gear mass enters the model.
     cg_x_landing_gear: float = 0.0
-    landing_gear_mass_kg: float = 0.18
+    landing_gear_mass_kg: float = 0.0
 
     # --- Derived fuselage geometry (computed in __post_init__) ---
     fuselage_OR: float = 0.0
@@ -736,6 +806,13 @@ class DesignInputs:
         if self.n_vertical_tail_surfaces != 2:
             raise ValueError("This baseline assumes two vertical fins, one on each boom.")
 
+        valid_prop_states = {"folded", "stopped_aligned", "stopped_random", "windmilling"}
+        if str(self.lift_prop_cruise_state).strip().lower() not in valid_prop_states:
+            raise ValueError(
+                "lift_prop_cruise_state must be one of: "
+                + ", ".join(sorted(valid_prop_states))
+            )
+
         # Fuel-cell and hydrogen derived quantities.
         self.fuel_cell_system_mass_kg = (
             float(self.fuel_cell_stack_mass_kg)
@@ -760,12 +837,28 @@ class DesignInputs:
         if self.hardcode_buffer_battery is not None:
             self.hardcode_battery = dict(self.hardcode_buffer_battery)
 
-        # Derived fuselage geometry
+        # Derived central-pod / twin-boom reference geometry.
+        # Legacy circular-fuselage quantities are retained as equivalent values for
+        # modules that have not yet been migrated.
         self.fuselage_OR = float(self.fuselage_OD) / 2.0
         self.fuselage_cs_area = math.pi * self.fuselage_OR**2
         self.fuselage_cs_perimeter = 2.0 * math.pi * self.fuselage_OR
         self.fuselage_shell_area_moment_of_inertia = math.pi * self.fuselage_OR**3
-        self.fuselage_wetted_area = math.pi * float(self.fuselage_OD) * float(self.fuselage_length)
+
+        pod_box_area = 2.0 * (
+            float(self.central_pod_length_m) * float(self.central_pod_width_m)
+            + float(self.central_pod_length_m) * float(self.central_pod_height_m)
+            + float(self.central_pod_width_m) * float(self.central_pod_height_m)
+        )
+        # Rounded/nose-taper correction for the pod, plus cylindrical boom wetted area.
+        pod_wetted = 0.82 * pod_box_area
+        booms_wetted = (
+            int(self.n_booms)
+            * math.pi
+            * float(self.boom_outer_diameter_m)
+            * float(self.boom_length_m)
+        )
+        self.fuselage_wetted_area = pod_wetted + booms_wetted
         if self.use_hardcoded_values:
             hc_sw = self.hardcode_fuselage_wetted_area_m2
             if hc_sw is not None:
@@ -883,7 +976,10 @@ class DesignInputs:
         set_if_zero("cg_x_lift_esc_rear", self.cg_x_lift_propulsion_rear)
         set_if_zero("cg_x_cruise_esc", 0.82)  # provisional: aft equipment bay, ahead of pusher motor
         set_if_zero("cg_x_booms", 0.5 * (self.boom_x_start_m + self.boom_x_end_m))
-        set_if_zero("cg_x_landing_gear", 0.48)
+        set_if_zero("cg_x_central_pod", 0.5 * self.central_pod_length_m)
+        # Compatibility field only; there is no landing gear.
+        set_if_zero("cg_x_landing_gear", self.cg_x_central_pod)
+        self.landing_gear_mass_kg = 0.0
 
         def _check_span_segment(name: str, a: float, b: float) -> None:
             if not (0.0 <= a <= 1.0 and 0.0 <= b <= 1.0):
@@ -935,6 +1031,7 @@ CG_X_COMPONENT_FIELDS = (
     "cg_x_lift_esc_rear",
     "cg_x_cruise_esc",
     "cg_x_booms",
+    "cg_x_central_pod",
     "cg_x_landing_gear",
 )
 

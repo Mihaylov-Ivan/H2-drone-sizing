@@ -151,10 +151,9 @@ def tail_geometry(x_cg: float, MAC_wing: float, S_wing: float, inputs: DesignInp
     b = 2.0 * S / (c_root * (1.0 + lam))
     c_tip = lam * c_root
 
-    # Add fuselage OD to span (spar passes through fuselage); all estimates use extended span
-    fuselage_OD = float(getattr(inputs, "fuselage_OD", 0.0))
-    b = b + fuselage_OD
-
+    # Twin-boom configuration: the horizontal tailplane is one continuous surface.
+    # The volume-coefficient area already represents the full planform, so no
+    # central-fuselage diameter is added to its span.
     if inputs.tail_span_extension_m > 0.0:
         b = b + float(inputs.tail_span_extension_m)
 
@@ -172,12 +171,11 @@ def vertical_tail_geometry(
     inputs: DesignInputs,
 ) -> Tuple[float, float, float, float, float, float, float, float, float]:
     """
-    Size vertical tail from vertical tail volume coefficient:
-      Vv = (Sv * l_vt) / (S_w * b_w)
-      => Sv = Vv * S_w * b_w / l_vt
+    Size the twin vertical tails from the total vertical-tail volume coefficient:
+      Vv = (Sv_total * l_vt) / (S_w * b_w)
 
-    Uses same planform inputs as horizontal tail (tail_c_root, tail_taper_ratio),
-    and assumes x-position set by inputs.cg_x_vertical_tail (as requested).
+    The returned geometry is for ONE fin. Total area and drag are obtained by
+    multiplying by inputs.n_vertical_tail_surfaces.
     """
     lam = float(inputs.tail_taper_ratio)
     c_root = float(inputs.tail_c_root)
@@ -196,44 +194,37 @@ def vertical_tail_geometry(
             "Vertical tail volume coefficient undefined for this geometry."
         )
 
-    # Fixed vertical tail span: same convention as computed span (full physical span b_v [m]).
-    # Area follows from trapezoid (c_root, taper); vertical_tail_volume_ratio does not set span.
+    n_fins = max(1, int(getattr(inputs, "n_vertical_tail_surfaces", 2)))
+
+    # A hardcoded vertical-tail span is interpreted as the height of ONE fin.
     if getattr(inputs, "use_hardcoded_values", False):
         hc_span = getattr(inputs, "hardcode_vertical_tail_span", None)
         if hc_span is not None:
             b_v = float(hc_span)
             c_tip = lam * c_root
-            Sv = b_v * (c_root + c_tip) / 2.0
-            AR = b_v**2 / Sv if Sv > 0 else 0.0
-            y_MAC = (b_v / 6.0) * (1.0 + 2.0 * lam) / (1.0 + lam)
-            c_MGC = Sv / b_v if b_v > 0 else 0.0
-            return Sv, b_v, c_root, c_tip, MAC, y_MAC, AR, c_MGC, ac_on_MAC
+            Sv_fin = b_v * (c_root + c_tip) / 2.0
+            AR = b_v**2 / Sv_fin if Sv_fin > 0 else 0.0
+            y_MAC = (b_v / 3.0) * (1.0 + 2.0 * lam) / (1.0 + lam)
+            c_MGC = Sv_fin / b_v if b_v > 0 else 0.0
+            return Sv_fin, b_v, c_root, c_tip, MAC, y_MAC, AR, c_MGC, ac_on_MAC
 
-    # Area from Vv definition
-    Sv = float(inputs.vertical_tail_volume_ratio) * float(S_wing) * float(b_wing) / l_cg_to_ac
-
-    # Planform trapezoid from (Sv, c_root, lam)
-    b_v = 2.0 * Sv / (c_root * (1.0 + lam))
+    # Total area from Vv, then divide equally between the two fins.
+    Sv_total = float(inputs.vertical_tail_volume_ratio) * float(S_wing) * float(b_wing) / l_cg_to_ac
+    Sv_fin = Sv_total / n_fins
     c_tip = lam * c_root
+    b_v = 2.0 * Sv_fin / (c_root * (1.0 + lam))
 
-    # Add fuselage OD to span (spar extends into fuselage); all estimates use extended span
-    fuselage_OD = float(getattr(inputs, "fuselage_OD", 0.0))
-    b_v = b_v + fuselage_OD
-
-    AR = b_v**2 / Sv
-    y_MAC = (b_v / 6.0) * (1.0 + 2.0 * lam) / (1.0 + lam)
-    c_MGC = Sv / b_v
-
-    # Apply same “span extension” as a physical height increase (consistent with your concept)
+    # Optional physical height extension applies to each fin.
     if float(inputs.tail_span_extension_m) > 0.0:
         b_v = b_v + float(inputs.tail_span_extension_m)
+        Sv_fin = b_v * (c_root + c_tip) / 2.0
 
-    Sv = b_v * (c_root + c_tip) / 2.0
-    AR = b_v**2 / Sv if Sv > 0 else 0.0
-    y_MAC = (b_v / 6.0) * (1.0 + 2.0 * lam) / (1.0 + lam)
-    c_MGC = Sv / b_v if b_v > 0 else 0.0
+    AR = b_v**2 / Sv_fin if Sv_fin > 0 else 0.0
+    # A fin is a single root-to-tip trapezoid, not a mirrored full wing.
+    y_MAC = (b_v / 3.0) * (1.0 + 2.0 * lam) / (1.0 + lam)
+    c_MGC = Sv_fin / b_v if b_v > 0 else 0.0
 
-    return Sv, b_v, c_root, c_tip, MAC, y_MAC, AR, c_MGC, ac_on_MAC
+    return Sv_fin, b_v, c_root, c_tip, MAC, y_MAC, AR, c_MGC, ac_on_MAC
 
 
 def lifting_surface_wetted_area_estimated_m2(planform_area_m2: float) -> float:

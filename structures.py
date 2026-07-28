@@ -788,6 +788,284 @@ def _estimate_fuselage_stringers_and_frames(
         "panel_interaction_ok": panel_check["interaction_ok"],
     }
 
+
+
+# ============================================================
+# Twin-boom VTOL concentrated loads and primary structure
+# ============================================================
+def calculate_lift_propulsion_wing_loads(
+    propulsion_selection: Optional[Dict[str, Any]],
+    wing_span_m: float,
+    c_root: float,
+    taper_ratio: float,
+    inputs: DesignInputs,
+) -> Dict[str, float]:
+    """Return one-half-wing root moments from the dedicated lift propulsors.
+
+    The four lift units are treated as concentrated masses and vertical forces at
+    the coordinates in ``lift_prop_*_positions_m``.  The output keeps the legacy
+    ``calculate_surface_structure`` load dictionary so the rest of the structural
+    sizing logic remains unchanged.
+    """
+    zero = {
+        "propulsion_load_N": 0.0,
+        "weight_moment_Nm": 0.0,
+        "thrust_moment_Nm": 0.0,
+        "motor_torque_Nm": 0.0,
+        "n_units_half": 0.0,
+        "mount_mass_half_kg": 0.0,
+        "thrust_per_motor_structural_N": 0.0,
+        "shaft_torque_half_Nm": 0.0,
+        "thrust_offset_torsion_half_Nm": 0.0,
+    }
+    if propulsion_selection is None or not bool(getattr(inputs, "use_lift_motor_loads_in_wing_structure", True)):
+        return zero
+
+    lift = propulsion_selection.get("lift", {})
+    combo = lift.get("combo")
+    if not combo:
+        return zero
+
+    xs = [float(x) for x in inputs.lift_prop_x_positions_m]
+    ys = [float(y) for y in inputs.lift_prop_y_positions_m]
+    # Right half is used because the layout is expected to be symmetric.
+    half_indices = [i for i, y in enumerate(ys) if y > 1e-9]
+    if not half_indices:
+        half_indices = list(range(max(1, len(ys) // 2)))
+
+    root_y = 0.5 * float(getattr(inputs, "central_pod_width_m", inputs.fuselage_OD))
+    c_mgc = float(c_root) * (1.0 + float(taper_ratio)) / 2.0
+    wing_le_x = float(inputs.cg_x_wing) - 0.5 * c_mgc
+    x_spar = wing_le_x + float(getattr(inputs, "wing_primary_spar_chord_fraction", 0.30)) * c_mgc
+
+    mount_mass_each = (
+        float(getattr(inputs, "lift_motor_mount_mass_each_kg", 0.0))
+        * float(getattr(inputs, "lift_motor_mount_reinforcement_factor", 1.0))
+    )
+    unit_mass = float(combo.get("motor_mass_kg", 0.0)) + float(combo.get("prop_mass_kg", 0.0)) + mount_mass_each
+
+    required_thrust = float(lift.get("required_thrust_per_motor_N", 0.0))
+    available_thrust = float(combo.get("max_thrust_N", required_thrust))
+    thrust_fraction = float(getattr(inputs, "lift_motor_max_thrust_fraction_for_structure", 1.0))
+    thrust_structural = max(required_thrust, thrust_fraction * available_thrust)
+
+    weight_N = 0.0
+    weight_moment = 0.0
+    thrust_moment = 0.0
+    thrust_offset_torsion = 0.0
+    for i in half_indices:
+        y_arm = max(0.0, abs(ys[i]) - root_y)
+        weight_N += unit_mass * ATMOSPHERIC.g
+        weight_moment += unit_mass * ATMOSPHERIC.g * y_arm
+        thrust_moment += thrust_structural * y_arm
+        thrust_offset_torsion += thrust_structural * abs(xs[i] - x_spar)
+
+    max_power = float(combo.get("max_power_W", lift.get("required_power_per_motor_W", 0.0)))
+    kv = float(combo.get("motor_kv", 0.0))
+    voltage = float(combo.get("voltage_max_V", 0.0))
+    rpm = kv * voltage
+    omega = 2.0 * math.pi * rpm / 60.0
+    torque_each = (max_power * float(inputs.motor_mechanical_efficiency) / omega) if omega > 1e-9 else 0.0
+    shaft_torque = len(half_indices) * torque_each
+
+    return {
+        "propulsion_load_N": weight_N,
+        "weight_moment_Nm": weight_moment,
+        "thrust_moment_Nm": thrust_moment,
+        "motor_torque_Nm": shaft_torque + thrust_offset_torsion,
+        "n_units_half": float(len(half_indices)),
+        "mount_mass_half_kg": float(len(half_indices)) * mount_mass_each,
+        "thrust_per_motor_structural_N": thrust_structural,
+        "shaft_torque_half_Nm": shaft_torque,
+        "thrust_offset_torsion_half_Nm": thrust_offset_torsion,
+        "root_y_m": root_y,
+        "primary_spar_x_m": x_spar,
+    }
+
+
+def calculate_central_pod_structure(
+    wing_bending_moment: float,
+    inputs: DesignInputs,
+) -> Tuple[float, float, Dict[str, float]]:
+    """Preliminary printed central-pod shell and frame estimate.
+
+    The pod is represented as a rounded rectangular thin-walled box.  The wing
+    carry-through is assumed to carry most of the main-wing bending; only the
+    configurable fraction enters the pod shell check.
+    """
+    L = float(inputs.central_pod_length_m)
+    w = float(inputs.central_pod_width_m)
+    h = float(inputs.central_pod_height_m)
+    t_min = max(float(getattr(inputs, "central_pod_min_shell_thickness_m", 0.0012)), MATERIAL.min_skin_thickness_m)
+    sigma_allow = float(inputs.filament_max_bending_stress_MPa) * 1e6 / float(inputs.printed_parts_sf)
+    tau_allow = float(inputs.filament_shear_strength_MPa) * 1e6 / float(inputs.printed_parts_sf)
+    M_design = abs(float(wing_bending_moment)) * float(getattr(inputs, "central_pod_bending_load_fraction", 0.25))
+    T_design = abs(float(wing_bending_moment)) * float(getattr(inputs, "central_pod_design_torsion_fraction", 0.20))
+
+    t = t_min
+    for _ in range(80):
+        wi = max(1e-6, w - 2.0 * t)
+        hi = max(1e-6, h - 2.0 * t)
+        I_box = (w * h**3 - wi * hi**3) / 12.0
+        sigma = M_design * (0.5 * h) / max(I_box, 1e-18)
+        A_enclosed = max(1e-9, wi * hi)
+        tau = T_design / max(2.0 * A_enclosed * t, 1e-18)
+        if sigma <= sigma_allow and tau <= tau_allow:
+            break
+        t *= 1.05
+
+    pod_surface_area = 0.82 * 2.0 * (L * w + L * h + w * h)
+    W_shell = float(inputs.filament_density) * pod_surface_area * t
+
+    spacing = max(0.04, float(getattr(inputs, "central_pod_frame_spacing_m", 0.12)))
+    n_frames = max(2, int(math.ceil(L / spacing)) + 1)
+    ring_width = min(0.45 * min(w, h), float(getattr(inputs, "central_pod_frame_ring_width_m", 0.012)))
+    A_frame = w * h - max(0.0, w - 2.0 * ring_width) * max(0.0, h - 2.0 * ring_width)
+    frame_axial_t = float(getattr(inputs, "central_pod_frame_axial_thickness_m", 0.004))
+    W_frames = n_frames * A_frame * frame_axial_t * float(inputs.filament_density)
+    W_carrythrough = float(getattr(inputs, "central_pod_wing_carrythrough_mass_kg", 0.0))
+    W_total_calc = (W_shell + W_frames + W_carrythrough) * float(getattr(inputs, "central_pod_nonstructural_factor", 1.0))
+
+    W_total = W_total_calc
+    if bool(getattr(inputs, "use_hardcoded_values", False)):
+        hard = getattr(inputs, "hardcode_central_pod_mass_kg", None)
+        if hard is not None:
+            W_total = float(hard)
+
+    return t, W_total, {
+        "structure_type": "rounded_rectangular_central_pod",
+        "W_shell_kg": W_shell,
+        "W_frames_total_kg": W_frames,
+        "W_stringers_total_kg": 0.0,
+        "W_longerons_total_kg": W_carrythrough,
+        "W_carrythrough_kg": W_carrythrough,
+        "W_total_calculated_kg": W_total_calc,
+        "T_design_Nm": T_design,
+        "M_design_Nm": M_design,
+        "N_frames": float(n_frames),
+        "frame_spacing_m": L / max(n_frames - 1, 1),
+        "frame_annulus_area_mm2": A_frame * 1e6,
+        "sigma_x_MPa": sigma / 1e6,
+        "tau_xy_MPa": tau / 1e6,
+        "sigma_cr_MPa": sigma_allow / 1e6,
+        "tau_cr_MPa": tau_allow / 1e6,
+        "panel_comp_ok": 1.0 if sigma <= sigma_allow else 0.0,
+        "panel_shear_ok": 1.0 if tau <= tau_allow else 0.0,
+        "panel_interaction_ok": 1.0 if (sigma / max(sigma_allow, 1e-9) + tau / max(tau_allow, 1e-9)) <= 1.0 else 0.0,
+        "pod_surface_area_m2": pod_surface_area,
+    }
+
+
+def calculate_twin_boom_structure(
+    L_tail_N: float,
+    horizontal_tail_mass_kg: float,
+    vertical_tail_mass_kg: float,
+    propulsion_selection: Optional[Dict[str, Any]],
+    inputs: DesignInputs,
+) -> Tuple[float, Dict[str, float]]:
+    """Size/check the two tail booms and return total boom-system mass.
+
+    Loads include tail aerodynamic force, tail structural weight, the aft lift
+    propulsors attached downstream of the boom root, and axial pusher thrust.
+    """
+    n_booms = max(1, int(inputs.n_booms))
+    L = max(1e-6, float(inputs.boom_length_m))
+    OD_input = float(inputs.boom_outer_diameter_m)
+    ID_input = min(float(inputs.boom_inner_diameter_m), 0.98 * OD_input)
+    id_ratio = ID_input / max(OD_input, 1e-9)
+
+    tail_force_per_boom = float(inputs.n_ult) * abs(float(L_tail_N)) / n_booms
+    tail_weight_per_boom = (
+        float(inputs.n_ult)
+        * (float(horizontal_tail_mass_kg) + float(vertical_tail_mass_kg))
+        * ATMOSPHERIC.g
+        / n_booms
+    )
+    M_cruise = (tail_force_per_boom + tail_weight_per_boom) * L
+
+    M_rear_lift = 0.0
+    pusher_axial_per_boom = 0.0
+    if propulsion_selection is not None:
+        lift = propulsion_selection.get("lift", {})
+        lift_combo = lift.get("combo", {})
+        thrust_motor = max(
+            float(lift.get("required_thrust_per_motor_N", 0.0)),
+            float(getattr(inputs, "lift_motor_max_thrust_fraction_for_structure", 1.0))
+            * float(lift_combo.get("max_thrust_N", 0.0)),
+        )
+        for x in inputs.lift_prop_x_positions_m:
+            x = float(x)
+            if x >= float(inputs.boom_x_start_m):
+                M_rear_lift += thrust_motor * max(0.0, x - float(inputs.boom_x_start_m)) / n_booms
+
+        cruise = propulsion_selection.get("cruise", {})
+        pusher_axial_per_boom = float(cruise.get("required_thrust_per_motor_N", 0.0)) / n_booms
+
+    M_vtol = float(inputs.n_ult) * M_rear_lift + tail_weight_per_boom * L
+    M_design = max(M_cruise, M_vtol)
+
+    sigma_allow = (
+        float(inputs.carbon_fiber_max_bending_stress_MPa) * 1e6
+        / max(1.0, float(getattr(inputs, "boom_bending_safety_factor", inputs.carbon_fiber_safety_factor)))
+    )
+    OD_req, ID_req, _, _ = _size_carbon_tube_for_bending(
+        M_max_Nm=M_design,
+        sigma_allow_Pa=sigma_allow,
+        id_over_od=id_ratio,
+        E_eff_Pa=float(inputs.carbon_fiber_E_Pa),
+        eps_comp_allow=float(inputs.carbon_fiber_comp_strain_allow),
+    )
+    OD = max(OD_input, OD_req) if bool(getattr(inputs, "boom_auto_size", True)) else OD_input
+    ID = id_ratio * OD
+    A = math.pi / 4.0 * (OD**2 - ID**2)
+    I = math.pi / 64.0 * (OD**4 - ID**4)
+    sigma_bend = M_design * (0.5 * OD) / max(I, 1e-18)
+    sigma_axial = pusher_axial_per_boom / max(A, 1e-18)
+    sigma_combined = sigma_bend + sigma_axial
+    tip_deflection = M_design * L**2 / max(4.0 * float(inputs.carbon_fiber_E_Pa) * I, 1e-18)
+
+    A_input = math.pi / 4.0 * (OD_input**2 - ID_input**2)
+    area_scale = A / max(A_input, 1e-18)
+    W_tubes = n_booms * L * float(inputs.boom_specific_mass_kg_per_m) * area_scale
+    W_mounts = n_booms * (
+        float(getattr(inputs, "boom_forward_mount_mass_each_kg", 0.0))
+        + float(getattr(inputs, "boom_tail_mount_mass_each_kg", 0.0))
+    )
+    W_cross = float(getattr(inputs, "tail_crossmember_mass_kg", 0.0))
+    W_total_calc = W_tubes + W_mounts + W_cross
+    W_total = W_total_calc
+    if bool(getattr(inputs, "use_hardcoded_values", False)):
+        hard = getattr(inputs, "hardcode_boom_mass_total_kg", None)
+        if hard is not None:
+            W_total = float(hard)
+
+    return W_total, {
+        "W_total_kg": W_total,
+        "W_total_calculated_kg": W_total_calc,
+        "W_tubes_kg": W_tubes,
+        "W_mounts_kg": W_mounts,
+        "W_tail_crossmember_kg": W_cross,
+        "OD_m": OD,
+        "ID_m": ID,
+        "area_one_m2": A,
+        "I_one_m4": I,
+        "M_cruise_Nm_per_boom": M_cruise,
+        "M_vtol_Nm_per_boom": M_vtol,
+        "M_design_Nm_per_boom": M_design,
+        "pusher_axial_N_per_boom": pusher_axial_per_boom,
+        "sigma_bending_MPa": sigma_bend / 1e6,
+        "sigma_axial_MPa": sigma_axial / 1e6,
+        "sigma_combined_MPa": sigma_combined / 1e6,
+        "sigma_allow_MPa": sigma_allow / 1e6,
+        "strength_ok": 1.0 if sigma_combined <= sigma_allow else 0.0,
+        "tip_deflection_m": tip_deflection,
+        "tip_deflection_mm": tip_deflection * 1e3,
+        "rear_lift_bending_Nm_per_boom": M_rear_lift,
+        "tail_force_N_per_boom": tail_force_per_boom,
+        "tail_weight_N_per_boom": tail_weight_per_boom,
+    }
+
+
 # ============================================================
 # Main surface structure (wing or tail)
 # ============================================================
@@ -1138,6 +1416,7 @@ def calculate_wing_structure(
     max_thickness_fraction: float,
     CM_max: float,
     inputs: DesignInputs,
+    propulsion_selection: Optional[Dict[str, Any]] = None,
 ) -> Tuple[Structure, float, Dict[str, float]]:
     """
     Calculate wing structural properties.
@@ -1147,6 +1426,13 @@ def calculate_wing_structure(
     Returns: (Structure, total_wings_mass_kg, spar_results)
     Total mass is for both cruciform wings (2x single wing)
     """
+    propulsion_loads = calculate_lift_propulsion_wing_loads(
+        propulsion_selection=propulsion_selection,
+        wing_span_m=b,
+        c_root=c_root,
+        taper_ratio=taper_ratio,
+        inputs=inputs,
+    )
     structure, spar_results = calculate_surface_structure(
         load_N=L_wing,
         S=S,
@@ -1159,8 +1445,21 @@ def calculate_wing_structure(
         flap_chord_ratio=inputs.wing_plain_flap_chord_ratio,
         CM_max=CM_max,
         inputs=inputs,
-        propulsion_loads=None,
+        propulsion_loads=propulsion_loads,
     )
+
+    # Printed/local motor-mount reinforcement is part of the wing airframe mass.
+    W_mounts_half = float(propulsion_loads.get("mount_mass_half_kg", 0.0))
+    structure.W_total_kg += W_mounts_half
+    spar_results.update({
+        "lift_mount_mass_half_kg": W_mounts_half,
+        "lift_mount_mass_total_kg": 2.0 * W_mounts_half,
+        "lift_thrust_per_motor_structural_N": propulsion_loads.get("thrust_per_motor_structural_N", 0.0),
+        "lift_weight_root_moment_Nm_half": propulsion_loads.get("weight_moment_Nm", 0.0),
+        "lift_thrust_root_moment_Nm_half": propulsion_loads.get("thrust_moment_Nm", 0.0),
+        "lift_shaft_torque_Nm_half": propulsion_loads.get("shaft_torque_half_Nm", 0.0),
+        "lift_offset_torsion_Nm_half": propulsion_loads.get("thrust_offset_torsion_half_Nm", 0.0),
+    })
 
     _apply_hardcoded_surface_skin_root_thickness(
         structure,
