@@ -35,8 +35,8 @@ class DesignInputs:
     # The old variable fuselage_length remains the global x-reference length so
     # existing CG logic stays usable until the fuselage/boom structural model is replaced.
     central_pod_length_m: float = 0.78
-    central_pod_width_m: float = 0.18
-    central_pod_height_m: float = 0.18
+    central_pod_width_m: float = 0.18 # max pod width
+    central_pod_height_m: float = 0.18 # max pod height
     boom_length_m: float = 0.76
     boom_outer_diameter_m: float = 0.035
     boom_inner_diameter_m: float = 0.031
@@ -44,12 +44,16 @@ class DesignInputs:
     boom_x_start_m: float = 0.34
     boom_x_end_m: float = 1.10
     boom_specific_mass_kg_per_m: float = 0.13
-    boom_auto_size: bool = True
     boom_bending_safety_factor: float = 1.5
     boom_forward_mount_mass_each_kg: float = 0.055
     boom_tail_mount_mass_each_kg: float = 0.035
     tail_crossmember_mass_kg: float = 0.080
     hardcode_boom_mass_total_kg: Optional[float] = None
+    # Booms are always auto-sized for strength (boom_outer_diameter_m acts as the
+    # starting/minimum geometry). Set these to force the final tube diameters instead
+    # (applied when use_hardcoded_values is True).
+    hardcode_boom_outer_diameter_m: Optional[float] = None
+    hardcode_boom_inner_diameter_m: Optional[float] = None
 
     # Central pod structure: printed shell + frames + wing carry-through fittings.
     central_pod_min_shell_thickness_m: float = 0.0012
@@ -91,10 +95,6 @@ class DesignInputs:
     # =========================================================
     # CONFIGURATION AERODYNAMICS / CRUISE-DRAG BUILD-UP
     # =========================================================
-    # Step 5 deliberately preserves the current main-wing planform and the
-    # current NACA 2410 polar. Change the wing later through the existing
-    # wing_loading, c_root, taper_ratio, hardcode_wing_span and airfoil fields.
-    preserve_current_wing_definition: bool = True
     wing_CLmax_3D_factor: float = 0.95
     tail_CLmax_3D_factor: float = 0.90
 
@@ -111,7 +111,7 @@ class DesignInputs:
 
     # Drag of the four inactive vertical-lift units during wing-borne cruise.
     # Supported states: folded, stopped_aligned, stopped_random, windmilling.
-    lift_prop_cruise_state: str = "stopped_aligned"
+    lift_prop_cruise_state: str = "stopped_random"
     lift_prop_blade_count: int = 2
     lift_prop_mean_blade_chord_ratio: float = 0.08
     lift_prop_blade_section_CD: float = 1.10

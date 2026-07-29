@@ -1008,7 +1008,14 @@ def _assemble_results(
         "hardcode_vertical_tail_wetted_area_m2",
         float(inputs.n_vertical_tail_surfaces) * vertical_tail_geometry.area_m2,
     )
-    fuselage_wetted_m2 = float(inputs.fuselage_wetted_area)
+    # Report the pod + boom wetted area actually used in the drag build-up
+    # (the booms use the structurally sized / hardcoded diameter there).
+    if "pod_wetted_area_m2" in drag_breakdown and "booms_wetted_area_m2" in drag_breakdown:
+        fuselage_wetted_m2 = float(drag_breakdown["pod_wetted_area_m2"]) + float(
+            drag_breakdown["booms_wetted_area_m2"]
+        )
+    else:
+        fuselage_wetted_m2 = float(inputs.fuselage_wetted_area)
 
     wing_results = WingResults(
         geometry=wing_geometry,
@@ -1409,6 +1416,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             wing_aerodynamics=wing_aero,
             inputs=inputs,
             propulsion_selection=propulsion_selection,
+            boom_outer_diameter_m=boom_details.get("OD_m"),
         )
         drag_cruise = float(drag_breakdown["total_N"])
         cruise_power = drag_cruise * inputs.speed
@@ -1543,6 +1551,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
                 vertical_tail_aerodynamics=vertical_tail_aero,
                 inputs=inputs,
                 propulsion_selection=propulsion_selection,
+                boom_outer_diameter_m=boom_details.get("OD_m"),
             )
             drag_cruise_inner = float(drag_breakdown_inner["total_N"])
             cruise_power_inner = drag_cruise_inner * inputs.speed
@@ -1620,6 +1629,7 @@ def run_design(inputs: DesignInputs, plot_convergence: bool = False) -> DesignRe
             vertical_tail_aerodynamics=vertical_tail_aero,
             inputs=inputs,
             propulsion_selection=propulsion_selection,
+            boom_outer_diameter_m=boom_details.get("OD_m"),
         )
         drag_cruise = float(drag_breakdown["total_N"])
         cruise_power = drag_cruise * inputs.speed

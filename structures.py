@@ -1015,8 +1015,19 @@ def calculate_twin_boom_structure(
         E_eff_Pa=float(inputs.carbon_fiber_E_Pa),
         eps_comp_allow=float(inputs.carbon_fiber_comp_strain_allow),
     )
-    OD = max(OD_input, OD_req) if bool(getattr(inputs, "boom_auto_size", True)) else OD_input
+    # Always auto-size for strength. boom_outer/inner_diameter_m only define the
+    # reference wall ratio and specific-mass scaling; they do not force the result.
+    OD = OD_req
     ID = id_ratio * OD
+    # Hardcoded diameters force the final tube geometry (strength margins are still reported).
+    if bool(getattr(inputs, "use_hardcoded_values", False)):
+        hc_od = getattr(inputs, "hardcode_boom_outer_diameter_m", None)
+        hc_id = getattr(inputs, "hardcode_boom_inner_diameter_m", None)
+        if hc_od is not None:
+            OD = float(hc_od)
+            ID = id_ratio * OD
+        if hc_id is not None:
+            ID = min(float(hc_id), 0.98 * OD)
     A = math.pi / 4.0 * (OD**2 - ID**2)
     I = math.pi / 64.0 * (OD**4 - ID**4)
     sigma_bend = M_design * (0.5 * OD) / max(I, 1e-18)

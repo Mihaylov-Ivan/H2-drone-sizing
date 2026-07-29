@@ -365,6 +365,7 @@ def configuration_cruise_drag(
     vertical_tail_geometry: Optional[Any] = None,
     vertical_tail_aerodynamics: Optional[Any] = None,
     propulsion_selection: Optional[Dict[str, Any]] = None,
+    boom_outer_diameter_m: Optional[float] = None,
 ) -> Dict[str, float]:
     """Build up total cruise drag for the high-wing twin-boom VTOL.
 
@@ -407,7 +408,7 @@ def configuration_cruise_drag(
     L_pod = float(inputs.central_pod_length_m)
     w_pod = float(inputs.central_pod_width_m)
     h_pod = float(inputs.central_pod_height_m)
-    Swet_pod = 0.82 * 2.0 * (L_pod * w_pod + L_pod * h_pod + w_pod * h_pod)
+    Swet_pod = 0.82 * 2.0 * (L_pod * w_pod + L_pod * h_pod + w_pod * h_pod) # rounded rectangular box
     if bool(getattr(inputs, "use_hardcoded_values", False)):
         hard = getattr(inputs, "hardcode_central_pod_wetted_area_m2", None)
         if hard is not None:
@@ -419,10 +420,14 @@ def configuration_cruise_drag(
     Q_pod = float(getattr(inputs, "central_pod_interference_factor", 1.05))
     D_pod = q * Cf_pod * FF_pod * Q_pod * Swet_pod
 
-    # Two circular booms aligned with the flow.
+    # Two circular booms aligned with the flow. Prefer the structurally sized
+    # (or hardcoded) boom diameter when the caller provides it.
     n_booms = max(1, int(inputs.n_booms))
     L_boom = float(inputs.boom_length_m)
-    D_boom_outer = float(inputs.boom_outer_diameter_m)
+    if boom_outer_diameter_m is not None and boom_outer_diameter_m > 0.0:
+        D_boom_outer = float(boom_outer_diameter_m)
+    else:
+        D_boom_outer = float(inputs.boom_outer_diameter_m)
     Swet_booms = n_booms * math.pi * D_boom_outer * L_boom
     Re_boom = rho * V * L_boom / max(mu, 1e-12)
     Cf_boom = _skin_friction_coefficient(Re_boom, laminar_fraction) * roughness_mult
