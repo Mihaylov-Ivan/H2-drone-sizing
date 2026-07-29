@@ -7,12 +7,9 @@ class DesignInputs:
     # --MAIN DRIVING VARIABLES--
     payload_mass: float = 1.2      # [kg]
     payload_length: float = 0.053 # [m] length of payload
-    # PLA
     wing_loading: float = 165.0     # [N/m²] provisional endurance-oriented design point
-    # ASA Aero
-    # wing_loading: float = 238.0     # [N/m²] design W/S (MAIN WING ONLY)
     speed: float = 20.0              # [m/s] provisional economical cruise speed
-    dive_speed: float = 50.0         # [m/s] (derived: 1.5*speed)
+    dive_speed: float = 50.0         # [m/s]
     fuselage_length: float = 1.15    # [m] overall longitudinal reference length (nose to tail)
     fuselage_OD: float = 0.18        # [m] central pod maximum outer diameter / equivalent diameter
     fuselage_nose_length: float = 0.14        # [m] central pod nose length
@@ -20,22 +17,14 @@ class DesignInputs:
     fuselage_nonopt_factor: float = 1.2       # [-] non-optimum factor to approximate total fuselage (structure + fittings)
     fuselage_body_length: float = fuselage_length - fuselage_nose_length - fuselage_tail_length         # [m] length of fuselage body
     tail_c_root: float = 0.18             # [m] horizontal/vertical tail reference root chord
-    # PLA
     tail_volume_ratio: float = 0.50     # [-] provisional conventional-tail horizontal volume coefficient
     vertical_tail_volume_ratio: float = 0.045  # [-] total of both fins: Vv = Sv_total*l_v/(S*b)
-    # ASA Aero
-    # tail_volume_ratio: float = 0.313      # [-]
-    # vertical_tail_volume_ratio: float = 0.05   # [-] Vv = (Sv * l_vt) / (S * b)
     c_root: float = 0.28                # [m] main-wing root chord
     # --END MAIN DRIVING VARIABLES--
 
     # =========================================================
     # AIRCRAFT ARCHITECTURE (new configuration)
     # =========================================================
-    aircraft_configuration: str = "high_wing_twin_boom_lift_plus_cruise"
-    energy_architecture: str = "pem_fuel_cell_hybrid"
-    vtol_configuration: str = "separate_lift_and_cruise_propulsion"
-
     n_lift_propellers: int = 4
     n_cruise_propellers: int = 1
     n_horizontal_tail_surfaces: int = 1
