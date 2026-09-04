@@ -1,0 +1,21 @@
+{
+  "model_version": "H2AIR-integrated-v2.0",
+  "config_hash": "edc6908833fc0196ba0d586c1cbf5386ff0dd21e6710721ed920a96b19783c78",
+  "outputs": [
+    "SUMMARY.md",
+    "closure_history.csv",
+    "component_ledger.csv",
+    "hybrid_power_history.csv",
+    "mission_profile.csv",
+    "model_results.json",
+    "sixdof_forward_current_layout.csv",
+    "sixdof_forward_stability_screen.csv",
+    "sixdof_gust_current_layout.csv",
+    "sixdof_gust_stability_screen.csv",
+    "sixdof_reverse_current_layout.csv",
+    "sixdof_reverse_stability_screen.csv",
+    "structure_load_cases.csv",
+    "transition_forward.csv",
+    "transition_reverse.csv"
+  ]
+}
