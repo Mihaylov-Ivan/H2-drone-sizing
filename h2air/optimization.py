@@ -50,14 +50,16 @@ def default_space_for_config(cfg: Mapping[str, Any]) -> Dict[str, Tuple[float,fl
         return dict(LEGACY_DEFAULT_SPACE)
     opt_space = cfg.get("optimizer_settings", {}).get("design_space", {})
     defaults = {
-        "wing_ac_x_m": (0.34, 0.43),
-        "lift_row_center_x_m": (0.38, 0.50),
-        "battery_x_m": (0.18, 0.62),
-        "battery_z_m": (0.060, 0.064),
-        "fuel_cell_x_m": (0.140, 0.190),
-        "fuel_cell_z_m": (-0.029, -0.025),
-        "hydrogen_cylinder_x_m": (0.505, 0.554),
-        "hydrogen_cylinder_z_m": (-0.029, -0.025),
+        "wing_ac_x_m": (0.30, 0.48),
+        "horizontal_tail_ac_x_m": (0.92, 1.15),
+        "vertical_tail_ac_x_m": (0.92, 1.15),
+        "lift_row_center_x_m": (0.35, 0.52),
+        "battery_x_m": (0.12, 0.65),
+        "battery_z_m": (0.02, 0.065),
+        "fuel_cell_x_m": (0.14, 0.40),
+        "fuel_cell_z_m": (-0.035, 0.01),
+        "hydrogen_cylinder_x_m": (0.25, 0.55),
+        "hydrogen_cylinder_z_m": (-0.035, 0.01),
     }
     space: Dict[str, Tuple[float,float]] = {
         k: tuple(float(x) for x in opt_space.get(k, v)) for k,v in defaults.items()

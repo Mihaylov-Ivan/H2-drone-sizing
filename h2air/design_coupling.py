@@ -90,6 +90,7 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     d.setdefault("wing_ac_x_m", REF["wing_ac_x_m"])
     d.setdefault("horizontal_tail_area_m2", REF["horizontal_tail_area_m2"])
     d.setdefault("horizontal_tail_ac_x_m", REF["horizontal_tail_ac_x_m"])
+    d.setdefault("vertical_tail_ac_x_m", REF["horizontal_tail_ac_x_m"])
     d.setdefault("lift_row_center_x_m", REF["lift_row_center_x_m"])
     d.setdefault("battery_x_m", REF["battery_position_m"][0])
     d.setdefault("battery_z_m", REF["battery_position_m"][2])
@@ -258,6 +259,7 @@ def design_overrides(cfg: Mapping[str, Any], values: Mapping[str, float]) -> Dic
             # New optimizer fields are allowed if resolver recognizes them.
             if k not in {
                 "wing_ac_x_m", "horizontal_tail_area_m2", "horizontal_tail_ac_x_m",
+                "vertical_tail_ac_x_m",
                 "main_wing_span_m", "horizontal_tail_span_m", "vertical_tail_height_m",
                 "lift_row_center_x_m", "battery_x_m", "battery_z_m", "fuel_cell_x_m",
                 "fuel_cell_z_m", "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",

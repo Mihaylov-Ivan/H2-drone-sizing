@@ -1,0 +1,2127 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ParamWithValueList xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <version>20080502</version>
+  <parameterTypes>
+    <ParamType>
+      <typeName>Inventor</typeName>
+      <typeCode>0</typeCode>
+    </ParamType>
+    <ParamType>
+      <typeName>String</typeName>
+      <typeCode>1</typeCode>
+    </ParamType>
+    <ParamType>
+      <typeName>Boolean</typeName>
+      <typeCode>2</typeCode>
+    </ParamType>
+  </parameterTypes>
+  <parameters>
+    <ParamWithValue>
+      <name>fuselage_nose_length</name>
+      <typeCode>mm</typeCode>
+      <value>140.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_body_section_A_length</name>
+      <typeCode>mm</typeCode>
+      <value>316.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_body_section_B_length</name>
+      <typeCode>mm</typeCode>
+      <value>308.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_body_section_C_length</name>
+      <typeCode>mm</typeCode>
+      <value>136.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_wing_interface_length</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_wing_interface_fit_clearance</name>
+      <typeCode>mm</typeCode>
+      <value>0.250 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_wing_interface_insert_depth_factor</name>
+      <typeCode>unitless</typeCode>
+      <value>4.5</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_wing_interface_sleeve_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_axial_restraint_bolt_length</name>
+      <typeCode>mm</typeCode>
+      <value>21.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>c_root</name>
+      <typeCode>mm</typeCode>
+      <value>280.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>c_tip</name>
+      <typeCode>mm</typeCode>
+      <value>154.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_c_root</name>
+      <typeCode>mm</typeCode>
+      <value>180.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_rib_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_bulkhead_inner_OD</name>
+      <typeCode>mm</typeCode>
+      <value>134.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_bulkhead_radial_ring_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>5.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_bulkhead_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_B_front_bulkhead_location</name>
+      <typeCode>mm</typeCode>
+      <value>77.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_B_rear_bulkhead_location</name>
+      <typeCode>mm</typeCode>
+      <value>96.250 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_frame_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_stringer_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_stringer_height</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_tail_front_bulkhead_location</name>
+      <typeCode>mm</typeCode>
+      <value>40.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_tail_rear_bulkhead_location</name>
+      <typeCode>mm</typeCode>
+      <value>110.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_bolt_hatch_depth</name>
+      <typeCode>mm</typeCode>
+      <value>15.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_plain_flap_chord_ratio</name>
+      <typeCode>unitless</typeCode>
+      <value>0.3</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_cg_root_chord_ratio</name>
+      <typeCode>unitless</typeCode>
+      <value>0.5</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_chord_ratio</name>
+      <typeCode>unitless</typeCode>
+      <value>0.3</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_span_start</name>
+      <typeCode>unitless</typeCode>
+      <value>0.1</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_span_end</name>
+      <typeCode>unitless</typeCode>
+      <value>0.9</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_rod_support_width</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_wing_stringer_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_wing_stringer_height</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_rudder_chord_ratio</name>
+      <typeCode>unitless</typeCode>
+      <value>0.3</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_rudder_span_start</name>
+      <typeCode>unitless</typeCode>
+      <value>0.1</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_rudder_span_end</name>
+      <typeCode>unitless</typeCode>
+      <value>0.9</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_rudder_rod_oversize_factor</name>
+      <typeCode>unitless</typeCode>
+      <value>1.2</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_wing</name>
+      <typeCode>mm</typeCode>
+      <value>430.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_cg_root_chord_ratio</name>
+      <typeCode>unitless</typeCode>
+      <value>0.5</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_spar_boss_factor</name>
+      <typeCode>unitless</typeCode>
+      <value>1.5</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_assembly_interface_depth</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_assembly_interface_sleeve_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_second_spar_scale</name>
+      <typeCode>unitless</typeCode>
+      <value>0.333333</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_bolt_hatch_depth</name>
+      <typeCode>mm</typeCode>
+      <value>30.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>N_ribs</name>
+      <typeCode>unitless</typeCode>
+      <value>14</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_N_ribs</name>
+      <typeCode>unitless</typeCode>
+      <value>6</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_N_ribs</name>
+      <typeCode>unitless</typeCode>
+      <value>4</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>assembly_fit_factor</name>
+      <typeCode>unitless</typeCode>
+      <value>1.05</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>prop_clearance_from_wing_LE</name>
+      <typeCode>mm</typeCode>
+      <value>5.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>motor_OD</name>
+      <typeCode>mm</typeCode>
+      <value>33.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>motor_body_length</name>
+      <typeCode>mm</typeCode>
+      <value>26.100 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>motor_mount_bolt_base_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>5.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>motor_mount_bolt_length</name>
+      <typeCode>mm</typeCode>
+      <value>9.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>motor_cabling_clearance_width</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>motor_cabling_clearance_height</name>
+      <typeCode>mm</typeCode>
+      <value>5.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M2_fixing_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M2_lenght</name>
+      <typeCode>mm</typeCode>
+      <value>4.100 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M3_fixing_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M3_lenght</name>
+      <typeCode>mm</typeCode>
+      <value>5.900 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M3_lenght_short</name>
+      <typeCode>mm</typeCode>
+      <value>4.100 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>hole_boss_factor</name>
+      <typeCode>unitless</typeCode>
+      <value>1.8</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_pocket_diameter_clearance</name>
+      <typeCode>mm</typeCode>
+      <value>1.700 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>prop_mount_bolt_circular_location</name>
+      <typeCode>mm</typeCode>
+      <value>19.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M4_fixing_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>5.600 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M4_lenght</name>
+      <typeCode>mm</typeCode>
+      <value>8.100 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_width</name>
+      <typeCode>mm</typeCode>
+      <value>27.600 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_height</name>
+      <typeCode>mm</typeCode>
+      <value>27.600 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_depth</name>
+      <typeCode>mm</typeCode>
+      <value>8.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_cables_hole_width</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_cables_hole_height</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_arm_length</name>
+      <typeCode>mm</typeCode>
+      <value>2.400 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_cover_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>1.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_cover_bolt_length</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_housing_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>6.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_mount_ears_width</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_mount_ears_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>1.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_mount_ears_location_from_top</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>servo_mount_bolt_length</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_power_unit_length</name>
+      <typeCode>mm</typeCode>
+      <value>33.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_power_unit_width</name>
+      <typeCode>mm</typeCode>
+      <value>33.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_power_unit_height</name>
+      <typeCode>mm</typeCode>
+      <value>11.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_power_unit_housing_front_part_length</name>
+      <typeCode>mm</typeCode>
+      <value>18.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_power_unit_cooling_channel_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_lens_diameter</name>
+      <typeCode>mm</typeCode>
+      <value>13.900 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_lens_length</name>
+      <typeCode>mm</typeCode>
+      <value>11.300 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_body_width</name>
+      <typeCode>mm</typeCode>
+      <value>18.800 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_body_length</name>
+      <typeCode>mm</typeCode>
+      <value>12.100 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_location_plane</name>
+      <typeCode>mm</typeCode>
+      <value>88.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_housing_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>camera_body_mount_hole_location</name>
+      <typeCode>mm</typeCode>
+      <value>6.900 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_length</name>
+      <typeCode>mm</typeCode>
+      <value>160.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_width</name>
+      <typeCode>mm</typeCode>
+      <value>50.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_height</name>
+      <typeCode>mm</typeCode>
+      <value>50.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_location_adjustment_length</name>
+      <typeCode>mm</typeCode>
+      <value>30.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_location_adjustment_gap</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_case_fuselage_section_B_length</name>
+      <typeCode>mm</typeCode>
+      <value>110.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_case_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_longeron_boss_height</name>
+      <typeCode>mm</typeCode>
+      <value>18.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_longeron_boss_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_assembly_fit_offset_from_top</name>
+      <typeCode>mm</typeCode>
+      <value>33.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_assembly_fitting_depth</name>
+      <typeCode>mm</typeCode>
+      <value>20.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_longeron_diameter</name>
+      <typeCode>mm</typeCode>
+      <value>8.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_torque_frame_diameter</name>
+      <typeCode>mm</typeCode>
+      <value>8.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>payload_length</name>
+      <typeCode>mm</typeCode>
+      <value>53.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M2_OD</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M2_head_width</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M2_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>2.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M2_head_OD</name>
+      <typeCode>mm</typeCode>
+      <value>5.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M3_OD</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M3_head_width</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M3_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>3.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M3_head_OD</name>
+      <typeCode>mm</typeCode>
+      <value>6.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>spring_washer_M3_OD</name>
+      <typeCode>mm</typeCode>
+      <value>6.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>spring_washer_M3_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>1.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M4_OD</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M4_head_width</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M4_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>4.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M4_head_OD</name>
+      <typeCode>mm</typeCode>
+      <value>8.220 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M5_OD</name>
+      <typeCode>mm</typeCode>
+      <value>5.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M5_head_width</name>
+      <typeCode>mm</typeCode>
+      <value>5.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M5_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>5.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M5_head_OD</name>
+      <typeCode>mm</typeCode>
+      <value>9.720 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M6_OD</name>
+      <typeCode>mm</typeCode>
+      <value>6.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M6_head_width</name>
+      <typeCode>mm</typeCode>
+      <value>6.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M6_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>6.200 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>bolt_M6_head_OD</name>
+      <typeCode>mm</typeCode>
+      <value>11.300 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tube_clamp_boss_width</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>clamp_M8_ID</name>
+      <typeCode>mm</typeCode>
+      <value>8.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>clamp_M8_OD</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>clamp_M8_width</name>
+      <typeCode>mm</typeCode>
+      <value>7.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>clamp_M8_washer_OD</name>
+      <typeCode>mm</typeCode>
+      <value>16.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>clamp_M8_washer_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M6_fixing_hole_OD</name>
+      <typeCode>mm</typeCode>
+      <value>8.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>threaded_insert_M6_lenght</name>
+      <typeCode>mm</typeCode>
+      <value>12.700 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>nose_axial_restraint_boss_width</name>
+      <typeCode>mm</typeCode>
+      <value>5.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>nose_axial_restraint_bolt_lenght</name>
+      <typeCode>mm</typeCode>
+      <value>8.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>transition_fit_clearance</name>
+      <typeCode>mm</typeCode>
+      <value>0.240 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>transition_fit_clearance_coated_carbon</name>
+      <typeCode>mm</typeCode>
+      <value>0.500 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>printed_vertical_small_hole_additional_clearance</name>
+      <typeCode>mm</typeCode>
+      <value>0.400 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cubepilot_height</name>
+      <typeCode>mm</typeCode>
+      <value>34.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cubepilot_width</name>
+      <typeCode>mm</typeCode>
+      <value>48.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cubepilot_depth</name>
+      <typeCode>mm</typeCode>
+      <value>40.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cubepilot_pin_section_height</name>
+      <typeCode>mm</typeCode>
+      <value>11.000 mm</value>
+      <comment>FORCED export (key)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_t_skin_root</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>FORCED export (path): results.vertical_tail.structure.t_skin_root_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_t_skin_tip</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>FORCED export (path): results.vertical_tail.structure.t_skin_tip_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_t_web_root</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>FORCED export (path): results.vertical_tail.structure.t_web_root_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_t_web_tip</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>FORCED export (path): results.vertical_tail.structure.t_web_tip_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>h_max_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>28.000 mm</value>
+      <comment>FORCED export (path): results.wing.structure.h_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>h_tail_max_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>21.600 mm</value>
+      <comment>FORCED export (path): results.tail.structure.h_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>h_tail_vertical_max_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>21.600 mm</value>
+      <comment>FORCED export (path): results.vertical_tail.structure.h_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_spar_OD_root</name>
+      <typeCode>mm</typeCode>
+      <value>13.294 mm</value>
+      <comment>FORCED export (path): results.wing.wing_spar_OD_root_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_spar_ID_root</name>
+      <typeCode>mm</typeCode>
+      <value>9.970 mm</value>
+      <comment>FORCED export (path): results.wing.wing_spar_ID_root_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_spar_OD_tip</name>
+      <typeCode>mm</typeCode>
+      <value>4.333 mm</value>
+      <comment>FORCED export (path): results.wing.wing_spar_OD_tip_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_spar_ID_tip</name>
+      <typeCode>mm</typeCode>
+      <value>3.250 mm</value>
+      <comment>FORCED export (path): results.wing.wing_spar_ID_tip_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_spar_OD_root</name>
+      <typeCode>mm</typeCode>
+      <value>3.367 mm</value>
+      <comment>FORCED export (path): results.tail.tail_spar_OD_root_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_spar_ID_root</name>
+      <typeCode>mm</typeCode>
+      <value>2.526 mm</value>
+      <comment>FORCED export (path): results.tail.tail_spar_ID_root_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_spar_OD_tip</name>
+      <typeCode>mm</typeCode>
+      <value>3.367 mm</value>
+      <comment>FORCED export (path): results.tail.tail_spar_OD_tip_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_spar_ID_tip</name>
+      <typeCode>mm</typeCode>
+      <value>2.526 mm</value>
+      <comment>FORCED export (path): results.tail.tail_spar_ID_tip_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>elevator_rod_OD</name>
+      <typeCode>mm</typeCode>
+      <value>1.850 mm</value>
+      <comment>FORCED export (path): results.tail.elevator_rod_OD_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>elevator_rod_ID</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>FORCED export (path): results.tail.elevator_rod_ID_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_nose_longeron_boss_height</name>
+      <typeCode>mm</typeCode>
+      <value>62.700 mm</value>
+      <comment>FORCED export (path): results.fuselage.fuselage_nose_longeron_boss_height_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rib_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>226.694 mm</value>
+      <comment>FORCED export (path): results.wing.structure.rib_spacing_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rib_spacing_tail</name>
+      <typeCode>mm</typeCode>
+      <value>165.433 mm</value>
+      <comment>FORCED export (path): results.tail.structure.rib_spacing_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rib_spacing_vertical_tail</name>
+      <typeCode>mm</typeCode>
+      <value>153.853 mm</value>
+      <comment>FORCED export (path): results.vertical_tail.structure.rib_spacing_m</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>accel_to_cruise_time_s</name>
+      <typeCode>mm</typeCode>
+      <value>20000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>battery_height_2</name>
+      <typeCode>mm</typeCode>
+      <value>50.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>boom_ID</name>
+      <typeCode>mm</typeCode>
+      <value>10.855 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>boom_OD</name>
+      <typeCode>mm</typeCode>
+      <value>12.255 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>boom_bending_safety_factor</name>
+      <typeCode>mm</typeCode>
+      <value>1500.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>boom_inner_diameter</name>
+      <typeCode>mm</typeCode>
+      <value>31.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>boom_lateral_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>700.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>boom_outer_diameter</name>
+      <typeCode>mm</typeCode>
+      <value>35.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>boom_x_end</name>
+      <typeCode>mm</typeCode>
+      <value>1100.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>central_pod_cross_section_form_factor</name>
+      <typeCode>mm</typeCode>
+      <value>1100.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>central_pod_frame_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>111.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>central_pod_height</name>
+      <typeCode>mm</typeCode>
+      <value>180.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>central_pod_min_shell_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_shift</name>
+      <typeCode>mm</typeCode>
+      <value>0.541 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_battery</name>
+      <typeCode>mm</typeCode>
+      <value>390.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_bec</name>
+      <typeCode>mm</typeCode>
+      <value>742.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_body_section_B</name>
+      <typeCode>mm</typeCode>
+      <value>430.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_body_section_C</name>
+      <typeCode>mm</typeCode>
+      <value>208.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_booms</name>
+      <typeCode>mm</typeCode>
+      <value>720.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_camera</name>
+      <typeCode>mm</typeCode>
+      <value>23.400 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_central_pod</name>
+      <typeCode>mm</typeCode>
+      <value>390.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_cruise_esc</name>
+      <typeCode>mm</typeCode>
+      <value>820.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_cruise_propulsion</name>
+      <typeCode>mm</typeCode>
+      <value>940.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_esc</name>
+      <typeCode>mm</typeCode>
+      <value>550.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_fuel_cell</name>
+      <typeCode>mm</typeCode>
+      <value>570.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_fuselage_tail</name>
+      <typeCode>mm</typeCode>
+      <value>1025.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_gps</name>
+      <typeCode>mm</typeCode>
+      <value>430.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_hydrogen_tank</name>
+      <typeCode>mm</typeCode>
+      <value>340.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_lift_propulsion_front</name>
+      <typeCode>mm</typeCode>
+      <value>310.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_misc</name>
+      <typeCode>mm</typeCode>
+      <value>575.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_payload</name>
+      <typeCode>mm</typeCode>
+      <value>160.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_power_module</name>
+      <typeCode>mm</typeCode>
+      <value>390.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_propulsion</name>
+      <typeCode>mm</typeCode>
+      <value>590.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_rx</name>
+      <typeCode>mm</typeCode>
+      <value>371.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_servos</name>
+      <typeCode>mm</typeCode>
+      <value>880.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_tail</name>
+      <typeCode>mm</typeCode>
+      <value>1050.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_tel</name>
+      <typeCode>mm</typeCode>
+      <value>371.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cg_x_vertical_tail</name>
+      <typeCode>mm</typeCode>
+      <value>1050.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>control_surface_drag_k</name>
+      <typeCode>mm</typeCode>
+      <value>15.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cruise_prop_x</name>
+      <typeCode>mm</typeCode>
+      <value>940.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cruise_prop_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cruise_prop_z</name>
+      <typeCode>mm</typeCode>
+      <value>20.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>elevator_horn_radius</name>
+      <typeCode>mm</typeCode>
+      <value>18.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuel_cell_height</name>
+      <typeCode>mm</typeCode>
+      <value>120.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_OD</name>
+      <typeCode>mm</typeCode>
+      <value>180.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_OR</name>
+      <typeCode>mm</typeCode>
+      <value>90.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_body_length</name>
+      <typeCode>mm</typeCode>
+      <value>1150.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_cs_perimeter</name>
+      <typeCode>mm</typeCode>
+      <value>565.487 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_frame_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>97.500 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_length</name>
+      <typeCode>mm</typeCode>
+      <value>1150.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_longeron_ID</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_longeron_OD</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_longeron_id_over_od</name>
+      <typeCode>mm</typeCode>
+      <value>750.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_longeron_lenght</name>
+      <typeCode>mm</typeCode>
+      <value>828.880 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_panel_comp_ok</name>
+      <typeCode>mm</typeCode>
+      <value>1000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_panel_interaction_index</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_panel_interaction_ok</name>
+      <typeCode>mm</typeCode>
+      <value>1000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_panel_kc</name>
+      <typeCode>mm</typeCode>
+      <value>4000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_panel_ks</name>
+      <typeCode>mm</typeCode>
+      <value>5500.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_sigma_cr_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>14500.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_sigma_x_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>998.482 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_stinger_height</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_stinger_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_stringer_height_2</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_stringer_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_stringer_thickness_2</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_t_shell</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_tail_length</name>
+      <typeCode>mm</typeCode>
+      <value>250.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_tail_longeron_length</name>
+      <typeCode>mm</typeCode>
+      <value>34.440 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_tau_cr_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>4618.802 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fuselage_tau_xy_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>534.933 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>mount_hole_scale_factor</name>
+      <typeCode>mm</typeCode>
+      <value>1000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>n_booms</name>
+      <typeCode>mm</typeCode>
+      <value>2000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>n_horizontal_tail_surfaces</name>
+      <typeCode>mm</typeCode>
+      <value>1000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>n_vertical_tail_surfaces</name>
+      <typeCode>mm</typeCode>
+      <value>2000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>printed_surface_drag_multiplier</name>
+      <typeCode>mm</typeCode>
+      <value>1100.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>prop_diameter</name>
+      <typeCode>mm</typeCode>
+      <value>381.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>prop_pitch</name>
+      <typeCode>mm</typeCode>
+      <value>203.200 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rib_spacing_2</name>
+      <typeCode>mm</typeCode>
+      <value>226.694 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>snap_fit_extension_length</name>
+      <typeCode>mm</typeCode>
+      <value>30.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>span_b</name>
+      <typeCode>mm</typeCode>
+      <value>2920.331 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>t_skin_root</name>
+      <typeCode>mm</typeCode>
+      <value>7.106 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>t_skin_tip</name>
+      <typeCode>mm</typeCode>
+      <value>1.066 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_V_stall</name>
+      <typeCode>mm</typeCode>
+      <value>10624.396 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_cruise_elevator</name>
+      <typeCode>deg</typeCode>
+      <value>0.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_downwash_k</name>
+      <typeCode>mm</typeCode>
+      <value>500.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_downwash_offset</name>
+      <typeCode>deg</typeCode>
+      <value>0.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_efficiency_factor</name>
+      <typeCode>mm</typeCode>
+      <value>900.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_deflection</name>
+      <typeCode>deg</typeCode>
+      <value>0.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_limit</name>
+      <typeCode>deg</typeCode>
+      <value>15.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_max_deflection</name>
+      <typeCode>deg</typeCode>
+      <value>25.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_max_down</name>
+      <typeCode>deg</typeCode>
+      <value>35.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_max_up</name>
+      <typeCode>deg</typeCode>
+      <value>-35.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_rod_id_over_od</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_elevator_tau_override</name>
+      <typeCode>mm</typeCode>
+      <value>-1000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_incidence</name>
+      <typeCode>deg</typeCode>
+      <value>1.528 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_incidence_limit</name>
+      <typeCode>deg</typeCode>
+      <value>2.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_le_x</name>
+      <typeCode>mm</typeCode>
+      <value>975.750 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_rib_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>165.433 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_span_b</name>
+      <typeCode>mm</typeCode>
+      <value>861.732 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_span_extension</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_stiffener_I_one_mm4</name>
+      <typeCode>mm</typeCode>
+      <value>273.067 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_stiffener_height</name>
+      <typeCode>mm</typeCode>
+      <value>1.600 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_stiffener_panel_ok</name>
+      <typeCode>mm</typeCode>
+      <value>1000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_stiffener_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>54.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_stiffener_tau_cr_panel_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>2828.567 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_stiffener_tau_skin_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>153.411 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_stiffener_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_t_skin_root</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>tail_t_skin_tip</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_Kf1</name>
+      <typeCode>mm</typeCode>
+      <value>750.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_V_stall</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_le_x</name>
+      <typeCode>mm</typeCode>
+      <value>975.750 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_rib_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>153.853 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_rudder_max_left</name>
+      <typeCode>deg</typeCode>
+      <value>-35.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_rudder_max_right</name>
+      <typeCode>deg</typeCode>
+      <value>35.000 deg</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_span_b</name>
+      <typeCode>mm</typeCode>
+      <value>507.705 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_stiffener_I_one_mm4</name>
+      <typeCode>mm</typeCode>
+      <value>273.067 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_stiffener_height</name>
+      <typeCode>mm</typeCode>
+      <value>1.600 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_stiffener_panel_ok</name>
+      <typeCode>mm</typeCode>
+      <value>1000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_stiffener_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>54.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_stiffener_tau_cr_panel_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>2828.567 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_stiffener_tau_skin_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>90.385 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_stiffener_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_t_skin_root_2</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vertical_tail_t_skin_tip_2</name>
+      <typeCode>mm</typeCode>
+      <value>0.800 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vtol_descent_height</name>
+      <typeCode>mm</typeCode>
+      <value>30000.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>vtol_descent_power_factor</name>
+      <typeCode>mm</typeCode>
+      <value>750.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_le_x</name>
+      <typeCode>mm</typeCode>
+      <value>321.500 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_stiffener_height</name>
+      <typeCode>mm</typeCode>
+      <value>8.400 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_stiffener_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>84.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_stiffener_tau_skin_MPa</name>
+      <typeCode>mm</typeCode>
+      <value>1154.701 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>wing_stiffener_thickness</name>
+      <typeCode>mm</typeCode>
+      <value>7.106 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>x_cg_end</name>
+      <typeCode>mm</typeCode>
+      <value>445.781 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>x_cg</name>
+      <typeCode>mm</typeCode>
+      <value>445.240 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>x_cg_over_fuselage_length</name>
+      <typeCode>mm</typeCode>
+      <value>387.165 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>x_cg_takeoff</name>
+      <typeCode>mm</typeCode>
+      <value>445.240 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>x_longerons_center</name>
+      <typeCode>mm</typeCode>
+      <value>575.000 mm</value>
+      <comment>Auto-export (dimension)</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+  </parameters>
+</ParamWithValueList>

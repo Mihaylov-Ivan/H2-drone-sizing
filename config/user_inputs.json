@@ -250,39 +250,47 @@
   },
   "optimizer": {
     "keep_existing_objective_and_constraint_logic": true,
-    "note": "The v2 LHS + local-refinement + robust uncertainty selection logic is retained. In v3 the lifting-surface design variables are spans; areas are derived from root chord and taper ratio.",
+    "note": "LHS + local-refinement + robust uncertainty selection. Spans come from span_bounds when span_mode=auto. Location bounds are packaging-aware for the ~0.78 m / 0.18 m pod and known component envelopes; packaging/layout gates still reject infeasible samples.",
     "design_space": {
       "wing_ac_x_m": [
-        0.34,
-        0.43
+        0.30,
+        0.48
+      ],
+      "horizontal_tail_ac_x_m": [
+        0.92,
+        1.15
+      ],
+      "vertical_tail_ac_x_m": [
+        0.92,
+        1.15
       ],
       "lift_row_center_x_m": [
-        0.38,
-        0.5
+        0.35,
+        0.52
       ],
       "battery_x_m": [
-        0.18,
-        0.62
+        0.12,
+        0.65
       ],
       "battery_z_m": [
-        0.058,
-        0.063
+        0.02,
+        0.065
       ],
       "fuel_cell_x_m": [
         0.14,
-        0.19
+        0.40
       ],
       "fuel_cell_z_m": [
-        -0.029,
-        -0.025
+        -0.035,
+        0.01
       ],
       "hydrogen_cylinder_x_m": [
-        0.505,
-        0.554
+        0.25,
+        0.55
       ],
       "hydrogen_cylinder_z_m": [
-        -0.029,
-        -0.025
+        -0.035,
+        0.01
       ]
     }
   },
@@ -309,6 +317,7 @@
   },
   "cad_export": {
     "enabled": true,
+    "export_directory": "C:\\Users\\User\\OneDrive\\Work\\Hydrogenera\\R&D\\H2 Drone\\CAD Model",
     "tolerances_mm": {
       "general_print_tolerance": 0.3,
       "transition_fit_clearance": 0.24,

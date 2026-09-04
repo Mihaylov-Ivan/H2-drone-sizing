@@ -1,0 +1,32 @@
+{
+  "user_input_file_schema": "H2AIR-user-inputs-v4",
+  "user_editable_groups": [
+    "mission",
+    "fuselage",
+    "lifting_surfaces",
+    "propulsion",
+    "component_positions",
+    "hardware",
+    "hardware_selection",
+    "manufacturing_mass_model",
+    "cad_export",
+    "optimizer"
+  ],
+  "auto_calculated_examples": [
+    "fuselage total length from section lengths",
+    "main wing span in AUTO mode and wing area/MAC",
+    "airfoil CL/CD/CM interpolation from a supplied polar when available",
+    "AUTO motor/prop/battery database selection when enabled",
+    "clean CAD parameter export (geometry/clearance/hardware only)",
+    "horizontal-tail span/area in AUTO mode",
+    "vertical-tail height/area in AUTO mode",
+    "component masses in LINEAR mode from kg/m x length",
+    "CG and inertia tensor",
+    "neutral point and static margin",
+    "aerodynamic drag/cruise power",
+    "VTOL thrust/power requirements",
+    "mission energy, hydrogen use and battery SOC",
+    "structural sizing feedback and converged MTOW"
+  ],
+  "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity."
+}

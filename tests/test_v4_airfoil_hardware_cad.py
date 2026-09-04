@@ -44,3 +44,5 @@ def test_cad_export_is_geometry_only(integrated_result):
         assert needed in names
     forbidden=('mass','weight','power','stress','mpa','energy','thrust','soc','current')
     assert not [n for n in names if any(x in n.lower() for x in forbidden)]
+    assert (out/'params.xml').exists()
+    assert (out/'params.xlsx').exists()

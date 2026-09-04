@@ -4,13 +4,18 @@ from __future__ import annotations
 
 Only geometry, component envelopes/locations, clearances/tolerances and selected
 fastener sizes are exported. Masses, powers, stresses and performance metrics
-are intentionally excluded so the XML remains useful as a drawing/CAD driver.
+are intentionally excluded so the XML/XLSX remain useful as a drawing/CAD driver.
 """
 
 from pathlib import Path
 from typing import Any, Dict, Mapping, Sequence, Tuple
 import json, math
 import xml.etree.ElementTree as ET
+
+try:
+    from openpyxl import Workbook
+except ImportError:  # pragma: no cover
+    Workbook = None  # type: ignore[misc, assignment]
 
 
 def _mm(x: float) -> float: return 1000.0*float(x)
@@ -107,29 +112,86 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     return {'schema':'H2AIR-CAD-parameters-v1','model_version':cfg['model']['version'],'parameters':out,'note':'Geometry/CAD only: masses, powers, stresses and performance outputs are intentionally excluded.'}
 
 
-def write_cad_exports(outdir: str|Path, cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> None:
+def _xml_value_text(value: Any, unit: str) -> str:
+    if unit == 'mm':
+        return f'{float(value):.3f} mm'
+    if unit == 'deg':
+        return f'{float(value):.3f} deg'
+    return str(value)
+
+
+def write_params_xml(path: Path, parameters: Sequence[Mapping[str, Any]]) -> None:
+    """Inventor-style ParamWithValueList XML matching parameters.xml."""
+    root = ET.Element('ParamWithValueList', {
+        'xmlns:xsd': 'http://www.w3.org/2001/XMLSchema',
+        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+    })
+    ET.SubElement(root, 'version').text = '20080502'
+    pts = ET.SubElement(root, 'parameterTypes')
+    for name, code in [('Inventor', '0'), ('String', '1'), ('Boolean', '2')]:
+        pt = ET.SubElement(pts, 'ParamType')
+        ET.SubElement(pt, 'typeName').text = name
+        ET.SubElement(pt, 'typeCode').text = code
+    pars = ET.SubElement(root, 'parameters')
+    for p in parameters:
+        node = ET.SubElement(pars, 'ParamWithValue')
+        ET.SubElement(node, 'name').text = p['name']
+        ET.SubElement(node, 'typeCode').text = p['unit']
+        ET.SubElement(node, 'value').text = _xml_value_text(p['value'], p['unit'])
+        ET.SubElement(node, 'comment').text = p['comment']
+        ET.SubElement(node, 'isKey').text = 'false'
+    tree = ET.ElementTree(root)
+    ET.indent(tree, space='  ')
+    tree.write(path, encoding='utf-8', xml_declaration=True)
+
+
+def write_params_xlsx(path: Path, parameters: Sequence[Mapping[str, Any]]) -> None:
+    """Excel table matching parameters.xlsx: Name / Value / Unit / Comment."""
+    if Workbook is None:
+        raise ImportError('openpyxl is required to write params.xlsx CAD exports')
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Parameters'
+    ws.append(['Name', 'Value', 'Unit', 'Comment'])
+    for p in parameters:
+        val = p['value']
+        if p['unit'] in ('mm', 'deg', 'unitless') and not isinstance(val, str):
+            try:
+                val = float(val)
+            except (TypeError, ValueError):
+                pass
+        ws.append([p['name'], val, p['unit'], p['comment']])
+    ws.column_dimensions['A'].width = 45.0
+    ws.column_dimensions['B'].width = 18.0
+    ws.column_dimensions['C'].width = 10.0
+    ws.column_dimensions['D'].width = 45.0
+    path.parent.mkdir(parents=True, exist_ok=True)
+    wb.save(path)
+
+
+def _write_params_bundle(directory: Path, data: Mapping[str, Any]) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    params = data['parameters']
+    write_params_xml(directory / 'params.xml', params)
+    write_params_xlsx(directory / 'params.xlsx', params)
+
+
+def write_cad_exports(outdir: str | Path, cfg: Mapping[str, Any], structure: Mapping[str, Any]) -> None:
     # CAD export is a v4 user-workflow feature. Legacy/internal regression
     # configurations have no controlled CAD input block and are intentionally
     # skipped rather than guessing drawing parameters.
-    u=cfg.get('user_input_snapshot')
-    if not u or not u.get('cad_export',{}).get('enabled',False):
+    u = cfg.get('user_input_snapshot')
+    if not u or not u.get('cad_export', {}).get('enabled', False):
         return
-    outdir=Path(outdir); outdir.mkdir(parents=True,exist_ok=True)
-    data=build_cad_parameters(cfg,structure)
-    (outdir/'cad_parameters.json').write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
-    # Inventor-style XML based on the user's example format.
-    root=ET.Element('ParamWithValueList',{'xmlns:xsd':'http://www.w3.org/2001/XMLSchema','xmlns:xsi':'http://www.w3.org/2001/XMLSchema-instance'})
-    ET.SubElement(root,'version').text='20080502'
-    pts=ET.SubElement(root,'parameterTypes')
-    for name,code in [('Inventor','0'),('String','1'),('Boolean','2')]:
-        pt=ET.SubElement(pts,'ParamType'); ET.SubElement(pt,'typeName').text=name; ET.SubElement(pt,'typeCode').text=code
-    pars=ET.SubElement(root,'parameters')
-    for p in data['parameters']:
-        node=ET.SubElement(pars,'ParamWithValue'); ET.SubElement(node,'name').text=p['name']; ET.SubElement(node,'typeCode').text=p['unit']
-        val=p['value']; unit=p['unit']
-        if unit=='mm': txt=f'{float(val):.3f} mm'
-        elif unit=='deg': txt=f'{float(val):.3f} deg'
-        elif unit=='unitless': txt=str(val)
-        else: txt=str(val)
-        ET.SubElement(node,'value').text=txt; ET.SubElement(node,'comment').text=p['comment']; ET.SubElement(node,'isKey').text='false'
-    tree=ET.ElementTree(root); ET.indent(tree,space='  '); tree.write(outdir/'cad_parameters.xml',encoding='utf-8',xml_declaration=True)
+    outdir = Path(outdir)
+    data = build_cad_parameters(cfg, structure)
+    outdir.mkdir(parents=True, exist_ok=True)
+    (outdir / 'cad_parameters.json').write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+    # Run-folder copies for reproducibility / tests.
+    _write_params_bundle(outdir, data)
+    # Also keep the legacy XML filename used by older run consumers.
+    write_params_xml(outdir / 'cad_parameters.xml', data['parameters'])
+
+    export_dir = u.get('cad_export', {}).get('export_directory')
+    if export_dir:
+        _write_params_bundle(Path(export_dir), data)

@@ -74,4 +74,6 @@ def test_v4_default_user_design_full_pipeline_runs(tmp_path):
     assert (tmp_path/'run'/'AUTO_CALCULATED_VALUES.json').exists()
     assert (tmp_path/'run'/'manufacturing_mass_ledger.csv').exists()
     assert (tmp_path/'run'/'cad_parameters.xml').exists()
+    assert (tmp_path/'run'/'params.xml').exists()
+    assert (tmp_path/'run'/'params.xlsx').exists()
     assert (tmp_path/'run'/'HARDWARE_SELECTION.json').exists()
