@@ -1,0 +1,128 @@
+{
+  "status": "FINAL_REFERENCE_STUDY",
+  "optimization_source": "Deterministic 60-candidate screening search already reproduced from seed 42.",
+  "selection_rule": "Both candidates must pass full integrated verification; margin-biased candidate is recommended when its uncertainty screening pass probability is not worse than the nominal mass optimum.",
+  "uncertainty_samples_each": 32,
+  "uncertainty_seed": 79,
+  "nominal": {
+    "verified_summary": {
+      "design_status": "SCREENING_PASS",
+      "reference_mass_kg": 11.925752836138177,
+      "post_structure_mass_kg": 13.325395537407953,
+      "post_structure_cg_x_m": 0.4251003235230893,
+      "mass_margin_to_15kg_kg": 1.6746044625920469,
+      "current_static_margin": 0.08874114850400815,
+      "post_structure_static_margin_if_np_fixed": 0.08874114850400815,
+      "cruise_drag_N": 11.728071244949025,
+      "cruise_bus_power_W": 360.77975680413954,
+      "forward_transition_duration_s": 17.079999999999725,
+      "reverse_transition_duration_s": 19.17999999999968,
+      "mission_energy_Wh": 751.2770333891714,
+      "h2_used_kg": 0.04908906385160905,
+      "final_battery_soc": 0.900581935969283,
+      "wing_spar_od_mm": 22.50000000000001,
+      "wing_spar_id_mm": 16.875000000000007,
+      "boom_od_mm": 22.00000000000001,
+      "boom_id_mm": 18.00000000000001,
+      "motor_mount_limit_thrust_N": 80.0,
+      "post_structure_15kg_zero_pitch_front_motor_N": 63.66517851952149,
+      "post_structure_15kg_zero_pitch_rear_motor_N": 55.09713398047852,
+      "structural_closure_iterations": 2
+    },
+    "uncertainty_summary": {
+      "samples": 32,
+      "seed": 79,
+      "screening_pass_probability": 0.6875,
+      "post_structure_mass_kg": {
+        "p05": 13.060002282909563,
+        "p50": 13.308540459300891,
+        "p95": 13.576522376190427
+      },
+      "static_margin": {
+        "p05": 0.08125074955280014,
+        "p50": 0.08858189904046392,
+        "p95": 0.097741278828189
+      },
+      "cruise_bus_power_W": {
+        "p05": 315.2900529575215,
+        "p50": 347.82935704949807,
+        "p95": 381.12101100402754
+      },
+      "mission_energy_Wh": {
+        "p05": 656.3325115622765,
+        "p50": 719.6924927860799,
+        "p95": 785.0617802562512
+      },
+      "max_motor_15kg_N": {
+        "p05": 63.185096037914015,
+        "p50": 63.654971736391374,
+        "p95": 64.24202428287386
+      },
+      "failure_counts": {
+        "15kg_stall_margin": 10
+      }
+    }
+  },
+  "recommended": {
+    "name": "robust_margin_biased",
+    "verified_summary": {
+      "design_status": "SCREENING_PASS",
+      "reference_mass_kg": 12.207765643819902,
+      "post_structure_mass_kg": 13.619527205419697,
+      "post_structure_cg_x_m": 0.42813612389651434,
+      "mass_margin_to_15kg_kg": 1.380472794580303,
+      "current_static_margin": 0.0854795015178473,
+      "post_structure_static_margin_if_np_fixed": 0.0854795015178473,
+      "cruise_drag_N": 11.787968615527895,
+      "cruise_bus_power_W": 362.4435726535526,
+      "forward_transition_duration_s": 16.259999999999742,
+      "reverse_transition_duration_s": 19.959999999999663,
+      "mission_energy_Wh": 755.3088156831941,
+      "h2_used_kg": 0.04930608476894918,
+      "final_battery_soc": 0.8969245672453907,
+      "wing_spar_od_mm": 22.50000000000001,
+      "wing_spar_id_mm": 16.875000000000007,
+      "boom_od_mm": 22.25000000000001,
+      "boom_id_mm": 18.25000000000001,
+      "motor_mount_limit_thrust_N": 80.0,
+      "post_structure_15kg_zero_pitch_front_motor_N": 62.909649029504045,
+      "post_structure_15kg_zero_pitch_rear_motor_N": 55.85266347049596,
+      "structural_closure_iterations": 2
+    },
+    "uncertainty_summary": {
+      "samples": 32,
+      "seed": 79,
+      "screening_pass_probability": 0.9375,
+      "post_structure_mass_kg": {
+        "p05": 13.354133950921309,
+        "p50": 13.602672127312637,
+        "p95": 13.87065404420217
+      },
+      "static_margin": {
+        "p05": 0.07832657162636408,
+        "p50": 0.08544493559980085,
+        "p95": 0.09378181895335273
+      },
+      "cruise_bus_power_W": {
+        "p05": 316.9201723646235,
+        "p50": 350.08305253461396,
+        "p95": 383.8038432168817
+      },
+      "mission_energy_Wh": {
+        "p05": 660.2091195166058,
+        "p50": 724.8170739602588,
+        "p95": 791.0240508118708
+      },
+      "max_motor_15kg_N": {
+        "p05": 62.4331968680878,
+        "p50": 62.907346615442336,
+        "p95": 63.462661172349215
+      },
+      "failure_counts": {
+        "15kg_stall_margin": 2
+      }
+    }
+  },
+  "selected": "robust_margin_biased",
+  "interpretation": "Screening probabilities propagate explicit engineering-assumption distributions only; they are not certified reliability probabilities."
+}

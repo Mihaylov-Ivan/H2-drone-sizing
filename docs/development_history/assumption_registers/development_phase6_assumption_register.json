@@ -1,0 +1,16 @@
+{
+  "model_version": "H2AIR-phase6-assumptions-1.0",
+  "items": [
+    {"item":"6-DOF mass, CG and inertia","status":"calculated_screening","source":"Phase-3 reference run","action":"replace placeholder battery/cylinder mass and geometry before release"},
+    {"item":"current static margin -13.28%","status":"calculated_from_current_model","source":"Phase-3 CG + inherited neutral point","action":"recompute neutral point with final wing/tail geometry and move CG/NP to positive margin"},
+    {"item":"target static margin 8% candidate","status":"preliminary_target","source":"Phase-6 stability screen","action":"close by geometry/CG/tail design, not by software alone"},
+    {"item":"CLalpha and CLmax","status":"engineering_model_input","source":"Phase-5/Phase-4 accessible model","action":"correlate CFD/airfoil data and flight test"},
+    {"item":"pitch/lateral aerodynamic derivatives","status":"engineering_assumption","source":"screening estimates","action":"derive from AVL/CFD/wind tunnel/system identification"},
+    {"item":"aileron/elevator/rudder effectiveness","status":"engineering_assumption","source":"screening values","action":"replace from actual control surface geometry and CFD/AVL"},
+    {"item":"servo rate/time constant and travel","status":"engineering_assumption","source":"screening values","action":"replace with selected servo data and linkage geometry"},
+    {"item":"lift motor 65 N maximum","status":"design_screen_not_hardware","source":"Phase-5 candidate","action":"supplier/bench verify on 12S at thermal steady state"},
+    {"item":"rotor reaction torque/thrust ratio","status":"engineering_assumption","source":"screening value 0.035 m","action":"derive from measured prop torque/RPM map"},
+    {"item":"pusher prop map","status":"engineering_assumption","source":"Phase-4 generic Ct/Cp map","action":"replace with selected prop/motor map"},
+    {"item":"5 m/s lateral gust","status":"design_test_condition","source":"Phase-6 screening scenario","action":"expand to turbulence spectra and multi-axis gusts later"}
+  ]
+}

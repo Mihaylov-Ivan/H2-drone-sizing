@@ -1,0 +1,88 @@
+"""Reusable fixed-point closure engine for H2AIR Phase 3.
+
+This module does not invent structural or propulsion scaling laws.  The caller
+provides an evaluator that consumes the current state and returns the next live
+state from the real geometry/structure/propulsion/mission models.  That keeps
+closure numerics separate from physics and prevents an arbitrary surrogate from
+being mistaken for the aircraft model.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, asdict
+from typing import Callable, Dict, List, Mapping
+
+
+@dataclass
+class ClosureSettings:
+    max_iterations: int = 50
+    min_iterations: int = 3
+    relaxation: float = 0.65
+    mass_rel_tol: float = 1e-5
+    cg_abs_tol_m: float = 1e-5
+    inertia_rel_tol: float = 1e-4
+    power_rel_tol: float = 1e-4
+
+
+@dataclass
+class ClosureResult:
+    converged: bool
+    iterations: int
+    state: Dict[str, float]
+    history: List[Dict[str, float]]
+    reason: str
+
+    def to_dict(self):
+        return asdict(self)
+
+
+def _reldiff(a: float, b: float) -> float:
+    return abs(a-b) / max(abs(a), abs(b), 1e-12)
+
+
+def fixed_point_closure(
+    initial_state: Mapping[str, float],
+    evaluator: Callable[[Mapping[str, float]], Mapping[str, float]],
+    *,
+    settings: ClosureSettings = ClosureSettings(),
+) -> ClosureResult:
+    required = {"mtow_kg", "cg_x_m", "Ixx_kgm2", "Iyy_kgm2", "Izz_kgm2", "peak_power_W"}
+    missing = required - set(initial_state)
+    if missing:
+        raise ValueError("Closure initial state missing: " + ", ".join(sorted(missing)))
+    if not (0 < settings.relaxation <= 1):
+        raise ValueError("relaxation must be in (0,1]")
+
+    current = {k: float(v) for k, v in initial_state.items()}
+    history: List[Dict[str, float]] = []
+    for iteration in range(1, settings.max_iterations + 1):
+        raw = {k: float(v) for k, v in evaluator(current).items()}
+        missing = required - set(raw)
+        if missing:
+            raise ValueError("Closure evaluator missing: " + ", ".join(sorted(missing)))
+        nxt = dict(current)
+        for key, value in raw.items():
+            if key in current:
+                nxt[key] = current[key] + settings.relaxation * (value - current[key])
+            else:
+                nxt[key] = value
+        row = {"iteration": float(iteration), **nxt}
+        row.update({
+            "mass_rel_residual": _reldiff(nxt["mtow_kg"], current["mtow_kg"]),
+            "cg_abs_residual_m": abs(nxt["cg_x_m"] - current["cg_x_m"]),
+            "inertia_rel_residual": max(
+                _reldiff(nxt["Ixx_kgm2"], current["Ixx_kgm2"]),
+                _reldiff(nxt["Iyy_kgm2"], current["Iyy_kgm2"]),
+                _reldiff(nxt["Izz_kgm2"], current["Izz_kgm2"]),
+            ),
+            "power_rel_residual": _reldiff(nxt["peak_power_W"], current["peak_power_W"]),
+        })
+        history.append(row)
+        current = nxt
+        if iteration >= settings.min_iterations and (
+            row["mass_rel_residual"] <= settings.mass_rel_tol
+            and row["cg_abs_residual_m"] <= settings.cg_abs_tol_m
+            and row["inertia_rel_residual"] <= settings.inertia_rel_tol
+            and row["power_rel_residual"] <= settings.power_rel_tol
+        ):
+            return ClosureResult(True, iteration, current, history, "converged")
+    return ClosureResult(False, settings.max_iterations, current, history, "maximum_iterations")

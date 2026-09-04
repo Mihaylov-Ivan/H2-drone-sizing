@@ -1,0 +1,31 @@
+{
+  "reference_drag_baseline": {
+    "status": "source_derived_calibration",
+    "note": "Calibrated to latest accessible H2AIR results at 20 m/s: 18.905 N total drag, 2.039 N induced, 8.830 N stopped-random lift-prop drag."
+  },
+  "lift_prop_cruise_state_factors": {
+    "status": "engineering_assumption_in_existing_model",
+    "note": "folded=0.05, stopped_aligned=0.15, stopped_random=0.50, windmilling=1.00 projected-area factors; replace with CFD/wind-tunnel/flight data."
+  },
+  "lift_propulsion_hardware": {
+    "status": "legacy_placeholder",
+    "note": "Current 18x6/55 N/1600 W lift combination is retained only for a fail/pass comparison. No flight hardware selection is made from it."
+  },
+  "pusher_generic_prop_map": {
+    "status": "engineering_assumption",
+    "note": "Generic Ct/Cp vs J map is for operating-point screening only; use manufacturer or thrust-stand maps for design release."
+  },
+  "cruise_propulsive_efficiency_reference": {
+    "status": "current_model_assumption",
+    "value": 0.72,
+    "note": "Used only to preserve current aircraft-model electrical cruise power."
+  },
+  "wing_area_scaling": {
+    "status": "calibrated_screening_assumption",
+    "note": "Stall speed scales from the source model's 14.75 m/s baseline. Wing-profile drag scales with qS and total calibrated induced drag is treated as wing-dominated for sensitivity. Re-close with live aero/tail/structure model before geometry freeze."
+  },
+  "15kg_peak_power": {
+    "status": "calculated_from_current_model_equations",
+    "note": "Uses the current model thrust margin, vertical acceleration, climb speed, effective lift efficiency and power margin. Actual motor/ESC/battery thermal/current pass remains open."
+  }
+}

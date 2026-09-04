@@ -1,0 +1,14 @@
+{
+  "phase": 7,
+  "items": [
+    {"item": "CFRP equivalent E = 300 GPa", "status": "engineering_assumption", "action": "Replace with selected tube supplier axial/flexural modulus and laminate data."},
+    {"item": "CFRP bending allowable = 1000 MPa", "status": "engineering_assumption_from_current_model", "action": "Replace with statistically supported design allowable including knockdowns/joints/environment."},
+    {"item": "Wing tip deflection limit = 3% semispan and root-slope limit = 3 deg", "status": "engineering_requirement", "action": "Refine with aeroelastic/control-surface alignment analysis."},
+    {"item": "Boom tip deflection limit ~10 mm", "status": "engineering_requirement", "action": "Refine from tail alignment, control, prop clearance and vibration requirements."},
+    {"item": "Horizontal tail |CL|=1.0 at 50 m/s", "status": "conservative_screen", "action": "Replace with 6DOF/CFD load envelope and control-surface hinge loads."},
+    {"item": "Vertical tail |CY|=0.8 at 50 m/s", "status": "conservative_screen", "action": "Replace with sideslip/gust/engine-out load envelope."},
+    {"item": "Candidate lift motor structural limit 80 N", "status": "design_screen", "action": "Replace with selected motor/prop measured thrust and overspeed/ESC limit."},
+    {"item": "Motor mount geometry", "status": "open", "action": "Add CAD section, fasteners, inserts, material orientation, bearing/pull-through and fatigue checks."},
+    {"item": "Boom 35x31 mm reference geometry vs legacy 24 g tube mass", "status": "conflict", "action": "Resolve from actual supplier tube dimensions and measured mass; do not use both simultaneously."}
+  ]
+}

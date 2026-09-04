@@ -1,0 +1,3806 @@
+{
+  "model": {
+    "name": "H2AIR Integrated Model",
+    "version": "H2AIR-integrated-v2.0",
+    "description": "Single-entry integrated H2AIR-4+1 UAV conceptual sizing, mission, control and structural screening model.",
+    "fidelity": "conceptual / screening; not flight-release evidence"
+  },
+  "config_hash": "f053da417d9dd3a1765c57141522138d2892d37971d396f6c2db5132354b5038",
+  "summary": {
+    "design_status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
+    "reference_mass_kg": 11.0777,
+    "post_structure_mass_kg": 12.386864504075065,
+    "post_structure_cg_x_m": 0.4614279824662396,
+    "mass_margin_to_15kg_kg": 2.6131354959249347,
+    "current_static_margin": -0.18577570612663513,
+    "post_structure_static_margin_if_np_fixed": -0.18577570612663513,
+    "cruise_drag_N": 11.55555501382033,
+    "cruise_bus_power_W": 355.98763927278696,
+    "forward_transition_duration_s": 29.99999999999945,
+    "reverse_transition_duration_s": 16.679999999999733,
+    "mission_energy_Wh": 739.8562082331161,
+    "h2_used_kg": 0.048524403372425924,
+    "final_battery_soc": 0.9143113799628151,
+    "wing_spar_od_mm": 22.50000000000001,
+    "wing_spar_id_mm": 16.875000000000007,
+    "boom_od_mm": 20.000000000000007,
+    "boom_id_mm": 16.000000000000007,
+    "motor_mount_limit_thrust_N": 80.0,
+    "post_structure_15kg_zero_pitch_front_motor_N": 68.98069941869224,
+    "post_structure_15kg_zero_pitch_rear_motor_N": 49.78161308130778,
+    "structural_closure_iterations": 2
+  },
+  "mass_properties": {
+    "pre_structure": {
+      "model_version": "H2AIR-integrated-mass-properties",
+      "coordinate_frame": {
+        "x": "nose -> aft",
+        "y": "centreline -> right positive (left negative)",
+        "z": "up positive",
+        "note": "design/packaging frame; future 6-DOF frame conversion must be explicit"
+      },
+      "components": [
+        {
+          "name": "wing_structure",
+          "group": "airframe",
+          "mass_takeoff_kg": 2.6153,
+          "position_m": [
+            0.43,
+            0.0,
+            0.1
+          ],
+          "mass_end_kg": 2.6153,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.223,
+            "width_y": 2.92,
+            "height_z": 0.028
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR results.txt",
+          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_1",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.26139999999999997,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_2",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.26139999999999997,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_3",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.7386,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_4",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.7386,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "central_pod_structure",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.9959,
+          "position_m": [
+            0.39,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.78,
+            "width_y": 0.18,
+            "height_z": 0.18
+          },
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR central-pod structure result",
+          "note": "",
+          "include_in_collision_check": false
+        },
+        {
+          "name": "boom_tube_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.0121,
+          "position_m": [
+            0.72,
+            -0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "cylinder_x",
+          "dimensions_m": {
+            "length": 0.76,
+            "diameter": 0.035
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_tube_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.0121,
+          "position_m": [
+            0.72,
+            0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "cylinder_x",
+          "dimensions_m": {
+            "length": 0.76,
+            "diameter": 0.035
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_forward_mount_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.055,
+          "position_m": [
+            0.34,
+            -0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_forward_mount_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.055,
+          "position_m": [
+            0.34,
+            0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_tail_mount_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.035,
+          "position_m": [
+            1.1,
+            -0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_tail_mount_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.035,
+          "position_m": [
+            1.1,
+            0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "tail_crossmember",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.08,
+          "position_m": [
+            1.1,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "horizontal_tail_structure",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.1305,
+          "position_m": [
+            1.05,
+            0.0,
+            0.03
+          ],
+          "mass_end_kg": 0.1305,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.148,
+            "width_y": 0.862,
+            "height_z": 0.0216
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR tail result",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "vertical_tail_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.0367,
+          "position_m": [
+            1.05,
+            -0.35,
+            0.254
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.148,
+            "width_y": 0.012,
+            "height_z": 0.508
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "vertical_tail_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.0367,
+          "position_m": [
+            1.05,
+            0.35,
+            0.254
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.148,
+            "width_y": 0.012,
+            "height_z": 0.508
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "payload",
+          "group": "payload",
+          "mass_takeoff_kg": 1.2,
+          "position_m": [
+            0.16,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.053,
+            "width_y": null,
+            "height_z": null
+          },
+          "package_zone": "central_pod",
+          "status": "preliminary_target",
+          "source": "Latest IH-MIE application / current design input",
+          "note": "Only payload length is currently controlled in the accessible H2 model; width/height remain open.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "buffer_battery",
+          "group": "energy",
+          "mass_takeoff_kg": 0.75,
+          "position_m": [
+            0.39,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.16,
+            "width_y": 0.05,
+            "height_z": 0.05
+          },
+          "package_zone": "central_pod",
+          "status": "legacy_placeholder",
+          "source": "Legacy 6S buffer used only because selected 12S pack mass/dimensions are not yet available",
+          "note": "Phase 2 electrical architecture is 12S/48-V class; do not freeze this mass or envelope.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "fuel_cell_system",
+          "group": "energy",
+          "mass_takeoff_kg": 1.45,
+          "position_m": [
+            0.57,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": 1.45,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.26,
+            "width_y": 0.16,
+            "height_z": 0.12
+          },
+          "package_zone": "central_pod",
+          "status": "supplier_confirmed",
+          "source": "Integrated power-system config",
+          "note": "IE-SOAR module mass is reconciled from Phase 2. Exact integration envelope still needs supplier drawing/interface confirmation.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "hydrogen_cylinder",
+          "group": "energy",
+          "mass_takeoff_kg": 1.1,
+          "position_m": [
+            0.34,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "cylinder_x",
+          "dimensions_m": {
+            "length": 0.45,
+            "diameter": 0.12
+          },
+          "package_zone": "central_pod",
+          "status": "legacy_placeholder",
+          "source": "Legacy cylinder mass/dimensions retained because current certified 3.0 L/350 bar cylinder mass/envelope is open",
+          "note": "Do not treat as selected-cylinder mass or geometry.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "hydrogen_regulator",
+          "group": "energy",
+          "mass_takeoff_kg": 0.315,
+          "position_m": [
+            0.5599999999999999,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": 0.315,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "supplier_confirmed",
+          "source": "Integrated power-system config",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "stored_hydrogen",
+          "group": "energy",
+          "mass_takeoff_kg": 0.07,
+          "position_m": [
+            0.34,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": 0.07,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "preliminary_target",
+          "source": "Integrated power-system config",
+          "note": "",
+          "include_in_collision_check": false
+        },
+        {
+          "name": "lift_propulsion_1",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.26139999999999997,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_propulsion_2",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.26139999999999997,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_propulsion_3",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.7386,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_propulsion_4",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.7386,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "cruise_propulsion",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.2,
+          "position_m": [
+            0.94,
+            0.0,
+            0.02
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 15x8 pusher motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_1",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.26139999999999997,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_2",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.26139999999999997,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_3",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.7386,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_4",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.7386,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "cruise_ESC",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0534,
+          "position_m": [
+            0.82,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR model; physical dimensions open",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "autopilot",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.016,
+          "position_m": [
+            0.208,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "gps",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.025,
+          "position_m": [
+            0.43,
+            0.0,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "airspeed_sensor",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.022,
+          "position_m": [
+            0.028,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "rc_receiver",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.01,
+          "position_m": [
+            0.371,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "telemetry",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.02,
+          "position_m": [
+            0.371,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "power_module",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.04,
+          "position_m": [
+            0.39,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "servos",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.06,
+          "position_m": [
+            0.88,
+            0.0,
+            0.03
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "misc_electronics",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.1656,
+          "position_m": [
+            0.575,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR lumped allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "camera",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.028,
+          "position_m": [
+            0.023,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        }
+      ],
+      "mass_groups_takeoff_kg": {
+        "airframe": 4.306300000000001,
+        "avionics": 0.5864,
+        "energy": 3.685,
+        "payload": 1.2,
+        "propulsion": 1.3
+      },
+      "mass_groups_end_kg": {
+        "airframe": 4.306300000000001,
+        "avionics": 0.5864,
+        "energy": 3.685,
+        "payload": 1.2,
+        "propulsion": 1.3
+      },
+      "takeoff": {
+        "scenario": "takeoff",
+        "total_mass_kg": 11.0777,
+        "cg_m": [
+          0.44961273549563535,
+          0.0,
+          0.03951439378210279
+        ],
+        "Ixx_kgm2": 2.2780978456282446,
+        "Iyy_kgm2": 0.5798179616233543,
+        "Izz_kgm2": 2.785998190220108,
+        "Ixy_kgm2": 0.0,
+        "Ixz_kgm2": 0.01842507674932524,
+        "Iyz_kgm2": 0.0,
+        "inertia_tensor_kgm2": [
+          [
+            2.2780978456282446,
+            -0.0,
+            -0.01842507674932524
+          ],
+          [
+            -0.0,
+            0.5798179616233543,
+            -0.0
+          ],
+          [
+            -0.01842507674932524,
+            -0.0,
+            2.785998190220108
+          ]
+        ],
+        "positive_definite_screen": true
+      },
+      "end_of_mission": {
+        "scenario": "end",
+        "total_mass_kg": 11.0777,
+        "cg_m": [
+          0.44961273549563535,
+          0.0,
+          0.03951439378210279
+        ],
+        "Ixx_kgm2": 2.2780978456282446,
+        "Iyy_kgm2": 0.5798179616233543,
+        "Izz_kgm2": 2.785998190220108,
+        "Ixy_kgm2": 0.0,
+        "Ixz_kgm2": 0.01842507674932524,
+        "Iyz_kgm2": 0.0,
+        "inertia_tensor_kgm2": [
+          [
+            2.2780978456282446,
+            -0.0,
+            -0.01842507674932524
+          ],
+          [
+            -0.0,
+            0.5798179616233543,
+            -0.0
+          ],
+          [
+            -0.01842507674932524,
+            -0.0,
+            2.785998190220108
+          ]
+        ],
+        "positive_definite_screen": true
+      },
+      "hydrogen_cg_sweep": [
+        {
+          "h2_fraction": 1.0,
+          "h2_mass_kg": 0.07,
+          "total_mass_kg": 11.0777,
+          "cg_m": [
+            0.44961273549563535,
+            0.0,
+            0.03951439378210279
+          ],
+          "Ixx_kgm2": 2.2780978456282446,
+          "Iyy_kgm2": 0.5798179616233543,
+          "Izz_kgm2": 2.785998190220108
+        },
+        {
+          "h2_fraction": 0.75,
+          "h2_mass_kg": 0.052500000000000005,
+          "total_mass_kg": 11.0602,
+          "cg_m": [
+            0.44978617023200307,
+            0.0,
+            0.03957691542648415
+          ],
+          "Ixx_kgm2": 2.2780704781163807,
+          "Iyy_kgm2": 0.5795799997688119,
+          "Izz_kgm2": 2.7857875958774314
+        },
+        {
+          "h2_fraction": 0.5,
+          "h2_mass_kg": 0.035,
+          "total_mass_kg": 11.0427,
+          "cg_m": [
+            0.4499601546723175,
+            0.0,
+            0.039639635234136585
+          ],
+          "Ixx_kgm2": 2.2780430238627822,
+          "Iyy_kgm2": 0.5793412836906733,
+          "Izz_kgm2": 2.7855763340528883
+        },
+        {
+          "h2_fraction": 0.25,
+          "h2_mass_kg": 0.0175,
+          "total_mass_kg": 11.0252,
+          "cg_m": [
+            0.45013469143416895,
+            0.0,
+            0.03970255414867758
+          ],
+          "Ixx_kgm2": 2.278015482454408,
+          "Iyy_kgm2": 0.5791018097974622,
+          "Izz_kgm2": 2.7853644015680534
+        },
+        {
+          "h2_fraction": 0.15,
+          "h2_mass_kg": 0.0105,
+          "total_mass_kg": 11.0182,
+          "cg_m": [
+            0.45020466137844656,
+            0.0,
+            0.03972777767693453
+          ],
+          "Ixx_kgm2": 2.2780044413946965,
+          "Iyy_kgm2": 0.5790058072431226,
+          "Izz_kgm2": 2.7852794400734253
+        },
+        {
+          "h2_fraction": 0.0,
+          "h2_mass_kg": 0.0,
+          "total_mass_kg": 11.0077,
+          "cg_m": [
+            0.45030978315179376,
+            0.0,
+            0.03976567311972529
+          ],
+          "Ixx_kgm2": 2.2779878534755778,
+          "Iyy_kgm2": 0.5788615744748643,
+          "Izz_kgm2": 2.7851517952242855
+        }
+      ],
+      "packaging_checks": [
+        {
+          "name": "fit_inside:central_pod",
+          "status": "NOT_EVALUATED",
+          "value": null,
+          "limit": null,
+          "message": "All known envelopes fit, but some components have incomplete dimensions.",
+          "affected": [
+            "payload",
+            "hydrogen_regulator",
+            "cruise_ESC",
+            "autopilot",
+            "airspeed_sensor",
+            "rc_receiver",
+            "telemetry",
+            "power_module",
+            "misc_electronics",
+            "camera"
+          ]
+        },
+        {
+          "name": "collision_free:central_pod",
+          "status": "FAIL",
+          "value": 3,
+          "limit": 0,
+          "message": "Current mass-station placements are not a collision-free hardware layout.",
+          "affected": [
+            "buffer_battery <-> fuel_cell_system (axis overlaps/gaps m: +0.0300, +0.0500, +0.0500)",
+            "buffer_battery <-> hydrogen_cylinder (axis overlaps/gaps m: +0.1600, +0.0500, +0.0500)",
+            "fuel_cell_system <-> hydrogen_cylinder (axis overlaps/gaps m: +0.1250, +0.1200, +0.1200)"
+          ]
+        }
+      ],
+      "propeller_clearance_checks": [
+        {
+          "name": "lift_propeller_pair_clearance",
+          "status": "WARNING",
+          "value": 0.020000000000000073,
+          "limit": 0.02,
+          "message": "Minimum lift-disk edge clearance is 20.0 mm; governing pair M1/M3. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": [
+            "M1",
+            "M3"
+          ]
+        },
+        {
+          "name": "lift_propeller_max_diameter_for_current_centres",
+          "status": "WARNING",
+          "value": 0.45720000000000005,
+          "limit": 0.4572,
+          "message": "At the current lift-motor centres and 20 mm edge clearance, the governing equal propeller diameter is <= 0.4572 m (18.00 in).",
+          "affected": []
+        },
+        {
+          "name": "lift_propeller_to_pod",
+          "status": "WARNING",
+          "value": 0.16140000000000002,
+          "limit": 0.02,
+          "message": "Minimum top-view lift-disk to pod clearance: 161.4 mm. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": []
+        },
+        {
+          "name": "pusher_disk_to_boom_lateral_clearance",
+          "status": "WARNING",
+          "value": 0.14199999999999996,
+          "limit": 0.02,
+          "message": "Minimum pusher disk-edge to boom-envelope lateral clearance: 142.0 mm. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": []
+        },
+        {
+          "name": "pusher_plane_to_tail_le_axial_clearance",
+          "status": "WARNING",
+          "value": 0.03600000000000003,
+          "limit": 0.02,
+          "message": "Pusher disk-plane to horizontal-tail leading-edge axial separation: 36.0 mm. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": []
+        }
+      ],
+      "design_gates": [
+        {
+          "name": "mtow_ceiling_numeric",
+          "status": "PASS",
+          "value": 11.0777,
+          "limit": 15.0,
+          "message": "Numerical ledger check; hardware-completeness gate is separate.",
+          "affected": []
+        },
+        {
+          "name": "mtow_growth_margin",
+          "status": "PASS",
+          "value": 3.9223,
+          "limit": null,
+          "message": "Numerical mass margin to the 15 kg ceiling.",
+          "affected": []
+        },
+        {
+          "name": "hardware_mass_completeness",
+          "status": "NOT_EVALUATED",
+          "value": 2,
+          "limit": 0,
+          "message": "Final MTOW cannot be released until selected battery and cylinder masses are supplier/measured values.",
+          "affected": [
+            "buffer_battery",
+            "hydrogen_cylinder"
+          ]
+        },
+        {
+          "name": "reference_static_margin",
+          "status": "FAIL",
+          "value": -0.1327925358548671,
+          "limit": 0.05,
+          "message": "Cross-check only: uses the inherited neutral point from the current aero/stability model. At that fixed neutral point, reaching 5.0% MAC would require CG x <= 0.4088 m (about 40.8 mm forward from this ledger). Aero/propulsion/6 must recompute the neutral point after geometry/CG updates.",
+          "affected": []
+        },
+        {
+          "name": "lateral_cg_symmetry",
+          "status": "PASS",
+          "value": 0.0,
+          "limit": 0.005,
+          "message": "3-D BOM lateral-CG symmetry check.",
+          "affected": []
+        },
+        {
+          "name": "inertia_tensor_positive_definite",
+          "status": "PASS",
+          "value": true,
+          "limit": null,
+          "message": "Basic physical consistency screen for the assembled inertia tensor.",
+          "affected": []
+        }
+      ],
+      "unknown_or_placeholder_items": [
+        {
+          "name": "wing_structure",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR results.txt",
+          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized."
+        },
+        {
+          "name": "boom_tube_left",
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release."
+        },
+        {
+          "name": "boom_tube_right",
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release."
+        },
+        {
+          "name": "horizontal_tail_structure",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR tail result",
+          "note": ""
+        },
+        {
+          "name": "vertical_tail_left",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station."
+        },
+        {
+          "name": "vertical_tail_right",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station."
+        },
+        {
+          "name": "buffer_battery",
+          "status": "legacy_placeholder",
+          "source": "Legacy 6S buffer used only because selected 12S pack mass/dimensions are not yet available",
+          "note": "Phase 2 electrical architecture is 12S/48-V class; do not freeze this mass or envelope."
+        },
+        {
+          "name": "hydrogen_cylinder",
+          "status": "legacy_placeholder",
+          "source": "Legacy cylinder mass/dimensions retained because current certified 3.0 L/350 bar cylinder mass/envelope is open",
+          "note": "Do not treat as selected-cylinder mass or geometry."
+        },
+        {
+          "name": "lift_propulsion_1",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "lift_propulsion_2",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "lift_propulsion_3",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "lift_propulsion_4",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "cruise_propulsion",
+          "status": "legacy_placeholder",
+          "source": "Current 15x8 pusher motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "misc_electronics",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR lumped allowance",
+          "note": ""
+        }
+      ],
+      "summary": {
+        "takeoff_mass_kg": 11.0777,
+        "empty_mass_excluding_payload_and_h2_kg": 9.8077,
+        "payload_mass_kg": 1.2,
+        "payload_fraction": 0.10832573548660823,
+        "takeoff_cg_m": [
+          0.44961273549563535,
+          0.0,
+          0.03951439378210279
+        ],
+        "end_cg_m": [
+          0.44961273549563535,
+          0.0,
+          0.03951439378210279
+        ],
+        "mission_cg_shift_mm": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mass_margin_to_15kg_kg": 3.9223,
+        "Ixx_kgm2": 2.2780978456282446,
+        "Iyy_kgm2": 0.5798179616233543,
+        "Izz_kgm2": 2.785998190220108,
+        "product_inertia_Ixy_kgm2": 0.0,
+        "product_inertia_Ixz_kgm2": 0.01842507674932524,
+        "product_inertia_Iyz_kgm2": 0.0,
+        "packaging_fail_count": 1,
+        "propeller_clearance_fail_count": 0,
+        "design_gate_fail_count": 1,
+        "critical_mass_complete": false
+      }
+    },
+    "post_structure": {
+      "model_version": "H2AIR-integrated-mass-properties",
+      "coordinate_frame": {
+        "x": "nose -> aft",
+        "y": "centreline -> right positive (left negative)",
+        "z": "up positive",
+        "note": "design/packaging frame; future 6-DOF frame conversion must be explicit"
+      },
+      "components": [
+        {
+          "name": "wing_structure",
+          "group": "airframe",
+          "mass_takeoff_kg": 3.4951782415776615,
+          "position_m": [
+            0.43,
+            0.0,
+            0.1
+          ],
+          "mass_end_kg": 3.4951782415776615,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.223,
+            "width_y": 2.92,
+            "height_z": 0.028
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR results.txt",
+          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_1",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.26139999999999997,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_2",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.26139999999999997,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_3",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.7386,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_motor_mount_4",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.05175,
+          "position_m": [
+            0.7386,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR wing motor-mount mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "central_pod_structure",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.9959,
+          "position_m": [
+            0.39,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.78,
+            "width_y": 0.18,
+            "height_z": 0.18
+          },
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR central-pod structure result",
+          "note": "",
+          "include_in_collision_check": false
+        },
+        {
+          "name": "boom_tube_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.15471715500399016,
+          "position_m": [
+            0.72,
+            -0.35,
+            0.0
+          ],
+          "mass_end_kg": 0.15471715500399016,
+          "shape": "cylinder_x",
+          "dimensions_m": {
+            "length": 0.76,
+            "diameter": 0.035
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_tube_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.15471715500399016,
+          "position_m": [
+            0.72,
+            0.35,
+            0.0
+          ],
+          "mass_end_kg": 0.15471715500399016,
+          "shape": "cylinder_x",
+          "dimensions_m": {
+            "length": 0.76,
+            "diameter": 0.035
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_forward_mount_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.055,
+          "position_m": [
+            0.34,
+            -0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_forward_mount_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.055,
+          "position_m": [
+            0.34,
+            0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_tail_mount_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.035,
+          "position_m": [
+            1.1,
+            -0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "boom_tail_mount_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.035,
+          "position_m": [
+            1.1,
+            0.35,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "tail_crossmember",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.08,
+          "position_m": [
+            1.1,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Design input allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "horizontal_tail_structure",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.21362555098146466,
+          "position_m": [
+            1.05,
+            0.0,
+            0.03
+          ],
+          "mass_end_kg": 0.21362555098146466,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.148,
+            "width_y": 0.862,
+            "height_z": 0.0216
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR tail result",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "vertical_tail_left",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.06716320075397973,
+          "position_m": [
+            1.05,
+            -0.35,
+            0.254
+          ],
+          "mass_end_kg": 0.06716320075397973,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.148,
+            "width_y": 0.012,
+            "height_z": 0.508
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "vertical_tail_right",
+          "group": "airframe",
+          "mass_takeoff_kg": 0.06716320075397973,
+          "position_m": [
+            1.05,
+            0.35,
+            0.254
+          ],
+          "mass_end_kg": 0.06716320075397973,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.148,
+            "width_y": 0.012,
+            "height_z": 0.508
+          },
+          "package_zone": null,
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "payload",
+          "group": "payload",
+          "mass_takeoff_kg": 1.2,
+          "position_m": [
+            0.16,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.053,
+            "width_y": null,
+            "height_z": null
+          },
+          "package_zone": "central_pod",
+          "status": "preliminary_target",
+          "source": "Latest IH-MIE application / current design input",
+          "note": "Only payload length is currently controlled in the accessible H2 model; width/height remain open.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "buffer_battery",
+          "group": "energy",
+          "mass_takeoff_kg": 0.75,
+          "position_m": [
+            0.39,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.16,
+            "width_y": 0.05,
+            "height_z": 0.05
+          },
+          "package_zone": "central_pod",
+          "status": "legacy_placeholder",
+          "source": "Legacy 6S buffer used only because selected 12S pack mass/dimensions are not yet available",
+          "note": "Phase 2 electrical architecture is 12S/48-V class; do not freeze this mass or envelope.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "fuel_cell_system",
+          "group": "energy",
+          "mass_takeoff_kg": 1.45,
+          "position_m": [
+            0.57,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": 1.45,
+          "shape": "box",
+          "dimensions_m": {
+            "length_x": 0.26,
+            "width_y": 0.16,
+            "height_z": 0.12
+          },
+          "package_zone": "central_pod",
+          "status": "supplier_confirmed",
+          "source": "Integrated power-system config",
+          "note": "IE-SOAR module mass is reconciled from Phase 2. Exact integration envelope still needs supplier drawing/interface confirmation.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "hydrogen_cylinder",
+          "group": "energy",
+          "mass_takeoff_kg": 1.1,
+          "position_m": [
+            0.34,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "cylinder_x",
+          "dimensions_m": {
+            "length": 0.45,
+            "diameter": 0.12
+          },
+          "package_zone": "central_pod",
+          "status": "legacy_placeholder",
+          "source": "Legacy cylinder mass/dimensions retained because current certified 3.0 L/350 bar cylinder mass/envelope is open",
+          "note": "Do not treat as selected-cylinder mass or geometry.",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "hydrogen_regulator",
+          "group": "energy",
+          "mass_takeoff_kg": 0.315,
+          "position_m": [
+            0.5599999999999999,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": 0.315,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "supplier_confirmed",
+          "source": "Integrated power-system config",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "stored_hydrogen",
+          "group": "energy",
+          "mass_takeoff_kg": 0.07,
+          "position_m": [
+            0.34,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": 0.021475596627574083,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "preliminary_target",
+          "source": "Integrated power-system config",
+          "note": "",
+          "include_in_collision_check": false
+        },
+        {
+          "name": "lift_propulsion_1",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.26139999999999997,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_propulsion_2",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.26139999999999997,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_propulsion_3",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.7386,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_propulsion_4",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.7386,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "cruise_propulsion",
+          "group": "propulsion",
+          "mass_takeoff_kg": 0.2,
+          "position_m": [
+            0.94,
+            0.0,
+            0.02
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "legacy_placeholder",
+          "source": "Current 15x8 pusher motor+prop placeholder",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_1",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.26139999999999997,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_2",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.26139999999999997,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_3",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.7386,
+            -0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "lift_ESC_4",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0366,
+          "position_m": [
+            0.7386,
+            0.48,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current ESC mass split",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "cruise_ESC",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.0534,
+          "position_m": [
+            0.82,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR model; physical dimensions open",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "autopilot",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.016,
+          "position_m": [
+            0.208,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "gps",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.025,
+          "position_m": [
+            0.43,
+            0.0,
+            0.1
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "airspeed_sensor",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.022,
+          "position_m": [
+            0.028,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "rc_receiver",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.01,
+          "position_m": [
+            0.371,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "telemetry",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.02,
+          "position_m": [
+            0.371,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "power_module",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.04,
+          "position_m": [
+            0.39,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "servos",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.06,
+          "position_m": [
+            0.88,
+            0.0,
+            0.03
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": null,
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "misc_electronics",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.1656,
+          "position_m": [
+            0.575,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR lumped allowance",
+          "note": "",
+          "include_in_collision_check": true
+        },
+        {
+          "name": "camera",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.028,
+          "position_m": [
+            0.023,
+            0.0,
+            0.0
+          ],
+          "mass_end_kg": null,
+          "shape": "point",
+          "dimensions_m": {},
+          "package_zone": "central_pod",
+          "status": "calculated",
+          "source": "Current H2AIR avionics model",
+          "note": "",
+          "include_in_collision_check": true
+        }
+      ],
+      "mass_groups_takeoff_kg": {
+        "airframe": 5.6154645040750655,
+        "avionics": 0.5864,
+        "energy": 3.685,
+        "payload": 1.2,
+        "propulsion": 1.3
+      },
+      "mass_groups_end_kg": {
+        "airframe": 5.6154645040750655,
+        "avionics": 0.5864,
+        "energy": 3.6364755966275744,
+        "payload": 1.2,
+        "propulsion": 1.3
+      },
+      "takeoff": {
+        "scenario": "takeoff",
+        "total_mass_kg": 12.386864504075065,
+        "cg_m": [
+          0.4614279824662396,
+          0.0,
+          0.043892100094529055
+        ],
+        "Ixx_kgm2": 2.9584852871851623,
+        "Iyy_kgm2": 0.6764748619432015,
+        "Izz_kgm2": 3.5477821255236712,
+        "Ixy_kgm2": 0.0,
+        "Ixz_kgm2": 0.02106401870122787,
+        "Iyz_kgm2": 0.0,
+        "inertia_tensor_kgm2": [
+          [
+            2.9584852871851623,
+            -0.0,
+            -0.02106401870122787
+          ],
+          [
+            -0.0,
+            0.6764748619432015,
+            -0.0
+          ],
+          [
+            -0.02106401870122787,
+            -0.0,
+            3.5477821255236712
+          ]
+        ],
+        "positive_definite_screen": true
+      },
+      "end_of_mission": {
+        "scenario": "end",
+        "total_mass_kg": 12.33834010070264,
+        "cg_m": [
+          0.46190553620149094,
+          0.0,
+          0.044064719584060594
+        ],
+        "Ixx_kgm2": 2.958391436472264,
+        "Iyy_kgm2": 0.6756627169427905,
+        "Izz_kgm2": 3.5470638312361618,
+        "Ixy_kgm2": 0.0,
+        "Ixz_kgm2": 0.020804379661491033,
+        "Iyz_kgm2": 0.0,
+        "inertia_tensor_kgm2": [
+          [
+            2.958391436472264,
+            -0.0,
+            -0.020804379661491033
+          ],
+          [
+            -0.0,
+            0.6756627169427905,
+            -0.0
+          ],
+          [
+            -0.020804379661491033,
+            -0.0,
+            3.5470638312361618
+          ]
+        ],
+        "positive_definite_screen": true
+      },
+      "hydrogen_cg_sweep": [
+        {
+          "h2_fraction": 1.0,
+          "h2_mass_kg": 0.07,
+          "total_mass_kg": 12.386864504075065,
+          "cg_m": [
+            0.4614279824662396,
+            0.0,
+            0.043892100094529055
+          ],
+          "Ixx_kgm2": 2.9584852871851623,
+          "Iyy_kgm2": 0.6764748619432015,
+          "Izz_kgm2": 3.5477821255236712
+        },
+        {
+          "h2_fraction": 0.75,
+          "h2_mass_kg": 0.052500000000000005,
+          "total_mass_kg": 12.369364504075065,
+          "cg_m": [
+            0.4615997770392316,
+            0.0,
+            0.04395419801002029
+          ],
+          "Ixx_kgm2": 2.9584515254491404,
+          "Iyy_kgm2": 0.6761827019342767,
+          "Izz_kgm2": 3.5475237272507725
+        },
+        {
+          "h2_fraction": 0.5,
+          "h2_mass_kg": 0.035,
+          "total_mass_kg": 12.351864504075067,
+          "cg_m": [
+            0.46177205840594215,
+            0.0,
+            0.044016471884941885
+          ],
+          "Ixx_kgm2": 2.9584176680465246,
+          "Iyy_kgm2": 0.6758897140665043,
+          "Izz_kgm2": 3.5472645967856167
+        },
+        {
+          "h2_fraction": 0.25,
+          "h2_mass_kg": 0.0175,
+          "total_mass_kg": 12.334364504075067,
+          "cg_m": [
+            0.46194482863836067,
+            0.0,
+            0.04407892246824774
+          ],
+          "Ixx_kgm2": 2.9583837145701217,
+          "Iyy_kgm2": 0.6755958948161853,
+          "Izz_kgm2": 3.5470047310117008
+        },
+        {
+          "h2_fraction": 0.15,
+          "h2_mass_kg": 0.0105,
+          "total_mass_kg": 12.327364504075065,
+          "cg_m": [
+            0.46201407408009215,
+            0.0,
+            0.04410395234849309
+          ],
+          "Ixx_kgm2": 2.9583701061872474,
+          "Iyy_kgm2": 0.6754781335358262,
+          "Izz_kgm2": 3.5469005781142133
+        },
+        {
+          "h2_fraction": 0.0,
+          "h2_mass_kg": 0.0,
+          "total_mass_kg": 12.316864504075067,
+          "cg_m": [
+            0.46211808982025204,
+            0.0,
+            0.04414155051314821
+          ],
+          "Ixx_kgm2": 2.958349664610424,
+          "Iyy_kgm2": 0.6753012406395946,
+          "Izz_kgm2": 3.546744126794805
+        }
+      ],
+      "packaging_checks": [
+        {
+          "name": "fit_inside:central_pod",
+          "status": "NOT_EVALUATED",
+          "value": null,
+          "limit": null,
+          "message": "All known envelopes fit, but some components have incomplete dimensions.",
+          "affected": [
+            "payload",
+            "hydrogen_regulator",
+            "cruise_ESC",
+            "autopilot",
+            "airspeed_sensor",
+            "rc_receiver",
+            "telemetry",
+            "power_module",
+            "misc_electronics",
+            "camera"
+          ]
+        },
+        {
+          "name": "collision_free:central_pod",
+          "status": "FAIL",
+          "value": 3,
+          "limit": 0,
+          "message": "Current mass-station placements are not a collision-free hardware layout.",
+          "affected": [
+            "buffer_battery <-> fuel_cell_system (axis overlaps/gaps m: +0.0300, +0.0500, +0.0500)",
+            "buffer_battery <-> hydrogen_cylinder (axis overlaps/gaps m: +0.1600, +0.0500, +0.0500)",
+            "fuel_cell_system <-> hydrogen_cylinder (axis overlaps/gaps m: +0.1250, +0.1200, +0.1200)"
+          ]
+        }
+      ],
+      "propeller_clearance_checks": [
+        {
+          "name": "lift_propeller_pair_clearance",
+          "status": "WARNING",
+          "value": 0.020000000000000073,
+          "limit": 0.02,
+          "message": "Minimum lift-disk edge clearance is 20.0 mm; governing pair M1/M3. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": [
+            "M1",
+            "M3"
+          ]
+        },
+        {
+          "name": "lift_propeller_max_diameter_for_current_centres",
+          "status": "WARNING",
+          "value": 0.45720000000000005,
+          "limit": 0.4572,
+          "message": "At the current lift-motor centres and 20 mm edge clearance, the governing equal propeller diameter is <= 0.4572 m (18.00 in).",
+          "affected": []
+        },
+        {
+          "name": "lift_propeller_to_pod",
+          "status": "WARNING",
+          "value": 0.16140000000000002,
+          "limit": 0.02,
+          "message": "Minimum top-view lift-disk to pod clearance: 161.4 mm. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": []
+        },
+        {
+          "name": "pusher_disk_to_boom_lateral_clearance",
+          "status": "WARNING",
+          "value": 0.14199999999999996,
+          "limit": 0.02,
+          "message": "Minimum pusher disk-edge to boom-envelope lateral clearance: 142.0 mm. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": []
+        },
+        {
+          "name": "pusher_plane_to_tail_le_axial_clearance",
+          "status": "WARNING",
+          "value": 0.03600000000000003,
+          "limit": 0.02,
+          "message": "Pusher disk-plane to horizontal-tail leading-edge axial separation: 36.0 mm. Screening only because the propeller diameter is not yet supplier/measured final hardware.",
+          "affected": []
+        }
+      ],
+      "design_gates": [
+        {
+          "name": "mtow_ceiling_numeric",
+          "status": "PASS",
+          "value": 12.386864504075065,
+          "limit": 15.0,
+          "message": "Numerical ledger check; hardware-completeness gate is separate.",
+          "affected": []
+        },
+        {
+          "name": "mtow_growth_margin",
+          "status": "PASS",
+          "value": 2.6131354959249347,
+          "limit": null,
+          "message": "Numerical mass margin to the 15 kg ceiling.",
+          "affected": []
+        },
+        {
+          "name": "hardware_mass_completeness",
+          "status": "NOT_EVALUATED",
+          "value": 2,
+          "limit": 0,
+          "message": "Final MTOW cannot be released until selected battery and cylinder masses are supplier/measured values.",
+          "affected": [
+            "buffer_battery",
+            "hydrogen_cylinder"
+          ]
+        },
+        {
+          "name": "reference_static_margin",
+          "status": "FAIL",
+          "value": -0.18577570612663513,
+          "limit": 0.05,
+          "message": "Cross-check only: uses the inherited neutral point from the current aero/stability model. At that fixed neutral point, reaching 5.0% MAC would require CG x <= 0.4088 m (about 52.6 mm forward from this ledger). Aero/propulsion/6 must recompute the neutral point after geometry/CG updates.",
+          "affected": []
+        },
+        {
+          "name": "lateral_cg_symmetry",
+          "status": "PASS",
+          "value": 0.0,
+          "limit": 0.005,
+          "message": "3-D BOM lateral-CG symmetry check.",
+          "affected": []
+        },
+        {
+          "name": "inertia_tensor_positive_definite",
+          "status": "PASS",
+          "value": true,
+          "limit": null,
+          "message": "Basic physical consistency screen for the assembled inertia tensor.",
+          "affected": []
+        }
+      ],
+      "unknown_or_placeholder_items": [
+        {
+          "name": "wing_structure",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR results.txt",
+          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized."
+        },
+        {
+          "name": "boom_tube_left",
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release."
+        },
+        {
+          "name": "boom_tube_right",
+          "status": "engineering_assumption",
+          "source": "Current boom-system mass disaggregated; 35 mm reference envelope from design inputs",
+          "note": "Mass uses half the reported ~0.024 kg tube mass while envelope retains the 35 mm reference OD; current structural autosize reported a smaller tube and must be reconciled before release."
+        },
+        {
+          "name": "horizontal_tail_structure",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR tail result",
+          "note": ""
+        },
+        {
+          "name": "vertical_tail_left",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station."
+        },
+        {
+          "name": "vertical_tail_right",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR twin-fin mass/geometry split",
+          "note": "Fin vertical centroid assumes root z=0; replace with CAD station."
+        },
+        {
+          "name": "buffer_battery",
+          "status": "legacy_placeholder",
+          "source": "Legacy 6S buffer used only because selected 12S pack mass/dimensions are not yet available",
+          "note": "Phase 2 electrical architecture is 12S/48-V class; do not freeze this mass or envelope."
+        },
+        {
+          "name": "hydrogen_cylinder",
+          "status": "legacy_placeholder",
+          "source": "Legacy cylinder mass/dimensions retained because current certified 3.0 L/350 bar cylinder mass/envelope is open",
+          "note": "Do not treat as selected-cylinder mass or geometry."
+        },
+        {
+          "name": "lift_propulsion_1",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "lift_propulsion_2",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "lift_propulsion_3",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "lift_propulsion_4",
+          "status": "legacy_placeholder",
+          "source": "Current 18x6 lift motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "cruise_propulsion",
+          "status": "legacy_placeholder",
+          "source": "Current 15x8 pusher motor+prop placeholder",
+          "note": ""
+        },
+        {
+          "name": "misc_electronics",
+          "status": "engineering_assumption",
+          "source": "Current H2AIR lumped allowance",
+          "note": ""
+        }
+      ],
+      "summary": {
+        "takeoff_mass_kg": 12.386864504075065,
+        "empty_mass_excluding_payload_and_h2_kg": 11.116864504075066,
+        "payload_mass_kg": 1.2,
+        "payload_fraction": 0.0968768165345815,
+        "takeoff_cg_m": [
+          0.4614279824662396,
+          0.0,
+          0.043892100094529055
+        ],
+        "end_cg_m": [
+          0.46190553620149094,
+          0.0,
+          0.044064719584060594
+        ],
+        "mission_cg_shift_mm": [
+          0.4775537352513237,
+          0.0,
+          0.17261948953153916
+        ],
+        "mass_margin_to_15kg_kg": 2.6131354959249347,
+        "Ixx_kgm2": 2.9584852871851623,
+        "Iyy_kgm2": 0.6764748619432015,
+        "Izz_kgm2": 3.5477821255236712,
+        "product_inertia_Ixy_kgm2": 0.0,
+        "product_inertia_Ixz_kgm2": 0.02106401870122787,
+        "product_inertia_Iyz_kgm2": 0.0,
+        "packaging_fail_count": 1,
+        "propeller_clearance_fail_count": 0,
+        "design_gate_fail_count": 1,
+        "critical_mass_complete": false
+      }
+    }
+  },
+  "coupled_closure": {
+    "converged": true,
+    "history": [
+      {
+        "iteration": 1,
+        "input_mass_kg": 11.0777,
+        "output_mass_kg": 12.386864504075065,
+        "input_cg_x_m": 0.44961273549563535,
+        "output_cg_x_m": 0.4614279824662396,
+        "mass_residual_kg": 1.3091645040750652,
+        "cg_residual_m": 0.011815246970604265
+      },
+      {
+        "iteration": 2,
+        "input_mass_kg": 12.386864504075065,
+        "output_mass_kg": 12.386864504075065,
+        "input_cg_x_m": 0.4614279824662396,
+        "output_cg_x_m": 0.4614279824662396,
+        "mass_residual_kg": 0.0,
+        "cg_residual_m": 0.0
+      }
+    ]
+  },
+  "aero_propulsion": {
+    "drag": {
+      "mass_kg": 12.386864504075065,
+      "speed_mps": 20.0,
+      "lift_prop_diameter_in": 18.0,
+      "lift_prop_state": "folded",
+      "dynamic_pressure_Pa": 240.0,
+      "non_lift_prop_parasite_drag_N": 8.036,
+      "lift_prop_drag_N": 0.8829504921600001,
+      "induced_drag_N": 2.6366045216603298,
+      "total_drag_N": 11.55555501382033,
+      "lift_to_drag": 10.512142830318965,
+      "propulsive_power_W": 231.1111002764066,
+      "cruise_propulsion_electrical_W": 320.98763927278696,
+      "auxiliary_power_W": 35.0,
+      "total_cruise_bus_power_W": 355.98763927278696,
+      "lift_prop_CdA_total_m2": 0.0036789603840000004,
+      "non_lift_prop_parasite_CdA_m2": 0.03348333333333333,
+      "induced_drag_factor_k": 0.027188257029153267,
+      "wing_area_m2": 0.634,
+      "wing_span_m": 2.92,
+      "wing_aspect_ratio": 13.448580441640377
+    },
+    "layout": {
+      "prop_diameter_in": 18.0,
+      "required_center_spacing_m": 0.4772,
+      "current_center_spacing_m": 0.47720000000000007,
+      "current_edge_clearance_m": 0.020000000000000073,
+      "current_layout_pass": true,
+      "proposed_front_x_m": 0.26139999999999997,
+      "proposed_rear_x_m": 0.7386,
+      "proposed_edge_clearance_m": 0.020000000000000073,
+      "proposed_layout_pass": true,
+      "front_shift_mm": 0.0,
+      "rear_shift_mm": 0.0,
+      "pod_lateral_clearance_m": 0.16139999999999996,
+      "pod_lateral_clearance_pass": true
+    },
+    "lift_reference": {
+      "mass_kg": 12.386864504075065,
+      "prop_diameter_in": 18.0,
+      "total_design_thrust_N": 196.14568975041604,
+      "design_thrust_per_motor_N": 49.03642243760401,
+      "total_disk_area_m2": 0.656692892910357,
+      "disk_loading_N_m2": 298.6870908273881,
+      "induced_velocity_hover_mps": 11.155848444265084,
+      "total_electrical_climb_power_W": 4035.6155308268158,
+      "electrical_climb_power_per_motor_W": 1008.9038827067039,
+      "total_design_power_with_margin_W": 4640.957860450838,
+      "design_power_per_motor_with_margin_W": 1160.2394651127095,
+      "placeholder_thrust_pass": true,
+      "placeholder_power_pass": true,
+      "five_kW_screen_pass": true,
+      "conditional_hybrid_peak_screen_pass": true
+    },
+    "lift_15kg": {
+      "mass_kg": 15.0,
+      "prop_diameter_in": 18.0,
+      "total_design_thrust_N": 237.52462500000001,
+      "design_thrust_per_motor_N": 59.381156250000004,
+      "total_disk_area_m2": 0.656692892910357,
+      "disk_loading_N_m2": 361.6981812416595,
+      "induced_velocity_hover_mps": 12.276301377750471,
+      "total_electrical_climb_power_W": 5312.7369823290355,
+      "electrical_climb_power_per_motor_W": 1328.1842455822589,
+      "total_design_power_with_margin_W": 6109.64752967839,
+      "design_power_per_motor_with_margin_W": 1527.4118824195975,
+      "placeholder_thrust_pass": false,
+      "placeholder_power_pass": true,
+      "five_kW_screen_pass": false,
+      "conditional_hybrid_peak_screen_pass": true
+    },
+    "wing_15kg": {
+      "mass_kg": 15.0,
+      "speed_mps": 20.0,
+      "stall_ratio": 1.3,
+      "target_max_stall_speed_mps": 15.384615384615383,
+      "minimum_wing_area_m2": 0.8024976461374278,
+      "screened_span_preserving_AR_m": 3.2851870796510587,
+      "reference_AR": 13.448580441640377,
+      "current_area_pass": false,
+      "current_stall_speed_mps": 17.308677974979236
+    }
+  },
+  "mission": {
+    "forward_transition": {
+      "direction": "forward",
+      "success": false,
+      "handover_reason": "forward transition did not achieve handover criteria before timeout",
+      "duration_s": 29.99999999999945,
+      "distance_m": 432.54285346427287,
+      "start_altitude_m": 30.0,
+      "end_altitude_m": 30.004159413707384,
+      "minimum_altitude_m": 30.0,
+      "maximum_altitude_m": 30.206017022608243,
+      "altitude_loss_m": 0.0,
+      "maximum_sink_rate_mps": 0.04657644646207355,
+      "maximum_climb_rate_mps": 0.045052991730740836,
+      "maximum_abs_alpha_deg": 6.715199431594419,
+      "maximum_bus_power_W": 2103.7032323119647,
+      "maximum_lift_power_W": 1720.063329389999,
+      "maximum_pusher_power_W": 838.4709102335285,
+      "transition_energy_Wh": 9.813264222841882,
+      "final_speed_mps": 20.103335092232513,
+      "final_vertical_speed_mps": -6.90951237411014e-05,
+      "final_pitch_deg": 6.5764086756636795,
+      "final_wing_lift_fraction_weight": 0.9093450633832121,
+      "final_lift_thrust_fraction_weight": 0.07798647793150992,
+      "handover_stall_ratio": 1.2781126985229394,
+      "abort_reasons": [
+        "forward transition did not achieve handover criteria before timeout"
+      ],
+      "warnings": []
+    },
+    "reverse_transition": {
+      "direction": "reverse",
+      "success": true,
+      "handover_reason": "hover-capture criteria achieved",
+      "duration_s": 16.679999999999733,
+      "distance_m": 163.14203546239278,
+      "start_altitude_m": 30.0,
+      "end_altitude_m": 29.991549245172482,
+      "minimum_altitude_m": 28.408393907054986,
+      "maximum_altitude_m": 30.0,
+      "altitude_loss_m": 1.591606092945014,
+      "maximum_sink_rate_mps": 0.532818557205743,
+      "maximum_climb_rate_mps": 0.5359654226563987,
+      "maximum_abs_alpha_deg": 9.746035009080458,
+      "maximum_bus_power_W": 1738.696510770346,
+      "maximum_lift_power_W": 1703.696510770346,
+      "maximum_pusher_power_W": 0.0,
+      "transition_energy_Wh": 5.162562999617945,
+      "final_speed_mps": 2.440926467681031,
+      "final_vertical_speed_mps": 0.000492168554043747,
+      "final_pitch_deg": 3.0000000357530223,
+      "final_wing_lift_fraction_weight": 0.007797436369133674,
+      "final_lift_thrust_fraction_weight": 0.9936274878331685,
+      "handover_stall_ratio": 0.15518714184440385,
+      "abort_reasons": [],
+      "warnings": []
+    },
+    "stage_energy_Wh": {
+      "Preflight / ready": 0.6666666666666666,
+      "VTOL takeoff": 4.875177987459178,
+      "Vertical climb": 6.384309111149191,
+      "Forward transition": 9.82756453609324,
+      "Wing-borne climb": 5.0,
+      "Cruise": 697.9651872310827,
+      "Reverse transition": 5.143187826373403,
+      "Vertical descent": 5.118936886832136,
+      "Landing hover": 4.8751779874596215
+    },
+    "total_profile_energy_Wh": 739.8562082331161,
+    "cruise_bus_power_W": 355.98763927278696
+  },
+  "hybrid_power": {
+    "feasible": true,
+    "failure_reasons": [],
+    "warnings": [],
+    "summary": {
+      "model_version": "H2AIR-phase2-hybrid-power-1.0",
+      "duration_s": 7200.0,
+      "duration_min": 120.0,
+      "bus_energy_demand_Wh": 739.8562082331991,
+      "peak_bus_power_W": 2298.3512800137087,
+      "peak_fc_bus_power_W": 800.0,
+      "peak_bus_current_A": 46.91641789798609,
+      "peak_battery_power_W": 1625.064075485304,
+      "peak_battery_current_A": 32.88712221658656,
+      "minimum_battery_voltage_V": 48.53332275665418,
+      "minimum_battery_soc": 0.9143113799628151,
+      "final_battery_soc": 0.9143113799628151,
+      "maximum_fuel_cell_temperature_C": 25.0,
+      "battery_net_energy_out_Wh": 18.92221527128604,
+      "h2_used_kg": 0.048524403372425924,
+      "h2_remaining_physical_kg": 0.021475596627574083,
+      "fc_net_energy_used_Wh": 720.933992961903,
+      "fc_operational_energy_remaining_Wh": 163.06600703809704,
+      "h2_reference_effective_net_efficiency_LHV": 0.44575886160044575,
+      "battery_nominal_voltage_V": 44.400000000000006,
+      "battery_nominal_energy_Wh": 222.00000000000003,
+      "fuel_cell_max_bus_power_W": 800.0,
+      "fuel_cell_mass_kg": 1.45,
+      "regulator_mass_kg": 0.315,
+      "cylinder_mass_kg": null,
+      "energy_system_mass_complete": false
+    },
+    "gates": [
+      {
+        "name": "takeoff_initial_soc",
+        "status": "PASS",
+        "value": 1.0,
+        "limit": 0.8,
+        "units": "fraction",
+        "message": "Mission must not begin below the protected takeoff SOC threshold."
+      },
+      {
+        "name": "application_peak_power_screening",
+        "status": "PASS",
+        "value": 2298.3512800137087,
+        "limit": 5000.0,
+        "units": "W",
+        "message": "Application preliminary peak estimate; exceedance is a design-review warning, not a supplier hardware limit."
+      },
+      {
+        "name": "conditional_supplier_hybrid_peak",
+        "status": "PASS",
+        "value": 2298.3512800137087,
+        "limit": 7500.0,
+        "units": "W",
+        "message": "Supplier-reported hybrid peak is conditional on the selected battery; PASS remains conditional until battery configuration is verified."
+      },
+      {
+        "name": "battery_peak_current",
+        "status": "NOT_EVALUATED",
+        "value": 32.88712221658656,
+        "limit": null,
+        "units": "A",
+        "message": "Actual selected battery peak-current limit is not yet available."
+      },
+      {
+        "name": "battery_continuous_current",
+        "status": "NOT_EVALUATED",
+        "value": 32.88712221658656,
+        "limit": null,
+        "units": "A",
+        "message": "Continuous-current limit is unknown; use the time history with supplier/bench limits."
+      },
+      {
+        "name": "fuel_cell_thermal",
+        "status": "NOT_EVALUATED",
+        "value": 25.0,
+        "limit": null,
+        "units": "degC",
+        "message": "Fuel-cell thermal capacitance/cooling resistance/limit are not yet supplier-confirmed."
+      },
+      {
+        "name": "battery_thermal",
+        "status": "NOT_EVALUATED",
+        "value": 25.0,
+        "limit": null,
+        "units": "degC",
+        "message": "Battery thermal properties/limit are not yet supplier-confirmed."
+      },
+      {
+        "name": "battery_minimum_loaded_voltage",
+        "status": "PASS",
+        "value": 48.53332275665418,
+        "limit": 39.599999999999994,
+        "units": "V",
+        "message": "Uses preliminary OCV/internal-resistance model until pack sag testing is available."
+      },
+      {
+        "name": "landing_soc_reserve",
+        "status": "PASS",
+        "value": 0.9143113799628151,
+        "limit": 0.3,
+        "units": "fraction",
+        "message": "Protected battery reserve for reverse transition / landing / go-around contingency."
+      },
+      {
+        "name": "hydrogen_operational_reserve",
+        "status": "PASS",
+        "value": 720.933992961903,
+        "limit": 884.0,
+        "units": "Wh",
+        "message": "15% application mission-energy reserve is protected from normal mission use."
+      }
+    ],
+    "source_ledger": {
+      "fuel_cell_rated_net_power_W": {
+        "value": 800.0,
+        "status": "supplier_confirmed",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": "continuous rating reported in application"
+      },
+      "fuel_cell_module_mass_kg": {
+        "value": 1.45,
+        "status": "supplier_confirmed",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": ""
+      },
+      "fuel_cell_output_voltage_V": {
+        "value": [
+          24.0,
+          48.0
+        ],
+        "status": "supplier_confirmed",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": ""
+      },
+      "regulator_mass_kg": {
+        "value": 0.315,
+        "status": "supplier_confirmed",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": ""
+      },
+      "hydrogen_storage": {
+        "value": "3.0 L / 350 bar",
+        "status": "supplier_confirmed",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": ""
+      },
+      "hydrogen_inventory_kg": {
+        "value": 0.07,
+        "status": "preliminary_target",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": "approximate; to be pressure-temperature corrected and supplier-confirmed"
+      },
+      "hybrid_peak_power_W": {
+        "value": 7500.0,
+        "status": "supplier_reported_conditional",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": "depends on selected battery"
+      },
+      "reference_400W_endurance_h": {
+        "value": 2.6,
+        "status": "supplier_confirmed",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": "complete 4.0 kg reference system using certified 3.0 L cylinder"
+      },
+      "reference_net_energy_Wh": {
+        "value": 1040.0,
+        "status": "derived_from_supplier_reference",
+        "source": "Hydrogenera IH-MIE Application Draft v8 (31 Aug 2026), citing Intelligent Energy IE-SOAR 800 supplier material",
+        "note": "2.6 h x 400 W"
+      },
+      "mission_energy_reserve_fraction": {
+        "value": 0.15,
+        "status": "preliminary_target",
+        "source": "Hydrogenera IH-MIE Application Draft v8",
+        "note": ""
+      },
+      "battery_architecture": {
+        "value": "12S 4-5 Ah / 178-222 Wh",
+        "status": "preliminary_target",
+        "source": "Hydrogenera IH-MIE Application Draft v8",
+        "note": ""
+      },
+      "application_peak_screening_W": {
+        "value": 5000.0,
+        "status": "preliminary_target",
+        "source": "Hydrogenera IH-MIE Application Draft v8",
+        "note": ""
+      },
+      "cruise_power_gate_W": {
+        "value": 550.0,
+        "status": "preliminary_target",
+        "source": "Hydrogenera IH-MIE Application Draft v8",
+        "note": ""
+      }
+    }
+  },
+  "sixdof_control": {
+    "current_layout": {
+      "static_margin": -0.18577570612663513,
+      "trim": {
+        "success": true,
+        "alpha_deg": 7.240858705170983,
+        "elevator_deg": 7.260298403576573,
+        "pusher_thrust_N": 9.705712265674787,
+        "residual_norm": 4.2207196534025654e-09,
+        "static_margin": -0.18577570612663513,
+        "Cm_alpha_per_rad": 0.8917233894078486
+      },
+      "forward_transition": {
+        "samples": 3001,
+        "duration_s": 30.00000000000189,
+        "final_speed_mps": 10.918249235924966,
+        "maximum_abs_roll_deg": 4.7027228926971476e-14,
+        "maximum_abs_yaw_deg": 6.460400660389477e-14,
+        "maximum_abs_pitch_tracking_error_deg": 28.510210394530056,
+        "maximum_abs_beta_deg": 3.5877648112400787e-12,
+        "maximum_abs_alpha_deg": 30.44534977633427,
+        "minimum_altitude_m": 29.999999991007876,
+        "altitude_loss_m": 8.992124378437438e-09,
+        "maximum_surface_utilization": 0.5313401427111619,
+        "maximum_rotor_utilization": 0.544168081562588,
+        "maximum_rotor_allocation_residual": 1.9335162629665325e-15,
+        "final_roll_deg": -3.6933198802735074e-15,
+        "final_pitch_deg": 31.590259957990888,
+        "final_yaw_deg": -3.1717339967488034e-14
+      },
+      "reverse_transition": {
+        "samples": 81,
+        "duration_s": 0.8000000000000005,
+        "final_speed_mps": 18.84246021519361,
+        "maximum_abs_roll_deg": 7.486797370074912e-16,
+        "maximum_abs_yaw_deg": 7.042407786030059e-16,
+        "maximum_abs_pitch_tracking_error_deg": 54.05642102768515,
+        "maximum_abs_beta_deg": 1.5218146979107753e-16,
+        "maximum_abs_alpha_deg": 52.42292041395742,
+        "minimum_altitude_m": 29.98980878590762,
+        "altitude_loss_m": 0.010191214092380108,
+        "maximum_surface_utilization": 0.9794908337512891,
+        "maximum_rotor_utilization": 0.06829399012176116,
+        "maximum_rotor_allocation_residual": 0.2331203403785193,
+        "final_roll_deg": -7.486797370074912e-16,
+        "final_pitch_deg": 59.90136322904947,
+        "final_yaw_deg": -7.042407786030059e-16
+      },
+      "controlled_gust": {
+        "samples": 84,
+        "duration_s": 0.8300000000000005,
+        "final_speed_mps": 18.84530675946635,
+        "maximum_abs_roll_deg": 1.0134952056603978e-16,
+        "maximum_abs_yaw_deg": 4.6273851947282863e-17,
+        "maximum_abs_pitch_tracking_error_deg": 62.609642256256116,
+        "maximum_abs_beta_deg": 4.548574710328881e-17,
+        "maximum_abs_alpha_deg": 61.33624111536944,
+        "minimum_altitude_m": 29.999959366707436,
+        "altitude_loss_m": 4.063329256354109e-05,
+        "maximum_surface_utilization": 0.9890903300095004,
+        "maximum_rotor_utilization": 0.05152387610523653,
+        "maximum_rotor_allocation_residual": 0.3706941710089597,
+        "final_roll_deg": -1.0134952056603978e-16,
+        "final_pitch_deg": 69.8505009614271,
+        "final_yaw_deg": -4.6273851947282863e-17
+      },
+      "linear_aero_validity": {
+        "maximum_abs_alpha_above_10mps_deg": 61.33624111536944,
+        "recommended_linear_limit_deg": 15.0,
+        "status": "WARNING",
+        "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation."
+      },
+      "gate_evaluation": {
+        "label": "current_layout",
+        "stall_speed_mps": 16.247411523517915,
+        "forward_final_stall_ratio": 0.6719993040196552,
+        "checks": [
+          {
+            "name": "static_margin",
+            "status": "FAIL",
+            "value": -0.18577570612663513,
+            "limit": 0.05,
+            "note": ""
+          },
+          {
+            "name": "cruise_trim_solver",
+            "status": "PASS",
+            "value": 4.2207196534025654e-09,
+            "limit": "trim residual near zero",
+            "note": ""
+          },
+          {
+            "name": "cruise_trim_elevator",
+            "status": "PASS",
+            "value": 7.260298403576573,
+            "limit": "\u00b115.0 deg",
+            "note": ""
+          },
+          {
+            "name": "forward_handover_stall_ratio",
+            "status": "FAIL",
+            "value": 0.6719993040196552,
+            "limit": 1.3,
+            "note": ""
+          },
+          {
+            "name": "forward_pitch_tracking",
+            "status": "FAIL",
+            "value": 28.510210394530056,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "forward_roll_control",
+            "status": "PASS",
+            "value": 4.7027228926971476e-14,
+            "limit": 10.0,
+            "note": ""
+          },
+          {
+            "name": "forward_altitude_loss",
+            "status": "PASS",
+            "value": 8.992124378437438e-09,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "forward_surface_headroom",
+            "status": "PASS",
+            "value": 0.5313401427111619,
+            "limit": 0.95,
+            "note": ""
+          },
+          {
+            "name": "forward_rotor_headroom",
+            "status": "PASS",
+            "value": 0.544168081562588,
+            "limit": 0.95,
+            "note": ""
+          },
+          {
+            "name": "reverse_hover_capture_speed",
+            "status": "FAIL",
+            "value": 18.84246021519361,
+            "limit": 3.0,
+            "note": ""
+          },
+          {
+            "name": "reverse_pitch_tracking",
+            "status": "FAIL",
+            "value": 54.05642102768515,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "reverse_altitude_loss",
+            "status": "PASS",
+            "value": 0.010191214092380108,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "gust_roll",
+            "status": "PASS",
+            "value": 1.0134952056603978e-16,
+            "limit": 12.0,
+            "note": ""
+          },
+          {
+            "name": "gust_yaw",
+            "status": "PASS",
+            "value": 4.6273851947282863e-17,
+            "limit": 15.0,
+            "note": ""
+          },
+          {
+            "name": "gust_altitude_loss",
+            "status": "PASS",
+            "value": 4.063329256354109e-05,
+            "limit": 5.0,
+            "note": ""
+          }
+        ],
+        "pass": false
+      }
+    },
+    "stability_screen": {
+      "static_margin": 0.08,
+      "trim": {
+        "success": true,
+        "alpha_deg": 7.2408587054822595,
+        "elevator_deg": -1.1372768798563806,
+        "pusher_thrust_N": 9.705712213232202,
+        "residual_norm": 3.772556155851336e-15,
+        "static_margin": 0.08,
+        "Cm_alpha_per_rad": -0.384
+      },
+      "forward_transition": {
+        "samples": 3001,
+        "duration_s": 30.00000000000189,
+        "final_speed_mps": 20.349490241524425,
+        "maximum_abs_roll_deg": 4.436496288553738e-14,
+        "maximum_abs_yaw_deg": 6.501552274998798e-14,
+        "maximum_abs_pitch_tracking_error_deg": 4.611329405826764,
+        "maximum_abs_beta_deg": 3.366051369640808e-12,
+        "maximum_abs_alpha_deg": 17.229893622300732,
+        "minimum_altitude_m": 29.999999991007893,
+        "altitude_loss_m": 8.992106614869044e-09,
+        "maximum_surface_utilization": 0.04913302024483074,
+        "maximum_rotor_utilization": 0.544168086170044,
+        "maximum_rotor_allocation_residual": 1.9364854432026014e-15,
+        "final_roll_deg": 1.822993868213686e-15,
+        "final_pitch_deg": 5.183182658452207,
+        "final_yaw_deg": -1.773732972701652e-14
+      },
+      "reverse_transition": {
+        "samples": 2501,
+        "duration_s": 25.00000000000111,
+        "final_speed_mps": 2.2963753863599945,
+        "maximum_abs_roll_deg": 2.497421419009011e-14,
+        "maximum_abs_yaw_deg": 3.9938697040520155e-14,
+        "maximum_abs_pitch_tracking_error_deg": 4.42584010650857,
+        "maximum_abs_beta_deg": 6.616058188187978e-13,
+        "maximum_abs_alpha_deg": 7.519587059570489,
+        "minimum_altitude_m": 28.20340713498388,
+        "altitude_loss_m": 1.7965928650161196,
+        "maximum_surface_utilization": 0.04695293009354912,
+        "maximum_rotor_utilization": 0.5396644018732502,
+        "maximum_rotor_allocation_residual": 1.890121305300446e-15,
+        "final_roll_deg": -2.057397966237576e-14,
+        "final_pitch_deg": 3.0001030886195696,
+        "final_yaw_deg": -3.731013542695419e-14
+      },
+      "controlled_gust": {
+        "samples": 1201,
+        "duration_s": 11.999999999999789,
+        "final_speed_mps": 19.25980205915925,
+        "maximum_abs_roll_deg": 2.221766713895507,
+        "maximum_abs_yaw_deg": 12.25528291647901,
+        "maximum_abs_pitch_tracking_error_deg": 2.3208065104561664,
+        "maximum_abs_beta_deg": 14.89896533023945,
+        "maximum_abs_alpha_deg": 7.240858705482258,
+        "minimum_altitude_m": 29.902497857559794,
+        "altitude_loss_m": 0.09750214244020583,
+        "maximum_surface_utilization": 0.37691845322915385,
+        "maximum_rotor_utilization": 0.1678269563488237,
+        "maximum_rotor_allocation_residual": 7.121098558281411e-16,
+        "final_roll_deg": -0.5366993822283503,
+        "final_pitch_deg": 5.643625100759715,
+        "final_yaw_deg": 1.5655158197336505
+      },
+      "linear_aero_validity": {
+        "maximum_abs_alpha_above_10mps_deg": 8.801842227770383,
+        "recommended_linear_limit_deg": 15.0,
+        "status": "PASS",
+        "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation."
+      },
+      "gate_evaluation": {
+        "label": "stability_screen",
+        "stall_speed_mps": 16.247411523517915,
+        "forward_final_stall_ratio": 1.252475830508066,
+        "checks": [
+          {
+            "name": "static_margin",
+            "status": "PASS",
+            "value": 0.08,
+            "limit": 0.05,
+            "note": ""
+          },
+          {
+            "name": "cruise_trim_solver",
+            "status": "PASS",
+            "value": 3.772556155851336e-15,
+            "limit": "trim residual near zero",
+            "note": ""
+          },
+          {
+            "name": "cruise_trim_elevator",
+            "status": "PASS",
+            "value": -1.1372768798563806,
+            "limit": "\u00b115.0 deg",
+            "note": ""
+          },
+          {
+            "name": "forward_handover_stall_ratio",
+            "status": "FAIL",
+            "value": 1.252475830508066,
+            "limit": 1.3,
+            "note": ""
+          },
+          {
+            "name": "forward_pitch_tracking",
+            "status": "PASS",
+            "value": 4.611329405826764,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "forward_roll_control",
+            "status": "PASS",
+            "value": 4.436496288553738e-14,
+            "limit": 10.0,
+            "note": ""
+          },
+          {
+            "name": "forward_altitude_loss",
+            "status": "PASS",
+            "value": 8.992106614869044e-09,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "forward_surface_headroom",
+            "status": "PASS",
+            "value": 0.04913302024483074,
+            "limit": 0.95,
+            "note": ""
+          },
+          {
+            "name": "forward_rotor_headroom",
+            "status": "PASS",
+            "value": 0.544168086170044,
+            "limit": 0.95,
+            "note": ""
+          },
+          {
+            "name": "reverse_hover_capture_speed",
+            "status": "PASS",
+            "value": 2.2963753863599945,
+            "limit": 3.0,
+            "note": ""
+          },
+          {
+            "name": "reverse_pitch_tracking",
+            "status": "PASS",
+            "value": 4.42584010650857,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "reverse_altitude_loss",
+            "status": "PASS",
+            "value": 1.7965928650161196,
+            "limit": 5.0,
+            "note": ""
+          },
+          {
+            "name": "gust_roll",
+            "status": "PASS",
+            "value": 2.221766713895507,
+            "limit": 12.0,
+            "note": ""
+          },
+          {
+            "name": "gust_yaw",
+            "status": "PASS",
+            "value": 12.25528291647901,
+            "limit": 15.0,
+            "note": ""
+          },
+          {
+            "name": "gust_altitude_loss",
+            "status": "PASS",
+            "value": 0.09750214244020583,
+            "limit": 5.0,
+            "note": ""
+          }
+        ],
+        "pass": false
+      }
+    }
+  },
+  "structures": {
+    "model_version": "H2AIR-phase7-structures-1.0",
+    "metadata": {
+      "purpose": "Structural load-case, strength, stiffness and mass-feedback screening for the H2AIR-4+1 UAV using Phase-3 geometry and Phase-6 control-allocation implications.",
+      "fidelity_boundary": "Beam/tube calculations are screening fidelity. CFRP is treated as an equivalent isotropic tube material; laminate orientation, joints, inserts, adhesive bonds, printed anisotropy, local buckling, fatigue, impact, vibration and aeroelasticity require supplier data/FEA/test evidence before flight release.",
+      "critical_rule": "Strength PASS is not sufficient. Stiffness/deflection is a separate hard design gate. Unknown local mount geometry remains NOT_EVALUATED rather than being assumed safe."
+    },
+    "load_cases": [
+      {
+        "name": "reference_trimmed_hover",
+        "category": "VTOL",
+        "mass_kg": 12.386864504075065,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 29.153674749333042,
+        "wing_torsion_Nm": 17.70229274304271,
+        "boom_root_bending_Nm": 0.0,
+        "boom_axial_N": 0.0,
+        "max_motor_thrust_N": 35.27776110992808,
+        "max_motor_mount_bending_Nm": 1.763888055496404,
+        "tail_force_N": 0.0,
+        "note": "6-DOF/control unequal rotor allocation at reference mass."
+      },
+      {
+        "name": "15kg_zero_pitch_design_VTOL",
+        "category": "VTOL",
+        "mass_kg": 15.0,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 57.00591000000001,
+        "wing_torsion_Nm": 33.36719100637557,
+        "boom_root_bending_Nm": 19.842950974209284,
+        "boom_axial_N": 0.0,
+        "max_motor_thrust_N": 68.98069941869224,
+        "max_motor_mount_bending_Nm": 3.449034970934612,
+        "tail_force_N": 0.0,
+        "note": "Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry."
+      },
+      {
+        "name": "15kg_3g_wingborne_manoeuvre",
+        "category": "wingborne",
+        "mass_kg": 15.0,
+        "load_factor": 3.0,
+        "wing_root_bending_Nm": 181.21882429496281,
+        "wing_torsion_Nm": 25.7,
+        "boom_root_bending_Nm": 0.0,
+        "boom_axial_N": 0.0,
+        "max_motor_thrust_N": 0.0,
+        "max_motor_mount_bending_Nm": 0.0,
+        "tail_force_N": 195.38750000000002,
+        "note": "Symmetric wing-borne structural manoeuvre screen."
+      },
+      {
+        "name": "dive_tail_download",
+        "category": "tail/boom",
+        "mass_kg": 15.0,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 0.0,
+        "wing_torsion_Nm": 0.0,
+        "boom_root_bending_Nm": 74.24725000000001,
+        "boom_axial_N": 0.0,
+        "max_motor_thrust_N": 0.0,
+        "max_motor_mount_bending_Nm": 0.0,
+        "tail_force_N": 195.38750000000002,
+        "note": "Horizontal-tail absolute CL design screen at configured dive speed."
+      },
+      {
+        "name": "dive_crosswind_fin_load",
+        "category": "tail/boom",
+        "mass_kg": 15.0,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 0.0,
+        "wing_torsion_Nm": 0.0,
+        "boom_root_bending_Nm": 74.24725000000001,
+        "boom_axial_N": 0.0,
+        "max_motor_thrust_N": 0.0,
+        "max_motor_mount_bending_Nm": 0.0,
+        "tail_force_N": 184.24000000000004,
+        "note": "Twin-fin side-force structural screen at configured dive speed."
+      },
+      {
+        "name": "combined_boom_tail_plus_rear_rotor",
+        "category": "tail/boom",
+        "mass_kg": 15.0,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 0.0,
+        "wing_torsion_Nm": 0.0,
+        "boom_root_bending_Nm": 94.0902009742093,
+        "boom_axial_N": 30.0,
+        "max_motor_thrust_N": 49.78161308130778,
+        "max_motor_mount_bending_Nm": 0.0,
+        "tail_force_N": 0.0,
+        "note": "Conservative envelope combining boom tail load with rear lift-rotor bending; simultaneous occurrence is a sizing envelope, not a trajectory claim."
+      },
+      {
+        "name": "pusher_axial_design",
+        "category": "propulsion",
+        "mass_kg": 15.0,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 0.0,
+        "wing_torsion_Nm": 0.0,
+        "boom_root_bending_Nm": 0.0,
+        "boom_axial_N": 30.0,
+        "max_motor_thrust_N": 0.0,
+        "max_motor_mount_bending_Nm": 0.0,
+        "tail_force_N": 0.0,
+        "note": "Pusher design thrust divided across two booms."
+      },
+      {
+        "name": "single_motor_mount_limit",
+        "category": "local",
+        "mass_kg": 15.0,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 0.0,
+        "wing_torsion_Nm": 0.0,
+        "boom_root_bending_Nm": 0.0,
+        "boom_axial_N": 0.0,
+        "max_motor_thrust_N": 80.0,
+        "max_motor_mount_bending_Nm": 4.0,
+        "tail_force_N": 0.0,
+        "note": "Local motor-mount load requirement. Geometry/material absent, so stress remains NOT_EVALUATED."
+      },
+      {
+        "name": "one_motor_out_remaining_motor_peak",
+        "category": "degraded",
+        "mass_kg": 15.0,
+        "load_factor": 1.0,
+        "wing_root_bending_Nm": 0.0,
+        "wing_torsion_Nm": 0.0,
+        "boom_root_bending_Nm": 0.0,
+        "boom_axial_N": 0.0,
+        "max_motor_thrust_N": 80.0,
+        "max_motor_mount_bending_Nm": 4.0,
+        "tail_force_N": 0.0,
+        "note": "Structural local envelope for a surviving motor during motor-out recovery; flight controllability remains a 6-DOF/control/8 problem."
+      }
+    ],
+    "structural_checks": {
+      "material": {
+        "name": "CFRP equivalent tube screen",
+        "E_Pa": 300000000000.0,
+        "G_Pa": 115384615384.61539,
+        "density_kg_m3": 1800.0,
+        "bending_allow_Pa": 1000000000.0,
+        "shear_allow_Pa": 120000000.0,
+        "status": "engineering_assumption_from_current_design_inputs_allowable_after_SF"
+      },
+      "governing_cases": {
+        "wing_bending": "15kg_3g_wingborne_manoeuvre",
+        "wing_torsion": "15kg_zero_pitch_design_VTOL",
+        "boom": "combined_boom_tail_plus_rear_rotor",
+        "motor_mount": "single_motor_mount_limit"
+      },
+      "wing": {
+        "current": {
+          "section": {
+            "od_m": 0.01329,
+            "id_m": 0.00997
+          },
+          "check": {
+            "member": "wing_primary_spar_current",
+            "case": "15kg_3g_wingborne_manoeuvre",
+            "bending_stress_MPa": 1150.8856695308257,
+            "axial_stress_MPa": 0.0,
+            "combined_stress_MPa": 1150.8856695308257,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 1.1508856695308256,
+            "tip_deflection_mm": 389.3737838344239,
+            "deflection_limit_mm": 49.275,
+            "deflection_utilization": 7.902055481165376,
+            "root_slope_deg": 18.110177141959802,
+            "slope_limit_deg": 3.0,
+            "slope_utilization": 6.036725713986601,
+            "strength_pass": false,
+            "stiffness_pass": false,
+            "overall_pass": false,
+            "note": ""
+          }
+        },
+        "recommended_screen": {
+          "section": {
+            "od_m": 0.02250000000000001,
+            "id_m": 0.016875000000000008
+          },
+          "check": {
+            "member": "candidate",
+            "case": "sizing",
+            "bending_stress_MPa": 237.0597250713869,
+            "axial_stress_MPa": 0.0,
+            "combined_stress_MPa": 237.0597250713869,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 0.2370597250713869,
+            "tip_deflection_mm": 47.373422808953265,
+            "deflection_limit_mm": 49.275,
+            "deflection_utilization": 0.9614088850117355,
+            "root_slope_deg": 2.2033868599020283,
+            "slope_limit_deg": 3.0,
+            "slope_utilization": 0.7344622866340095,
+            "strength_pass": true,
+            "stiffness_pass": true,
+            "overall_pass": true,
+            "note": ""
+          }
+        },
+        "governing_root_bending_Nm": 181.21882429496281,
+        "governing_torsion_Nm": 33.36719100637557,
+        "torsional_skin_status": "NOT_EVALUATED_IN_PHASE7_WRAPPER_USE_EXISTING_structures.py_closed_cell_check_and_future_CFD/aeroelastic_loads"
+      },
+      "tails": {
+        "horizontal_current_reference": {
+          "section": {
+            "od_m": 0.00433,
+            "id_m": 0.00325
+          },
+          "check": {
+            "member": "horizontal_tail_spar_current_reference",
+            "case": "dive_tail_download",
+            "bending_stress_MPa": 3868.759720691486,
+            "axial_stress_MPa": 0.0,
+            "combined_stress_MPa": 3868.759720691486,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 3.868759720691486,
+            "tip_deflection_mm": 276.49392843535213,
+            "deflection_limit_mm": 21.545,
+            "deflection_utilization": 12.833322275950435,
+            "root_slope_deg": 49.01968023621226,
+            "slope_limit_deg": 3.0,
+            "slope_utilization": 16.339893412070754,
+            "strength_pass": false,
+            "stiffness_pass": false,
+            "overall_pass": false,
+            "note": ""
+          },
+          "root_moment_Nm": 21.0481184375
+        },
+        "horizontal_recommended_screen": {
+          "section": {
+            "od_m": 0.008750000000000004,
+            "id_m": 0.006562500000000003
+          },
+          "check": {
+            "member": "candidate",
+            "case": "sizing",
+            "bending_stress_MPa": 468.15659100684087,
+            "axial_stress_MPa": 0.0,
+            "combined_stress_MPa": 468.15659100684087,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 0.46815659100684087,
+            "tip_deflection_mm": 16.557121159131974,
+            "deflection_limit_mm": 21.545,
+            "deflection_utilization": 0.7684901907232291,
+            "root_slope_deg": 2.9354163017096484,
+            "slope_limit_deg": 3.0,
+            "slope_utilization": 0.9784721005698828,
+            "strength_pass": true,
+            "stiffness_pass": true,
+            "overall_pass": true,
+            "note": ""
+          },
+          "root_moment_Nm": 21.0481184375
+        },
+        "vertical_current_reference": {
+          "section": {
+            "od_m": 0.00433,
+            "id_m": 0.00325
+          },
+          "check": {
+            "member": "vertical_tail_spar_current_reference",
+            "case": "dive_crosswind_fin_load",
+            "bending_stress_MPa": 4300.769079108112,
+            "axial_stress_MPa": 0.0,
+            "combined_stress_MPa": 4300.769079108112,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 4.300769079108112,
+            "tip_deflection_mm": 427.2031068633394,
+            "deflection_limit_mm": 25.400000000000002,
+            "deflection_utilization": 16.819019955249583,
+            "root_slope_deg": 64.24392393214079,
+            "slope_limit_deg": 3.0,
+            "slope_utilization": 21.414641310713595,
+            "strength_pass": false,
+            "stiffness_pass": false,
+            "overall_pass": false,
+            "note": ""
+          },
+          "root_moment_Nm": 23.398480000000006
+        },
+        "vertical_recommended_screen": {
+          "section": {
+            "od_m": 0.009500000000000005,
+            "id_m": 0.007125000000000004
+          },
+          "check": {
+            "member": "candidate",
+            "case": "sizing",
+            "bending_stress_MPa": 406.648198156192,
+            "axial_stress_MPa": 0.0,
+            "combined_stress_MPa": 406.648198156192,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 0.406648198156192,
+            "tip_deflection_mm": 18.410747475259555,
+            "deflection_limit_mm": 25.400000000000002,
+            "deflection_utilization": 0.7248325777661242,
+            "root_slope_deg": 2.7686565039724633,
+            "slope_limit_deg": 3.0,
+            "slope_utilization": 0.9228855013241545,
+            "strength_pass": true,
+            "stiffness_pass": true,
+            "overall_pass": true,
+            "note": ""
+          },
+          "root_moment_Nm": 23.398480000000006
+        }
+      },
+      "central_pod": {
+        "scaled_bending_stress_MPa": 1.3305346864534715,
+        "scaled_shear_stress_MPa": 0.70518338382034,
+        "bending_allow_MPa": 14.5,
+        "shear_allow_MPa": 4.62,
+        "bending_pass": true,
+        "shear_pass": true,
+        "status": "screen_scaled_from_current_live_structures.py_result"
+      },
+      "booms": {
+        "legacy_strength_only": {
+          "section": {
+            "od_m": 0.0123,
+            "id_m": 0.0109
+          },
+          "check": {
+            "member": "boom_legacy_strength_only",
+            "case": "combined_boom_tail_plus_rear_rotor",
+            "bending_stress_MPa": 1343.720702991812,
+            "axial_stress_MPa": 1.1760217469844483,
+            "combined_stress_MPa": 1344.8967247387964,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 1.3448967247387964,
+            "tip_deflection_mm": 105.16708374635101,
+            "deflection_limit_mm": 10.032,
+            "deflection_utilization": 10.483162255417765,
+            "root_slope_deg": 10.571280776078584,
+            "slope_limit_deg": 2.0,
+            "slope_utilization": 5.285640388039292,
+            "strength_pass": false,
+            "stiffness_pass": false,
+            "overall_pass": false,
+            "note": ""
+          }
+        },
+        "reference_35x31_geometry": {
+          "section": {
+            "od_m": 0.035,
+            "id_m": 0.031
+          },
+          "check": {
+            "member": "boom_reference_geometry",
+            "case": "combined_boom_tail_plus_rear_rotor",
+            "bending_stress_MPa": 58.12439716703365,
+            "axial_stress_MPa": 0.14468631190172293,
+            "combined_stress_MPa": 58.26908347893538,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 0.05826908347893538,
+            "tip_deflection_mm": 1.5986977049370774,
+            "deflection_limit_mm": 10.032,
+            "deflection_utilization": 0.1593598190726752,
+            "root_slope_deg": 0.16069935300025534,
+            "slope_limit_deg": 2.0,
+            "slope_utilization": 0.08034967650012767,
+            "strength_pass": true,
+            "stiffness_pass": true,
+            "overall_pass": true,
+            "note": ""
+          }
+        },
+        "recommended_screen": {
+          "section": {
+            "od_m": 0.020000000000000007,
+            "id_m": 0.016000000000000007
+          },
+          "check": {
+            "member": "boom_stiffness_sized_candidate",
+            "case": "combined_boom_tail_plus_rear_rotor",
+            "bending_stress_MPa": 202.9122030021038,
+            "axial_stress_MPa": 0.2652582384864922,
+            "combined_stress_MPa": 203.1774612405903,
+            "allowable_stress_MPa": 1000.0,
+            "stress_utilization": 0.2031774612405903,
+            "tip_deflection_mm": 9.76684070450126,
+            "deflection_limit_mm": 10.032,
+            "deflection_utilization": 0.9735686507676695,
+            "root_slope_deg": 0.9817521956921084,
+            "slope_limit_deg": 2.0,
+            "slope_utilization": 0.4908760978460542,
+            "strength_pass": true,
+            "stiffness_pass": true,
+            "overall_pass": true,
+            "note": ""
+          }
+        },
+        "governing_root_bending_Nm": 94.0902009742093,
+        "governing_axial_N": 30.0
+      },
+      "motor_mount": {
+        "status": "NOT_EVALUATED",
+        "required_limit_thrust_N": 80.0,
+        "required_limit_bending_Nm": 4.0,
+        "reason": "Mount section geometry, fastener pattern, laminate/printed material orientation and bearing allowables are not controlled in the current model."
+      }
+    },
+    "mass_feedback": {
+      "reference_mass_kg": 12.386864504075065,
+      "reference_cg_x_m": 0.4614279824662396,
+      "current_wing_spar_mass_kg": 0.471,
+      "recommended_screen_wing_spar_mass_kg": 1.3508782415776615,
+      "wing_spar_mass_delta_kg": 0.8798782415776615,
+      "legacy_reported_boom_tube_mass_kg": 0.0242,
+      "geometry_reconciled_candidate_boom_tube_mass_kg": 0.30943431000798033,
+      "boom_tube_mass_delta_kg": 0.28523431000798033,
+      "current_horizontal_tail_spar_mass_kg": 0.027,
+      "recommended_horizontal_tail_spar_mass_kg": 0.11012555098146465,
+      "horizontal_tail_spar_mass_delta_kg": 0.08312555098146465,
+      "current_vertical_tail_spar_mass_kg": 0.016,
+      "recommended_vertical_tail_spar_mass_kg": 0.07692640150795946,
+      "vertical_tail_spar_mass_delta_kg": 0.06092640150795946,
+      "screening_updated_mass_kg": 13.69602900815013,
+      "screening_updated_cg_x_m": 0.470984457652469,
+      "screening_cg_shift_mm": 9.556475186229374,
+      "mass_margin_to_15kg_kg": 1.3039709918498694,
+      "warning": "This is a partial structural-mass feedback only. It does not rescale wing skins/ribs/webs, mounts, pod or tails and is not the final coupled MTOW closure."
+    },
+    "gates": [
+      {
+        "name": "current_wing_spar_strength",
+        "status": "FAIL",
+        "value": 1.1508856695308256,
+        "limit": "<=1.0",
+        "note": ""
+      },
+      {
+        "name": "current_wing_spar_stiffness",
+        "status": "FAIL",
+        "value": 7.902055481165376,
+        "limit": "<=1.0",
+        "note": "Current strength-sized spar is retained as an audit reference, not accepted when stiffness fails."
+      },
+      {
+        "name": "recommended_wing_spar_screen",
+        "status": "PASS",
+        "value": 0.9614088850117355,
+        "limit": "<=1.0",
+        "note": ""
+      },
+      {
+        "name": "legacy_strength_only_boom_stiffness",
+        "status": "FAIL",
+        "value": 10.483162255417765,
+        "limit": "<=1.0",
+        "note": ""
+      },
+      {
+        "name": "reference_35x31_boom_screen",
+        "status": "PASS",
+        "value": 0.1593598190726752,
+        "limit": "<=1.0",
+        "note": "Geometry passes the screen, but its mass conflicts with the old reported boom-tube mass and needs supplier/CAD reconciliation."
+      },
+      {
+        "name": "recommended_boom_screen",
+        "status": "PASS",
+        "value": 0.9735686507676695,
+        "limit": "<=1.0",
+        "note": ""
+      },
+      {
+        "name": "horizontal_tail_current_screen",
+        "status": "FAIL",
+        "value": 16.339893412070754,
+        "limit": "<=1.0",
+        "note": "Current tail spars were not sized for this high-speed load envelope."
+      },
+      {
+        "name": "vertical_tail_current_screen",
+        "status": "FAIL",
+        "value": 21.414641310713595,
+        "limit": "<=1.0",
+        "note": "Current tail spars were not sized for this high-speed load envelope."
+      },
+      {
+        "name": "horizontal_tail_recommended_screen",
+        "status": "PASS",
+        "value": 0.9784721005698828,
+        "limit": "<=1.0",
+        "note": ""
+      },
+      {
+        "name": "vertical_tail_recommended_screen",
+        "status": "PASS",
+        "value": 0.9228855013241545,
+        "limit": "<=1.0",
+        "note": ""
+      },
+      {
+        "name": "central_pod_scaled_strength",
+        "status": "PASS",
+        "value": 0.15263709606500864,
+        "limit": "<=1.0",
+        "note": "Scaled audit screen; live pod shell/frame model remains authority."
+      },
+      {
+        "name": "motor_mount_strength",
+        "status": "NOT_EVALUATED",
+        "value": 4.0,
+        "limit": "controlled mount geometry + material allowables required",
+        "note": ""
+      },
+      {
+        "name": "mass_ceiling_after_partial_structural_feedback",
+        "status": "PASS",
+        "value": 13.69602900815013,
+        "limit": 15.0,
+        "note": ""
+      }
+    ],
+    "summary": {
+      "governing_wing_root_bending_Nm": 181.21882429496281,
+      "recommended_wing_spar_od_mm": 22.50000000000001,
+      "recommended_wing_spar_id_mm": 16.875000000000007,
+      "current_wing_tip_deflection_mm": 389.3737838344239,
+      "recommended_wing_tip_deflection_mm": 47.373422808953265,
+      "governing_boom_root_bending_Nm": 94.0902009742093,
+      "recommended_boom_od_mm": 20.000000000000007,
+      "recommended_boom_id_mm": 16.000000000000007,
+      "reference_35x31_boom_tip_deflection_mm": 1.5986977049370774,
+      "legacy_strength_only_boom_tip_deflection_mm": 105.16708374635101,
+      "horizontal_tail_recommended_spar_od_mm": 8.750000000000004,
+      "vertical_tail_recommended_spar_od_mm": 9.500000000000005,
+      "required_motor_mount_limit_thrust_N": 80.0,
+      "required_motor_mount_limit_bending_Nm": 4.0,
+      "partial_structural_feedback_mass_kg": 13.69602900815013,
+      "partial_structural_feedback_cg_x_m": 0.470984457652469,
+      "mass_margin_to_15kg_kg": 1.3039709918498694,
+      "gate_fail_count": 5,
+      "not_evaluated_count": 1
+    }
+  },
+  "gates": [
+    {
+      "name": "mass_ceiling",
+      "status": "PASS",
+      "note": "Structurally closed mass 12.387 kg vs 15.0 kg ceiling."
+    },
+    {
+      "name": "packaging",
+      "status": "FAIL",
+      "note": "1 packaging collision/containment failures remain."
+    },
+    {
+      "name": "lift_prop_clearance",
+      "status": "PASS",
+      "note": "Collision-free lift-row geometry screen."
+    },
+    {
+      "name": "15kg_stall_margin",
+      "status": "FAIL",
+      "note": "Wing area 0.634 m\u00b2 vs minimum 0.802 m\u00b2 screen."
+    },
+    {
+      "name": "cruise_power",
+      "status": "PASS",
+      "note": "356.0 W vs configured gate."
+    },
+    {
+      "name": "mission_ems",
+      "status": "PASS",
+      "note": "Dynamic mission profile through hybrid H2/battery EMS."
+    },
+    {
+      "name": "transition",
+      "status": "FAIL",
+      "note": "Forward and reverse point-mass transition completion on closed mass."
+    },
+    {
+      "name": "current_longitudinal_stability",
+      "status": "FAIL",
+      "note": "Closed-aircraft static margin -18.58% MAC."
+    },
+    {
+      "name": "current_layout_6dof",
+      "status": "FAIL",
+      "note": "Actual closed geometry/control 6-DOF gate set."
+    },
+    {
+      "name": "sixdof_linear_aero_validity",
+      "status": "WARNING",
+      "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 61.3 deg."
+    },
+    {
+      "name": "stability_screen_6dof",
+      "status": "FAIL",
+      "note": "Explicit +8% SM reference screen."
+    },
+    {
+      "name": "15kg_zero_pitch_motor_thrust",
+      "status": "FAIL",
+      "note": "Front/rear requirement 69.0/49.8 N vs 65.0 N available screen."
+    },
+    {
+      "name": "recommended_structure_screen",
+      "status": "PASS",
+      "note": "Recommended structural member screens. The legacy partial-feedback mass gate is excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately."
+    },
+    {
+      "name": "motor_mount",
+      "status": "NOT_EVALUATED",
+      "note": "Controlled mount CAD, fasteners and material allowables are still required."
+    },
+    {
+      "name": "selected_battery_and_cylinder_mass",
+      "status": "NOT_EVALUATED",
+      "note": "Battery and certified cylinder masses remain placeholders where supplier values are absent."
+    }
+  ],
+  "fidelity_note": "Integrated-v2 closure/optimization is screening fidelity. Generic prop maps, aerodynamic/control derivatives, CFRP equivalent properties and placeholder battery/cylinder hardware still require supplier/CFD/FEA/test evidence.",
+  "run_environment": {
+    "python": "3.14.2",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "non_lift_parasite_drag_factor": {
+    "mean": 1.0,
+    "sigma": 0.08,
+    "min": 0.8,
+    "max": 1.2,
+    "status": "engineering_assumption"
+  },
+  "cruise_propulsive_efficiency_factor": {
+    "mean": 1.0,
+    "sigma": 0.05,
+    "min": 0.85,
+    "max": 1.12,
+    "status": "engineering_assumption"
+  },
+  "reference_stall_speed_factor": {
+    "mean": 1.0,
+    "sigma": 0.03,
+    "min": 0.92,
+    "max": 1.08,
+    "status": "engineering_assumption"
+  },
+  "battery_mass_factor": {
+    "mean": 1.0,
+    "sigma": 0.12,
+    "min": 0.75,
+    "max": 1.3,
+    "status": "engineering_assumption_placeholder_hardware"
+  },
+  "cylinder_mass_factor": {
+    "mean": 1.0,
+    "sigma": 0.12,
+    "min": 0.75,
+    "max": 1.3,
+    "status": "engineering_assumption_placeholder_hardware"
+  },
+  "fuel_cell_mass_factor": {
+    "mean": 1.0,
+    "sigma": 0.04,
+    "min": 0.9,
+    "max": 1.1,
+    "status": "supplier_reference_tolerance_screen"
+  },
+  "h2_net_energy_factor": {
+    "mean": 1.0,
+    "sigma": 0.05,
+    "min": 0.88,
+    "max": 1.12,
+    "status": "engineering_assumption"
+  }
+}

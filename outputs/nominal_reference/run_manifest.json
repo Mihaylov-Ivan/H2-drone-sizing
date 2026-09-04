@@ -1,0 +1,12 @@
+{
+  "model_version": "H2AIR-integrated-v2.0",
+  "config_hash": "e15e9395a321aed850f9d3674198c64a431f267a2d876f424785f0806a57389f",
+  "outputs": [
+    "SUMMARY.md",
+    "closure_history.csv",
+    "component_ledger.csv",
+    "mission_profile.csv",
+    "model_results.json",
+    "structure_load_cases.csv"
+  ]
+}

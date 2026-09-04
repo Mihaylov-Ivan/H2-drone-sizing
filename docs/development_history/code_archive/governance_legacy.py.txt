@@ -1,0 +1,563 @@
+"""Phase-1 configuration governance, validation, traceability and result archiving.
+
+Drop this file into the root of the existing H2AIR-4+1 model package.  It is
+intentionally dependency-light so it can wrap the current model without changing
+its physics.  Phase 1 establishes a controlled source of truth before deeper
+fuel-cell, mission, stability and 6-DOF refactors.
+"""
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, fields, is_dataclass
+from datetime import datetime, timezone
+from enum import Enum
+from hashlib import sha256
+from pathlib import Path
+from typing import Any, Dict, Iterable, Mapping, Optional
+import json
+import math
+import os
+import platform
+import sys
+
+PHASE1_VERSION = "H2AIR-4+1-model-phase1.0"
+SCHEMA_VERSION = 1
+
+# Values that are computed in DesignInputs.__post_init__ in the current model and
+# therefore must not be accepted as external overrides.
+_DERIVED_OR_COMPATIBILITY_FIELDS = {
+    "fuselage_OR",
+    "fuselage_cs_area",
+    "fuselage_cs_perimeter",
+    "fuselage_shell_area_moment_of_inertia",
+    "fuselage_wetted_area",
+    "fuselage_body_length",
+    "fuel_cell_system_mass_kg",
+    "hydrogen_usable_mass_kg",
+    "hydrogen_chemical_energy_Wh",
+    "fuel_cell_usable_electrical_energy_Wh",
+    "n_propellers",
+    "n_motors",
+    "hardcode_battery",  # compatibility mirror of hardcode_buffer_battery
+}
+
+
+class EvidenceStatus(str, Enum):
+    MEASURED = "measured"
+    SUPPLIER_CONFIRMED = "supplier_confirmed"
+    CALCULATED = "calculated"
+    ENGINEERING_ASSUMPTION = "engineering_assumption"
+    PRELIMINARY_TARGET = "preliminary_target"
+    PLACEHOLDER = "placeholder"
+    OPEN = "open"
+
+
+class Severity(str, Enum):
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
+
+
+@dataclass(frozen=True)
+class ValidationIssue:
+    severity: str
+    code: str
+    field: str
+    message: str
+    recommendation: str = ""
+
+
+@dataclass(frozen=True)
+class ProvenanceRecord:
+    field: str
+    status: str
+    source: str
+    note: str = ""
+
+
+def _jsonable(value: Any) -> Any:
+    if is_dataclass(value):
+        return {k: _jsonable(v) for k, v in asdict(value).items()}
+    if isinstance(value, Mapping):
+        return {str(k): _jsonable(v) for k, v in value.items()}
+    if isinstance(value, (tuple, list)):
+        return [_jsonable(v) for v in value]
+    if isinstance(value, Enum):
+        return value.value
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, float) and not math.isfinite(value):
+        return str(value)
+    return value
+
+
+def canonical_json(data: Any) -> str:
+    return json.dumps(_jsonable(data), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def configuration_hash(inputs: Any) -> str:
+    """Stable SHA-256 hash of the complete DesignInputs state."""
+    if is_dataclass(inputs):
+        payload = asdict(inputs)
+    else:
+        payload = dict(vars(inputs))
+    return sha256(canonical_json(payload).encode("utf-8")).hexdigest()
+
+
+def _field_names(cls: type) -> set[str]:
+    if is_dataclass(cls):
+        return {f.name for f in fields(cls)}
+    return set(getattr(cls, "__annotations__", {}).keys())
+
+
+def load_case_file(path: Path | str) -> Dict[str, Any]:
+    p = Path(path)
+    with p.open("r", encoding="utf-8") as f:
+        raw = json.load(f)
+    if not isinstance(raw, dict):
+        raise ValueError("Phase-1 case JSON must contain a JSON object at its root.")
+    return raw
+
+
+def inputs_from_case(design_inputs_cls: type, case: Mapping[str, Any]) -> Any:
+    """Instantiate DesignInputs from a strict top-level override dictionary.
+
+    Accepted case structure:
+        {"case_name": "...", "overrides": {"speed": 27.78, ...}}
+
+    Unknown and derived fields are rejected rather than silently ignored.
+    """
+    overrides = case.get("overrides", {})
+    if not isinstance(overrides, Mapping):
+        raise ValueError("case['overrides'] must be a JSON object.")
+
+    valid = _field_names(design_inputs_cls)
+    unknown = sorted(set(overrides) - valid)
+    if unknown:
+        raise ValueError("Unknown DesignInputs override(s): " + ", ".join(unknown))
+
+    blocked = sorted(set(overrides) & _DERIVED_OR_COMPATIBILITY_FIELDS)
+    if blocked:
+        raise ValueError(
+            "Derived/compatibility fields cannot be overridden directly: " + ", ".join(blocked)
+        )
+
+    try:
+        return design_inputs_cls(**dict(overrides))
+    except TypeError as exc:
+        raise ValueError(f"Could not construct DesignInputs from overrides: {exc}") from exc
+
+
+def load_provenance(path: Path | str | None) -> Dict[str, ProvenanceRecord]:
+    if path is None:
+        return {}
+    p = Path(path)
+    if not p.exists():
+        return {}
+    with p.open("r", encoding="utf-8") as f:
+        raw = json.load(f)
+    records: Dict[str, ProvenanceRecord] = {}
+    for item in raw.get("records", []):
+        record = ProvenanceRecord(
+            field=str(item["field"]),
+            status=str(item["status"]),
+            source=str(item.get("source", "")),
+            note=str(item.get("note", "")),
+        )
+        records[record.field] = record
+    return records
+
+
+def _get(obj: Any, name: str, default: Any = None) -> Any:
+    return getattr(obj, name, default)
+
+
+def _positive(issue_list: list[ValidationIssue], obj: Any, name: str, *, allow_zero: bool = False) -> None:
+    value = _get(obj, name, None)
+    if value is None:
+        return
+    try:
+        x = float(value)
+    except (TypeError, ValueError):
+        issue_list.append(ValidationIssue("error", "TYPE", name, f"{name} must be numeric."))
+        return
+    bad = x < 0.0 if allow_zero else x <= 0.0
+    if bad or not math.isfinite(x):
+        op = ">= 0" if allow_zero else "> 0"
+        issue_list.append(ValidationIssue("error", "RANGE", name, f"{name} must be finite and {op}; got {value!r}."))
+
+
+def validate_design_inputs(inputs: Any, provenance: Optional[Mapping[str, ProvenanceRecord]] = None) -> list[ValidationIssue]:
+    """Validate the present H2AIR-4+1 model inputs without altering them."""
+    issues: list[ValidationIssue] = []
+    provenance = provenance or {}
+
+    # Core physical values.
+    for name in (
+        "payload_mass", "wing_loading", "speed", "central_pod_length_m",
+        "central_pod_width_m", "central_pod_height_m", "boom_length_m",
+        "boom_outer_diameter_m", "dc_bus_nominal_voltage_V",
+        "fuel_cell_rated_net_power_W", "hydrogen_storage_pressure_bar",
+    ):
+        _positive(issues, inputs, name)
+
+    # Architecture is intentionally frozen in the current H2AIR-4+1 programme.
+    expected_counts = {
+        "n_lift_propellers": 4,
+        "n_cruise_propellers": 1,
+        "n_horizontal_tail_surfaces": 1,
+        "n_vertical_tail_surfaces": 2,
+        "n_booms": 2,
+    }
+    for name, expected in expected_counts.items():
+        actual = _get(inputs, name, None)
+        if actual is not None and int(actual) != expected:
+            issues.append(ValidationIssue(
+                "error", "ARCHITECTURE", name,
+                f"H2AIR-4+1 baseline requires {name}={expected}; got {actual}.",
+                "Use a different named configuration if deliberately studying another architecture.",
+            ))
+
+    # Boom geometry consistency.
+    od = _get(inputs, "boom_outer_diameter_m", None)
+    id_ = _get(inputs, "boom_inner_diameter_m", None)
+    if od is not None and id_ is not None:
+        if float(id_) < 0.0 or float(id_) >= float(od):
+            issues.append(ValidationIssue(
+                "error", "BOOM_WALL", "boom_inner_diameter_m",
+                f"Boom ID must satisfy 0 <= ID < OD; got ID={id_}, OD={od}.",
+            ))
+    bx0 = _get(inputs, "boom_x_start_m", None)
+    bx1 = _get(inputs, "boom_x_end_m", None)
+    bl = _get(inputs, "boom_length_m", None)
+    if None not in (bx0, bx1, bl):
+        delta = float(bx1) - float(bx0)
+        if delta <= 0.0:
+            issues.append(ValidationIssue("error", "BOOM_X", "boom_x_end_m", "boom_x_end_m must be aft of boom_x_start_m."))
+        elif abs(delta - float(bl)) > max(0.005, 0.01 * float(bl)):
+            issues.append(ValidationIssue(
+                "warning", "BOOM_LENGTH_CONFLICT", "boom_length_m",
+                f"boom_x_end-start={delta:.4f} m but boom_length_m={float(bl):.4f} m.",
+                "Use one geometric definition as authoritative before CAD export.",
+            ))
+
+    # Lift-prop coordinates and symmetry.
+    n_lift = int(_get(inputs, "n_lift_propellers", 0) or 0)
+    coordinate_fields = (
+        "lift_prop_x_positions_m", "lift_prop_y_positions_m", "lift_prop_z_positions_m",
+        "lift_prop_rotation_directions",
+    )
+    for name in coordinate_fields:
+        values = _get(inputs, name, ())
+        if len(values) != n_lift:
+            issues.append(ValidationIssue(
+                "error", "LIFT_LAYOUT_LENGTH", name,
+                f"{name} has {len(values)} entries; expected {n_lift}.",
+            ))
+    ys = [float(v) for v in _get(inputs, "lift_prop_y_positions_m", ())]
+    if ys and abs(sum(ys)) > 1e-9:
+        issues.append(ValidationIssue(
+            "warning", "LIFT_Y_ASYMMETRY", "lift_prop_y_positions_m",
+            f"Lift-prop y positions are not laterally balanced (sum={sum(ys):.6g} m).",
+            "Confirm this is intentional; an unmodelled asymmetry changes hover CG/control loads.",
+        ))
+
+    global_L = _get(inputs, "fuselage_length", None)
+    for name in ("lift_prop_x_positions_m",):
+        xs = [float(v) for v in _get(inputs, name, ())]
+        if global_L is not None and any(x < 0.0 or x > float(global_L) for x in xs):
+            issues.append(ValidationIssue(
+                "warning", "X_REFERENCE", name,
+                "At least one lift-prop x station lies outside the current legacy fuselage_length reference.",
+                "Freeze the global aircraft coordinate definition in Phase 3 before removing the legacy reference.",
+            ))
+
+    # Energy-system state bounds.
+    fraction_fields = (
+        "power_management_efficiency", "fuel_cell_dc_dc_efficiency",
+        "fuel_cell_max_continuous_fraction", "fuel_cell_min_stable_fraction",
+        "fuel_cell_system_efficiency_LHV", "hydrogen_usable_fraction",
+        "buffer_battery_min_soc", "buffer_battery_initial_soc",
+        "buffer_battery_takeoff_min_soc", "buffer_battery_cruise_target_soc",
+    )
+    for name in fraction_fields:
+        value = _get(inputs, name, None)
+        if value is not None and not (0.0 <= float(value) <= 1.0):
+            issues.append(ValidationIssue("error", "FRACTION", name, f"{name} must be between 0 and 1; got {value}."))
+
+    fc_min = _get(inputs, "fuel_cell_min_stable_fraction", None)
+    fc_max = _get(inputs, "fuel_cell_max_continuous_fraction", None)
+    if None not in (fc_min, fc_max) and float(fc_min) > float(fc_max):
+        issues.append(ValidationIssue("error", "FC_RANGE", "fuel_cell_min_stable_fraction", "Fuel-cell minimum stable fraction exceeds the maximum continuous fraction."))
+
+    soc_min = _get(inputs, "buffer_battery_min_soc", None)
+    soc_initial = _get(inputs, "buffer_battery_initial_soc", None)
+    soc_takeoff = _get(inputs, "buffer_battery_takeoff_min_soc", None)
+    soc_target = _get(inputs, "buffer_battery_cruise_target_soc", None)
+    if None not in (soc_min, soc_initial) and float(soc_min) >= float(soc_initial):
+        issues.append(ValidationIssue("error", "SOC_WINDOW", "buffer_battery_min_soc", "Minimum SOC must be below initial SOC."))
+    if None not in (soc_min, soc_target, soc_initial) and not (float(soc_min) <= float(soc_target) <= float(soc_initial)):
+        issues.append(ValidationIssue("warning", "SOC_TARGET", "buffer_battery_cruise_target_soc", "Cruise SOC target is outside the minimum-to-initial SOC window."))
+    if None not in (soc_takeoff, soc_initial) and float(soc_takeoff) > float(soc_initial):
+        issues.append(ValidationIssue("error", "SOC_TAKEOFF", "buffer_battery_takeoff_min_soc", "Takeoff minimum SOC exceeds initial SOC."))
+
+    # Recompute the current DesignInputs derived energy/mass identities and catch stale values.
+    stack = _get(inputs, "fuel_cell_stack_mass_kg", None)
+    bop = _get(inputs, "fuel_cell_bop_mass_kg", None)
+    dcdc = _get(inputs, "fuel_cell_dc_dc_mass_kg", None)
+    fc_sys = _get(inputs, "fuel_cell_system_mass_kg", None)
+    if None not in (stack, bop, dcdc, fc_sys):
+        expected = float(stack) + float(bop) + float(dcdc)
+        if abs(float(fc_sys) - expected) > 1e-9:
+            issues.append(ValidationIssue("error", "DERIVED_STALE", "fuel_cell_system_mass_kg", f"Derived FC system mass {fc_sys} kg does not equal stack+BoP+DC/DC={expected} kg."))
+
+    h2_nom = _get(inputs, "hydrogen_mass_nominal_kg", None)
+    h2_use = _get(inputs, "hydrogen_usable_mass_kg", None)
+    h2_frac = _get(inputs, "hydrogen_usable_fraction", None)
+    if None not in (h2_nom, h2_use, h2_frac):
+        expected = float(h2_nom) * float(h2_frac)
+        if abs(float(h2_use) - expected) > 1e-9:
+            issues.append(ValidationIssue("error", "DERIVED_STALE", "hydrogen_usable_mass_kg", f"Derived usable H2 mass {h2_use} kg does not equal nominal*fraction={expected} kg."))
+
+    # Explicitly expose legacy model debt instead of silently accepting it.
+    if hasattr(inputs, "fuselage_length"):
+        issues.append(ValidationIssue(
+            "info", "LEGACY_REFERENCE", "fuselage_length",
+            "The current H2 model still uses fuselage_length as a legacy global x reference.",
+            "Retain for Phase 1 compatibility; migrate all CG/CAD consumers together in Phase 3.",
+        ))
+    if hasattr(inputs, "fuselage_OD"):
+        issues.append(ValidationIssue(
+            "info", "LEGACY_EQUIVALENT_BODY", "fuselage_OD",
+            "Circular fuselage_OD-derived quantities remain as compatibility approximations for the rounded rectangular central pod.",
+            "Do not use these equivalent-circle values as final pod structural/packaging geometry.",
+        ))
+
+    # Current programme-vs-code reconciliation. These are WARNINGS, not automatic replacements.
+    fc_name = str(_get(inputs, "fuel_cell_name", ""))
+    if "placeholder" in fc_name.lower():
+        issues.append(ValidationIssue(
+            "warning", "PLACEHOLDER_FC", "fuel_cell_name",
+            f"Fuel-cell entry is explicitly a placeholder: {fc_name!r}.",
+            "Replace with supplier-controlled IE-SOAR 800 data in Phase 2.",
+        ))
+    storage_name = str(_get(inputs, "hydrogen_storage_name", ""))
+    if "placeholder" in storage_name.lower():
+        issues.append(ValidationIssue(
+            "warning", "PLACEHOLDER_H2", "hydrogen_storage_name",
+            f"Hydrogen storage entry is explicitly a placeholder: {storage_name!r}.",
+            "Do not treat its H2 mass/tank mass/endurance as validated hardware performance.",
+        ))
+    pressure = _get(inputs, "hydrogen_storage_pressure_bar", None)
+    if pressure is not None and abs(float(pressure) - 350.0) > 1e-9:
+        issues.append(ValidationIssue(
+            "warning", "PROGRAMME_STORAGE_PRESSURE", "hydrogen_storage_pressure_bar",
+            f"Current code uses {float(pressure):.0f} bar, while the newer H2AIR-4+1 application baseline uses a certified 3.0 L / 350 bar package.",
+            "Keep current code value labelled placeholder until exact supplier cylinder data are entered.",
+        ))
+    bus = _get(inputs, "dc_bus_nominal_voltage_V", None)
+    if bus is not None and float(bus) < 35.0:
+        issues.append(ValidationIssue(
+            "warning", "PROGRAMME_BUS", "dc_bus_nominal_voltage_V",
+            f"Current code uses {float(bus):.1f} V nominal; the newer application architecture is 48 V-class / preliminary 12S.",
+            "Phase 2 must reconcile exact IE-SOAR output, hybrid controller and battery voltage ranges before hardware selection.",
+        ))
+    endurance = _get(inputs, "cruise_endurance_min", None)
+    if endurance is not None and float(endurance) < 120.0:
+        issues.append(ValidationIssue(
+            "warning", "PROGRAMME_ENDURANCE_TARGET", "cruise_endurance_min",
+            f"Current single endurance requirement is {float(endurance):.0f} min; the newer application separates >60 min minimum success from >=120 min target.",
+            "Replace the single requirement with minimum/target/stretch gates in Phase 2/5.",
+        ))
+
+    # Portability and reproducibility.
+    inventor_path = str(_get(inputs, "inventor_xml_path", ""))
+    if inventor_path and (":" in inventor_path or inventor_path.startswith("/")):
+        issues.append(ValidationIssue(
+            "warning", "MACHINE_PATH", "inventor_xml_path",
+            f"CAD export path is machine-specific: {inventor_path}",
+            "Use an output directory relative to the repository or a CLI/config path.",
+        ))
+
+    # Provenance coverage: safety-/performance-critical input values should not be anonymous.
+    critical = (
+        "fuel_cell_rated_net_power_W", "fuel_cell_stack_mass_kg", "fuel_cell_bop_mass_kg",
+        "fuel_cell_dc_dc_mass_kg", "fuel_cell_system_efficiency_LHV",
+        "hydrogen_storage_pressure_bar", "hydrogen_mass_nominal_kg", "hydrogen_tank_mass_kg",
+        "hydrogen_regulator_valves_mass_kg", "hardcode_buffer_battery",
+        "hardcode_lift_propulsion", "hardcode_cruise_propulsion",
+    )
+    missing = [name for name in critical if hasattr(inputs, name) and name not in provenance]
+    if missing:
+        issues.append(ValidationIssue(
+            "info", "PROVENANCE_GAPS", "provenance",
+            "No explicit provenance record for: " + ", ".join(missing),
+            "Fill config/provenance.json as supplier/measured data become available.",
+        ))
+
+    return issues
+
+
+def summarize_validation(issues: Iterable[ValidationIssue]) -> Dict[str, int]:
+    summary = {"error": 0, "warning": 0, "info": 0}
+    for issue in issues:
+        summary.setdefault(issue.severity, 0)
+        summary[issue.severity] += 1
+    summary["total"] = sum(summary.values())
+    return summary
+
+
+def _sha256_file(path: Path) -> str:
+    h = sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def source_manifest(root: Path | str = ".") -> Dict[str, Dict[str, Any]]:
+    root = Path(root)
+    preferred = (
+        "design_inputs.py", "constants.py", "geometry.py", "aerodynamics.py",
+        "structures.py", "propulsion.py", "batteries.py", "propulsion_system.py",
+        "avionics.py", "maneuvering.py", "maneuvering_rudder.py", "convergence.py",
+        "results.py", "reporting.py", "inventor_param_export.py", "script.py",
+        "phase1_governance.py", "run_phase1.py",
+    )
+    out: Dict[str, Dict[str, Any]] = {}
+    for name in preferred:
+        p = root / name
+        if p.is_file():
+            stat = p.stat()
+            out[name] = {
+                "sha256": _sha256_file(p),
+                "bytes": stat.st_size,
+                "mtime_utc": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat(),
+            }
+    return out
+
+
+def validate_result_dict(result: Mapping[str, Any], inputs: Any) -> list[ValidationIssue]:
+    """Post-run sanity checks that do not depend on the internal result dataclasses."""
+    issues: list[ValidationIssue] = []
+
+    def value(*names: str) -> Optional[float]:
+        for name in names:
+            if name in result and result[name] is not None:
+                try:
+                    return float(result[name])
+                except (TypeError, ValueError):
+                    pass
+        return None
+
+    mtow = value("W0_mass_kg", "mtow_kg", "MTOW_kg")
+    if mtow is not None:
+        if mtow <= 0.0 or not math.isfinite(mtow):
+            issues.append(ValidationIssue("error", "RESULT_MTOW", "W0_mass_kg", f"Invalid MTOW result: {mtow}."))
+        elif mtow > 15.0:
+            issues.append(ValidationIssue("error", "MTOW_CEILING", "W0_mass_kg", f"MTOW={mtow:.3f} kg exceeds the current 15 kg programme ceiling."))
+        elif mtow > 14.0:
+            issues.append(ValidationIssue("warning", "MTOW_GROWTH_MARGIN", "W0_mass_kg", f"MTOW={mtow:.3f} kg is inside the absolute ceiling but above the 12-14 kg target band."))
+
+    cruise = value("cruise_power_elec_W", "cruise_bus_power_W")
+    if cruise is not None:
+        if cruise > 550.0:
+            issues.append(ValidationIssue("error", "CRUISE_POWER_GATE", "cruise_power_elec_W", f"Cruise electrical power={cruise:.1f} W exceeds the current 550 W design gate."))
+        elif cruise > 450.0:
+            issues.append(ValidationIssue("warning", "CRUISE_POWER_TARGET", "cruise_power_elec_W", f"Cruise electrical power={cruise:.1f} W is above the current 400-450 W target band."))
+
+    # General non-finite output scan.
+    bad = []
+    for key, raw in result.items():
+        if isinstance(raw, float) and not math.isfinite(raw):
+            bad.append(key)
+    if bad:
+        issues.append(ValidationIssue("warning", "NONFINITE_OUTPUT", "results", "Non-finite scalar outputs present: " + ", ".join(bad[:20])))
+
+    return issues
+
+
+def write_run_archive(
+    *,
+    case_name: str,
+    inputs: Any,
+    output_dir: Path | str,
+    model_results: Any = None,
+    provenance: Optional[Mapping[str, ProvenanceRecord]] = None,
+    source_root: Path | str = ".",
+    input_issues: Optional[list[ValidationIssue]] = None,
+) -> Dict[str, str]:
+    """Write a controlled Phase-1 manifest and, if available, governed result JSON."""
+    outdir = Path(output_dir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now(timezone.utc).isoformat()
+    config_sha = configuration_hash(inputs)
+    input_issues = input_issues if input_issues is not None else validate_design_inputs(inputs, provenance)
+
+    if is_dataclass(inputs):
+        input_dict = asdict(inputs)
+    else:
+        input_dict = dict(vars(inputs))
+
+    manifest: Dict[str, Any] = {
+        "schema_version": SCHEMA_VERSION,
+        "phase1_version": PHASE1_VERSION,
+        "case_name": case_name,
+        "timestamp_utc": timestamp,
+        "configuration_sha256": config_sha,
+        "python": sys.version,
+        "platform": platform.platform(),
+        "working_directory": str(Path.cwd()),
+        "source_files": source_manifest(source_root),
+        "inputs": _jsonable(input_dict),
+        "provenance": [_jsonable(v) for _, v in sorted((provenance or {}).items())],
+        "input_validation_summary": summarize_validation(input_issues),
+        "input_validation_issues": [_jsonable(i) for i in input_issues],
+    }
+
+    manifest_path = outdir / f"{case_name}_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    paths = {"manifest": str(manifest_path)}
+
+    if model_results is not None:
+        if hasattr(model_results, "to_dict"):
+            raw_results = model_results.to_dict()
+        elif is_dataclass(model_results):
+            raw_results = asdict(model_results)
+        elif isinstance(model_results, Mapping):
+            raw_results = dict(model_results)
+        else:
+            raw_results = dict(vars(model_results))
+        result_issues = validate_result_dict(raw_results, inputs)
+        governed = {
+            "schema_version": SCHEMA_VERSION,
+            "phase1_version": PHASE1_VERSION,
+            "case_name": case_name,
+            "timestamp_utc": timestamp,
+            "configuration_sha256": config_sha,
+            "validation_summary": summarize_validation([*input_issues, *result_issues]),
+            "input_validation_issues": [_jsonable(i) for i in input_issues],
+            "result_validation_issues": [_jsonable(i) for i in result_issues],
+            "results": _jsonable(raw_results),
+        }
+        results_path = outdir / f"{case_name}_results_governed.json"
+        results_path.write_text(json.dumps(governed, indent=2, ensure_ascii=False), encoding="utf-8")
+        paths["results"] = str(results_path)
+
+    return paths
+
+
+def format_validation_report(issues: Iterable[ValidationIssue]) -> str:
+    issues = list(issues)
+    summary = summarize_validation(issues)
+    lines = [
+        "=== H2AIR-4+1 PHASE-1 INPUT GOVERNANCE ===",
+        f"Errors: {summary['error']} | Warnings: {summary['warning']} | Info: {summary['info']}",
+    ]
+    if not issues:
+        lines.append("No Phase-1 validation issues detected.")
+        return "\n".join(lines)
+    for issue in issues:
+        lines.append(f"[{issue.severity.upper():7}] {issue.code:<28} {issue.field}: {issue.message}")
+        if issue.recommendation:
+            lines.append(f"          -> {issue.recommendation}")
+    return "\n".join(lines)

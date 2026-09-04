@@ -1,0 +1,166 @@
+"""Aero/propulsion design-space sweeps for H2AIR-4+1.
+
+This module deliberately returns screening tables rather than pretending to select
+flight hardware from generic data. Real motor/propeller release still requires
+supplier/thrust-stand maps at the selected 12S voltage and representative density.
+"""
+from __future__ import annotations
+
+from typing import Any, Dict, List, Mapping
+
+from .aero_propulsion import (
+    cruise_drag,
+    lift_layout,
+    lift_system_sizing,
+    maximum_mass_supported_by_placeholder_thrust,
+    minimum_wing_area_for_stall_margin,
+    mission_energy_screen,
+    pusher_operating_point,
+    stall_speed_mps,
+)
+
+
+def architecture_sweep(cfg: Mapping[str, Any]) -> List[Dict[str, Any]]:
+    """Sweep lift-prop diameter and cruise-state trade space."""
+    mass = float(cfg["aircraft"]["phase3_screening_mtow_kg"])
+    V = float(cfg["aircraft"]["cruise_speed_mps"])
+    gate = float(cfg["aircraft"]["cruise_power_gate_W"])
+    rows: List[Dict[str, Any]] = []
+    for d in cfg["lift_system"]["diameter_candidates_in"]:
+        layout = lift_layout(cfg, float(d))
+        lift_current = lift_system_sizing(cfg, mass_kg=mass, prop_diameter_in=float(d))
+        lift_ceiling = lift_system_sizing(cfg, mass_kg=float(cfg["aircraft"]["mtow_ceiling_kg"]), prop_diameter_in=float(d))
+        for state in cfg["lift_system"]["cruise_state_candidates"]:
+            drag = cruise_drag(cfg, mass_kg=mass, speed_mps=V, lift_prop_diameter_in=float(d), lift_prop_state=str(state))
+            mission = mission_energy_screen(cfg, mass_kg=mass, prop_diameter_in=float(d), lift_prop_state=str(state))
+            rows.append({
+                "lift_prop_diameter_in": float(d),
+                "lift_prop_state": str(state),
+                "cruise_drag_N": drag.total_drag_N,
+                "cruise_L_D": drag.lift_to_drag,
+                "lift_prop_drag_N": drag.lift_prop_drag_N,
+                "cruise_propulsion_electrical_W": drag.cruise_propulsion_electrical_W,
+                "cruise_bus_power_W": drag.total_cruise_bus_power_W,
+                "cruise_gate_W": gate,
+                "cruise_gate_pass": drag.total_cruise_bus_power_W <= gate,
+                "mission_120min_screen_Wh": mission.total_bus_energy_Wh,
+                "current_layout_pass": layout.current_layout_pass,
+                "proposed_layout_pass": layout.proposed_layout_pass,
+                "proposed_front_x_m": layout.proposed_front_x_m,
+                "proposed_rear_x_m": layout.proposed_rear_x_m,
+                "current_mass_design_peak_W": lift_current.total_design_power_with_margin_W,
+                "current_mass_thrust_per_motor_N": lift_current.design_thrust_per_motor_N,
+                "ceiling_15kg_design_peak_W": lift_ceiling.total_design_power_with_margin_W,
+                "ceiling_15kg_power_per_motor_W": lift_ceiling.design_power_per_motor_with_margin_W,
+                "ceiling_15kg_thrust_per_motor_N": lift_ceiling.design_thrust_per_motor_N,
+                "ceiling_15kg_placeholder_thrust_pass": lift_ceiling.placeholder_thrust_pass,
+                "ceiling_15kg_placeholder_power_pass": lift_ceiling.placeholder_power_pass,
+                "ceiling_15kg_5kW_screen_pass": lift_ceiling.five_kW_screen_pass,
+                "ceiling_15kg_7p5kW_conditional_pass": lift_ceiling.conditional_hybrid_peak_screen_pass,
+            })
+    return rows
+
+
+def wing_sizing_sweep(cfg: Mapping[str, Any]) -> List[Dict[str, Any]]:
+    """Minimum-area screening for the required transition stall margin."""
+    rows: List[Dict[str, Any]] = []
+    speed = float(cfg["wing_sizing"]["transition_reference_speed_mps"])
+    ratio = float(cfg["wing_sizing"]["transition_stall_ratio"])
+    for mass in cfg["wing_sizing"]["screen_mass_candidates_kg"]:
+        r = minimum_wing_area_for_stall_margin(cfg, mass_kg=float(mass), speed_mps=speed, stall_ratio=ratio)
+        # Show the folded/aligned cruise consequence at the minimum-area screen.
+        for state in ("folded", "stopped_aligned"):
+            drag = cruise_drag(
+                cfg,
+                mass_kg=float(mass),
+                speed_mps=speed,
+                lift_prop_diameter_in=18.0,
+                lift_prop_state=state,
+                wing_area_m2=float(r["minimum_wing_area_m2"]),
+            )
+            r[f"18in_{state}_cruise_bus_W_at_min_area"] = drag.total_cruise_bus_power_W
+            r[f"18in_{state}_L_D_at_min_area"] = drag.lift_to_drag
+        rows.append(r)
+    return rows
+
+
+def pusher_sweep(cfg: Mapping[str, Any], *, lift_prop_diameter_in: float = 18.0, lift_prop_state: str = "folded") -> List[Dict[str, Any]]:
+    """Screen generic pusher operating points at the current Phase-3 mass."""
+    mass = float(cfg["aircraft"]["phase3_screening_mtow_kg"])
+    V = float(cfg["aircraft"]["cruise_speed_mps"])
+    drag = cruise_drag(cfg, mass_kg=mass, speed_mps=V,
+                       lift_prop_diameter_in=lift_prop_diameter_in,
+                       lift_prop_state=lift_prop_state)
+    rows: List[Dict[str, Any]] = []
+    for d in cfg["pusher_screen"]["diameter_candidates_in"]:
+        op = pusher_operating_point(cfg, prop_diameter_in=float(d), speed_mps=V, required_aircraft_thrust_N=drag.total_drag_N)
+        row = op.to_dict()
+        row.update({
+            "aircraft_drag_N": drag.total_drag_N,
+            "normal_cruise_propulsion_electrical_W_calibrated": drag.cruise_propulsion_electrical_W,
+            "note": "Generic coefficient-map sizing point includes the configured thrust margin; not supplier-validated hardware data.",
+        })
+        rows.append(row)
+    return rows
+
+
+def speed_sweep(cfg: Mapping[str, Any], *, mass_kg: float, lift_prop_diameter_in: float = 18.0, lift_prop_state: str = "folded", v_min: float = 15.0, v_max: float = 30.0, step: float = 0.5) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    vstall = stall_speed_mps(cfg, mass_kg)
+    ratio_req = float(cfg["aircraft"]["minimum_transition_stall_ratio"])
+    v = v_min
+    while v <= v_max + 1e-9:
+        drag = cruise_drag(cfg, mass_kg=mass_kg, speed_mps=v,
+                           lift_prop_diameter_in=lift_prop_diameter_in,
+                           lift_prop_state=lift_prop_state)
+        rows.append({
+            "speed_mps": v,
+            "stall_speed_mps": vstall,
+            "V_over_Vstall": v / vstall,
+            "transition_stall_margin_pass": v / vstall >= ratio_req,
+            "drag_N": drag.total_drag_N,
+            "L_D": drag.lift_to_drag,
+            "cruise_propulsion_electrical_W": drag.cruise_propulsion_electrical_W,
+            "cruise_bus_power_W": drag.total_cruise_bus_power_W,
+        })
+        v += step
+    return rows
+
+
+def reference_summary(cfg: Mapping[str, Any]) -> Dict[str, Any]:
+    mass = float(cfg["aircraft"]["phase3_screening_mtow_kg"])
+    V = float(cfg["aircraft"]["cruise_speed_mps"])
+    preferred_d = 18.0
+    preferred_state = "folded"
+    drag_pref = cruise_drag(cfg, mass_kg=mass, speed_mps=V,
+                            lift_prop_diameter_in=preferred_d, lift_prop_state=preferred_state)
+    drag_random = cruise_drag(cfg, mass_kg=mass, speed_mps=V,
+                              lift_prop_diameter_in=preferred_d, lift_prop_state="stopped_random")
+    drag_aligned = cruise_drag(cfg, mass_kg=mass, speed_mps=V,
+                               lift_prop_diameter_in=preferred_d, lift_prop_state="stopped_aligned")
+    layout = lift_layout(cfg, preferred_d)
+    lift_15 = lift_system_sizing(cfg, mass_kg=15.0, prop_diameter_in=preferred_d)
+    lift_now = lift_system_sizing(cfg, mass_kg=mass, prop_diameter_in=preferred_d)
+    wing_15 = minimum_wing_area_for_stall_margin(cfg, mass_kg=15.0, speed_mps=V)
+    wing_14 = minimum_wing_area_for_stall_margin(cfg, mass_kg=14.0, speed_mps=V)
+    return {
+        "reference_mass_kg": mass,
+        "preferred_screening_direction": "18-in folding lift propellers with re-spaced front/rear motor centres; final hardware selection requires 12S thrust-stand data.",
+        "18in_folded": drag_pref.to_dict(),
+        "18in_stopped_aligned": drag_aligned.to_dict(),
+        "18in_stopped_random": drag_random.to_dict(),
+        "folded_vs_random_bus_power_reduction_W": drag_random.total_cruise_bus_power_W - drag_pref.total_cruise_bus_power_W,
+        "folded_vs_random_drag_reduction_N": drag_random.total_drag_N - drag_pref.total_drag_N,
+        "18in_layout": layout.to_dict(),
+        "lift_sizing_at_phase3_mass": lift_now.to_dict(),
+        "lift_sizing_at_15kg_ceiling": lift_15.to_dict(),
+        "max_mass_supported_by_current_55N_placeholder_kg": maximum_mass_supported_by_placeholder_thrust(cfg),
+        "wing_minimum_area_screen_14kg": wing_14,
+        "wing_minimum_area_screen_15kg": wing_15,
+        "limitations": [
+            "Lift motor/propeller database values remain placeholders; no real 12S thrust-stand map is available in the source set.",
+            "Pusher map is an engineering assumption unless a measured map is supplied.",
+            "Wing-area sensitivity does not yet feed structural mass, tail sizing, CG and packaging back into the original inaccessible source-tree runtime.",
+            "Aero/propulsion mission transition energy remains a stage screen; time-resolved transition physics is Mission/transition.",
+        ],
+    }

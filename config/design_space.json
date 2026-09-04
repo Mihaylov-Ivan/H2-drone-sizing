@@ -1,0 +1,46 @@
+{
+  "wing_area_m2": [
+    0.8,
+    0.9
+  ],
+  "wing_span_m": [
+    3.15,
+    3.6
+  ],
+  "wing_ac_x_m": [
+    0.34,
+    0.43
+  ],
+  "horizontal_tail_area_m2": [
+    0.13,
+    0.2
+  ],
+  "lift_row_center_x_m": [
+    0.42,
+    0.5
+  ],
+  "battery_x_m": [
+    0.18,
+    0.62
+  ],
+  "battery_z_m": [
+    0.06,
+    0.064
+  ],
+  "fuel_cell_x_m": [
+    0.14,
+    0.19
+  ],
+  "fuel_cell_z_m": [
+    -0.029,
+    -0.025
+  ],
+  "hydrogen_cylinder_x_m": [
+    0.505,
+    0.554
+  ],
+  "hydrogen_cylinder_z_m": [
+    -0.029,
+    -0.025
+  ]
+}

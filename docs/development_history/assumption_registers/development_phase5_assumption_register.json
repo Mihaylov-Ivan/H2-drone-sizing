@@ -1,0 +1,13 @@
+{
+  "phase": 5,
+  "items": [
+    {"parameter": "CL_alpha_per_rad", "status": "engineering_assumption", "validation": "derive from selected wing/airfoil using XFLR5/CFD and flight identification"},
+    {"parameter": "zero_lift_alpha_deg", "status": "engineering_assumption", "validation": "replace with selected airfoil/wing polar"},
+    {"parameter": "lift_motor_thrust_time_constant_s", "status": "engineering_assumption", "validation": "measure commanded-to-thrust transient on bench with selected ESC/motor/prop"},
+    {"parameter": "pusher_generic_Ct_Cp_map", "status": "engineering_assumption", "validation": "replace with manufacturer or thrust-stand J/Ct/Cp data"},
+    {"parameter": "pusher_max_electrical_power_W", "status": "engineering_assumption", "validation": "replace with selected motor/ESC continuous and transient limits"},
+    {"parameter": "active_lift_prop_forward_drag", "status": "engineering_assumption", "validation": "measure or CFD powered/stopped/folding rotor drag through transition"},
+    {"parameter": "transition_controller_gains_and_pitch_schedule", "status": "engineering_assumption", "validation": "Phase-6 SIL/HIL tuning then progressive flight-test envelope expansion"},
+    {"parameter": "lift_thrust_available_per_motor_N", "status": "legacy_placeholder", "validation": "replace with selected 12S motor/prop thrust-power-current-temperature map"}
+  ]
+}

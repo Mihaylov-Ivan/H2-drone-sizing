@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "assumptions": [
+    {
+      "field": "fuel_cell.min_stable_fraction",
+      "value": 0.1,
+      "status": "engineering_assumption",
+      "reason": "Current model value retained pending IE dynamic/interface data."
+    },
+    {
+      "field": "fuel_cell.ramp_up_W_per_s",
+      "value": 100.0,
+      "status": "engineering_assumption",
+      "reason": "Current model value retained; replace with supplier/bench ramp map."
+    },
+    {
+      "field": "fuel_cell.ramp_down_W_per_s",
+      "value": 150.0,
+      "status": "engineering_assumption",
+      "reason": "Preliminary faster-down-ramp screening value."
+    },
+    {
+      "field": "fuel_cell.startup_time_s",
+      "value": 30.0,
+      "status": "engineering_assumption",
+      "reason": "Current model value retained; mission default declares FC ready before takeoff."
+    },
+    {
+      "field": "fuel_cell.preflight_power_W",
+      "value": 400.0,
+      "status": "engineering_assumption",
+      "reason": "Preloads the ready FC at the supplier reference load before VTOL; configurable."
+    },
+    {
+      "field": "battery.internal_resistance_ohm",
+      "value": 0.03,
+      "status": "engineering_assumption",
+      "reason": "Used only for preliminary voltage-sag/current calculation; must be replaced by pack pulse-test data."
+    },
+    {
+      "field": "battery.ocv_curve_cell_V",
+      "status": "engineering_assumption",
+      "reason": "Generic LiPo screening curve; replace with selected pack chemistry/data."
+    },
+    {
+      "field": "battery.minimum_loaded_cell_voltage_V",
+      "value": 3.3,
+      "status": "engineering_assumption",
+      "reason": "Preliminary sag guard; actual BMS/pack limit required."
+    },
+    {
+      "field": "battery.current_limits",
+      "value": null,
+      "status": "open",
+      "reason": "Not supplied in current source set; model reports NOT_EVALUATED instead of PASS."
+    },
+    {
+      "field": "battery.thermal_model",
+      "value": null,
+      "status": "open",
+      "reason": "Mass, heat capacity, cooling resistance and max temperature are not yet available."
+    },
+    {
+      "field": "hydrogen.cylinder_mass_kg",
+      "value": null,
+      "status": "open",
+      "reason": "3.0 L/350 bar cylinder is identified, but exact certified cylinder mass is not supported by current source extract."
+    },
+    {
+      "field": "hydrogen.physical_usable_fraction",
+      "value": 1.0,
+      "status": "engineering_assumption",
+      "reason": "Residual-pressure requirement is unknown; separate 15% mission-energy reserve is enforced."
+    },
+    {
+      "field": "fuel_cell.thermal_model",
+      "value": null,
+      "status": "open",
+      "reason": "Module thermal capacitance, effective cooling resistance and maximum temperature/derating map are not supported by current source extract."
+    },
+    {
+      "field": "ems.allow_planned_battery_endurance_extension",
+      "value": false,
+      "status": "engineering_assumption",
+      "reason": "Conservative mission-planning policy: preserve battery as transient/landing/go-around reserve rather than claim planned cruise endurance from battery drawdown after the protected H2 energy budget is reached."
+    }
+  ]
+}

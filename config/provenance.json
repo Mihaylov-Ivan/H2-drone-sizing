@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "field": "payload_mass",
+      "status": "preliminary_target",
+      "source": "Hydrogenera_IH-MIE_Application_Draft_v8, 2026-08-31",
+      "note": "Current programme payload target is 1.2 kg."
+    },
+    {
+      "field": "fuel_cell_rated_net_power_W",
+      "status": "supplier_confirmed",
+      "source": "IE-SOAR 800 package information summarized in Hydrogenera_IH-MIE_Application_Draft_v8",
+      "note": "800 W continuous class; exact accepted interface/data sheet must be attached before final hardware closure."
+    },
+    {
+      "field": "fuel_cell_stack_mass_kg",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Current code value is not the supplier package mass stated in the newer application."
+    },
+    {
+      "field": "fuel_cell_bop_mass_kg",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Replace with accepted supplier BoP/package breakdown."
+    },
+    {
+      "field": "fuel_cell_dc_dc_mass_kg",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Replace with actual hybrid controller/DC-DC mass and interfaces."
+    },
+    {
+      "field": "fuel_cell_system_efficiency_LHV",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Single 50% efficiency is a screening assumption; Phase 2 needs a net efficiency/load map or supplier reference."
+    },
+    {
+      "field": "hydrogen_storage_pressure_bar",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Current code uses 300 bar; newer application package is 3.0 L/350 bar."
+    },
+    {
+      "field": "hydrogen_mass_nominal_kg",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Current 120 g is not the newer application preliminary ~70 g inventory and must not be treated as validated."
+    },
+    {
+      "field": "hydrogen_tank_mass_kg",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Replace with actual certified cylinder mass including installed hardware boundary."
+    },
+    {
+      "field": "hydrogen_regulator_valves_mass_kg",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Newer application references a 315 g regulator; confirm exact supplied assembly and boundary."
+    },
+    {
+      "field": "hardcode_buffer_battery",
+      "status": "placeholder",
+      "source": "current design_inputs.py",
+      "note": "Current code is 6S-class while the newer application architecture is preliminary 12S / 48 V-class."
+    },
+    {
+      "field": "hardcode_lift_propulsion",
+      "status": "open",
+      "source": "current model/component selection",
+      "note": "Final lift motor/prop/ESC must come from instrumented thrust/thermal test data."
+    },
+    {
+      "field": "hardcode_cruise_propulsion",
+      "status": "open",
+      "source": "current model/component selection",
+      "note": "Final pusher must be selected on forward-flight efficiency/thrust data, not static thrust only."
+    }
+  ]
+}
