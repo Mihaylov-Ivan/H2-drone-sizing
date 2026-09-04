@@ -1,28 +1,28 @@
 name,group,mass_takeoff_kg,mass_end_kg,x_m,y_m,z_m,status,source
-lift_motor_mount_1,airframe,0.05175,,0.1306,-0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
-lift_motor_mount_2,airframe,0.05175,,0.1306,0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
-lift_motor_mount_3,airframe,0.05175,,0.7094,-0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
-lift_motor_mount_4,airframe,0.05175,,0.7094,0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
+lift_motor_mount_1,airframe,0.05175,,0.14422676720416233,-0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
+lift_motor_mount_2,airframe,0.05175,,0.14422676720416233,0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
+lift_motor_mount_3,airframe,0.05175,,0.7230267672041624,-0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
+lift_motor_mount_4,airframe,0.05175,,0.7230267672041624,0.48,0.1,calculated,Current H2AIR wing motor-mount mass split
 boom_forward_mount_left,airframe,0.055,,0.34,-0.35,0.0,calculated,Design input allowance
 boom_forward_mount_right,airframe,0.055,,0.34,0.35,0.0,calculated,Design input allowance
 boom_tail_mount_left,airframe,0.035,,1.1,-0.35,0.0,calculated,Design input allowance
 boom_tail_mount_right,airframe,0.035,,1.1,0.35,0.0,calculated,Design input allowance
 tail_crossmember,airframe,0.08,,1.1,0.0,0.0,calculated,Design input allowance
 payload,payload,1.2,,0.16,0.0,0.0,preliminary_target,Latest IH-MIE application / current design input
-buffer_battery,energy,1.634,1.634,0.337336,0.0,0.0631,supplier_confirmed,Integrated power-system config
-fuel_cell_system,energy,1.45,1.45,0.159069,0.0,-0.025465,supplier_confirmed,Integrated power-system config
-hydrogen_cylinder,energy,1.1,,0.519286,0.0,-0.02828,legacy_placeholder,Legacy cylinder mass/dimensions retained because current certified 3.0 L/350 bar cylinder mass/envelope is open
-hydrogen_regulator,energy,0.315,0.315,0.14906899999999998,0.0,-0.025465,supplier_confirmed,Integrated power-system config
-stored_hydrogen,energy,0.07,0.01908849201479538,0.519286,0.0,-0.02828,preliminary_target,Integrated power-system config
-lift_propulsion_1,propulsion,0.284,0.284,0.1306,-0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
-lift_propulsion_2,propulsion,0.284,0.284,0.1306,0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
-lift_propulsion_3,propulsion,0.284,0.284,0.7094,-0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
-lift_propulsion_4,propulsion,0.284,0.284,0.7094,0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+buffer_battery,energy,1.634,1.634,0.38,0.0,0.0631,supplier_confirmed,Integrated power-system config
+fuel_cell_system,energy,1.45,1.45,0.1508290738714257,0.0,-0.025465,supplier_confirmed,Integrated power-system config
+hydrogen_cylinder,energy,1.1,,0.5380487112951451,0.0,-0.02828,legacy_placeholder,Legacy cylinder mass/dimensions retained because current certified 3.0 L/350 bar cylinder mass/envelope is open
+hydrogen_regulator,energy,0.315,0.315,0.14082907387142568,0.0,-0.025465,supplier_confirmed,Integrated power-system config
+stored_hydrogen,energy,0.07,0.018954917708923547,0.5380487112951451,0.0,-0.02828,preliminary_target,Integrated power-system config
+lift_propulsion_1,propulsion,0.284,0.284,0.14422676720416233,-0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+lift_propulsion_2,propulsion,0.284,0.284,0.14422676720416233,0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+lift_propulsion_3,propulsion,0.284,0.284,0.7230267672041624,-0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+lift_propulsion_4,propulsion,0.284,0.284,0.7230267672041624,0.48,0.1,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
 cruise_propulsion,propulsion,0.191,0.191,0.94,0.0,0.02,supplier_confirmed_motor_and_bench_data_prop_mass_from_user_database,T-MOTOR MN501-S KV240 official product/test table; P15x5 at 12S
-lift_ESC_1,avionics,0.0366,,0.1306,-0.48,0.1,calculated,Current ESC mass split
-lift_ESC_2,avionics,0.0366,,0.1306,0.48,0.1,calculated,Current ESC mass split
-lift_ESC_3,avionics,0.0366,,0.7094,-0.48,0.1,calculated,Current ESC mass split
-lift_ESC_4,avionics,0.0366,,0.7094,0.48,0.1,calculated,Current ESC mass split
+lift_ESC_1,avionics,0.0366,,0.14422676720416233,-0.48,0.1,calculated,Current ESC mass split
+lift_ESC_2,avionics,0.0366,,0.14422676720416233,0.48,0.1,calculated,Current ESC mass split
+lift_ESC_3,avionics,0.0366,,0.7230267672041624,-0.48,0.1,calculated,Current ESC mass split
+lift_ESC_4,avionics,0.0366,,0.7230267672041624,0.48,0.1,calculated,Current ESC mass split
 cruise_ESC,avionics,0.0534,,0.82,0.0,0.0,calculated,Current H2AIR model; physical dimensions open
 autopilot,avionics,0.016,,0.208,0.0,0.0,calculated,Current H2AIR avionics model
 gps,avionics,0.025,,0.43,0.0,0.1,calculated,Current H2AIR avionics model
@@ -38,17 +38,17 @@ fuselage_center_a_shell,fuselage_structure,0.274325,0.274325,0.265,0.0,0.0,engin
 fuselage_center_b_shell,fuselage_structure,0.274325,0.274325,0.515,0.0,0.0,engineering_assumption,Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m
 fuselage_tail_shell,fuselage_structure,0.153622,0.153622,0.71,0.0,0.0,engineering_assumption,Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m
 fuselage_longerons,fuselage_structure,0.13999440000000002,0.13999440000000002,0.39,0.0,0.0,engineering_assumption,Calibrated placeholder; replace with measured CFRP tube kg/m
-main_wing_shell,wing_structure,3.3732,3.3732,0.443214,0.0,0.1,engineering_assumption,Calibrated from current wing lump; replace with measured printed wing kg/m
-main_wing_primary_spar,wing_structure,0.9893747345357361,0.9893747345357361,0.39,0.0,0.1,engineering_assumption,Reference kg/m at current spar section; auto structural sizing scales this value by section area
-main_wing_secondary_spar,wing_structure,0.18025200000000002,0.18025200000000002,0.496428,0.0,0.1,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
-horizontal_tail_shell,tail_structure,0.1478436342978521,0.1478436342978521,1.05,0.0,0.03,engineering_assumption,Calibrated from current tail lump; replace with measured printed tail kg/m
-horizontal_tail_primary_spar,tail_structure,0.07203180206694519,0.07203180206694519,1.05,0.0,0.03,engineering_assumption,Reference kg/m; structural sizing scales by tube area
-horizontal_tail_secondary_spar,tail_structure,0.007490983657618995,0.007490983657618995,1.124889411764706,0.0,0.03,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
-vertical_tail_left_shell,tail_structure,0.0311393156019656,0.0311393156019656,1.05,-0.35,0.2755691646191646,engineering_assumption,Calibrated from current twin-fin lump; replace with measured printed fin kg/m
-vertical_tail_right_shell,tail_structure,0.0311393156019656,0.0311393156019656,1.05,0.35,0.2755691646191646,engineering_assumption,Calibrated from current twin-fin lump; replace with measured printed fin kg/m
-vertical_tail_left_primary_spar,tail_structure,0.027464593107346495,0.027464593107346495,1.05,-0.35,0.2755691646191646,engineering_assumption,Reference kg/m; structural sizing scales by tube area
-vertical_tail_right_primary_spar,tail_structure,0.027464593107346495,0.027464593107346495,1.05,0.35,0.2755691646191646,engineering_assumption,Reference kg/m; structural sizing scales by tube area
-vertical_tail_left_secondary_spar,tail_structure,0.0032572275257985255,0.0032572275257985255,1.05,-0.35,0.2755691646191646,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
-vertical_tail_right_secondary_spar,tail_structure,0.0032572275257985255,0.0032572275257985255,1.05,0.35,0.2755691646191646,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
+main_wing_shell,wing_structure,3.1616387211067467,3.1616387211067467,0.4537349173953844,0.0,0.1,engineering_assumption,Calibrated from current wing lump; replace with measured printed wing kg/m
+main_wing_primary_spar,wing_structure,0.8690765732577467,0.8690765732577467,0.4005209173953844,0.0,0.1,engineering_assumption,Reference kg/m at current spar section; auto structural sizing scales this value by section area
+main_wing_secondary_spar,wing_structure,0.16894690583331357,0.16894690583331357,0.5069489173953844,0.0,0.1,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
+horizontal_tail_shell,tail_structure,0.14300968813801504,0.14300968813801504,1.041436481184546,0.0,0.03,engineering_assumption,Calibrated from current tail lump; replace with measured printed tail kg/m
+horizontal_tail_primary_spar,tail_structure,0.06967662556819813,0.06967662556819813,1.041436481184546,0.0,0.03,engineering_assumption,Reference kg/m; structural sizing scales by tube area
+horizontal_tail_secondary_spar,tail_structure,0.007246055887430409,0.007246055887430409,1.1163258929492519,0.0,0.03,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
+vertical_tail_left_shell,tail_structure,0.01695,0.01695,1.022077557874785,-0.35,0.15,engineering_assumption,Calibrated from current twin-fin lump; replace with measured printed fin kg/m
+vertical_tail_right_shell,tail_structure,0.01695,0.01695,1.022077557874785,0.35,0.15,engineering_assumption,Calibrated from current twin-fin lump; replace with measured printed fin kg/m
+vertical_tail_left_primary_spar,tail_structure,0.008266098772009537,0.008266098772009537,1.022077557874785,-0.35,0.15,engineering_assumption,Reference kg/m; structural sizing scales by tube area
+vertical_tail_right_primary_spar,tail_structure,0.008266098772009537,0.008266098772009537,1.022077557874785,0.35,0.15,engineering_assumption,Reference kg/m; structural sizing scales by tube area
+vertical_tail_left_secondary_spar,tail_structure,0.001773,0.001773,1.022077557874785,-0.35,0.15,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
+vertical_tail_right_secondary_spar,tail_structure,0.001773,0.001773,1.022077557874785,0.35,0.15,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
 boom_tube_left,tail_structure,0.007057866666666664,0.007057866666666664,0.7200000000000001,-0.35,0.0,engineering_assumption,Legacy kg/m reference; structural sizing scales by tube area; replace with supplier tube kg/m
 boom_tube_right,tail_structure,0.007057866666666664,0.007057866666666664,0.7200000000000001,0.35,0.0,engineering_assumption,Legacy kg/m reference; structural sizing scales by tube area; replace with supplier tube kg/m

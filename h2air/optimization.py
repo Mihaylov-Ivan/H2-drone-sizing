@@ -49,21 +49,24 @@ def default_space_for_config(cfg: Mapping[str, Any]) -> Dict[str, Tuple[float,fl
     if str(d.get("surface_geometry_mode", "legacy_area_span")) != "root_taper_span":
         return dict(LEGACY_DEFAULT_SPACE)
     opt_space = cfg.get("optimizer_settings", {}).get("design_space", {})
+    # Fallback niche used only when the user file omits design_space entirely.
     defaults = {
-        "wing_ac_x_m": (0.30, 0.48),
-        "horizontal_tail_ac_x_m": (0.92, 1.15),
-        "vertical_tail_ac_x_m": (0.92, 1.15),
-        "lift_row_center_x_m": (0.35, 0.52),
-        "battery_x_m": (0.12, 0.65),
-        "battery_z_m": (0.02, 0.065),
-        "fuel_cell_x_m": (0.14, 0.40),
-        "fuel_cell_z_m": (-0.035, 0.01),
-        "hydrogen_cylinder_x_m": (0.25, 0.55),
-        "hydrogen_cylinder_z_m": (-0.035, 0.01),
+        "wing_ac_x_m": (0.36, 0.42),
+        "horizontal_tail_ac_x_m": (1.00, 1.10),
+        "vertical_tail_ac_x_m": (1.00, 1.10),
+        "lift_row_center_x_m": (0.38, 0.46),
+        "battery_x_m": (0.30, 0.38),
+        "fuel_cell_x_m": (0.145, 0.170),
+        "hydrogen_cylinder_x_m": (0.510, 0.540),
     }
-    space: Dict[str, Tuple[float,float]] = {
-        k: tuple(float(x) for x in opt_space.get(k, v)) for k,v in defaults.items()
-    }
+    if opt_space:
+        # User design_space is authoritative: omitted keys (e.g. *_z_m) stay fixed
+        # at component_positions / resolved design values.
+        space: Dict[str, Tuple[float,float]] = {
+            k: tuple(float(x) for x in v) for k, v in opt_space.items()
+        }
+    else:
+        space = dict(defaults)
     if str(d.get("main_wing_span_mode","auto")).lower()=="auto":
         space["main_wing_span_m"] = tuple(float(x) for x in d["main_wing_span_bounds_m"])
     if str(d.get("horizontal_tail_span_mode","auto")).lower()=="auto":

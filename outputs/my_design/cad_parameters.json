@@ -112,13 +112,13 @@
     },
     {
       "name": "wing_span",
-      "value": 3600.0,
+      "value": 3374.2000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "wing_half_span",
-      "value": 1800.0,
+      "value": 1687.1000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -142,13 +142,13 @@
     },
     {
       "name": "wing_le_x",
-      "value": 323.4825,
+      "value": 333.9825000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "wing_ac_x",
-      "value": 390.0,
+      "value": 400.5,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -190,13 +190,13 @@
     },
     {
       "name": "wing_primary_spar_OD",
-      "value": 23.50000000000001,
+      "value": 22.75000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "wing_primary_spar_ID",
-      "value": 17.625000000000007,
+      "value": 17.062500000000007,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -220,13 +220,13 @@
     },
     {
       "name": "horizontal_tail_span",
-      "value": 898.1994793308148,
+      "value": 868.8000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_half_span",
-      "value": 449.0997396654074,
+      "value": 434.40000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -250,13 +250,13 @@
     },
     {
       "name": "horizontal_tail_le_x",
-      "value": 1003.1941176470589,
+      "value": 994.594117647059,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_ac_x",
-      "value": 1050.0,
+      "value": 1041.4,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -298,7 +298,7 @@
     },
     {
       "name": "vertical_tail_height",
-      "value": 551.1383292383292,
+      "value": 300.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -316,13 +316,13 @@
     },
     {
       "name": "vertical_tail_le_x",
-      "value": 1019.7833333333335,
+      "value": 991.8833333333333,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_ac_x",
-      "value": 1050.0,
+      "value": 1022.1,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -340,13 +340,13 @@
     },
     {
       "name": "vertical_tail_primary_spar_OD",
-      "value": 9.750000000000005,
+      "value": 7.250000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_primary_spar_ID",
-      "value": 7.3125000000000036,
+      "value": 5.437500000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -406,13 +406,13 @@
     },
     {
       "name": "lift_motor_front_x",
-      "value": 130.6,
+      "value": 144.2,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "lift_motor_rear_x",
-      "value": 709.4,
+      "value": 723.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -508,7 +508,7 @@
     },
     {
       "name": "battery_x",
-      "value": 337.336,
+      "value": 380.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -544,7 +544,7 @@
     },
     {
       "name": "fuel_cell_x",
-      "value": 159.069,
+      "value": 150.79999999999998,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -580,7 +580,7 @@
     },
     {
       "name": "hydrogen_cylinder_x",
-      "value": 519.2860000000001,
+      "value": 538.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -706,7 +706,7 @@
     },
     {
       "name": "wing_rib_count",
-      "value": 16,
+      "value": 15,
       "unit": "unitless",
       "comment": "H2AIR CAD export"
     },
@@ -718,7 +718,7 @@
     },
     {
       "name": "vertical_tail_rib_count_each",
-      "value": 6,
+      "value": 4,
       "unit": "unitless",
       "comment": "H2AIR CAD export"
     }

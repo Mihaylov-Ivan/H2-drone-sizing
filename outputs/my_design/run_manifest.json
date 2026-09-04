@@ -1,6 +1,6 @@
 {
   "model_version": "H2AIR-integrated-v4.0",
-  "config_hash": "9dbb0d12607eb26df83c7db6b8cbd9ae8dc2e24a4b926286422f36fd4cf3e311",
+  "config_hash": "03fcf7c3375509ee844ce91738b1a22d12885c62a59b985c8052d1df75ebb43b",
   "outputs": [
     "AUTO_CALCULATED_VALUES.json",
     "HARDWARE_SELECTION.json",
@@ -17,6 +17,7 @@
     "params.xlsx",
     "params.xml",
     "resolved_configuration.json",
+    "run_manifest.json",
     "sixdof_forward_current_layout.csv",
     "sixdof_forward_stability_screen.csv",
     "sixdof_gust_current_layout.csv",

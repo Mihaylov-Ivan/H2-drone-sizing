@@ -5,29 +5,29 @@
     "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export and discrete hardware selection.",
     "fidelity": "conceptual / screening; not flight-release evidence"
   },
-  "config_hash": "d30fed1f8005669021901cee38976297bb565d11432f87d4238d22ce09476006",
+  "config_hash": "76236ac28946505a3ef36b0a0f4acc1f9c54ab3a0a979fe7f46276f868bda1ca",
   "summary": {
     "design_status": "SCREENING_FAIL",
-    "reference_mass_kg": 13.297634703109184,
-    "post_structure_mass_kg": 14.07304212305872,
-    "post_structure_cg_x_m": 0.4009224716353659,
-    "mass_margin_to_15kg_kg": 0.9269578769412803,
-    "current_static_margin": 0.11622495788335972,
-    "post_structure_static_margin_if_np_fixed": 0.11622495788335972,
-    "cruise_drag_N": 12.234766489773325,
-    "cruise_bus_power_W": 374.8546247159257,
-    "forward_transition_duration_s": 17.099999999999724,
-    "reverse_transition_duration_s": 19.459999999999674,
-    "mission_energy_Wh": 775.5452659403272,
-    "h2_used_kg": 0.050934668690463335,
-    "final_battery_soc": 0.9225896352811345,
+    "reference_mass_kg": 13.255498048590322,
+    "post_structure_mass_kg": 13.991222590195203,
+    "post_structure_cg_x_m": 0.40740825394774427,
+    "mass_margin_to_15kg_kg": 1.0087774098047966,
+    "current_static_margin": 0.12421221496497147,
+    "post_structure_static_margin_if_np_fixed": 0.12421221496497147,
+    "cruise_drag_N": 12.208807153536387,
+    "cruise_bus_power_W": 374.1335320426774,
+    "forward_transition_duration_s": 16.979999999999727,
+    "reverse_transition_duration_s": 19.479999999999674,
+    "mission_energy_Wh": 773.8043416081401,
+    "h2_used_kg": 0.05083802330625847,
+    "final_battery_soc": 0.9238450377534743,
     "wing_spar_od_mm": 23.50000000000001,
     "wing_spar_id_mm": 17.625000000000007,
     "boom_od_mm": 21.500000000000007,
     "boom_id_mm": 17.500000000000007,
     "motor_mount_limit_thrust_N": 79.553113864,
-    "post_structure_15kg_zero_pitch_front_motor_N": 63.29561959721544,
-    "post_structure_15kg_zero_pitch_rear_motor_N": 55.46669290278458,
+    "post_structure_15kg_zero_pitch_front_motor_N": 64.76085781296496,
+    "post_structure_15kg_zero_pitch_rear_motor_N": 54.00145468703505,
     "structural_closure_iterations": 2
   },
   "mass_properties": {
@@ -45,7 +45,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             -0.48,
             0.1
           ],
@@ -63,7 +63,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             0.48,
             0.1
           ],
@@ -81,7 +81,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             -0.48,
             0.1
           ],
@@ -99,7 +99,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             0.48,
             0.1
           ],
@@ -229,7 +229,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.634,
           "position_m": [
-            0.337336,
+            0.38,
             0.0,
             0.0631
           ],
@@ -251,7 +251,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.45,
           "position_m": [
-            0.159069,
+            0.1508290738714257,
             0.0,
             -0.025465
           ],
@@ -273,7 +273,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.1,
           "position_m": [
-            0.519286,
+            0.5380487112951451,
             0.0,
             -0.02828
           ],
@@ -294,7 +294,7 @@
           "group": "energy",
           "mass_takeoff_kg": 0.315,
           "position_m": [
-            0.14906899999999998,
+            0.14082907387142568,
             0.0,
             -0.025465
           ],
@@ -312,7 +312,7 @@
           "group": "energy",
           "mass_takeoff_kg": 0.07,
           "position_m": [
-            0.519286,
+            0.5380487112951451,
             0.0,
             -0.02828
           ],
@@ -330,7 +330,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             -0.48,
             0.1
           ],
@@ -351,7 +351,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             0.48,
             0.1
           ],
@@ -372,7 +372,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             -0.48,
             0.1
           ],
@@ -393,7 +393,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             0.48,
             0.1
           ],
@@ -435,7 +435,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             -0.48,
             0.1
           ],
@@ -453,7 +453,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             0.48,
             0.1
           ],
@@ -471,7 +471,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             -0.48,
             0.1
           ],
@@ -489,7 +489,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             0.48,
             0.1
           ],
@@ -796,7 +796,7 @@
           "group": "wing_structure",
           "mass_takeoff_kg": 3.3732,
           "position_m": [
-            0.446214,
+            0.457214,
             0.0,
             0.1
           ],
@@ -818,7 +818,7 @@
           "group": "wing_structure",
           "mass_takeoff_kg": 0.316224,
           "position_m": [
-            0.393,
+            0.404,
             0.0,
             0.1
           ],
@@ -839,7 +839,7 @@
           "group": "wing_structure",
           "mass_takeoff_kg": 0.18025200000000002,
           "position_m": [
-            0.499428,
+            0.510428,
             0.0,
             0.1
           ],
@@ -858,17 +858,17 @@
         {
           "name": "horizontal_tail_shell",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.15523581601274472,
+          "mass_takeoff_kg": 0.1501601725449158,
           "position_m": [
-            1.05,
+            1.041436481184546,
             0.0,
             0.03
           ],
-          "mass_end_kg": 0.15523581601274472,
+          "mass_end_kg": 0.1501601725449158,
           "shape": "box",
           "dimensions_m": {
             "length_x": 0.18722352941176468,
-            "width_y": 0.9431094532973555,
+            "width_y": 0.9122732232376415,
             "height_z": 0.022
           },
           "package_zone": null,
@@ -880,16 +880,16 @@
         {
           "name": "horizontal_tail_primary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.01573106568099989,
+          "mass_takeoff_kg": 0.01521671736360386,
           "position_m": [
-            1.05,
+            1.041436481184546,
             0.0,
             0.03
           ],
-          "mass_end_kg": 0.01573106568099989,
+          "mass_end_kg": 0.01521671736360386,
           "shape": "cylinder_y",
           "dimensions_m": {
-            "length": 0.9431094532973555,
+            "length": 0.9122732232376415,
             "diameter": 0.00433
           },
           "package_zone": null,
@@ -901,16 +901,16 @@
         {
           "name": "horizontal_tail_secondary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.007865532840499945,
+          "mass_takeoff_kg": 0.00760835868180193,
           "position_m": [
-            1.124889411764706,
+            1.1163258929492519,
             0.0,
             0.03
           ],
-          "mass_end_kg": 0.007865532840499945,
+          "mass_end_kg": 0.00760835868180193,
           "shape": "cylinder_y",
           "dimensions_m": {
-            "length": 0.9431094532973555,
+            "length": 0.9122732232376415,
             "diameter": 0.004
           },
           "package_zone": null,
@@ -922,18 +922,18 @@
         {
           "name": "vertical_tail_left_shell",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0311393156019656,
+          "mass_takeoff_kg": 0.01695,
           "position_m": [
-            1.05,
+            1.022077557874785,
             -0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0311393156019656,
+          "mass_end_kg": 0.01695,
           "shape": "box",
           "dimensions_m": {
             "length_x": 0.148,
             "width_y": 0.012,
-            "height_z": 0.5511383292383292
+            "height_z": 0.3
           },
           "package_zone": null,
           "status": "engineering_assumption",
@@ -944,18 +944,18 @@
         {
           "name": "vertical_tail_right_shell",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0311393156019656,
+          "mass_takeoff_kg": 0.01695,
           "position_m": [
-            1.05,
+            1.022077557874785,
             0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0311393156019656,
+          "mass_end_kg": 0.01695,
           "shape": "box",
           "dimensions_m": {
             "length_x": 0.148,
             "width_y": 0.012,
-            "height_z": 0.5511383292383292
+            "height_z": 0.3
           },
           "package_zone": null,
           "status": "engineering_assumption",
@@ -966,16 +966,16 @@
         {
           "name": "vertical_tail_left_primary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.005423201159705159,
+          "mass_takeoff_kg": 0.0029519999999999998,
           "position_m": [
-            1.05,
+            1.022077557874785,
             -0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.005423201159705159,
+          "mass_end_kg": 0.0029519999999999998,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.00433
           },
           "package_zone": null,
@@ -987,16 +987,16 @@
         {
           "name": "vertical_tail_right_primary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.005423201159705159,
+          "mass_takeoff_kg": 0.0029519999999999998,
           "position_m": [
-            1.05,
+            1.022077557874785,
             0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.005423201159705159,
+          "mass_end_kg": 0.0029519999999999998,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.00433
           },
           "package_zone": null,
@@ -1008,16 +1008,16 @@
         {
           "name": "vertical_tail_left_secondary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0032572275257985255,
+          "mass_takeoff_kg": 0.001773,
           "position_m": [
-            1.05,
+            1.022077557874785,
             -0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0032572275257985255,
+          "mass_end_kg": 0.001773,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.004
           },
           "package_zone": null,
@@ -1029,16 +1029,16 @@
         {
           "name": "vertical_tail_right_secondary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0032572275257985255,
+          "mass_takeoff_kg": 0.001773,
           "position_m": [
-            1.05,
+            1.022077557874785,
             0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0032572275257985255,
+          "mass_end_kg": 0.001773,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.004
           },
           "package_zone": null,
@@ -1097,7 +1097,7 @@
         "fuselage_structure": 0.9958884000000001,
         "payload": 1.2,
         "propulsion": 1.327,
-        "tail_structure": 0.2826703031091831,
+        "tail_structure": 0.24053364859032159,
         "wing_structure": 3.869676
       },
       "mass_groups_end_kg": {
@@ -1107,71 +1107,71 @@
         "fuselage_structure": 0.9958884000000001,
         "payload": 1.2,
         "propulsion": 1.327,
-        "tail_structure": 0.2826703031091831,
+        "tail_structure": 0.24053364859032159,
         "wing_structure": 3.869676
       },
       "takeoff": {
         "scenario": "takeoff",
-        "total_mass_kg": 13.297634703109184,
+        "total_mass_kg": 13.255498048590322,
         "cg_m": [
-          0.39608655273232746,
+          0.4043638152190798,
           0.0,
-          0.04485089627510004
+          0.04381515732782858
         ],
-        "Ixx_kgm2": 4.628325672492991,
-        "Iyy_kgm2": 0.7612876609411217,
-        "Izz_kgm2": 5.290079106402997,
+        "Ixx_kgm2": 4.617155232168412,
+        "Iyy_kgm2": 0.7468117647077864,
+        "Izz_kgm2": 5.2753657272175865,
         "Ixy_kgm2": 0.0,
-        "Ixz_kgm2": 0.04374545580461661,
+        "Ixz_kgm2": 0.03893260426553854,
         "Iyz_kgm2": 0.0,
         "inertia_tensor_kgm2": [
           [
-            4.628325672492991,
+            4.617155232168412,
             -0.0,
-            -0.04374545580461661
+            -0.03893260426553854
           ],
           [
             -0.0,
-            0.7612876609411217,
+            0.7468117647077864,
             -0.0
           ],
           [
-            -0.04374545580461661,
+            -0.03893260426553854,
             -0.0,
-            5.290079106402997
+            5.2753657272175865
           ]
         ],
         "positive_definite_screen": true
       },
       "end_of_mission": {
         "scenario": "end",
-        "total_mass_kg": 13.297634703109184,
+        "total_mass_kg": 13.255498048590322,
         "cg_m": [
-          0.39608655273232746,
+          0.4043638152190798,
           0.0,
-          0.04485089627510004
+          0.04381515732782858
         ],
-        "Ixx_kgm2": 4.628325672492991,
-        "Iyy_kgm2": 0.7612876609411217,
-        "Izz_kgm2": 5.290079106402997,
+        "Ixx_kgm2": 4.617155232168412,
+        "Iyy_kgm2": 0.7468117647077864,
+        "Izz_kgm2": 5.2753657272175865,
         "Ixy_kgm2": 0.0,
-        "Ixz_kgm2": 0.04374545580461661,
+        "Ixz_kgm2": 0.03893260426553854,
         "Iyz_kgm2": 0.0,
         "inertia_tensor_kgm2": [
           [
-            4.628325672492991,
+            4.617155232168412,
             -0.0,
-            -0.04374545580461661
+            -0.03893260426553854
           ],
           [
             -0.0,
-            0.7612876609411217,
+            0.7468117647077864,
             -0.0
           ],
           [
-            -0.04374545580461661,
+            -0.03893260426553854,
             -0.0,
-            5.290079106402997
+            5.2753657272175865
           ]
         ],
         "positive_definite_screen": true
@@ -1180,80 +1180,80 @@
         {
           "h2_fraction": 1.0,
           "h2_mass_kg": 0.07,
-          "total_mass_kg": 13.297634703109184,
+          "total_mass_kg": 13.255498048590322,
           "cg_m": [
-            0.39608655273232746,
+            0.4043638152190798,
             0.0,
-            0.04485089627510004
+            0.04381515732782858
           ],
-          "Ixx_kgm2": 4.628325672492991,
-          "Iyy_kgm2": 0.7612876609411217,
-          "Izz_kgm2": 5.290079106402997
+          "Ixx_kgm2": 4.617155232168412,
+          "Iyy_kgm2": 0.7468117647077864,
+          "Izz_kgm2": 5.2753657272175865
         },
         {
           "h2_fraction": 0.75,
           "h2_mass_kg": 0.052500000000000005,
-          "total_mass_kg": 13.280134703109184,
+          "total_mass_kg": 13.237998048590322,
           "cg_m": [
-            0.3959242057098474,
+            0.40418709018310817,
             0.0,
-            0.04494726507808475
+            0.04391046367616056
           ],
-          "Ixx_kgm2": 4.6282319569212715,
-          "Iyy_kgm2": 0.7609279785341669,
-          "Izz_kgm2": 5.289813139567764
+          "Ixx_kgm2": 4.617064151968777,
+          "Iyy_kgm2": 0.7464075171622794,
+          "Izz_kgm2": 5.275052559871715
         },
         {
           "h2_fraction": 0.5,
           "h2_mass_kg": 0.035,
-          "total_mass_kg": 13.262634703109184,
+          "total_mass_kg": 13.220498048590322,
           "cg_m": [
-            0.39576143025471316,
+            0.4040098972845615,
             0.0,
-            0.0450438881976649
+            0.04400602233890455
           ],
-          "Ixx_kgm2": 4.628137994034814,
-          "Iyy_kgm2": 0.7605673469278613,
-          "Izz_kgm2": 5.289546470847918
+          "Ixx_kgm2": 4.616972830643055,
+          "Iyy_kgm2": 0.7460021994101862,
+          "Izz_kgm2": 5.274738563445346
         },
         {
           "h2_fraction": 0.25,
           "h2_mass_kg": 0.0175,
-          "total_mass_kg": 13.245134703109184,
+          "total_mass_kg": 13.202998048590322,
           "cg_m": [
-            0.39559822466873784,
+            0.4038322346630453,
             0.0,
-            0.04514076664188019
+            0.0441018343193559
           ],
-          "Ixx_kgm2": 4.628043782853333,
-          "Iyy_kgm2": 0.760205762359846,
-          "Izz_kgm2": 5.289279097461382
+          "Ixx_kgm2": 4.616881267232434,
+          "Iyy_kgm2": 0.745595807195969,
+          "Izz_kgm2": 5.274423734641748
         },
         {
           "h2_fraction": 0.15,
           "h2_mass_kg": 0.0105,
-          "total_mass_kg": 13.238134703109184,
+          "total_mass_kg": 13.195998048590322,
           "cg_m": [
-            0.39553282161560865,
+            0.4037610376734,
             0.0,
-            0.04517958973727991
+            0.044140230266246
           ],
-          "Ixx_kgm2": 4.628006028637563,
-          "Iyy_kgm2": 0.7600608608568038,
-          "Izz_kgm2": 5.289171950174111
+          "Ixx_kgm2": 4.6168445738686765,
+          "Iyy_kgm2": 0.7454329485033483,
+          "Izz_kgm2": 5.274297569312887
         },
         {
           "h2_fraction": 0.0,
           "h2_mass_kg": 0.0,
-          "total_mass_kg": 13.227634703109183,
+          "total_mass_kg": 13.185498048590322,
           "cg_m": [
-            0.3954345872447479,
+            0.4036541004482886,
             0.0,
-            0.04523790142410478
+            0.04419790062613634
           ],
-          "Ixx_kgm2": 4.627949322391353,
-          "Iyy_kgm2": 0.7598432210478493,
-          "Izz_kgm2": 5.289011016611365
+          "Ixx_kgm2": 4.616789460773022,
+          "Iyy_kgm2": 0.7451883362414986,
+          "Izz_kgm2": 5.27410807014669
         }
       ],
       "packaging_checks": [
@@ -1334,7 +1334,7 @@
         {
           "name": "mtow_ceiling_numeric",
           "status": "PASS",
-          "value": 13.297634703109184,
+          "value": 13.255498048590322,
           "limit": 15.0,
           "message": "Numerical ledger check; hardware-completeness gate is separate.",
           "affected": []
@@ -1342,7 +1342,7 @@
         {
           "name": "mtow_growth_margin",
           "status": "PASS",
-          "value": 1.7023652968908163,
+          "value": 1.7445019514096778,
           "limit": null,
           "message": "Numerical mass margin to the 15 kg ceiling.",
           "affected": []
@@ -1360,9 +1360,9 @@
         {
           "name": "reference_static_margin",
           "status": "PASS",
-          "value": 0.13440032114505182,
+          "value": 0.13565446222570904,
           "limit": 0.05,
-          "message": "Cross-check only: uses the inherited neutral point from the current aero/stability model. At that fixed neutral point, reaching 5.0% MAC would require CG x <= 0.4185 m (about 0.0 mm forward from this ledger). Aero/propulsion/6 must recompute the neutral point after geometry/CG updates.",
+          "message": "Cross-check only: uses the inherited neutral point from the current aero/stability model. At that fixed neutral point, reaching 5.0% MAC would require CG x <= 0.4272 m (about 0.0 mm forward from this ledger). Aero/propulsion/6 must recompute the neutral point after geometry/CG updates.",
           "affected": []
         },
         {
@@ -1511,31 +1511,31 @@
         }
       ],
       "summary": {
-        "takeoff_mass_kg": 13.297634703109184,
-        "empty_mass_excluding_payload_and_h2_kg": 12.027634703109184,
+        "takeoff_mass_kg": 13.255498048590322,
+        "empty_mass_excluding_payload_and_h2_kg": 11.985498048590323,
         "payload_mass_kg": 1.2,
-        "payload_fraction": 0.09024161264705385,
+        "payload_fraction": 0.09052847321173389,
         "takeoff_cg_m": [
-          0.39608655273232746,
+          0.4043638152190798,
           0.0,
-          0.04485089627510004
+          0.04381515732782858
         ],
         "end_cg_m": [
-          0.39608655273232746,
+          0.4043638152190798,
           0.0,
-          0.04485089627510004
+          0.04381515732782858
         ],
         "mission_cg_shift_mm": [
           0.0,
           0.0,
           0.0
         ],
-        "mass_margin_to_15kg_kg": 1.7023652968908163,
-        "Ixx_kgm2": 4.628325672492991,
-        "Iyy_kgm2": 0.7612876609411217,
-        "Izz_kgm2": 5.290079106402997,
+        "mass_margin_to_15kg_kg": 1.7445019514096778,
+        "Ixx_kgm2": 4.617155232168412,
+        "Iyy_kgm2": 0.7468117647077864,
+        "Izz_kgm2": 5.2753657272175865,
         "product_inertia_Ixy_kgm2": 0.0,
-        "product_inertia_Ixz_kgm2": 0.04374545580461661,
+        "product_inertia_Ixz_kgm2": 0.03893260426553854,
         "product_inertia_Iyz_kgm2": 0.0,
         "packaging_fail_count": 0,
         "propeller_clearance_fail_count": 0,
@@ -1557,7 +1557,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             -0.48,
             0.1
           ],
@@ -1575,7 +1575,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             0.48,
             0.1
           ],
@@ -1593,7 +1593,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             -0.48,
             0.1
           ],
@@ -1611,7 +1611,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             0.48,
             0.1
           ],
@@ -1741,7 +1741,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.634,
           "position_m": [
-            0.337336,
+            0.38,
             0.0,
             0.0631
           ],
@@ -1763,7 +1763,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.45,
           "position_m": [
-            0.159069,
+            0.1508290738714257,
             0.0,
             -0.025465
           ],
@@ -1785,7 +1785,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.1,
           "position_m": [
-            0.519286,
+            0.5380487112951451,
             0.0,
             -0.02828
           ],
@@ -1806,7 +1806,7 @@
           "group": "energy",
           "mass_takeoff_kg": 0.315,
           "position_m": [
-            0.14906899999999998,
+            0.14082907387142568,
             0.0,
             -0.025465
           ],
@@ -1824,11 +1824,11 @@
           "group": "energy",
           "mass_takeoff_kg": 0.07,
           "position_m": [
-            0.519286,
+            0.5380487112951451,
             0.0,
             -0.02828
           ],
-          "mass_end_kg": 0.019065331309536672,
+          "mass_end_kg": 0.019161976693741534,
           "shape": "point",
           "dimensions_m": {},
           "package_zone": null,
@@ -1842,7 +1842,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             -0.48,
             0.1
           ],
@@ -1863,7 +1863,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             0.48,
             0.1
           ],
@@ -1884,7 +1884,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             -0.48,
             0.1
           ],
@@ -1905,7 +1905,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             0.48,
             0.1
           ],
@@ -1947,7 +1947,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             -0.48,
             0.1
           ],
@@ -1965,7 +1965,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.1306,
+            0.14422676720416233,
             0.48,
             0.1
           ],
@@ -1983,7 +1983,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             -0.48,
             0.1
           ],
@@ -2001,7 +2001,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.7094,
+            0.7230267672041624,
             0.48,
             0.1
           ],
@@ -2308,7 +2308,7 @@
           "group": "wing_structure",
           "mass_takeoff_kg": 3.3732,
           "position_m": [
-            0.446214,
+            0.457214,
             0.0,
             0.1
           ],
@@ -2330,7 +2330,7 @@
           "group": "wing_structure",
           "mass_takeoff_kg": 0.9893747345357361,
           "position_m": [
-            0.393,
+            0.404,
             0.0,
             0.1
           ],
@@ -2351,7 +2351,7 @@
           "group": "wing_structure",
           "mass_takeoff_kg": 0.18025200000000002,
           "position_m": [
-            0.499428,
+            0.510428,
             0.0,
             0.1
           ],
@@ -2370,17 +2370,17 @@
         {
           "name": "horizontal_tail_shell",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.15523581601274472,
+          "mass_takeoff_kg": 0.1501601725449158,
           "position_m": [
-            1.05,
+            1.041436481184546,
             0.0,
             0.03
           ],
-          "mass_end_kg": 0.15523581601274472,
+          "mass_end_kg": 0.1501601725449158,
           "shape": "box",
           "dimensions_m": {
             "length_x": 0.18722352941176468,
-            "width_y": 0.9431094532973555,
+            "width_y": 0.9122732232376415,
             "height_z": 0.022
           },
           "package_zone": null,
@@ -2392,16 +2392,16 @@
         {
           "name": "horizontal_tail_primary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.08380431265406367,
+          "mass_takeoff_kg": 0.07706167234327618,
           "position_m": [
-            1.05,
+            1.041436481184546,
             0.0,
             0.03
           ],
-          "mass_end_kg": 0.08380431265406367,
+          "mass_end_kg": 0.07706167234327618,
           "shape": "cylinder_y",
           "dimensions_m": {
-            "length": 0.9431094532973555,
+            "length": 0.9122732232376415,
             "diameter": 0.00433
           },
           "package_zone": null,
@@ -2413,16 +2413,16 @@
         {
           "name": "horizontal_tail_secondary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.007865532840499945,
+          "mass_takeoff_kg": 0.00760835868180193,
           "position_m": [
-            1.124889411764706,
+            1.1163258929492519,
             0.0,
             0.03
           ],
-          "mass_end_kg": 0.007865532840499945,
+          "mass_end_kg": 0.00760835868180193,
           "shape": "cylinder_y",
           "dimensions_m": {
-            "length": 0.9431094532973555,
+            "length": 0.9122732232376415,
             "diameter": 0.004
           },
           "package_zone": null,
@@ -2434,18 +2434,18 @@
         {
           "name": "vertical_tail_left_shell",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0311393156019656,
+          "mass_takeoff_kg": 0.01695,
           "position_m": [
-            1.05,
+            1.022077557874785,
             -0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0311393156019656,
+          "mass_end_kg": 0.01695,
           "shape": "box",
           "dimensions_m": {
             "length_x": 0.148,
             "width_y": 0.012,
-            "height_z": 0.5511383292383292
+            "height_z": 0.3
           },
           "package_zone": null,
           "status": "engineering_assumption",
@@ -2456,18 +2456,18 @@
         {
           "name": "vertical_tail_right_shell",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0311393156019656,
+          "mass_takeoff_kg": 0.01695,
           "position_m": [
-            1.05,
+            1.022077557874785,
             0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0311393156019656,
+          "mass_end_kg": 0.01695,
           "shape": "box",
           "dimensions_m": {
             "length_x": 0.148,
             "width_y": 0.012,
-            "height_z": 0.5511383292383292
+            "height_z": 0.3
           },
           "package_zone": null,
           "status": "engineering_assumption",
@@ -2478,16 +2478,16 @@
         {
           "name": "vertical_tail_left_primary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.027464593107346495,
+          "mass_takeoff_kg": 0.008266098772009537,
           "position_m": [
-            1.05,
+            1.022077557874785,
             -0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.027464593107346495,
+          "mass_end_kg": 0.008266098772009537,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.00433
           },
           "package_zone": null,
@@ -2499,16 +2499,16 @@
         {
           "name": "vertical_tail_right_primary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.027464593107346495,
+          "mass_takeoff_kg": 0.008266098772009537,
           "position_m": [
-            1.05,
+            1.022077557874785,
             0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.027464593107346495,
+          "mass_end_kg": 0.008266098772009537,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.00433
           },
           "package_zone": null,
@@ -2520,16 +2520,16 @@
         {
           "name": "vertical_tail_left_secondary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0032572275257985255,
+          "mass_takeoff_kg": 0.001773,
           "position_m": [
-            1.05,
+            1.022077557874785,
             -0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0032572275257985255,
+          "mass_end_kg": 0.001773,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.004
           },
           "package_zone": null,
@@ -2541,16 +2541,16 @@
         {
           "name": "vertical_tail_right_secondary_spar",
           "group": "tail_structure",
-          "mass_takeoff_kg": 0.0032572275257985255,
+          "mass_takeoff_kg": 0.001773,
           "position_m": [
-            1.05,
+            1.022077557874785,
             0.35,
-            0.2755691646191646
+            0.15
           ],
-          "mass_end_kg": 0.0032572275257985255,
+          "mass_end_kg": 0.001773,
           "shape": "cylinder_z",
           "dimensions_m": {
-            "length": 0.5511383292383292,
+            "length": 0.3,
             "diameter": 0.004
           },
           "package_zone": null,
@@ -2609,81 +2609,81 @@
         "fuselage_structure": 0.9958884000000001,
         "payload": 1.2,
         "propulsion": 1.327,
-        "tail_structure": 0.3849269885229842,
+        "tail_structure": 0.30310745565946756,
         "wing_structure": 4.542826734535737
       },
       "mass_groups_end_kg": {
         "airframe": 0.467,
         "avionics": 0.5864,
-        "energy": 4.518065331309536,
+        "energy": 4.518161976693741,
         "fuselage_structure": 0.9958884000000001,
         "payload": 1.2,
         "propulsion": 1.327,
-        "tail_structure": 0.3849269885229842,
+        "tail_structure": 0.30310745565946756,
         "wing_structure": 4.542826734535737
       },
       "takeoff": {
         "scenario": "takeoff",
-        "total_mass_kg": 14.07304212305872,
+        "total_mass_kg": 13.991222590195203,
         "cg_m": [
-          0.4009224716353659,
+          0.40740825394774427,
           0.0,
-          0.04817124511106445
+          0.046568938489255064
         ],
-        "Ixx_kgm2": 5.369917370649424,
-        "Iyy_kgm2": 0.8127720911824363,
-        "Izz_kgm2": 6.0724423082953844,
+        "Ixx_kgm2": 5.350753681857185,
+        "Iyy_kgm2": 0.7766008144105313,
+        "Izz_kgm2": 6.034317324303907,
         "Ixy_kgm2": 0.0,
-        "Ixz_kgm2": 0.04953840436482559,
+        "Ixz_kgm2": 0.03909125999015158,
         "Iyz_kgm2": 0.0,
         "inertia_tensor_kgm2": [
           [
-            5.369917370649424,
+            5.350753681857185,
             -0.0,
-            -0.04953840436482559
+            -0.03909125999015158
           ],
           [
             -0.0,
-            0.8127720911824363,
+            0.7766008144105313,
             -0.0
           ],
           [
-            -0.04953840436482559,
+            -0.03909125999015158,
             -0.0,
-            6.0724423082953844
+            6.034317324303907
           ]
         ],
         "positive_definite_screen": true
       },
       "end_of_mission": {
         "scenario": "end",
-        "total_mass_kg": 14.022107454368257,
+        "total_mass_kg": 13.940384566888945,
         "cg_m": [
-          0.40049252149257125,
+          0.4069318321830864,
           0.0,
-          0.0484489507878593
+          0.04684189882697799
         ],
-        "Ixx_kgm2": 5.369618586669427,
-        "Iyy_kgm2": 0.8117571242355102,
-        "Izz_kgm2": 6.071726125328454,
+        "Ixx_kgm2": 5.350467830105221,
+        "Iyy_kgm2": 0.7754441495630242,
+        "Izz_kgm2": 6.033446511208362,
         "Ixy_kgm2": 0.0,
-        "Ixz_kgm2": 0.050000988408286484,
+        "Ixz_kgm2": 0.03959018227768232,
         "Iyz_kgm2": 0.0,
         "inertia_tensor_kgm2": [
           [
-            5.369618586669427,
+            5.350467830105221,
             -0.0,
-            -0.050000988408286484
+            -0.03959018227768232
           ],
           [
             -0.0,
-            0.8117571242355102,
+            0.7754441495630242,
             -0.0
           ],
           [
-            -0.050000988408286484,
+            -0.03959018227768232,
             -0.0,
-            6.071726125328454
+            6.033446511208362
           ]
         ],
         "positive_definite_screen": true
@@ -2692,80 +2692,80 @@
         {
           "h2_fraction": 1.0,
           "h2_mass_kg": 0.07,
-          "total_mass_kg": 14.07304212305872,
+          "total_mass_kg": 13.991222590195203,
           "cg_m": [
-            0.4009224716353659,
+            0.40740825394774427,
             0.0,
-            0.04817124511106445
+            0.046568938489255064
           ],
-          "Ixx_kgm2": 5.369917370649424,
-          "Iyy_kgm2": 0.8127720911824363,
-          "Izz_kgm2": 6.0724423082953844
+          "Ixx_kgm2": 5.350753681857185,
+          "Iyy_kgm2": 0.7766008144105313,
+          "Izz_kgm2": 6.034317324303907
         },
         {
           "h2_fraction": 0.75,
           "h2_mass_kg": 0.052500000000000005,
-          "total_mass_kg": 14.05554212305872,
+          "total_mass_kg": 13.973722590195203,
           "cg_m": [
-            0.40077510188411436,
+            0.4072446462913862,
             0.0,
-            0.04826643153487721
+            0.04666267560297743
           ],
-          "Ixx_kgm2": 5.369814959424429,
-          "Iyy_kgm2": 0.8124242010165558,
-          "Izz_kgm2": 6.072196829354498
+          "Ixx_kgm2": 5.35065551771215,
+          "Iyy_kgm2": 0.7762036049651814,
+          "Izz_kgm2": 6.034018279003594
         },
         {
           "h2_fraction": 0.5,
           "h2_mass_kg": 0.035,
-          "total_mass_kg": 14.03804212305872,
+          "total_mass_kg": 13.956222590195203,
           "cg_m": [
-            0.4006273647068892,
+            0.40708062833288977,
             0.0,
-            0.048361855279877956
+            0.04675664779456268
           ],
-          "Ixx_kgm2": 5.3697122928651915,
-          "Iyy_kgm2": 0.8120754434821563,
-          "Izz_kgm2": 6.071950738379337
+          "Ixx_kgm2": 5.350557107386951,
+          "Iyy_kgm2": 0.7758053993813346,
+          "Izz_kgm2": 6.0337184837449405
         },
         {
           "h2_fraction": 0.25,
           "h2_mass_kg": 0.0175,
-          "total_mass_kg": 14.02054212305872,
+          "total_mass_kg": 13.938722590195203,
           "cg_m": [
-            0.4004792587278619,
+            0.4069161985268578,
             0.0,
-            0.0484575172347172
+            0.04685085594942821
           ],
-          "Ixx_kgm2": 5.36960937001561,
-          "Iyy_kgm2": 0.811725815331372,
-          "Izz_kgm2": 6.071704033078134
+          "Ixx_kgm2": 5.350458449954365,
+          "Iyy_kgm2": 0.7754061939070509,
+          "Izz_kgm2": 6.033417935703245
         },
         {
           "h2_fraction": 0.15,
           "h2_mass_kg": 0.0105,
-          "total_mass_kg": 14.01354212305872,
+          "total_mass_kg": 13.931722590195204,
           "cg_m": [
-            0.4004199127622522,
+            0.40685031093948765,
             0.0,
-            0.04849584891531059
+            0.04688860548027346
           ],
-          "Ixx_kgm2": 5.3695681288994015,
-          "Iyy_kgm2": 0.8115857195678593,
-          "Izz_kgm2": 6.071605178430827
+          "Ixx_kgm2": 5.350418917582674,
+          "Iyy_kgm2": 0.77524623090399,
+          "Izz_kgm2": 6.033297505071875
         },
         {
           "h2_fraction": 0.0,
           "h2_mass_kg": 0.0,
-          "total_mass_kg": 14.00304212305872,
+          "total_mass_kg": 13.921222590195203,
           "cg_m": [
-            0.400330782564326,
+            0.40675135532012235,
             0.0,
-            0.0485534182924878
+            0.0469453009574436
           ],
-          "Ixx_kgm2": 5.369506189914799,
-          "Iyy_kgm2": 0.8113753133000995,
-          "Izz_kgm2": 6.071456711147669
+          "Ixx_kgm2": 5.35035954448249,
+          "Iyy_kgm2": 0.7750059847715215,
+          "Izz_kgm2": 6.033116632039591
         }
       ],
       "packaging_checks": [
@@ -2846,17 +2846,17 @@
         {
           "name": "mtow_ceiling_numeric",
           "status": "PASS",
-          "value": 14.07304212305872,
+          "value": 13.991222590195203,
           "limit": 15.0,
           "message": "Numerical ledger check; hardware-completeness gate is separate.",
           "affected": []
         },
         {
           "name": "mtow_growth_margin",
-          "status": "WARNING",
-          "value": 0.9269578769412803,
-          "limit": 1.0,
-          "message": "Forecast MTOW is above the 14 kg design-review trigger.",
+          "status": "PASS",
+          "value": 1.0087774098047966,
+          "limit": null,
+          "message": "Numerical mass margin to the 15 kg ceiling.",
           "affected": []
         },
         {
@@ -2872,9 +2872,9 @@
         {
           "name": "reference_static_margin",
           "status": "PASS",
-          "value": 0.11622495788335972,
+          "value": 0.12421221496497147,
           "limit": 0.05,
-          "message": "Cross-check only: uses the inherited neutral point from the current aero/stability model. At that fixed neutral point, reaching 5.0% MAC would require CG x <= 0.4185 m (about 0.0 mm forward from this ledger). Aero/propulsion/6 must recompute the neutral point after geometry/CG updates.",
+          "message": "Cross-check only: uses the inherited neutral point from the current aero/stability model. At that fixed neutral point, reaching 5.0% MAC would require CG x <= 0.4272 m (about 0.0 mm forward from this ledger). Aero/propulsion/6 must recompute the neutral point after geometry/CG updates.",
           "affected": []
         },
         {
@@ -3023,31 +3023,31 @@
         }
       ],
       "summary": {
-        "takeoff_mass_kg": 14.07304212305872,
-        "empty_mass_excluding_payload_and_h2_kg": 12.80304212305872,
+        "takeoff_mass_kg": 13.991222590195203,
+        "empty_mass_excluding_payload_and_h2_kg": 12.721222590195204,
         "payload_mass_kg": 1.2,
-        "payload_fraction": 0.0852694100896491,
+        "payload_fraction": 0.08576805867136574,
         "takeoff_cg_m": [
-          0.4009224716353659,
+          0.40740825394774427,
           0.0,
-          0.04817124511106445
+          0.046568938489255064
         ],
         "end_cg_m": [
-          0.40049252149257125,
+          0.4069318321830864,
           0.0,
-          0.0484489507878593
+          0.04684189882697799
         ],
         "mission_cg_shift_mm": [
-          -0.42995014279462174,
+          -0.4764217646578972,
           0.0,
-          0.2777056767948524
+          0.27296033772292866
         ],
-        "mass_margin_to_15kg_kg": 0.9269578769412803,
-        "Ixx_kgm2": 5.369917370649424,
-        "Iyy_kgm2": 0.8127720911824363,
-        "Izz_kgm2": 6.0724423082953844,
+        "mass_margin_to_15kg_kg": 1.0087774098047966,
+        "Ixx_kgm2": 5.350753681857185,
+        "Iyy_kgm2": 0.7766008144105313,
+        "Izz_kgm2": 6.034317324303907,
         "product_inertia_Ixy_kgm2": 0.0,
-        "product_inertia_Ixz_kgm2": 0.04953840436482559,
+        "product_inertia_Ixz_kgm2": 0.03909125999015158,
         "product_inertia_Iyz_kgm2": 0.0,
         "packaging_fail_count": 0,
         "propeller_clearance_fail_count": 0,
@@ -3061,19 +3061,19 @@
     "history": [
       {
         "iteration": 1,
-        "input_mass_kg": 13.297634703109184,
-        "output_mass_kg": 14.07304212305872,
-        "input_cg_x_m": 0.39608655273232746,
-        "output_cg_x_m": 0.4009224716353659,
-        "mass_residual_kg": 0.775407419949536,
-        "cg_residual_m": 0.004835918903038416
+        "input_mass_kg": 13.255498048590322,
+        "output_mass_kg": 13.991222590195203,
+        "input_cg_x_m": 0.4043638152190798,
+        "output_cg_x_m": 0.40740825394774427,
+        "mass_residual_kg": 0.7357245416048812,
+        "cg_residual_m": 0.0030444387286644448
       },
       {
         "iteration": 2,
-        "input_mass_kg": 14.07304212305872,
-        "output_mass_kg": 14.07304212305872,
-        "input_cg_x_m": 0.4009224716353659,
-        "output_cg_x_m": 0.4009224716353659,
+        "input_mass_kg": 13.991222590195203,
+        "output_mass_kg": 13.991222590195203,
+        "input_cg_x_m": 0.40740825394774427,
+        "output_cg_x_m": 0.40740825394774427,
         "mass_residual_kg": 0.0,
         "cg_residual_m": 0.0
       }
@@ -3081,20 +3081,20 @@
   },
   "aero_propulsion": {
     "drag": {
-      "mass_kg": 14.07304212305872,
+      "mass_kg": 13.991222590195203,
       "speed_mps": 20.0,
       "lift_prop_diameter_in": 22.0,
       "lift_prop_state": "folded",
       "dynamic_pressure_Pa": 240.0,
       "non_lift_prop_parasite_drag_N": 8.676766309148265,
       "lift_prop_drag_N": 1.3189754265600002,
-      "induced_drag_N": 2.239024754065059,
-      "total_drag_N": 12.234766489773325,
-      "lift_to_drag": 11.280100740087823,
-      "propulsive_power_W": 244.69532979546648,
-      "cruise_propulsion_electrical_W": 339.8546247159257,
+      "induced_drag_N": 2.213065417828122,
+      "total_drag_N": 12.208807153536387,
+      "lift_to_drag": 11.23836434539754,
+      "propulsive_power_W": 244.17614307072773,
+      "cruise_propulsion_electrical_W": 339.1335320426774,
       "auxiliary_power_W": 35.0,
-      "total_cruise_bus_power_W": 374.8546247159257,
+      "total_cruise_bus_power_W": 374.1335320426774,
       "lift_prop_CdA_total_m2": 0.0054957309440000005,
       "non_lift_prop_parasite_CdA_m2": 0.03615319295478444,
       "induced_drag_factor_k": 0.0264725866288583,
@@ -3108,8 +3108,8 @@
       "current_center_spacing_m": 0.5788,
       "current_edge_clearance_m": 0.020000000000000018,
       "current_layout_pass": true,
-      "proposed_front_x_m": 0.1306,
-      "proposed_rear_x_m": 0.7094,
+      "proposed_front_x_m": 0.14422676720416233,
+      "proposed_rear_x_m": 0.7230267672041624,
       "proposed_edge_clearance_m": 0.020000000000000018,
       "proposed_layout_pass": true,
       "front_shift_mm": 0.0,
@@ -3118,17 +3118,17 @@
       "pod_lateral_clearance_pass": true
     },
     "lift_reference": {
-      "mass_kg": 14.07304212305872,
+      "mass_kg": 13.991222590195203,
       "prop_diameter_in": 22.0,
-      "total_design_thrust_N": 222.84627019258173,
-      "design_thrust_per_motor_N": 55.71156754814543,
+      "total_design_thrust_N": 221.55065993517627,
+      "design_thrust_per_motor_N": 55.38766498379407,
       "total_disk_area_m2": 0.9809856795327554,
-      "disk_loading_N_m2": 227.16567106129793,
-      "induced_velocity_hover_mps": 9.728944595494799,
-      "total_electrical_climb_power_W": 4077.331864726564,
-      "electrical_climb_power_per_motor_W": 1019.332966181641,
-      "total_design_power_with_margin_W": 4688.931644435548,
-      "design_power_per_motor_with_margin_W": 1172.232911108887,
+      "disk_loading_N_m2": 225.84494815530957,
+      "induced_velocity_hover_mps": 9.700621718806428,
+      "total_electrical_climb_power_W": 4043.6242243343017,
+      "electrical_climb_power_per_motor_W": 1010.9060560835754,
+      "total_design_power_with_margin_W": 4650.1678579844465,
+      "design_power_per_motor_with_margin_W": 1162.5419644961116,
       "placeholder_thrust_pass": false,
       "placeholder_power_pass": true,
       "five_kW_screen_pass": true,
@@ -3168,26 +3168,26 @@
       "direction": "forward",
       "success": true,
       "handover_reason": "wing-borne handover criteria achieved",
-      "duration_s": 17.099999999999724,
-      "distance_m": 175.42239224786616,
+      "duration_s": 16.979999999999727,
+      "distance_m": 173.13125778976408,
       "start_altitude_m": 30.0,
-      "end_altitude_m": 30.18038564753014,
-      "minimum_altitude_m": 29.999999999859796,
-      "maximum_altitude_m": 30.231073846727746,
-      "altitude_loss_m": 1.4020429262018297e-10,
-      "maximum_sink_rate_mps": 0.037261183967740884,
-      "maximum_climb_rate_mps": 0.05429357687233399,
-      "maximum_abs_alpha_deg": 6.113377416500271,
-      "maximum_bus_power_W": 2298.5264044804403,
-      "maximum_lift_power_W": 1704.2541237066578,
-      "maximum_pusher_power_W": 1003.8442695551499,
-      "transition_energy_Wh": 8.039872171812902,
-      "final_speed_mps": 19.12277061841824,
-      "final_vertical_speed_mps": 0.007835449234624323,
+      "end_altitude_m": 30.18780268621507,
+      "minimum_altitude_m": 29.99999999989954,
+      "maximum_altitude_m": 30.232165500106017,
+      "altitude_loss_m": 1.0046008469544176e-10,
+      "maximum_sink_rate_mps": 0.03549603686088052,
+      "maximum_climb_rate_mps": 0.054503552889447256,
+      "maximum_abs_alpha_deg": 6.622820548623068,
+      "maximum_bus_power_W": 2278.0354343401914,
+      "maximum_lift_power_W": 1689.4131497433566,
+      "maximum_pusher_power_W": 994.0536324728133,
+      "transition_energy_Wh": 7.9427960593821645,
+      "final_speed_mps": 19.08101578092175,
+      "final_vertical_speed_mps": 0.011186931907684583,
       "final_pitch_deg": 5.999999999999994,
-      "final_wing_lift_fraction_weight": 0.9968275518253457,
-      "final_lift_thrust_fraction_weight": 4.094449214640281e-05,
-      "handover_stall_ratio": 1.329545083094531,
+      "final_wing_lift_fraction_weight": 0.9970171381533182,
+      "final_lift_thrust_fraction_weight": 4.3722904825958495e-05,
+      "handover_stall_ratio": 1.3305153955346463,
       "abort_reasons": [],
       "warnings": []
     },
@@ -3195,42 +3195,42 @@
       "direction": "reverse",
       "success": true,
       "handover_reason": "hover-capture criteria achieved",
-      "duration_s": 19.459999999999674,
-      "distance_m": 209.87911250617918,
+      "duration_s": 19.479999999999674,
+      "distance_m": 210.04268547410314,
       "start_altitude_m": 30.0,
-      "end_altitude_m": 29.989724266437253,
-      "minimum_altitude_m": 28.7935607851669,
-      "maximum_altitude_m": 30.0,
-      "altitude_loss_m": 1.2064392148331002,
-      "maximum_sink_rate_mps": 0.5019133332564883,
-      "maximum_climb_rate_mps": 0.391736681535955,
-      "maximum_abs_alpha_deg": 10.02765797796139,
-      "maximum_bus_power_W": 1716.9783924719072,
-      "maximum_lift_power_W": 1681.9783924719072,
+      "end_altitude_m": 29.98971418811541,
+      "minimum_altitude_m": 28.869839036811467,
+      "maximum_altitude_m": 30.010323917312395,
+      "altitude_loss_m": 1.1301609631885334,
+      "maximum_sink_rate_mps": 0.5019234995709732,
+      "maximum_climb_rate_mps": 0.36693568109396113,
+      "maximum_abs_alpha_deg": 10.035425655312944,
+      "maximum_bus_power_W": 1702.151720581089,
+      "maximum_lift_power_W": 1667.151720581089,
       "maximum_pusher_power_W": 0.0,
-      "transition_energy_Wh": 4.6213868434581045,
-      "final_speed_mps": 2.44250198123089,
-      "final_vertical_speed_mps": -6.064546432662109e-05,
-      "final_pitch_deg": 3.000000046965467,
-      "final_wing_lift_fraction_weight": 0.010196900146430486,
-      "final_lift_thrust_fraction_weight": 0.9912697643218051,
-      "handover_stall_ratio": 0.16981935120146274,
+      "transition_energy_Wh": 4.560462720555689,
+      "final_speed_mps": 2.4435790771206203,
+      "final_vertical_speed_mps": -0.00010655239834678563,
+      "final_pitch_deg": 3.0000000491499104,
+      "final_wing_lift_fraction_weight": 0.01026778671263489,
+      "final_lift_thrust_fraction_weight": 0.9912005493545528,
+      "handover_stall_ratio": 0.17039027794139117,
       "abort_reasons": [],
       "warnings": []
     },
     "stage_energy_Wh": {
       "Preflight / ready": 0.6666666666666666,
-      "VTOL takeoff": 4.8312614230145945,
-      "Vertical climb": 6.476451048504611,
-      "Forward transition": 8.053900778758942,
+      "VTOL takeoff": 4.790036504530103,
+      "Vertical climb": 6.424326128671488,
+      "Forward transition": 7.956729849422493,
       "Wing-borne climb": 5.0,
-      "Cruise": 736.0103954241773,
-      "Reverse transition": 4.60250468202513,
-      "Vertical descent": 5.072824494165324,
-      "Landing hover": 4.8312614230145945
+      "Cruise": 734.6049546069298,
+      "Reverse transition": 4.542053017632835,
+      "Vertical descent": 5.029538329756608,
+      "Landing hover": 4.790036504530103
     },
-    "total_profile_energy_Wh": 775.5452659403272,
-    "cruise_bus_power_W": 374.8546247159257
+    "total_profile_energy_Wh": 773.8043416081401,
+    "cruise_bus_power_W": 374.1335320426774
   },
   "hybrid_power": {
     "feasible": true,
@@ -3240,21 +3240,21 @@
       "model_version": "H2AIR-phase2-hybrid-power-1.0",
       "duration_s": 7200.0,
       "duration_min": 120.0,
-      "bus_energy_demand_Wh": 775.5452659403326,
-      "peak_bus_power_W": 2331.5223774616597,
+      "bus_energy_demand_Wh": 773.8043416082461,
+      "peak_bus_power_W": 2312.7574063217357,
       "peak_fc_bus_power_W": 800.0,
-      "peak_bus_current_A": 47.57183854217553,
-      "peak_battery_power_W": 1609.2541122852542,
-      "peak_battery_current_A": 32.56071667452408,
-      "minimum_battery_voltage_V": 48.667920470555686,
-      "minimum_battery_soc": 0.9225896352811345,
-      "final_battery_soc": 0.9225896352811345,
+      "peak_bus_current_A": 47.1721985819221,
+      "peak_battery_power_W": 1594.413141630837,
+      "peak_battery_current_A": 32.25443654640093,
+      "minimum_battery_voltage_V": 48.69610234400943,
+      "minimum_battery_soc": 0.9238450377534743,
+      "final_battery_soc": 0.9238450377534743,
       "maximum_fuel_cell_temperature_C": 25.0,
-      "battery_net_energy_out_Wh": 18.801616825071733,
-      "h2_used_kg": 0.050934668690463335,
-      "h2_remaining_physical_kg": 0.019065331309536672,
-      "fc_net_energy_used_Wh": 756.7436491152578,
-      "fc_operational_energy_remaining_Wh": 127.25635088474223,
+      "battery_net_energy_out_Wh": 18.49656677219908,
+      "h2_used_kg": 0.05083802330625847,
+      "h2_remaining_physical_kg": 0.019161976693741534,
+      "fc_net_energy_used_Wh": 755.3077748360457,
+      "fc_operational_energy_remaining_Wh": 128.69222516395428,
       "h2_reference_effective_net_efficiency_LHV": 0.44575886160044575,
       "battery_nominal_voltage_V": 44.400000000000006,
       "battery_nominal_energy_Wh": 244.20000000000005,
@@ -3276,7 +3276,7 @@
       {
         "name": "application_peak_power_screening",
         "status": "PASS",
-        "value": 2331.5223774616597,
+        "value": 2312.7574063217357,
         "limit": 5000.0,
         "units": "W",
         "message": "Application preliminary peak estimate; exceedance is a design-review warning, not a supplier hardware limit."
@@ -3284,7 +3284,7 @@
       {
         "name": "conditional_supplier_hybrid_peak",
         "status": "PASS",
-        "value": 2331.5223774616597,
+        "value": 2312.7574063217357,
         "limit": 7500.0,
         "units": "W",
         "message": "Supplier-reported hybrid peak is conditional on the selected battery; PASS remains conditional until battery configuration is verified."
@@ -3292,7 +3292,7 @@
       {
         "name": "battery_peak_current",
         "status": "NOT_EVALUATED",
-        "value": 32.56071667452408,
+        "value": 32.25443654640093,
         "limit": null,
         "units": "A",
         "message": "Actual selected battery peak-current limit is not yet available."
@@ -3316,7 +3316,7 @@
       {
         "name": "battery_minimum_loaded_voltage",
         "status": "PASS",
-        "value": 48.667920470555686,
+        "value": 48.69610234400943,
         "limit": 39.599999999999994,
         "units": "V",
         "message": "Uses preliminary OCV/internal-resistance model until pack sag testing is available."
@@ -3324,7 +3324,7 @@
       {
         "name": "landing_soc_reserve",
         "status": "PASS",
-        "value": 0.9225896352811345,
+        "value": 0.9238450377534743,
         "limit": 0.3,
         "units": "fraction",
         "message": "Protected battery reserve for reverse transition / landing / go-around contingency."
@@ -3332,7 +3332,7 @@
       {
         "name": "hydrogen_operational_reserve",
         "status": "PASS",
-        "value": 756.7436491152578,
+        "value": 755.3077748360457,
         "limit": 884.0,
         "units": "Wh",
         "message": "15% application mission-energy reserve is protected from normal mission use."
@@ -3424,183 +3424,183 @@
   },
   "sixdof_control": {
     "current_layout": {
-      "static_margin": 0.11622495788335972,
+      "static_margin": 0.12421221496497147,
       "trim": {
         "success": true,
-        "alpha_deg": 5.108144331245302,
-        "elevator_deg": -2.2627211850124933,
-        "pusher_thrust_N": 12.527230733200053,
-        "residual_norm": 1.2037607524022634e-09,
-        "static_margin": 0.11622495788335972,
-        "Cm_alpha_per_rad": -0.5578797978401266
+        "alpha_deg": 5.067077258833896,
+        "elevator_deg": -2.5059474178906274,
+        "pusher_thrust_N": 12.498572423054995,
+        "residual_norm": 3.4901222049579835e-09,
+        "static_margin": 0.12421221496497147,
+        "Cm_alpha_per_rad": -0.596218631831863
       },
       "forward_transition": {
         "samples": 3001,
         "duration_s": 30.00000000000189,
-        "final_speed_mps": 20.703552183949256,
-        "maximum_abs_roll_deg": 9.298462945603233e-15,
-        "maximum_abs_yaw_deg": 1.4042871007310707e-14,
-        "maximum_abs_pitch_tracking_error_deg": 4.01309071982729,
-        "maximum_abs_beta_deg": 5.716770828954385e-13,
-        "maximum_abs_alpha_deg": 89.23556341345851,
-        "minimum_altitude_m": 29.99999999772613,
-        "altitude_loss_m": 2.273871757552115e-09,
-        "maximum_surface_utilization": 0.03145310491103647,
-        "maximum_rotor_utilization": 0.5190596638198279,
-        "maximum_rotor_allocation_residual": 2.063452406937407e-15,
-        "final_roll_deg": -4.830176347650552e-16,
-        "final_pitch_deg": 2.0320506300559966,
-        "final_yaw_deg": -1.175528725608697e-14
+        "final_speed_mps": 20.77484768847269,
+        "maximum_abs_roll_deg": 1.8592248586924348e-14,
+        "maximum_abs_yaw_deg": 1.9239596382327467e-14,
+        "maximum_abs_pitch_tracking_error_deg": 4.290427429315081,
+        "maximum_abs_beta_deg": 1.57994513347348e-12,
+        "maximum_abs_alpha_deg": 88.8049210430429,
+        "minimum_altitude_m": 29.99999999796191,
+        "altitude_loss_m": 2.038088808831162e-09,
+        "maximum_surface_utilization": 0.033521355375586745,
+        "maximum_rotor_utilization": 0.5279108281215338,
+        "maximum_rotor_allocation_residual": 2.9275985929705275e-15,
+        "final_roll_deg": 1.8139106711069235e-15,
+        "final_pitch_deg": 1.757081741140739,
+        "final_yaw_deg": 1.2972440828647491e-14
       },
       "reverse_transition": {
         "samples": 2501,
         "duration_s": 25.00000000000111,
-        "final_speed_mps": 4.843229214873675,
-        "maximum_abs_roll_deg": 5.856397402223057e-15,
-        "maximum_abs_yaw_deg": 1.3873621397985484e-14,
-        "maximum_abs_pitch_tracking_error_deg": 7.282415054585268,
-        "maximum_abs_beta_deg": 3.082041811459884e-14,
-        "maximum_abs_alpha_deg": 5.393550791715806,
-        "minimum_altitude_m": 28.692656282705585,
-        "altitude_loss_m": 1.3073437172944153,
-        "maximum_surface_utilization": 0.06687174182226895,
-        "maximum_rotor_utilization": 0.4999939041352871,
-        "maximum_rotor_allocation_residual": 1.6582729623957854e-15,
-        "final_roll_deg": -2.4130286090553548e-15,
-        "final_pitch_deg": 2.5832248465371617,
-        "final_yaw_deg": -1.044481045652725e-14
+        "final_speed_mps": 5.286977689604396,
+        "maximum_abs_roll_deg": 8.352645157299334e-15,
+        "maximum_abs_yaw_deg": 1.494164958792507e-14,
+        "maximum_abs_pitch_tracking_error_deg": 7.578673015588465,
+        "maximum_abs_beta_deg": 5.7687113191337e-14,
+        "maximum_abs_alpha_deg": 5.044444444444445,
+        "minimum_altitude_m": 28.776350574658064,
+        "altitude_loss_m": 1.2236494253419359,
+        "maximum_surface_utilization": 0.0668096626593617,
+        "maximum_rotor_utilization": 0.5055804007958695,
+        "maximum_rotor_allocation_residual": 2.930196631464394e-15,
+        "final_roll_deg": 5.857014439747343e-15,
+        "final_pitch_deg": 2.4497392762927346,
+        "final_yaw_deg": 1.4703390245092004e-14
       },
       "controlled_gust": {
         "samples": 1201,
         "duration_s": 11.999999999999789,
-        "final_speed_mps": 19.632652235247804,
-        "maximum_abs_roll_deg": 1.984294853903129,
-        "maximum_abs_yaw_deg": 11.633335564526055,
-        "maximum_abs_pitch_tracking_error_deg": 3.788038081421848,
-        "maximum_abs_beta_deg": 14.390737126775404,
-        "maximum_abs_alpha_deg": 5.108144331245302,
-        "minimum_altitude_m": 29.817197027128916,
-        "altitude_loss_m": 0.18280297287108382,
-        "maximum_surface_utilization": 0.32191334426682405,
-        "maximum_rotor_utilization": 0.2686020965693381,
-        "maximum_rotor_allocation_residual": 8.702188362334442e-16,
-        "final_roll_deg": -0.4605699214396498,
-        "final_pitch_deg": 1.9395061096632285,
-        "final_yaw_deg": 1.5249767420634162
+        "final_speed_mps": 19.701247769718226,
+        "maximum_abs_roll_deg": 1.9911987334177585,
+        "maximum_abs_yaw_deg": 11.626187615385287,
+        "maximum_abs_pitch_tracking_error_deg": 4.046753707272476,
+        "maximum_abs_beta_deg": 14.3390580370103,
+        "maximum_abs_alpha_deg": 5.067077258833896,
+        "minimum_altitude_m": 29.803446074415834,
+        "altitude_loss_m": 0.1965539255841655,
+        "maximum_surface_utilization": 0.31838419497111803,
+        "maximum_rotor_utilization": 0.28944539233474126,
+        "maximum_rotor_allocation_residual": 1.8673308714213966e-15,
+        "final_roll_deg": -0.4588221786711003,
+        "final_pitch_deg": 1.6661007966531702,
+        "final_yaw_deg": 1.5206217917835143
       },
       "linear_aero_validity": {
-        "maximum_abs_alpha_above_10mps_deg": 7.00438250109582,
+        "maximum_abs_alpha_above_10mps_deg": 6.574937870329249,
         "recommended_linear_limit_deg": 15.0,
         "status": "PASS",
         "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation."
       },
       "gate_evaluation": {
         "label": "current_layout",
-        "stall_speed_mps": 14.235421343407301,
-        "forward_final_stall_ratio": 1.454368766790136,
+        "stall_speed_mps": 14.193979224032603,
+        "forward_final_stall_ratio": 1.4636380228947818,
         "checks": [
           {
             "name": "static_margin",
             "status": "PASS",
-            "value": 0.11622495788335972,
+            "value": 0.12421221496497147,
             "limit": 0.05,
             "note": ""
           },
           {
             "name": "cruise_trim_solver",
             "status": "PASS",
-            "value": 1.2037607524022634e-09,
+            "value": 3.4901222049579835e-09,
             "limit": "trim residual near zero",
             "note": ""
           },
           {
             "name": "cruise_trim_elevator",
             "status": "PASS",
-            "value": -2.2627211850124933,
+            "value": -2.5059474178906274,
             "limit": "\u00b115.0 deg",
             "note": ""
           },
           {
             "name": "forward_handover_stall_ratio",
             "status": "PASS",
-            "value": 1.454368766790136,
+            "value": 1.4636380228947818,
             "limit": 1.3,
             "note": ""
           },
           {
             "name": "forward_pitch_tracking",
             "status": "PASS",
-            "value": 4.01309071982729,
+            "value": 4.290427429315081,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "forward_roll_control",
             "status": "PASS",
-            "value": 9.298462945603233e-15,
+            "value": 1.8592248586924348e-14,
             "limit": 10.0,
             "note": ""
           },
           {
             "name": "forward_altitude_loss",
             "status": "PASS",
-            "value": 2.273871757552115e-09,
+            "value": 2.038088808831162e-09,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "forward_surface_headroom",
             "status": "PASS",
-            "value": 0.03145310491103647,
+            "value": 0.033521355375586745,
             "limit": 0.95,
             "note": ""
           },
           {
             "name": "forward_rotor_headroom",
             "status": "PASS",
-            "value": 0.5190596638198279,
+            "value": 0.5279108281215338,
             "limit": 0.95,
             "note": ""
           },
           {
             "name": "reverse_hover_capture_speed",
             "status": "FAIL",
-            "value": 4.843229214873675,
+            "value": 5.286977689604396,
             "limit": 3.0,
             "note": ""
           },
           {
             "name": "reverse_pitch_tracking",
             "status": "FAIL",
-            "value": 7.282415054585268,
+            "value": 7.578673015588465,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "reverse_altitude_loss",
             "status": "PASS",
-            "value": 1.3073437172944153,
+            "value": 1.2236494253419359,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "gust_roll",
             "status": "PASS",
-            "value": 1.984294853903129,
+            "value": 1.9911987334177585,
             "limit": 12.0,
             "note": ""
           },
           {
             "name": "gust_yaw",
             "status": "PASS",
-            "value": 11.633335564526055,
+            "value": 11.626187615385287,
             "limit": 15.0,
             "note": ""
           },
           {
             "name": "gust_altitude_loss",
             "status": "PASS",
-            "value": 0.18280297287108382,
+            "value": 0.1965539255841655,
             "limit": 5.0,
             "note": ""
           }
@@ -3612,77 +3612,77 @@
       "static_margin": 0.08,
       "trim": {
         "success": true,
-        "alpha_deg": 5.108144331291183,
-        "elevator_deg": -1.139118731489145,
-        "pusher_thrust_N": 12.527230716447972,
-        "residual_norm": 1.5089281610123342e-11,
+        "alpha_deg": 5.06707725896578,
+        "elevator_deg": -1.1425242672914124,
+        "pusher_thrust_N": 12.498572374446137,
+        "residual_norm": 2.073758887389762e-11,
         "static_margin": 0.08,
         "Cm_alpha_per_rad": -0.384
       },
       "forward_transition": {
         "samples": 3001,
         "duration_s": 30.00000000000189,
-        "final_speed_mps": 20.53317673015539,
-        "maximum_abs_roll_deg": 8.920034196398195e-15,
-        "maximum_abs_yaw_deg": 1.3923494804318235e-14,
-        "maximum_abs_pitch_tracking_error_deg": 4.207307981983352,
-        "maximum_abs_beta_deg": 5.359196932565132e-13,
-        "maximum_abs_alpha_deg": 89.26872027077647,
-        "minimum_altitude_m": 29.999999997726047,
-        "altitude_loss_m": 2.2739534699667274e-09,
-        "maximum_surface_utilization": 0.026937587253502645,
-        "maximum_rotor_utilization": 0.5190596320117252,
-        "maximum_rotor_allocation_residual": 1.6814231556547118e-15,
-        "final_roll_deg": -6.663390012827037e-16,
-        "final_pitch_deg": 3.271161254948667,
-        "final_yaw_deg": -1.2722728399539338e-14
+        "final_speed_mps": 20.539398311203858,
+        "maximum_abs_roll_deg": 1.9502914705751554e-14,
+        "maximum_abs_yaw_deg": 1.619686624391265e-14,
+        "maximum_abs_pitch_tracking_error_deg": 4.084654251242172,
+        "maximum_abs_beta_deg": 2.131176815402395e-12,
+        "maximum_abs_alpha_deg": 88.76193757220419,
+        "minimum_altitude_m": 29.999999997961808,
+        "altitude_loss_m": 2.0381918375278474e-09,
+        "maximum_surface_utilization": 0.0244935553578821,
+        "maximum_rotor_utilization": 0.5279107893137129,
+        "maximum_rotor_allocation_residual": 3.3410745239516027e-15,
+        "final_roll_deg": 1.1677801580295436e-15,
+        "final_pitch_deg": 3.1947886042964773,
+        "final_yaw_deg": 1.3018762678743328e-14
       },
       "reverse_transition": {
         "samples": 2501,
         "duration_s": 25.00000000000111,
-        "final_speed_mps": 3.1462059810894774,
-        "maximum_abs_roll_deg": 6.411729355984945e-15,
-        "maximum_abs_yaw_deg": 1.3728777044721018e-14,
-        "maximum_abs_pitch_tracking_error_deg": 5.966287353625939,
-        "maximum_abs_beta_deg": 4.972082851158345e-14,
-        "maximum_abs_alpha_deg": 6.975566197367497,
-        "minimum_altitude_m": 28.691587911136683,
-        "altitude_loss_m": 1.3084120888633173,
-        "maximum_surface_utilization": 0.05422538903000373,
-        "maximum_rotor_utilization": 0.5099470642612156,
-        "maximum_rotor_allocation_residual": 1.6871651879197904e-15,
-        "final_roll_deg": -4.746780423611824e-15,
-        "final_pitch_deg": 2.903817792554925,
-        "final_yaw_deg": -1.1485089846760987e-14
+        "final_speed_mps": 3.1973356208063337,
+        "maximum_abs_roll_deg": 8.659291378894912e-15,
+        "maximum_abs_yaw_deg": 1.483794380193816e-14,
+        "maximum_abs_pitch_tracking_error_deg": 6.041823730882593,
+        "maximum_abs_beta_deg": 1.3188898766565847e-13,
+        "maximum_abs_alpha_deg": 6.875503955017648,
+        "minimum_altitude_m": 28.77556917245783,
+        "altitude_loss_m": 1.2244308275421716,
+        "maximum_surface_utilization": 0.052814558878955246,
+        "maximum_rotor_utilization": 0.5183867117497881,
+        "maximum_rotor_allocation_residual": 3.163005835506028e-15,
+        "final_roll_deg": 7.60390881709325e-15,
+        "final_pitch_deg": 2.8965940341811884,
+        "final_yaw_deg": 1.304459461956806e-14
       },
       "controlled_gust": {
         "samples": 1201,
         "duration_s": 11.999999999999789,
-        "final_speed_mps": 19.412681744451493,
-        "maximum_abs_roll_deg": 1.9643862262526177,
-        "maximum_abs_yaw_deg": 11.700596750139047,
-        "maximum_abs_pitch_tracking_error_deg": 2.5148928611626244,
-        "maximum_abs_beta_deg": 14.59028036482796,
-        "maximum_abs_alpha_deg": 5.108144331291183,
-        "minimum_altitude_m": 29.878300570222763,
-        "altitude_loss_m": 0.12169942977723736,
-        "maximum_surface_utilization": 0.33004196749439735,
-        "maximum_rotor_utilization": 0.19841046365824877,
-        "maximum_rotor_allocation_residual": 8.273863770281352e-16,
-        "final_roll_deg": -0.47581464996102496,
-        "final_pitch_deg": 3.1385346041960056,
-        "final_yaw_deg": 1.5582012698004648
+        "final_speed_mps": 19.440111599106036,
+        "maximum_abs_roll_deg": 1.9687963057298656,
+        "maximum_abs_yaw_deg": 11.705112525168143,
+        "maximum_abs_pitch_tracking_error_deg": 2.5448467007245954,
+        "maximum_abs_beta_deg": 14.573375900473355,
+        "maximum_abs_alpha_deg": 5.06707725896578,
+        "minimum_altitude_m": 29.876172934514514,
+        "altitude_loss_m": 0.12382706548548583,
+        "maximum_surface_utilization": 0.32798376958858777,
+        "maximum_rotor_utilization": 0.20483130700638144,
+        "maximum_rotor_allocation_residual": 1.2452658162653311e-15,
+        "final_roll_deg": -0.47597590884460766,
+        "final_pitch_deg": 3.0500231360878733,
+        "final_yaw_deg": 1.5581853286460514
       },
       "linear_aero_validity": {
-        "maximum_abs_alpha_above_10mps_deg": 8.138508170421,
+        "maximum_abs_alpha_above_10mps_deg": 7.996719462834228,
         "recommended_linear_limit_deg": 15.0,
         "status": "PASS",
         "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation."
       },
       "gate_evaluation": {
         "label": "stability_screen",
-        "stall_speed_mps": 14.235421343407301,
-        "forward_final_stall_ratio": 1.4424003501424072,
+        "stall_speed_mps": 14.193979224032603,
+        "forward_final_stall_ratio": 1.4470500475601287,
         "checks": [
           {
             "name": "static_margin",
@@ -3694,98 +3694,98 @@
           {
             "name": "cruise_trim_solver",
             "status": "PASS",
-            "value": 1.5089281610123342e-11,
+            "value": 2.073758887389762e-11,
             "limit": "trim residual near zero",
             "note": ""
           },
           {
             "name": "cruise_trim_elevator",
             "status": "PASS",
-            "value": -1.139118731489145,
+            "value": -1.1425242672914124,
             "limit": "\u00b115.0 deg",
             "note": ""
           },
           {
             "name": "forward_handover_stall_ratio",
             "status": "PASS",
-            "value": 1.4424003501424072,
+            "value": 1.4470500475601287,
             "limit": 1.3,
             "note": ""
           },
           {
             "name": "forward_pitch_tracking",
             "status": "PASS",
-            "value": 4.207307981983352,
+            "value": 4.084654251242172,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "forward_roll_control",
             "status": "PASS",
-            "value": 8.920034196398195e-15,
+            "value": 1.9502914705751554e-14,
             "limit": 10.0,
             "note": ""
           },
           {
             "name": "forward_altitude_loss",
             "status": "PASS",
-            "value": 2.2739534699667274e-09,
+            "value": 2.0381918375278474e-09,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "forward_surface_headroom",
             "status": "PASS",
-            "value": 0.026937587253502645,
+            "value": 0.0244935553578821,
             "limit": 0.95,
             "note": ""
           },
           {
             "name": "forward_rotor_headroom",
             "status": "PASS",
-            "value": 0.5190596320117252,
+            "value": 0.5279107893137129,
             "limit": 0.95,
             "note": ""
           },
           {
             "name": "reverse_hover_capture_speed",
             "status": "FAIL",
-            "value": 3.1462059810894774,
+            "value": 3.1973356208063337,
             "limit": 3.0,
             "note": ""
           },
           {
             "name": "reverse_pitch_tracking",
             "status": "FAIL",
-            "value": 5.966287353625939,
+            "value": 6.041823730882593,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "reverse_altitude_loss",
             "status": "PASS",
-            "value": 1.3084120888633173,
+            "value": 1.2244308275421716,
             "limit": 5.0,
             "note": ""
           },
           {
             "name": "gust_roll",
             "status": "PASS",
-            "value": 1.9643862262526177,
+            "value": 1.9687963057298656,
             "limit": 12.0,
             "note": ""
           },
           {
             "name": "gust_yaw",
             "status": "PASS",
-            "value": 11.700596750139047,
+            "value": 11.705112525168143,
             "limit": 15.0,
             "note": ""
           },
           {
             "name": "gust_altitude_loss",
             "status": "PASS",
-            "value": 0.12169942977723736,
+            "value": 0.12382706548548583,
             "limit": 5.0,
             "note": ""
           }
@@ -3805,14 +3805,14 @@
       {
         "name": "reference_trimmed_hover",
         "category": "VTOL",
-        "mass_kg": 14.07304212305872,
+        "mass_kg": 13.991222590195203,
         "load_factor": 1.0,
-        "wing_root_bending_Nm": 33.1222556486625,
-        "wing_torsion_Nm": 24.139847699513076,
+        "wing_root_bending_Nm": 32.929685523393104,
+        "wing_torsion_Nm": 23.884061031712505,
         "boom_root_bending_Nm": 0.0,
         "boom_axial_N": 0.0,
-        "max_motor_thrust_N": 36.77677794704903,
-        "max_motor_mount_bending_Nm": 1.8388388973524514,
+        "max_motor_thrust_N": 37.409361275104835,
+        "max_motor_mount_bending_Nm": 1.8704680637552418,
         "tail_force_N": 0.0,
         "note": "6-DOF/control unequal rotor allocation at reference mass."
       },
@@ -3821,12 +3821,12 @@
         "category": "VTOL",
         "mass_kg": 15.0,
         "load_factor": 1.0,
-        "wing_root_bending_Nm": 57.00591000000001,
-        "wing_torsion_Nm": 41.311458656583795,
-        "boom_root_bending_Nm": 20.489396358288623,
+        "wing_root_bending_Nm": 57.00591,
+        "wing_torsion_Nm": 41.06813705269153,
+        "boom_root_bending_Nm": 20.684002613097096,
         "boom_axial_N": 0.0,
-        "max_motor_thrust_N": 63.29561959721544,
-        "max_motor_mount_bending_Nm": 3.1647809798607724,
+        "max_motor_thrust_N": 64.76085781296496,
+        "max_motor_mount_bending_Nm": 3.238042890648248,
         "tail_force_N": 0.0,
         "note": "Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry."
       },
@@ -3841,7 +3841,7 @@
         "boom_axial_N": 0.0,
         "max_motor_thrust_N": 0.0,
         "max_motor_mount_bending_Nm": 0.0,
-        "tail_force_N": 267.59846572199996,
+        "tail_force_N": 258.84897453221294,
         "note": "Symmetric wing-borne structural manoeuvre screen."
       },
       {
@@ -3851,11 +3851,11 @@
         "load_factor": 1.0,
         "wing_root_bending_Nm": 0.0,
         "wing_torsion_Nm": 0.0,
-        "boom_root_bending_Nm": 101.68741697435999,
+        "boom_root_bending_Nm": 98.36261032224091,
         "boom_axial_N": 0.0,
         "max_motor_thrust_N": 0.0,
         "max_motor_mount_bending_Nm": 0.0,
-        "tail_force_N": 267.59846572199996,
+        "tail_force_N": 258.84897453221294,
         "note": "Horizontal-tail absolute CL design screen at configured dive speed."
       },
       {
@@ -3865,7 +3865,7 @@
         "load_factor": 1.0,
         "wing_root_bending_Nm": 0.0,
         "wing_torsion_Nm": 0.0,
-        "boom_root_bending_Nm": 101.68741697435999,
+        "boom_root_bending_Nm": 98.36261032224091,
         "boom_axial_N": 0.0,
         "max_motor_thrust_N": 0.0,
         "max_motor_mount_bending_Nm": 0.0,
@@ -3879,9 +3879,9 @@
         "load_factor": 1.0,
         "wing_root_bending_Nm": 0.0,
         "wing_torsion_Nm": 0.0,
-        "boom_root_bending_Nm": 122.1768133326486,
+        "boom_root_bending_Nm": 119.046612935338,
         "boom_axial_N": 30.0,
-        "max_motor_thrust_N": 55.46669290278458,
+        "max_motor_thrust_N": 54.00145468703505,
         "max_motor_mount_bending_Nm": 0.0,
         "tail_force_N": 0.0,
         "note": "Conservative envelope combining boom tail load with rear lift-rotor bending; simultaneous occurrence is a sizing envelope, not a trajectory claim."
@@ -3997,7 +3997,7 @@
           }
         },
         "governing_root_bending_Nm": 198.5846625,
-        "governing_torsion_Nm": 41.311458656583795,
+        "governing_torsion_Nm": 41.06813705269153,
         "torsional_skin_status": "NOT_EVALUATED_IN_PHASE7_WRAPPER_USE_EXISTING_structures.py_closed_cell_check_and_future_CFD/aeroelastic_loads"
       },
       "tails": {
@@ -4009,49 +4009,49 @@
           "check": {
             "member": "horizontal_tail_spar_current_reference",
             "case": "dive_tail_download",
-            "bending_stress_MPa": 5798.480604933298,
+            "bending_stress_MPa": 5425.501255381814,
             "axial_stress_MPa": 0.0,
-            "combined_stress_MPa": 5798.480604933298,
+            "combined_stress_MPa": 5425.501255381814,
             "allowable_stress_MPa": 1000.0,
-            "stress_utilization": 5.798480604933298,
-            "tip_deflection_mm": 496.29427665553317,
-            "deflection_limit_mm": 23.577736332433886,
-            "deflection_utilization": 21.049275878652665,
-            "root_slope_deg": 80.40231131022168,
+            "stress_utilization": 5.425501255381814,
+            "tip_deflection_mm": 434.50080538504443,
+            "deflection_limit_mm": 22.80683058094104,
+            "deflection_utilization": 19.051345334592142,
+            "root_slope_deg": 72.7707787812254,
             "slope_limit_deg": 3.0,
-            "slope_utilization": 26.80077043674056,
+            "slope_utilization": 24.256926260408466,
             "strength_pass": false,
             "stiffness_pass": false,
             "overall_pass": false,
             "note": ""
           },
-          "root_moment_Nm": 31.546830338785814
+          "root_moment_Nm": 29.51762354103251
         },
         "horizontal_recommended_screen": {
           "section": {
-            "od_m": 0.010000000000000005,
-            "id_m": 0.007500000000000004
+            "od_m": 0.009750000000000005,
+            "id_m": 0.007312500000000004
           },
           "check": {
             "member": "candidate",
             "case": "sizing",
-            "bending_stress_MPa": 470.0648231309078,
+            "bending_stress_MPa": 474.53643661612176,
             "axial_stress_MPa": 0.0,
-            "combined_stress_MPa": 470.0648231309078,
+            "combined_stress_MPa": 474.53643661612176,
             "allowable_stress_MPa": 1000.0,
-            "stress_utilization": 0.47006482313090786,
-            "tip_deflection_mm": 17.420904771205628,
-            "deflection_limit_mm": 23.577736332433886,
-            "deflection_utilization": 0.7388709639288471,
-            "root_slope_deg": 2.8222791891923893,
+            "stress_utilization": 0.47453643661612177,
+            "tip_deflection_mm": 16.87732303219878,
+            "deflection_limit_mm": 22.80683058094104,
+            "deflection_utilization": 0.7400117685051179,
+            "root_slope_deg": 2.8266367416903564,
             "slope_limit_deg": 3.0,
-            "slope_utilization": 0.9407597297307965,
+            "slope_utilization": 0.9422122472301188,
             "strength_pass": true,
             "stiffness_pass": true,
             "overall_pass": true,
             "note": ""
           },
-          "root_moment_Nm": 31.546830338785814
+          "root_moment_Nm": 29.51762354103251
         },
         "vertical_current_reference": {
           "section": {
@@ -4061,49 +4061,49 @@
           "check": {
             "member": "vertical_tail_spar_current_reference",
             "case": "dive_crosswind_fin_load",
-            "bending_stress_MPa": 4665.9816627943155,
+            "bending_stress_MPa": 2539.824259315814,
             "axial_stress_MPa": 0.0,
-            "combined_stress_MPa": 4665.9816627943155,
+            "combined_stress_MPa": 2539.824259315814,
             "allowable_stress_MPa": 1000.0,
-            "stress_utilization": 4.665981662794315,
-            "tip_deflection_mm": 545.5381311898664,
-            "deflection_limit_mm": 27.55691646191646,
-            "deflection_utilization": 19.796777043026484,
-            "root_slope_deg": 75.61811816845967,
+            "stress_utilization": 2.539824259315814,
+            "tip_deflection_mm": 87.9846741102476,
+            "deflection_limit_mm": 15.0,
+            "deflection_utilization": 5.865644940683174,
+            "root_slope_deg": 22.40511328156066,
             "slope_limit_deg": 3.0,
-            "slope_utilization": 25.20603938948656,
+            "slope_utilization": 7.468371093853553,
             "strength_pass": false,
             "stiffness_pass": false,
             "overall_pass": false,
             "note": ""
           },
-          "root_moment_Nm": 25.385431444717447
+          "root_moment_Nm": 13.818000000000003
         },
         "vertical_recommended_screen": {
           "section": {
-            "od_m": 0.009750000000000005,
-            "id_m": 0.007312500000000004
+            "od_m": 0.007250000000000003,
+            "id_m": 0.005437500000000002
           },
           "check": {
             "member": "candidate",
             "case": "sizing",
-            "bending_stress_MPa": 408.10575969957273,
+            "bending_stress_MPa": 540.2977896941383,
             "axial_stress_MPa": 0.0,
-            "combined_stress_MPa": 408.10575969957273,
+            "combined_stress_MPa": 540.2977896941383,
             "allowable_stress_MPa": 1000.0,
-            "stress_utilization": 0.40810575969957275,
-            "tip_deflection_mm": 21.190347986384484,
-            "deflection_limit_mm": 27.55691646191646,
-            "deflection_utilization": 0.7689665865072187,
-            "root_slope_deg": 2.937235999563009,
+            "stress_utilization": 0.5402977896941383,
+            "tip_deflection_mm": 11.178574959189062,
+            "deflection_limit_mm": 15.0,
+            "deflection_utilization": 0.7452383306126041,
+            "root_slope_deg": 2.846600738365154,
             "slope_limit_deg": 3.0,
-            "slope_utilization": 0.9790786665210031,
+            "slope_utilization": 0.9488669127883846,
             "strength_pass": true,
             "stiffness_pass": true,
             "overall_pass": true,
             "note": ""
           },
-          "root_moment_Nm": 25.385431444717447
+          "root_moment_Nm": 13.818000000000003
         }
       },
       "central_pod": {
@@ -4124,17 +4124,17 @@
           "check": {
             "member": "boom_legacy_strength_only",
             "case": "combined_boom_tail_plus_rear_rotor",
-            "bending_stress_MPa": 1744.831149267567,
+            "bending_stress_MPa": 1700.1281405075756,
             "axial_stress_MPa": 1.1760217469844483,
-            "combined_stress_MPa": 1746.0071710145517,
+            "combined_stress_MPa": 1701.30416225456,
             "allowable_stress_MPa": 1000.0,
-            "stress_utilization": 1.7460071710145517,
-            "tip_deflection_mm": 136.56022653346162,
+            "stress_utilization": 1.70130416225456,
+            "tip_deflection_mm": 133.06151950639236,
             "deflection_limit_mm": 10.032,
-            "deflection_utilization": 13.612462772474245,
-            "root_slope_deg": 13.726885315294371,
+            "deflection_utilization": 13.26370808476798,
+            "root_slope_deg": 13.375199093533261,
             "slope_limit_deg": 2.0,
-            "slope_utilization": 6.863442657647186,
+            "slope_utilization": 6.687599546766631,
             "strength_pass": false,
             "stiffness_pass": false,
             "overall_pass": false,
@@ -4149,17 +4149,17 @@
           "check": {
             "member": "boom_reference_geometry",
             "case": "combined_boom_tail_plus_rear_rotor",
-            "bending_stress_MPa": 75.47495434403368,
+            "bending_stress_MPa": 73.54126720954069,
             "axial_stress_MPa": 0.14468631190172293,
-            "combined_stress_MPa": 75.6196406559354,
+            "combined_stress_MPa": 73.68595352144241,
             "allowable_stress_MPa": 1000.0,
-            "stress_utilization": 0.07561964065593539,
-            "tip_deflection_mm": 2.0759206490054214,
+            "stress_utilization": 0.07368595352144242,
+            "tip_deflection_mm": 2.0227350447728907,
             "deflection_limit_mm": 10.032,
-            "deflection_utilization": 0.20692988925492636,
-            "root_slope_deg": 0.20866928384573574,
+            "deflection_utilization": 0.20162829393669165,
+            "root_slope_deg": 0.2033231248047232,
             "slope_limit_deg": 2.0,
-            "slope_utilization": 0.10433464192286787,
+            "slope_utilization": 0.1016615624023616,
             "strength_pass": true,
             "stiffness_pass": true,
             "overall_pass": true,
@@ -4174,24 +4174,24 @@
           "check": {
             "member": "boom_stiffness_sized_candidate",
             "case": "combined_boom_tail_plus_rear_rotor",
-            "bending_stress_MPa": 223.1818580300865,
+            "bending_stress_MPa": 217.46388322273722,
             "axial_stress_MPa": 0.24485375860291583,
-            "combined_stress_MPa": 223.4267117886894,
+            "combined_stress_MPa": 217.70873698134014,
             "allowable_stress_MPa": 1000.0,
-            "stress_utilization": 0.2234267117886894,
-            "tip_deflection_mm": 9.993010945595186,
+            "stress_utilization": 0.21770873698134013,
+            "tip_deflection_mm": 9.736987515461472,
             "deflection_limit_mm": 10.032,
-            "deflection_utilization": 0.9961135312594883,
-            "root_slope_deg": 1.0044865821239297,
+            "deflection_utilization": 0.9705928544120287,
+            "root_slope_deg": 0.9787513856272204,
             "slope_limit_deg": 2.0,
-            "slope_utilization": 0.5022432910619649,
+            "slope_utilization": 0.4893756928136102,
             "strength_pass": true,
             "stiffness_pass": true,
             "overall_pass": true,
             "note": ""
           }
         },
-        "governing_root_bending_Nm": 122.1768133326486,
+        "governing_root_bending_Nm": 119.046612935338,
         "governing_axial_N": 30.0
       },
       "motor_mount": {
@@ -4202,8 +4202,8 @@
       }
     },
     "mass_feedback": {
-      "reference_mass_kg": 14.07304212305872,
-      "reference_cg_x_m": 0.4009224716353659,
+      "reference_mass_kg": 13.991222590195203,
+      "reference_cg_x_m": 0.40740825394774427,
       "current_wing_spar_mass_kg": 0.471,
       "recommended_screen_wing_spar_mass_kg": 1.4736247089605206,
       "wing_spar_mass_delta_kg": 1.0026247089605205,
@@ -4211,15 +4211,15 @@
       "geometry_reconciled_candidate_boom_tube_mass_kg": 0.33522050250864543,
       "boom_tube_mass_delta_kg": 0.31102050250864544,
       "current_horizontal_tail_spar_mass_kg": 0.027,
-      "recommended_horizontal_tail_spar_mass_kg": 0.1438374543431375,
-      "horizontal_tail_spar_mass_delta_kg": 0.1168374543431375,
+      "recommended_horizontal_tail_spar_mass_kg": 0.13673548003494504,
+      "horizontal_tail_spar_mass_delta_kg": 0.10973548003494504,
       "current_vertical_tail_spar_mass_kg": 0.016,
-      "recommended_vertical_tail_spar_mass_kg": 0.08102843261330077,
-      "vertical_tail_spar_mass_delta_kg": 0.06502843261330077,
-      "screening_updated_mass_kg": 15.568553221484326,
-      "screening_updated_cg_x_m": 0.4177821344205849,
-      "screening_cg_shift_mm": 16.859662785219054,
-      "mass_margin_to_15kg_kg": -0.5685532214843256,
+      "recommended_vertical_tail_spar_mass_kg": 0.04480270337132541,
+      "vertical_tail_spar_mass_delta_kg": 0.028802703371325407,
+      "screening_updated_mass_kg": 15.443405985070642,
+      "screening_updated_cg_x_m": 0.42261095411287397,
+      "screening_cg_shift_mm": 15.202700165129702,
+      "mass_margin_to_15kg_kg": -0.4434059850706422,
       "warning": "This is a partial structural-mass feedback only. It does not rescale wing skins/ribs/webs, mounts, pod or tails and is not the final coupled MTOW closure."
     },
     "gates": [
@@ -4247,49 +4247,49 @@
       {
         "name": "legacy_strength_only_boom_stiffness",
         "status": "FAIL",
-        "value": 13.612462772474245,
+        "value": 13.26370808476798,
         "limit": "<=1.0",
         "note": ""
       },
       {
         "name": "reference_35x31_boom_screen",
         "status": "PASS",
-        "value": 0.20692988925492636,
+        "value": 0.20162829393669165,
         "limit": "<=1.0",
         "note": "Geometry passes the screen, but its mass conflicts with the old reported boom-tube mass and needs supplier/CAD reconciliation."
       },
       {
         "name": "recommended_boom_screen",
         "status": "PASS",
-        "value": 0.9961135312594883,
+        "value": 0.9705928544120287,
         "limit": "<=1.0",
         "note": ""
       },
       {
         "name": "horizontal_tail_current_screen",
         "status": "FAIL",
-        "value": 26.80077043674056,
+        "value": 24.256926260408466,
         "limit": "<=1.0",
         "note": "Current tail spars were not sized for this high-speed load envelope."
       },
       {
         "name": "vertical_tail_current_screen",
         "status": "FAIL",
-        "value": 25.20603938948656,
+        "value": 7.468371093853553,
         "limit": "<=1.0",
         "note": "Current tail spars were not sized for this high-speed load envelope."
       },
       {
         "name": "horizontal_tail_recommended_screen",
         "status": "PASS",
-        "value": 0.9407597297307965,
+        "value": 0.9422122472301188,
         "limit": "<=1.0",
         "note": ""
       },
       {
         "name": "vertical_tail_recommended_screen",
         "status": "PASS",
-        "value": 0.9790786665210031,
+        "value": 0.9488669127883846,
         "limit": "<=1.0",
         "note": ""
       },
@@ -4310,7 +4310,7 @@
       {
         "name": "mass_ceiling_after_partial_structural_feedback",
         "status": "FAIL",
-        "value": 15.568553221484326,
+        "value": 15.443405985070642,
         "limit": 15.0,
         "note": ""
       }
@@ -4321,18 +4321,18 @@
       "recommended_wing_spar_id_mm": 17.625000000000007,
       "current_wing_tip_deflection_mm": 512.4403934016178,
       "recommended_wing_tip_deflection_mm": 52.39261026948316,
-      "governing_boom_root_bending_Nm": 122.1768133326486,
+      "governing_boom_root_bending_Nm": 119.046612935338,
       "recommended_boom_od_mm": 21.500000000000007,
       "recommended_boom_id_mm": 17.500000000000007,
-      "reference_35x31_boom_tip_deflection_mm": 2.0759206490054214,
-      "legacy_strength_only_boom_tip_deflection_mm": 136.56022653346162,
-      "horizontal_tail_recommended_spar_od_mm": 10.000000000000005,
-      "vertical_tail_recommended_spar_od_mm": 9.750000000000005,
+      "reference_35x31_boom_tip_deflection_mm": 2.0227350447728907,
+      "legacy_strength_only_boom_tip_deflection_mm": 133.06151950639236,
+      "horizontal_tail_recommended_spar_od_mm": 9.750000000000005,
+      "vertical_tail_recommended_spar_od_mm": 7.250000000000003,
       "required_motor_mount_limit_thrust_N": 79.553113864,
       "required_motor_mount_limit_bending_Nm": 3.9776556932,
-      "partial_structural_feedback_mass_kg": 15.568553221484326,
-      "partial_structural_feedback_cg_x_m": 0.4177821344205849,
-      "mass_margin_to_15kg_kg": -0.5685532214843256,
+      "partial_structural_feedback_mass_kg": 15.443405985070642,
+      "partial_structural_feedback_cg_x_m": 0.42261095411287397,
+      "mass_margin_to_15kg_kg": -0.4434059850706422,
       "gate_fail_count": 6,
       "not_evaluated_count": 1
     }
@@ -6492,7 +6492,7 @@
     {
       "name": "mass_ceiling",
       "status": "PASS",
-      "note": "Structurally closed mass 14.073 kg vs 15.0 kg ceiling."
+      "note": "Structurally closed mass 13.991 kg vs 15.0 kg ceiling."
     },
     {
       "name": "packaging",
@@ -6512,7 +6512,7 @@
     {
       "name": "cruise_power",
       "status": "PASS",
-      "note": "374.9 W vs configured gate."
+      "note": "374.1 W vs configured gate."
     },
     {
       "name": "mission_ems",
@@ -6527,7 +6527,7 @@
     {
       "name": "current_longitudinal_stability",
       "status": "PASS",
-      "note": "Closed-aircraft static margin 11.62% MAC."
+      "note": "Closed-aircraft static margin 12.42% MAC."
     },
     {
       "name": "current_layout_6dof",
@@ -6537,7 +6537,7 @@
     {
       "name": "sixdof_linear_aero_validity",
       "status": "PASS",
-      "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 7.0 deg."
+      "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 6.6 deg."
     },
     {
       "name": "stability_screen_6dof",
@@ -6547,7 +6547,7 @@
     {
       "name": "15kg_zero_pitch_motor_thrust",
       "status": "PASS",
-      "note": "Front/rear requirement 63.3/55.5 N vs 71.0 N available screen."
+      "note": "Front/rear requirement 64.8/54.0 N vs 71.0 N available screen."
     },
     {
       "name": "recommended_structure_screen",
