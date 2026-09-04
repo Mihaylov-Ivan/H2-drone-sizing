@@ -1,0 +1,12 @@
+{
+  "airfoil": "NACA0012",
+  "reynolds_number": 200000,
+  "source_file": "airfoil_naca0012(2).py",
+  "method": "XFOIL polar supplied by user",
+  "alpha_min_deg": -14.0,
+  "alpha_max_deg": 14.0,
+  "CL_max": 1.1101,
+  "CL_min": -1.1063,
+  "thickness_fraction": 0.12,
+  "status": "user_supplied_analysis_data"
+}

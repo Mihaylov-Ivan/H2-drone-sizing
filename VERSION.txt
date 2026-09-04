@@ -1,3 +1,2 @@
-H2AIR Integrated Model v2.0
-Release date: 2026-09-03
-Fidelity: conceptual / multidisciplinary screening
+H2AIR Integrated Model v4.0
+User inputs + measured mass model + polar airfoils + CAD export + hardware selection

@@ -1,28 +1,43 @@
 from pathlib import Path
 import tempfile,traceback,json
 from h2air.config import load_model_config
-from h2air.pipeline import run_model
-from h2air.optimization import screening_evaluate
+from h2air.pipeline import run_model,_components_with_power
+from h2air.optimization import screening_evaluate,default_space_for_config
+from h2air.airfoils import interpolate_polar
 ROOT=Path(__file__).resolve().parent
 
 def main():
     checks=[]
     try:
-        c=load_model_config(ROOT/'config/baseline.json');checks.append(('config',True,''))
+        c=load_model_config(ROOT/'config/user_inputs.json')
+        checks.append(('v4_user_config',c['model']['version']=='H2AIR-integrated-v4.0',''))
+        checks.append(('auto_main_span',c['design']['main_wing_span_mode']=='auto' and 'main_wing_span_m' in default_space_for_config(c),''))
+        checks.append(('naca0012_polar_loaded',bool(c['airfoil_model']['horizontal_tail'].get('polar_rows')),''))
+        row=interpolate_polar(c['airfoil_model']['horizontal_tail']['polar_rows'],0.0)
+        checks.append(('naca0012_zero_alpha',abs(row['CL'])<1e-8 and abs(row['CD']-0.01020)<1e-6,''))
+        sel=c.get('hardware_selection_result',{})
+        checks.append(('hardware_auto_selection',sel.get('mode')=='auto' and bool(sel.get('selected_lift_combo')) and bool(sel.get('selected_pusher_combo')) and bool(sel.get('selected_battery')),''))
+        comps=_components_with_power(c);by={x.name:x for x in comps}
+        expected=float(c['manufacturing_mass_model']['fuselage_longerons']['specific_mass_kg_per_m'])*float(c['design']['fuselage_length_m'])*2
+        checks.append(('linear_mass',abs(by['fuselage_longerons'].mass_takeoff_kg-expected)<1e-10,''))
+        vals={k:c['design'][k] for k in default_space_for_config(c)}
+        screen=screening_evaluate(c,vals)
+        checks.append(('current_design_screening_feasible',screen.feasible,','.join(screen.violations)))
         with tempfile.TemporaryDirectory() as td:
-            r=run_model(c,Path(td),write_histories=False)
+            out=Path(td)
+            r=run_model(c,out,write_histories=False)
             checks += [
-              ('baseline_reference_mass',10<r['summary']['reference_mass_kg']<13,''),
               ('structural_closure',r['coupled_closure']['converged'],''),
-              ('baseline_geometry_problem_exposed',r['summary']['design_status']!='SCREENING_PASS',''),
-              ('baseline_instability_detected',r['summary']['current_static_margin']<0,''),
-              ('ems_executes',isinstance(r['hybrid_power']['feasible'],bool),''),
+              ('known_component_packaging',next(g for g in r['gates'] if g['name']=='packaging')['status']=='PASS',''),
+              ('lift_prop_clearance',next(g for g in r['gates'] if g['name']=='lift_prop_clearance')['status']=='PASS',''),
+              ('cad_json_written',(out/'cad_parameters.json').exists(),''),
+              ('cad_xml_written',(out/'cad_parameters.xml').exists(),''),
+              ('hardware_selection_written',(out/'HARDWARE_SELECTION.json').exists(),''),
             ]
-        oc=load_model_config(ROOT/'config/optimized_screening_case.json')
-        keys=('wing_area_m2','wing_span_m','wing_ac_x_m','horizontal_tail_area_m2','lift_row_center_x_m','battery_x_m','battery_z_m','fuel_cell_x_m','fuel_cell_z_m','hydrogen_cylinder_x_m','hydrogen_cylinder_z_m')
-        sc=screening_evaluate(c,{k:oc['design'][k] for k in keys});checks.append(('optimized_screening_candidate',sc.feasible,''))
-        vr=json.load(open(ROOT/'outputs'/'nominal_reference'/'model_results.json'))
-        checks += [('optimized_full_status',vr['summary']['design_status']=='SCREENING_PASS',''),('optimized_6dof',vr['sixdof_control']['current_layout']['gate_evaluation']['pass'],'')]
+            cad=json.loads((out/'cad_parameters.json').read_text())
+            names=[p['name'].lower() for p in cad['parameters']]
+            forbidden=('mass','weight','power','stress','mpa','energy','thrust','soc')
+            checks.append(('cad_geometry_only',not any(any(f in n for f in forbidden) for n in names),''))
     except Exception:
         traceback.print_exc();return 1
     failed=[x for x in checks if not x[1]]

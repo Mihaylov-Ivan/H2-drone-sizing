@@ -28,7 +28,7 @@ from .structures import build_structural_result
 
 G = 9.80665
 
-DEFAULT_SPACE: Dict[str, Tuple[float, float]] = {
+LEGACY_DEFAULT_SPACE: Dict[str, Tuple[float, float]] = {
     "wing_area_m2": (0.80, 0.90),
     "wing_span_m": (3.15, 3.60),
     "wing_ac_x_m": (0.34, 0.43),
@@ -41,6 +41,52 @@ DEFAULT_SPACE: Dict[str, Tuple[float, float]] = {
     "hydrogen_cylinder_x_m": (0.505, 0.554),
     "hydrogen_cylinder_z_m": (-0.029, -0.025),
 }
+
+
+
+def default_space_for_config(cfg: Mapping[str, Any]) -> Dict[str, Tuple[float,float]]:
+    d=cfg["design"]
+    if str(d.get("surface_geometry_mode", "legacy_area_span")) != "root_taper_span":
+        return dict(LEGACY_DEFAULT_SPACE)
+    opt_space = cfg.get("optimizer_settings", {}).get("design_space", {})
+    defaults = {
+        "wing_ac_x_m": (0.34, 0.43),
+        "lift_row_center_x_m": (0.38, 0.50),
+        "battery_x_m": (0.18, 0.62),
+        "battery_z_m": (0.060, 0.064),
+        "fuel_cell_x_m": (0.140, 0.190),
+        "fuel_cell_z_m": (-0.029, -0.025),
+        "hydrogen_cylinder_x_m": (0.505, 0.554),
+        "hydrogen_cylinder_z_m": (-0.029, -0.025),
+    }
+    space: Dict[str, Tuple[float,float]] = {
+        k: tuple(float(x) for x in opt_space.get(k, v)) for k,v in defaults.items()
+    }
+    if str(d.get("main_wing_span_mode","auto")).lower()=="auto":
+        space["main_wing_span_m"] = tuple(float(x) for x in d["main_wing_span_bounds_m"])
+    if str(d.get("horizontal_tail_span_mode","auto")).lower()=="auto":
+        space["horizontal_tail_span_m"] = tuple(float(x) for x in d["horizontal_tail_span_bounds_m"])
+    if str(d.get("vertical_tail_span_mode","auto")).lower()=="auto":
+        space["vertical_tail_height_m"] = tuple(float(x) for x in d["vertical_tail_span_bounds_m"])
+
+    # Constrain the lift-row midpoint to the physically feasible range for the
+    # selected propeller diameter and the user's fixed fuselage envelope. This
+    # prevents an otherwise good LHS search from wasting nearly all candidates
+    # on rotor rows that cannot satisfy the required disk-edge clearance.
+    lay=cfg["aero_propulsion"]["lift_layout"]
+    D=float(d["lift_propeller_diameter_in"])*0.0254
+    sep=D+float(lay["required_disk_edge_clearance_m"])
+    physical_lo=float(lay["minimum_front_x_m"])+0.5*sep
+    physical_hi=float(lay["maximum_rear_x_m"])-0.5*sep
+    if physical_lo > physical_hi:
+        raise ValueError(f"Selected lift propeller {float(d['lift_propeller_diameter_in']):.1f} in cannot fit within the fixed longitudinal lift-station envelope")
+    if "lift_row_center_x_m" in space:
+        lo,hi=space["lift_row_center_x_m"]
+        lo=max(float(lo),physical_lo); hi=min(float(hi),physical_hi)
+        if lo>hi:
+            raise ValueError("Optimizer lift-row bounds do not overlap the physically feasible propeller-clearance interval")
+        space["lift_row_center_x_m"]=(lo,hi)
+    return space
 
 @dataclass
 class Candidate:
@@ -111,7 +157,7 @@ def screening_evaluate(raw_cfg: Mapping[str, Any], values: Mapping[str, float], 
     f1, r1 = _zero_pitch_pair(mass0.takeoff.total_mass_kg * G, rows[0], rows[1], mass0.takeoff.cg_m[0])
     struct_cfg["rotor_system"]["phase6_reference_hover_thrusts_N"] = [f1, f1, r1, r1]
     structure = build_structural_result(struct_cfg)
-    comps_post = _apply_structural_feedback(comps, structure["mass_feedback"])
+    comps_post = _apply_structural_feedback(cfg, comps, structure)
     mass_post = _mass_result(cfg, comps_post)
 
     np_x = float(d["neutral_point_station_x_m"])
@@ -218,9 +264,14 @@ def optimize_design(
     design_space: Mapping[str, Tuple[float,float]] | None = None,
     local_refinement_count: int = 16,
 ) -> Dict[str, Any]:
-    space = dict(design_space or DEFAULT_SPACE)
+    space = dict(design_space or default_space_for_config(cfg))
     candidates: List[Candidate] = []
-    for i, values in enumerate(_lhs_points(space, sample_count, seed)):
+    # Always include the current resolved design as a deterministic seed. This
+    # keeps the LHS+local-refinement algorithm but guarantees that a known-good
+    # user design is not accidentally omitted by random space filling.
+    current_values = {k: float(cfg["design"][k]) for k in space}
+    candidates.append(screening_evaluate(cfg, current_values, index=0))
+    for i, values in enumerate(_lhs_points(space, sample_count, seed), start=1):
         candidates.append(screening_evaluate(cfg, values, index=i))
 
     # Deterministic local jitter around the best screen candidates.
@@ -273,42 +324,47 @@ def optimized_config(cfg: Mapping[str, Any], optimization_result: Mapping[str, A
     return design_overrides(cfg, optimization_result["best"]["values"])
 
 def derive_margin_variant(cfg:Mapping[str,Any],optimization_result:Mapping[str,Any],*,stall_area_factor:float=1.109)->Dict[str,Any]:
-    """Derive the deterministic margin-biased candidate used by the integrated study.
-
-    The nominal optimizer deliberately favours low mass.  This selector adds a
-    controlled margin above the 15 kg stall-area screen, preserves the nominal
-    aspect ratio, maximises the screened horizontal-tail area, and shifts the
-    wing aerodynamic-centre aft by approximately 5 mm.  The resulting candidate
-    is then passed through the same screening evaluator as every optimization
-    sample.  It is a robustness *heuristic*; uncertainty propagation and the
-    full EMS/6-DOF/structures verification still decide whether it is accepted.
-    """
+    """Derive deterministic margin-biased candidate while preserving v2 selection logic."""
     best=optimization_result["best"]
     vals=dict(best["values"])
     req=float(best["metrics"]["wing_required_15kg_m2"])
-    loS,hiS=DEFAULT_SPACE["wing_area_m2"]
+    d=cfg["design"]
+    space=default_space_for_config(cfg)
 
-    # Round to an engineering-friendly 0.01 m² increment so the selected case
-    # is reproducible and does not imply false geometric precision.
-    target=float(np.clip(round(max(vals["wing_area_m2"],stall_area_factor*req),2),loS,hiS))
-    ar=vals["wing_span_m"]**2/vals["wing_area_m2"]
-    vals["wing_area_m2"]=target
-    vals["wing_span_m"]=float(np.sqrt(ar*target))
-    vals["horizontal_tail_area_m2"]=float(DEFAULT_SPACE["horizontal_tail_area_m2"][1])
-    vals["wing_ac_x_m"]=float(np.clip(round(best["values"]["wing_ac_x_m"]+0.005,3),*DEFAULT_SPACE["wing_ac_x_m"]))
+    if str(d.get("surface_geometry_mode","legacy_area_span"))=="root_taper_span":
+        cr=float(d["main_wing_root_chord_m"]); lam=float(d["main_wing_taper_ratio"])
+        if "main_wing_span_m" in space:
+            target_area=stall_area_factor*req
+            target_span=2.0*target_area/(cr*(1.0+lam))
+            lo,hi=space["main_wing_span_m"]
+            vals["main_wing_span_m"]=float(np.clip(round(max(vals.get("main_wing_span_m",d["main_wing_span_m"]),target_span),3),lo,hi))
+        if "horizontal_tail_span_m" in space:
+            loh,hih=space["horizontal_tail_span_m"]
+            # Add modest tail margin without blindly maxing the tail span, which
+            # can over-stabilize the actual 6-DOF transition.
+            vals["horizontal_tail_span_m"]=float(np.clip(vals.get("horizontal_tail_span_m",d["horizontal_tail_span_m"])*1.05,loh,hih))
+        loac,hiac=space["wing_ac_x_m"]
+        vals["wing_ac_x_m"]=float(np.clip(round(best["values"]["wing_ac_x_m"]+0.003,3),loac,hiac))
+    else:
+        loS,hiS=LEGACY_DEFAULT_SPACE["wing_area_m2"]
+        target=float(np.clip(round(max(vals["wing_area_m2"],stall_area_factor*req),2),loS,hiS))
+        ar=vals["wing_span_m"]**2/vals["wing_area_m2"]
+        vals["wing_area_m2"]=target
+        vals["wing_span_m"]=float(np.sqrt(ar*target))
+        vals["horizontal_tail_area_m2"]=float(LEGACY_DEFAULT_SPACE["horizontal_tail_area_m2"][1])
+        vals["wing_ac_x_m"]=float(np.clip(round(best["values"]["wing_ac_x_m"]+0.005,3),*LEGACY_DEFAULT_SPACE["wing_ac_x_m"]))
 
     primary=screening_evaluate(cfg,vals,index=0)
     candidates=[primary]
-    # Only if the deterministic candidate misses a screen, try nearby AC
-    # stations.  This keeps the normal design-study path fast and deterministic.
     if not primary.feasible:
+        loac,hiac=space.get("wing_ac_x_m",LEGACY_DEFAULT_SPACE["wing_ac_x_m"])
         for dx in (-0.005,0.005,0.010):
             v=dict(vals)
-            v["wing_ac_x_m"]=float(np.clip(vals["wing_ac_x_m"]+dx,*DEFAULT_SPACE["wing_ac_x_m"]))
+            v["wing_ac_x_m"]=float(np.clip(vals["wing_ac_x_m"]+dx,loac,hiac))
             candidates.append(screening_evaluate(cfg,v,index=len(candidates)))
     ranked=sorted(candidates,key=lambda c:(not c.feasible,c.score))
     return {
-        "method":"deterministic stall-area margin + aspect-ratio preservation + tail/AC margin",
+        "method":"deterministic stall-area margin + tail/AC margin (v3 span-derived geometry aware)",
         "stall_area_factor":stall_area_factor,
         "best":ranked[0].to_dict(),
         "candidates":[c.to_dict() for c in ranked],

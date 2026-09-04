@@ -26,6 +26,7 @@ from .aero_propulsion import (
     lift_prop_drag_CdA_each_m2,
     stall_speed_mps,
 )
+from .airfoils import interpolate_polar
 
 
 @dataclass
@@ -165,11 +166,17 @@ def _wing_aero(
     aero5 = cfg5["aerodynamics"]
     cl_alpha = float(aero5["CL_alpha_per_rad"])
     alpha0 = radians(float(aero5["zero_lift_alpha_deg"]))
-    cl_raw = cl_alpha * (alpha - alpha0)
     cl_min = float(aero5["CL_min"])
     cl_max = float(aero5["CL_max"])
-    stall_limited = cl_raw < cl_min or cl_raw > cl_max
-    CL = max(cl_min, min(cl_max, cl_raw))
+    polar_point = None
+    if aero5.get("polar_rows"):
+        polar_point = interpolate_polar(aero5["polar_rows"], alpha * 180.0 / pi)
+        CL = float(polar_point["CL"])
+        stall_limited = bool(polar_point.get("clamped", False))
+    else:
+        cl_raw = cl_alpha * (alpha - alpha0)
+        stall_limited = cl_raw < cl_min or cl_raw > cl_max
+        CL = max(cl_min, min(cl_max, cl_raw))
 
     q = 0.5 * rho * V * V
     L = q * wing_area_m2 * CL
@@ -180,7 +187,7 @@ def _wing_aero(
     S_ref = float(ac4["wing_area_m2"])
     q_ref = 0.5 * rho * float(ref["reference_speed_mps"]) ** 2
     D_wing_profile_ref = constants["reference_wing_profile_drag_N"]
-    wing_profile_CD = D_wing_profile_ref / max(q_ref * S_ref, EPS)
+    wing_profile_CD = float(polar_point["CD"]) if polar_point is not None else D_wing_profile_ref / max(q_ref * S_ref, EPS)
     fixed_other_CdA = max(
         0.0,
         constants["non_lift_prop_parasite_CdA_m2"] - D_wing_profile_ref / max(q_ref, EPS),

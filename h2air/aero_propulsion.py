@@ -17,6 +17,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from math import pi, sqrt
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from .airfoils import interpolate_polar_by_cl
 
 G = 9.80665
 INCH_TO_M = 0.0254
@@ -235,6 +236,11 @@ def cruise_drag(
     q_ref = 0.5 * rho * float(ref["reference_speed_mps"]) ** 2
     D_wing_profile_ref = constants["reference_wing_profile_drag_N"]
     wing_profile_CD = D_wing_profile_ref / max(q_ref * S_ref, EPS)
+    polar_rows=ac.get("wing_polar_rows")
+    if polar_rows:
+        CL_req=(mass_kg*G)/max(q*S,EPS)
+        polar_point=interpolate_polar_by_cl(polar_rows,CL_req)
+        wing_profile_CD=float(polar_point["CD"])
     fixed_other_CdA = max(0.0, constants["non_lift_prop_parasite_CdA_m2"] - D_wing_profile_ref / max(q_ref, EPS))
     D_other = q * fixed_other_CdA + q * S * wing_profile_CD
 
@@ -278,11 +284,11 @@ def cruise_drag(
 
 
 def stall_speed_mps(cfg: Mapping[str, Any], mass_kg: float, wing_area_m2: Optional[float] = None) -> float:
-    """Stall-speed screen calibrated to the source model's reported stall speed.
+    """Return the screening stall speed.
 
-    The source model's wing lift is not exactly aircraft weight because the tail
-    carries trim load. Scaling from its reported 14.75 m/s preserves that trim
-    convention better than recomputing from W/(qSCLmax) with total weight.
+    v3 root/taper/NACA configs use the direct CLmax relation. Legacy configs
+    retain the baseline-calibrated relation so historical regression cases stay
+    reproducible.
     """
     ac = cfg["aircraft"]
     ref = cfg["reference_calibration"]
@@ -290,6 +296,9 @@ def stall_speed_mps(cfg: Mapping[str, Any], mass_kg: float, wing_area_m2: Option
     S = S_ref if wing_area_m2 is None else float(wing_area_m2)
     if S <= 0.0:
         raise ValueError("wing_area_m2 must be > 0")
+    if str(ac.get("stall_model", "calibrated_reference")) == "direct_CLmax":
+        rho=float(cfg["atmosphere"]["rho_kg_m3"]); clmax=float(ac["wing_CLmax"])
+        return sqrt(2.0*float(mass_kg)*G/max(rho*S*clmax,EPS))
     return float(ref["reference_wing_stall_speed_mps"]) * sqrt(
         (float(mass_kg) / float(ref["reference_mass_kg"])) * (S_ref / S)
     )
@@ -304,7 +313,11 @@ def minimum_wing_area_for_stall_margin(
     ratio = float(stall_ratio if stall_ratio is not None else ws.get("transition_stall_ratio", cfg["aircraft"]["minimum_transition_stall_ratio"]))
     target_vstall = float(speed_mps) / max(ratio, EPS)
     S_ref = float(ref.get("reference_wing_area_m2", cfg["aircraft"]["wing_area_m2"]))
-    S_req = S_ref * (float(mass_kg) / float(ref["reference_mass_kg"])) * (float(ref["reference_wing_stall_speed_mps"]) / max(target_vstall, EPS)) ** 2
+    if str(cfg["aircraft"].get("stall_model", "calibrated_reference")) == "direct_CLmax":
+        rho=float(cfg["atmosphere"]["rho_kg_m3"]); clmax=float(cfg["aircraft"]["wing_CLmax"])
+        S_req = 2.0*float(mass_kg)*G/max(rho*target_vstall*target_vstall*clmax,EPS)
+    else:
+        S_req = S_ref * (float(mass_kg) / float(ref["reference_mass_kg"])) * (float(ref["reference_wing_stall_speed_mps"]) / max(target_vstall, EPS)) ** 2
     b_ref = float(ref.get("reference_wing_span_m", cfg["aircraft"]["wing_span_m"]))
     AR_ref = b_ref ** 2 / S_ref
     b_req = sqrt(AR_ref * S_req)

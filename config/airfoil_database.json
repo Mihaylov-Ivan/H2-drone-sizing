@@ -1,0 +1,25 @@
+{
+  "NACA0012": {
+    "polar_file": "data/airfoils/NACA0012_Re200000_XFOIL.csv",
+    "reynolds_number": 200000,
+    "thickness_fraction": 0.12,
+    "status": "user_supplied_analysis_data",
+    "note": "Uses the user-supplied XFOIL polar table directly. Values outside the table alpha range are clamped, not extrapolated."
+  },
+  "NACA2412": {
+    "CLmax_screen": 1.35,
+    "alpha0_deg_screen": -2.0,
+    "Cm0_screen": -0.05,
+    "status": "engineering_assumption",
+    "note": "Generic conceptual-screen values only; replace with XFOIL/CFD/wind-tunnel data at the actual Reynolds number.",
+    "polar_file": null
+  },
+  "NACA4412": {
+    "CLmax_screen": 1.185,
+    "alpha0_deg_screen": -4.0,
+    "Cm0_screen": -0.09,
+    "status": "project_calibrated_placeholder",
+    "note": "Temporarily set equal to the current H2AIR CLmax=1.185 to preserve model continuity. Replace with Reynolds-specific XFOIL/CFD/test polar before design freeze.",
+    "polar_file": null
+  }
+}

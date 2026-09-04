@@ -10,6 +10,7 @@ from dataclasses import dataclass, asdict
 from math import asin, atan2, cos, degrees, pi, radians, sin, sqrt
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 import numpy as np
+from .airfoils import interpolate_polar
 from scipy.optimize import least_squares, lsq_linear
 
 G = 9.80665
@@ -156,11 +157,17 @@ class Model:
         alpha=atan2(w,max(abs(u),1e-6)); beta=asin(clamp(v/Va,-1,1)); qbar=.5*self.rho*Va*Va
         ad=self.cfg['aerodynamics']; da,de,dr=state.surfaces; p,q,r=state.omega_body
         ph=p*self.b/(2*Va); qh=q*self.c/(2*Va); rh=r*self.b/(2*Va)
-        CL=clamp(self.CLalpha*(alpha-self.alpha0),float(ad['CL_min']),float(ad['CL_max']))
-        CD=float(ad['CD0_folded'])+self.k*CL*CL+0.05*beta*beta
+        polar_point = interpolate_polar(ad['polar_rows'], alpha*180.0/pi) if ad.get('polar_rows') else None
+        if polar_point is not None:
+            CL=float(polar_point['CL'])
+            CD=float(polar_point['CD'])+self.k*CL*CL+0.05*beta*beta
+        else:
+            CL=clamp(self.CLalpha*(alpha-self.alpha0),float(ad['CL_min']),float(ad['CL_max']))
+            CD=float(ad['CD0_folded'])+self.k*CL*CL+0.05*beta*beta
         CY=float(ad['CY_beta'])*beta+float(ad['CY_p'])*ph+float(ad['CY_r'])*rh+float(ad['CY_dr'])*dr
         Cl=float(ad['Cl_beta'])*beta+float(ad['Cl_p'])*ph+float(ad['Cl_r'])*rh+float(ad['Cl_da'])*da+float(ad['Cl_dr'])*dr
-        Cm=float(ad['Cm0'])+self.Cma*alpha+float(ad['Cm_q'])*qh+float(ad['Cm_de'])*de
+        airfoil_cm=float(polar_point.get('CM',0.0)) if polar_point is not None else float(ad['Cm0'])
+        Cm=airfoil_cm+self.Cma*(alpha-self.alpha0)+float(ad['Cm_q'])*qh+float(ad['Cm_de'])*de
         Cn=float(ad['Cn_beta'])*beta+float(ad['Cn_p'])*ph+float(ad['Cn_r'])*rh+float(ad['Cn_da'])*da+float(ad['Cn_dr'])*dr
         L=qbar*self.S*CL; D=qbar*self.S*CD; Y=qbar*self.S*CY
         ca,sa=cos(alpha),sin(alpha)

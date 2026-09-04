@@ -99,11 +99,26 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     d.setdefault("hydrogen_cylinder_z_m", REF["hydrogen_cylinder_position_m"][2])
     d.setdefault("neutral_point_model", "calibrated_tail_volume")
 
-    S = float(d["wing_area_m2"]); b = float(d["wing_span_m"])
-    if S <= 0 or b <= 0:
-        raise ValueError("wing area/span must be positive")
-    mac = _MAC_SHAPE_FACTOR * S / b
-    d["wing_mac_m"] = mac
+    # v3 root/taper/span geometry derives planform values from the user-defined
+    # chords. Legacy v2 configs retain the calibrated MAC relation.
+    if str(d.get("surface_geometry_mode", "legacy_area_span")) == "root_taper_span":
+        b = float(d["main_wing_span_m"])
+        cr = float(d["main_wing_root_chord_m"]); lam = float(d["main_wing_taper_ratio"])
+        S = b * cr * (1.0 + lam) / 2.0
+        mac = (2.0/3.0) * cr * (1.0 + lam + lam*lam) / (1.0 + lam)
+        d["wing_span_m"] = b; d["wing_area_m2"] = S; d["wing_mac_m"] = mac
+        bh = float(d["horizontal_tail_span_m"]); chr_ = float(d["horizontal_tail_root_chord_m"]); lamh = float(d["horizontal_tail_taper_ratio"])
+        d["horizontal_tail_area_m2"] = bh * chr_ * (1.0 + lamh) / 2.0
+        d["horizontal_tail_mac_m"] = (2.0/3.0) * chr_ * (1.0 + lamh + lamh*lamh) / (1.0 + lamh)
+        hv = float(d["vertical_tail_height_m"]); cvr=float(d["vertical_tail_root_chord_m"]); lamv=float(d["vertical_tail_taper_ratio"])
+        d["vertical_tail_area_each_m2"] = hv*cvr*(1.0+lamv)/2.0
+        d["vertical_tail_area_total_m2"] = 2.0*d["vertical_tail_area_each_m2"]
+    else:
+        S = float(d["wing_area_m2"]); b = float(d["wing_span_m"])
+        if S <= 0 or b <= 0:
+            raise ValueError("wing area/span must be positive")
+        mac = _MAC_SHAPE_FACTOR * S / b
+        d["wing_mac_m"] = mac
     wing_ac = float(d["wing_ac_x_m"])
     Sh = float(d["horizontal_tail_area_m2"])
     xh = float(d["horizontal_tail_ac_x_m"])
@@ -124,6 +139,13 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "wing_ac_x_m": wing_ac,
         "reference_neutral_point_x_m": float(d["neutral_point_station_x_m"]),
     })
+    if str(d.get("surface_geometry_mode", "")) == "root_taper_span":
+        geom["horizontal_tail_span_m"] = float(d["horizontal_tail_span_m"])
+        geom["vertical_fin_height_m"] = float(d["vertical_tail_height_m"])
+        # Preserve the user's fixed fuselage/pod geometry. No component-fit driven pod sizing is performed.
+        if "fuselage_length_m" in d:
+            geom["central_pod_outer"]["center_m"] = [float(d["fuselage_length_m"])/2.0, 0.0, 0.0]
+            geom["central_pod_outer"]["dimensions_m"] = [float(d["fuselage_length_m"]), float(d["fuselage_max_diameter_m"]), float(d["fuselage_max_diameter_m"])]
 
     # Propagate to aero/transition/six-DOF records; pipeline will still refresh mass.
     ap = cfg["aero_propulsion"]["aircraft"]
@@ -142,6 +164,8 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "design_wing_span_m": b,
         "horizontal_tail_area_m2": Sh,
     })
+    cfg["structures"]["structure"]["design_wing_semispan_m"] = 0.5*b
+    cfg["structures"]["structure"]["wing_structure_station_x_m"] = wing_ac + _WING_STRUCTURE_X_OFFSET
 
     # Simple explicit geometric mass scaling for the pre-sized shell/secondary
     # structure.  Primary spar sizing is still calculated by structures.py.
@@ -166,9 +190,13 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         h["status"] = "engineering_assumption"
 
     # Tail spar span scales with sqrt(area) at constant tail AR for screening.
-    cfg["structures"]["structure"]["horizontal_tail_semispan_m"] = (
-        REF["horizontal_tail_semispan_m"] * sqrt(Sh / REF["horizontal_tail_area_m2"])
-    )
+    if str(d.get("surface_geometry_mode", "")) == "root_taper_span":
+        cfg["structures"]["structure"]["horizontal_tail_semispan_m"] = 0.5*float(d["horizontal_tail_span_m"])
+        cfg["structures"]["structure"]["vertical_tail_height_m"] = float(d["vertical_tail_height_m"])
+    else:
+        cfg["structures"]["structure"]["horizontal_tail_semispan_m"] = (
+            REF["horizontal_tail_semispan_m"] * sqrt(Sh / REF["horizontal_tail_area_m2"])
+        )
     cfg["structures"]["structure"]["tail_structure_station_x_m"] = xh
 
     # Energy-system packaging positions.
@@ -230,6 +258,7 @@ def design_overrides(cfg: Mapping[str, Any], values: Mapping[str, float]) -> Dic
             # New optimizer fields are allowed if resolver recognizes them.
             if k not in {
                 "wing_ac_x_m", "horizontal_tail_area_m2", "horizontal_tail_ac_x_m",
+                "main_wing_span_m", "horizontal_tail_span_m", "vertical_tail_height_m",
                 "lift_row_center_x_m", "battery_x_m", "battery_z_m", "fuel_cell_x_m",
                 "fuel_cell_z_m", "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",
             }:

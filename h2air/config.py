@@ -7,6 +7,7 @@ import json
 
 from .hybrid_power import BatteryConfig, EMSConfig, FuelCellConfig, HydrogenConfig, HybridPowerConfig, RequirementConfig
 from .design_coupling import resolve_design_couplings
+from .user_inputs import load_user_input_config
 
 T=TypeVar("T")
 
@@ -33,7 +34,12 @@ def load_hybrid_power_config(path: str|Path) -> HybridPowerConfig:
     return hybrid_config_from_mapping(json.loads(Path(path).read_text(encoding="utf-8")))
 
 def load_model_config(path: str|Path) -> Dict[str,Any]:
-    cfg=json.loads(Path(path).read_text(encoding="utf-8"))
+    path=Path(path)
+    raw=json.loads(path.read_text(encoding="utf-8"))
+    if raw.get("schema") in {"H2AIR-user-inputs-v3", "H2AIR-user-inputs-v4"}:
+        cfg=load_user_input_config(path)
+    else:
+        cfg=raw
     required={"model","design","power_system","geometry_mass","aero_propulsion","transition_mission","sixdof_control","structures"}
     missing=sorted(required-set(cfg))
     if missing: raise ValueError("Integrated config missing: "+", ".join(missing))

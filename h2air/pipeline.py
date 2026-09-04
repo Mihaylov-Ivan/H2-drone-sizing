@@ -9,6 +9,7 @@ from .design_coupling import resolve_design_couplings
 from .config import hybrid_config_from_mapping
 from .hybrid_power import HybridPowerSystem, reference_sources
 from .mass_properties import component_from_mapping, build_mass_geometry_result
+from .manufacturing_mass import apply_manufacturing_mass_model, apply_structural_mass_updates
 from .aero_propulsion import cruise_drag, lift_layout, lift_system_sizing, minimum_wing_area_for_stall_margin
 from .transition import simulate_forward_transition, simulate_reverse_transition
 from .mission import build_mission_profile
@@ -16,6 +17,7 @@ from .sixdof import Model, simulate_tracking, simulate_cruise_gust, summarize_sa
 from .control_gates import evaluate_case as evaluate_control_case
 from .structures import build_structural_result
 from .report import write_markdown_report
+from .cad_export import write_cad_exports
 
 G=9.80665
 
@@ -31,6 +33,10 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
         "wing_area_m2":float(d["wing_area_m2"]),"wing_span_m":float(d["wing_span_m"]),"wing_MAC_m":float(d["wing_mac_m"]),
         "wing_CLmax":float(d["wing_CLmax"]),"cruise_speed_mps":float(d["cruise_speed_mps"]),
     })
+    main_af=cfg.get("airfoil_model",{}).get("main_wing",{})
+    if main_af.get("polar_rows"):
+        a["aircraft"]["wing_polar_rows"] = main_af["polar_rows"]
+        a["aircraft"]["wing_polar_reynolds_number"] = main_af.get("reynolds_number")
     a["lift_system"]["supplier_conditional_hybrid_peak_W"]=float(cfg["power_system"]["requirements"]["supplier_conditional_hybrid_peak_W"])
     t["reference_case"].update({
         "mass_kg":mass,"wing_area_m2":float(d["wing_area_m2"]),"wing_span_m":float(d["wing_span_m"]),
@@ -69,13 +75,21 @@ def _components_with_power(cfg:Mapping[str,Any]):
         c=by["buffer_battery"]; c.mass_takeoff_kg=c.mass_end_kg=float(b["mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
     if "hydrogen_cylinder" in by and h.get("cylinder_mass_kg") is not None:
         c=by["hydrogen_cylinder"]; c.mass_takeoff_kg=c.mass_end_kg=float(h["cylinder_mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
+    comps, manufacturing_ledger = apply_manufacturing_mass_model(cfg, comps)
+    if isinstance(cfg, dict):
+        cfg.setdefault("_runtime", {})["manufacturing_mass_ledger"] = manufacturing_ledger
     return comps
 
 def _mass_result(cfg, comps):
     gm=cfg["geometry_mass"]["geometry_model"]
     return build_mass_geometry_result(components=comps,geometry=gm["geometry"],requirements=gm["requirements"],packaging=gm["packaging"],model_version="H2AIR-integrated-mass-properties")
 
-def _apply_structural_feedback(comps, fb):
+def _apply_structural_feedback(cfg, comps, structure):
+    # v3 detailed manufacturing ledger: structural-linear members scale with
+    # selected structural section area, while hardcoded masses stay locked.
+    if cfg.get("manufacturing_mass_model", {}).get("enabled", False):
+        return apply_structural_mass_updates(cfg, comps, structure)
+    fb=structure["mass_feedback"]
     out=deepcopy(comps); by={c.name:c for c in out}
     if "wing_structure" in by:
         by["wing_structure"].mass_takeoff_kg += float(fb["wing_spar_mass_delta_kg"]); by["wing_structure"].mass_end_kg=by["wing_structure"].mass_takeoff_kg
@@ -112,7 +126,7 @@ def _structural_closure(cfg, base_comps, *, max_iterations=8, mass_tol_kg=2e-4, 
         st["rotor_system"].update({"row_x_m":rows,"motor_y_m":y,"phase4_equal_share_design_thrust_N":lift15.design_thrust_per_motor_N,"candidate_motor_max_thrust_N":float(d["lift_motor_structural_limit_thrust_per_motor_N"])})
         f,r=_zero_pitch_pair(m.takeoff.total_mass_kg*G,rows[0],rows[1],m.takeoff.cg_m[0]); st["rotor_system"]["phase6_reference_hover_thrusts_N"]=[f,f,r,r]
         structure=build_structural_result(st)
-        nxt=_apply_structural_feedback(base_comps,structure["mass_feedback"]); mn=_mass_result(cfg,nxt)
+        nxt=_apply_structural_feedback(cfg,base_comps,structure); mn=_mass_result(cfg,nxt)
         history.append({"iteration":it,"input_mass_kg":m.takeoff.total_mass_kg,"output_mass_kg":mn.takeoff.total_mass_kg,"input_cg_x_m":m.takeoff.cg_m[0],"output_cg_x_m":mn.takeoff.cg_m[0],"mass_residual_kg":abs(mn.takeoff.total_mass_kg-m.takeoff.total_mass_kg),"cg_residual_m":abs(mn.takeoff.cg_m[0]-m.takeoff.cg_m[0])})
         comps=nxt
         if history[-1]["mass_residual_kg"]<=mass_tol_kg and history[-1]["cg_residual_m"]<=cg_tol_m: break
@@ -194,15 +208,48 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("15kg_zero_pitch_motor_thrust","PASS" if max(front_each,rear_each)<=float(d["lift_motor_available_thrust_per_motor_N"]) else "FAIL",f"Front/rear requirement {front_each:.1f}/{rear_each:.1f} N vs {float(d['lift_motor_available_thrust_per_motor_N']):.1f} N available screen.")
     gate("recommended_structure_screen","PASS" if all(g["status"]!="FAIL" for g in structure["gates"] if "current_" not in g["name"] and "legacy_" not in g["name"] and g["name"]!="mass_ceiling_after_partial_structural_feedback" and g["status"]!="NOT_EVALUATED") else "FAIL","Recommended structural member screens. The legacy partial-feedback mass gate is excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.")
     gate("motor_mount","NOT_EVALUATED","Controlled mount CAD, fasteners and material allowables are still required.")
-    gate("selected_battery_and_cylinder_mass","NOT_EVALUATED","Battery and certified cylinder masses remain placeholders where supplier values are absent.")
+    selected_battery=cfg.get("hardware_selection_result",{}).get("selected_battery",{})
+    battery_known = selected_battery.get("mass_kg") is not None and all(selected_battery.get(k) is not None for k in ("length_m","width_m","height_m"))
+    gate("selected_battery_database_record","PASS" if battery_known else "NOT_EVALUATED",
+         "Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation." if battery_known else "Selected battery mass/envelope are incomplete.")
+    cylinder_known = cfg["power_system"]["hydrogen"].get("cylinder_mass_kg") is not None
+    gate("certified_hydrogen_cylinder_mass","PASS" if cylinder_known else "NOT_EVALUATED",
+         "Certified cylinder mass is present." if cylinder_known else "Selected certified 3.0 L / 350 bar cylinder mass remains open and is not released.")
     hard=[g for g in gates if g["status"]=="FAIL"]
     status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","current_longitudinal_stability","15kg_zero_pitch_motor_thrust","15kg_stall_margin"} for g in hard) else "SCREENING_FAIL")
 
-    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"gates":gates,"fidelity_note":"Integrated-v2 closure/optimization is screening fidelity. Generic prop maps, aerodynamic/control derivatives, CFRP equivalent properties and placeholder battery/cylinder hardware still require supplier/CFD/FEA/test evidence.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
+    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
     (out/"model_results.json").write_text(json.dumps(result,indent=2,default=str)+"\n",encoding="utf-8");write_markdown_report(out/"SUMMARY.md",result)
     rows=[]
     for c in comps:rows.append({"name":c.name,"group":c.group,"mass_takeoff_kg":c.mass_takeoff_kg,"mass_end_kg":c.mass_end_kg,"x_m":c.position_m[0],"y_m":c.position_m[1],"z_m":c.position_m[2],"status":c.status,"source":c.source})
     _csv(out/"component_ledger.csv",rows);_csv(out/"mission_profile.csv",[{"time_s":p.time_s,"bus_power_W":p.bus_power_W,"stage":p.stage} for p in mission["profile"]]);_csv(out/"structure_load_cases.csv",structure["load_cases"]);_csv(out/"closure_history.csv",closure_history)
+    if cfg.get("_runtime",{}).get("manufacturing_mass_ledger"):
+        _csv(out/"manufacturing_mass_ledger.csv",cfg["_runtime"]["manufacturing_mass_ledger"])
+    # Derived/internal configuration is emitted for audit, not intended for hand editing.
+    resolved={k:v for k,v in cfg.items() if k!="_runtime"}
+    (out/"resolved_configuration.json").write_text(json.dumps(resolved,indent=2,default=str)+"\n",encoding="utf-8")
+    if cfg.get("user_input_snapshot") is not None:
+        from .user_inputs import input_classification
+        (out/"INPUT_CLASSIFICATION.json").write_text(json.dumps(input_classification(cfg),indent=2)+"\n",encoding="utf-8")
+        auto_values={
+            "geometry": cfg.get("derived_geometry_v3",{}),
+            "closed_mtow_kg": mass_final.takeoff.total_mass_kg,
+            "closed_cg_m": list(mass_final.takeoff.cg_m),
+            "neutral_point_x_m": float(d["neutral_point_station_x_m"]),
+            "static_margin": current_model.static_margin,
+            "cruise_bus_power_W": drag.total_cruise_bus_power_W,
+            "mission_energy_Wh": mission["total_profile_energy_Wh"],
+            "h2_used_kg": ems.summary.get("h2_used_kg"),
+            "final_battery_soc": ems.summary.get("final_battery_soc"),
+            "wing_spar_od_mm": structure["summary"]["recommended_wing_spar_od_mm"],
+            "boom_od_mm": structure["summary"]["recommended_boom_od_mm"],
+            "front_motor_15kg_N": front_each,
+            "rear_motor_15kg_N": rear_each,
+        }
+        (out/"AUTO_CALCULATED_VALUES.json").write_text(json.dumps(auto_values,indent=2)+"\n",encoding="utf-8")
+    if cfg.get("hardware_selection_result") is not None:
+        (out/"HARDWARE_SELECTION.json").write_text(json.dumps(cfg["hardware_selection_result"],indent=2,default=str)+"\n",encoding="utf-8")
+    write_cad_exports(out, cfg, structure)
     if write_histories:
         _csv(out/"transition_forward.csv",[x.to_dict() for x in mission["forward_transition"].samples]);_csv(out/"transition_reverse.csv",[x.to_dict() for x in mission["reverse_transition"].samples])
         if ems.steps:_csv(out/"hybrid_power_history.csv",[x.__dict__ for x in ems.steps])

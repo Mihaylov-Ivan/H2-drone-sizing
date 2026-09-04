@@ -2,12 +2,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Dict, Mapping, Sequence
 import csv, json
-from .optimization import screening_evaluate, DEFAULT_SPACE
+from .optimization import screening_evaluate, default_space_for_config
 
 OUTPUTS=("post_structure_mass_kg","static_margin","cruise_bus_power_W","mission_energy_Wh","max_motor_15kg_N")
 
 def local_sensitivity(cfg:Mapping[str,Any],design_values:Mapping[str,float],*,fraction_of_range:float=0.03,space:Mapping[str,Sequence[float]]|None=None)->Dict[str,Any]:
-    sp=dict(space or DEFAULT_SPACE); base=screening_evaluate(cfg,design_values,index=0); rows=[]
+    sp=dict(space or default_space_for_config(cfg)); base=screening_evaluate(cfg,design_values,index=0); rows=[]
     for name,(lo,hi) in sp.items():
         x=float(design_values[name]); dx=fraction_of_range*(float(hi)-float(lo));
         xm=max(float(lo),x-dx); xp=min(float(hi),x+dx)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 import argparse, json
+from copy import deepcopy
 from pathlib import Path
 from h2air.config import load_model_config
 from h2air.pipeline import run_model
@@ -31,16 +32,44 @@ def _run_design_study(root:Path,args,base_cfg):
         print(f"Running multidisciplinary screening search ({args.samples} + local refinement candidates)...")
         opt=optimize_design(base_cfg,sample_count=args.samples,local_refinement_count=max(8,args.samples//4),seed=args.seed)
         write_optimization_outputs(opt,study/"optimization")
-    nominal_cfg=optimized_config(base_cfg,opt)
-    (study/"nominal_optimized_config.json").write_text(json.dumps(nominal_cfg,indent=2)+"\n",encoding="utf-8")
     print(f"Screening-feasible candidates: {opt['feasible_count']} / {opt['sample_count']}")
 
-    print("Running full EMS + 6-DOF + structural verification on the nominal optimum...")
-    nominal_verified=run_model(nominal_cfg,study/"nominal_verified",write_histories=not args.no_histories)
+    # The screening objective deliberately omits the expensive nonlinear 6-DOF.
+    # Verify the best few screening-feasible candidates and keep the lightest/
+    # lowest-score one that passes the full integrated model. This prevents a
+    # screening optimum with marginal transition tracking from being accepted.
+    feasible_ranked=[c for c in opt["ranked"] if c.get("feasible")][:5]
+    if not feasible_ranked:
+        feasible_ranked=[opt["best"]]
+    nominal_verified=None; nominal_cfg=None; nominal_choice=None
+    verify_summaries=[]
+    for j,cand in enumerate(feasible_ranked, start=1):
+        c_cfg=design_overrides(base_cfg,cand["values"])
+        c_out=study/f"nominal_candidate_{j}_verified"
+        print(f"Full verification of screening candidate {j}/{len(feasible_ranked)}...")
+        c_res=run_model(c_cfg,c_out,write_histories=False)
+        verify_summaries.append({"rank":j,"screening_score":cand["score"],"values":cand["values"],"verified_summary":c_res["summary"]})
+        if c_res["summary"]["design_status"]=="SCREENING_PASS":
+            nominal_verified=c_res; nominal_cfg=c_cfg; nominal_choice=cand
+            break
+    if nominal_verified is None:
+        nominal_choice=feasible_ranked[0]
+        nominal_cfg=design_overrides(base_cfg,nominal_choice["values"])
+        nominal_verified=run_model(nominal_cfg,study/"nominal_verified",write_histories=not args.no_histories)
+    else:
+        # Re-run the selected nominal only when histories are requested.
+        if not args.no_histories:
+            nominal_verified=run_model(nominal_cfg,study/"nominal_verified",write_histories=True)
+        else:
+            # Keep a stable conventional output directory for downstream users.
+            nominal_verified=run_model(nominal_cfg,study/"nominal_verified",write_histories=False)
+    (study/"nominal_candidate_verification.json").write_text(json.dumps(verify_summaries,indent=2)+"\n",encoding="utf-8")
+    (study/"nominal_optimized_config.json").write_text(json.dumps(nominal_cfg,indent=2)+"\n",encoding="utf-8")
     print(f"Nominal verified status: {nominal_verified['summary']['design_status']}")
 
     print("Deriving margin-biased robust candidate...")
-    margin=derive_margin_variant(base_cfg,opt)
+    verified_opt=deepcopy(opt); verified_opt["best"]=nominal_choice
+    margin=derive_margin_variant(base_cfg,verified_opt)
     (study/"robust_derivation.json").write_text(json.dumps(margin,indent=2)+"\n",encoding="utf-8")
     robust_cfg=design_overrides(base_cfg,margin["best"]["values"])
     (study/"recommended_robust_config.json").write_text(json.dumps(robust_cfg,indent=2)+"\n",encoding="utf-8")
@@ -50,7 +79,7 @@ def _run_design_study(root:Path,args,base_cfg):
     print(f"Robust verified status: {robust_verified['summary']['design_status']}")
 
     print(f"Running uncertainty propagation on nominal and robust candidates ({args.uncertainty_samples} samples each)...")
-    nominal_unc=run_uncertainty(base_cfg,opt["best"]["values"],samples=args.uncertainty_samples,seed=args.seed+35)
+    nominal_unc=run_uncertainty(base_cfg,nominal_choice["values"],samples=args.uncertainty_samples,seed=args.seed+35)
     robust_unc=run_uncertainty(base_cfg,margin["best"]["values"],samples=args.uncertainty_samples,seed=args.seed+35)
     write_uncertainty_outputs(nominal_unc,study/"uncertainty_nominal")
     write_uncertainty_outputs(robust_unc,study/"uncertainty_recommended")
@@ -66,7 +95,7 @@ def _run_design_study(root:Path,args,base_cfg):
     choose_robust=selected_name=="robust_margin_biased"
     selected_cfg=robust_cfg if choose_robust else nominal_cfg
     selected_verified=robust_verified if choose_robust else nominal_verified
-    selected_values=margin["best"]["values"] if choose_robust else opt["best"]["values"]
+    selected_values=margin["best"]["values"] if choose_robust else nominal_choice["values"]
     selected_unc=robust_unc if choose_robust else nominal_unc
 
     sens=local_sensitivity(base_cfg,selected_values)
@@ -83,7 +112,8 @@ def _run_design_study(root:Path,args,base_cfg):
             "nominal_uncertainty_pass_probability":nominal_prob,
             "robust_uncertainty_pass_probability":robust_prob,
         },
-        "optimization_best":opt["best"],
+        "optimization_best_screening":opt["best"],
+        "nominal_selected_after_full_verification":nominal_choice,
         "robust_derivation_best":margin["best"],
         "nominal_verified_summary":nominal_verified["summary"],
         "robust_verified_summary":robust_verified["summary"],
@@ -100,14 +130,14 @@ def _run_design_study(root:Path,args,base_cfg):
 def main():
     root=Path(__file__).resolve().parent
     ap=argparse.ArgumentParser(description="Run the integrated H2AIR UAV model")
-    ap.add_argument("--config",type=Path,default=root/"config"/"baseline.json")
+    ap.add_argument("--config",type=Path,default=root/"config"/"user_inputs.json")
     ap.add_argument("--output",type=Path,default=root/"outputs"/"latest")
     ap.add_argument("--no-histories",action="store_true",help="Skip large time-history CSVs")
     ap.add_argument("--design-study",action="store_true",help="Run MDO search, full verification, uncertainty, sensitivity and flight-envelope study")
     ap.add_argument("--samples",type=int,default=48,help="Latin-hypercube screening samples for --design-study")
     ap.add_argument("--uncertainty-samples",type=int,default=32,help="Uncertainty samples for --design-study")
     ap.add_argument("--seed",type=int,default=42)
-    ap.add_argument("--reuse-reference-search",action="store_true",help="Reuse the frozen deterministic 60-candidate optimization result shipped with the package")
+    ap.add_argument("--reuse-reference-search",action="store_true",help="Reuse the frozen deterministic reference optimization result shipped with the package")
     args=ap.parse_args()
     cfg=load_model_config(args.config)
     if args.design_study:

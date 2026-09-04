@@ -7,11 +7,14 @@ from h2air.config import load_model_config
 from h2air.pipeline import run_model
 
 @pytest.fixture(scope='session')
-def model_config():return load_model_config(ROOT/'config/baseline.json')
+def model_config():return load_model_config(ROOT/'config/user_inputs.json')
+
+@pytest.fixture(scope='session')
+def legacy_config():return load_model_config(ROOT/'config/baseline.json')
 
 @pytest.fixture(scope='session')
 def integrated_result(tmp_path_factory,model_config):
-    out=tmp_path_factory.mktemp('baseline_integrated_run');return run_model(model_config,out,write_histories=False),out
+    out=tmp_path_factory.mktemp('v3_integrated_run');return run_model(model_config,out,write_histories=False),out
 
 @pytest.fixture(scope='session')
-def optimized_config():return load_model_config(ROOT/'config/optimized_screening_case.json')
+def optimized_config():return load_model_config(ROOT/'config/user_inputs.json')
