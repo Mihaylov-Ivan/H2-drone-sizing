@@ -114,6 +114,9 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
         ('fuel_cell_system', 'fuel_cell'),
         ('fuel_cell_control_box', 'fuel_cell_control_box'),
         ('hydrogen_cylinder', 'hydrogen_cylinder'),
+        ('autopilot', 'cube_orange'),
+        ('power_module', 'pdb'),
+        ('power_module_2', 'pdb2'),
     ]:
         c = _find_comp(cfg, name)
         if not c:
@@ -122,8 +125,8 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
         dims = dict(c.get('dimensions_m', {}) or {})
         out += [
             _param(f'{prefix}_x', _mm(pos[0])),
-            _param(f'{prefix}_y', _mm(pos[1])),
-            _param(f'{prefix}_z', _mm(pos[2])),
+            _param(f'{prefix}_y', _mm(pos[1] if len(pos) > 1 else 0.0)),
+            _param(f'{prefix}_z', _mm(pos[2] if len(pos) > 2 else 0.0)),
         ]
         if 'diameter' in dims and 'length' in dims:
             out += [

@@ -450,7 +450,17 @@ def design_overrides(cfg: Mapping[str, Any], values: Mapping[str, float]) -> Dic
                 "main_wing_span_m", "horizontal_tail_span_m", "vertical_tail_height_m",
                 "lift_row_center_x_m", "battery_x_m", "battery_z_m", "fuel_cell_x_m",
                 "fuel_cell_z_m", "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",
+                "energy_bay_order_code",
             }:
                 raise KeyError(f"Unknown design override: {k}")
         out["design"][k] = float(v)
+    # Discrete energy-bay order (0=FC forward, 1=H2 forward) for packaging + sweeps.
+    if "energy_bay_order_code" in values or "energy_bay_order_code" in out["design"]:
+        code = float(out["design"].get("energy_bay_order_code", 0.0))
+        order = "hydrogen_forward" if code >= 0.5 else "fuel_cell_forward"
+        out["design"]["energy_bay_order"] = order
+        out["design"]["energy_bay_order_code"] = 1.0 if order == "hydrogen_forward" else 0.0
+        pl = out.setdefault("packaging_layout", {})
+        if isinstance(pl, dict):
+            pl["energy_bay_order"] = order
     return resolve_design_couplings(out)

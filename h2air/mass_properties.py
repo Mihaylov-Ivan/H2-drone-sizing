@@ -324,9 +324,17 @@ def _aabb_overlap(a, b, clearance_m: float = 0.0) -> Tuple[bool, Tuple[float, fl
     for (alo, ahi), (blo, bhi) in zip(a, b):
         overlap = min(ahi, bhi) - max(alo, blo)
         overlaps.append(overlap)
-    # Positive clearance requirement means two items need a gap; inflate overlap criterion.
-    collision = all(o > -clearance_m + EPS for o in overlaps)
-    return collision, (float(overlaps[0]), float(overlaps[1]), float(overlaps[2]))
+    # Hard volumetric intersection (positive overlap on all axes).
+    if all(o > EPS for o in overlaps):
+        return True, (float(overlaps[0]), float(overlaps[1]), float(overlaps[2]))
+    # Clearance gaps: ignore exact flush-face mates (overlap ~ 0 on one axis) so
+    # nose-break packaging (payload|FC, Cube|FC) can share a face.
+    if clearance_m > 0.0:
+        close = all(o > -float(clearance_m) + EPS for o in overlaps)
+        flush_axes = sum(1 for o in overlaps if abs(o) <= EPS)
+        if close and flush_axes == 0:
+            return True, (float(overlaps[0]), float(overlaps[1]), float(overlaps[2]))
+    return False, (float(overlaps[0]), float(overlaps[1]), float(overlaps[2]))
 
 
 def _max_yz_radius_from_axis(

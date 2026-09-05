@@ -161,26 +161,49 @@ def write_markdown_report(
         f"longerons **top/bottom** (wing uses top boss only)",
         "",
         "### Energy / avionics packaging (stations)",
+        f"- Energy bay order: **{d.get('energy_bay_order', '—')}**"
+        + (
+            f" (mode {d.get('energy_bay_order_mode', '—')})"
+            if d.get("energy_bay_order_mode") is not None else ""
+        ),
         f"- Fuel cell: **x = {_f(d.get('fuel_cell_x_m'), 4)} m**, z = **{_f(d.get('fuel_cell_z_m'), 4)} m**"
         + (
             f" ({_f(d.get('fuel_cell_stack_mass_kg'), 3)} kg)"
             if d.get("fuel_cell_stack_mass_kg") is not None else ""
         ),
         (
-            f"- FC control box: **x = {_f(d.get('fuel_cell_control_box_x_m'), 4)} m**, "
-            f"z = **{_f(d.get('fuel_cell_control_box_z_m'), 4)} m**"
+            f"- FC control box ({d.get('packaging_control_box_site', '—')}): "
+            f"**x,y,z = ({_f(d.get('fuel_cell_control_box_x_m'), 4)}, "
+            f"{_f(d.get('fuel_cell_control_box_y_m', 0), 4)}, "
+            f"{_f(d.get('fuel_cell_control_box_z_m'), 4)}) m**"
             + (
                 f" ({_f(d.get('fuel_cell_control_box_mass_kg'), 3)} kg)"
                 if d.get("fuel_cell_control_box_mass_kg") is not None else ""
             )
             if d.get("fuel_cell_control_box_x_m") is not None else ""
         ),
-        f"- Buffer battery: **x = {_f(d.get('battery_x_m'), 4)} m**, z = **{_f(d.get('battery_z_m'), 4)} m**",
+        (
+            f"- Buffer battery ({d.get('packaging_battery_site', '—')}): "
+            f"**x,y,z = ({_f(d.get('battery_x_m'), 4)}, "
+            f"{_f(d.get('battery_y_m', 0), 4)}, "
+            f"{_f(d.get('battery_z_m'), 4)}) m**"
+        ),
         f"- H2 cylinder (+ stored H2): **x = {_f(d.get('hydrogen_cylinder_x_m'), 4)} m**, z = **{_f(d.get('hydrogen_cylinder_z_m'), 4)} m**",
         (
-            f"- Cube Orange / PDB: **x,z = ({_f(d.get('cube_orange_x_m'), 4)}, {_f(d.get('cube_orange_z_m'), 4)}) / "
-            f"({_f(d.get('pdb_x_m'), 4)}, {_f(d.get('pdb_z_m'), 4)}) m**"
+            f"- Payload / Cube Orange: **x,z = ({_f(d.get('payload_x_m'), 4)}, {_f(d.get('payload_z_m'), 4)}) / "
+            f"({_f(d.get('cube_orange_x_m'), 4)}, {_f(d.get('cube_orange_z_m'), 4)}) m** "
+            f"(nose aft flush x={_f(d.get('nose_section_end_x_m'), 4)} m)"
             if d.get("cube_orange_x_m") is not None
+            else ""
+        ),
+        (
+            f"- PDBs: **({_f(d.get('pdb_x_m'), 4)}, {_f(d.get('pdb_y_m', 0), 4)}, {_f(d.get('pdb_z_m'), 4)})**"
+            + (
+                f" and **({_f(d.get('pdb2_x_m'), 4)}, {_f(d.get('pdb2_y_m', 0), 4)}, {_f(d.get('pdb2_z_m'), 4)})** m"
+                if d.get("pdb2_x_m") is not None
+                else " m"
+            )
+            if d.get("pdb_x_m") is not None
             else ""
         ),
         f"- Fuselage wall keepout: **{_f(1000 * float(pkg_env.get('wall_clearance_m') or 0), 1)} mm** "

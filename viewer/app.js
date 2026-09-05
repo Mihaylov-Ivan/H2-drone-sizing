@@ -14,6 +14,8 @@ const COLORS = {
   fuelCellControl: 0x8fbc6b,
   hydrogen: 0x5b8def,
   payload: 0xc27a6a,
+  cube: 0xb07cc6,
+  pdb: 0x6e7f91,
 };
 
 /** @type {Record<string, number|string>} */
@@ -512,6 +514,35 @@ function internalPackMeshes() {
       mm('hydrogen_cylinder_length'),
       mm('hydrogen_cylinder_diameter'),
       COLORS.hydrogen,
+    );
+  }
+
+  // Cube Orange — over payload in nose
+  if (P.cube_orange_length != null) {
+    addBoxAt(
+      g,
+      mm('cube_orange_x'),
+      mm('cube_orange_y'),
+      mm('cube_orange_z'),
+      mm('cube_orange_length'),
+      mm('cube_orange_width'),
+      mm('cube_orange_height'),
+      COLORS.cube,
+    );
+  }
+
+  // Dual PDBs on H₂ cylinder top
+  for (const prefix of ['pdb', 'pdb2']) {
+    if (P[`${prefix}_length`] == null) continue;
+    addBoxAt(
+      g,
+      mm(`${prefix}_x`),
+      mm(`${prefix}_y`),
+      mm(`${prefix}_z`),
+      mm(`${prefix}_length`),
+      mm(`${prefix}_width`),
+      mm(`${prefix}_height`),
+      COLORS.pdb,
     );
   }
 

@@ -1,0 +1,1 @@
+- auto set of top cutout sections of the fuselage over specific components - fus nose and tail do not have cutouts, but the center sections have a specifc sectin cutout (given as % of the diameter)

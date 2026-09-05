@@ -26,7 +26,7 @@
     <ParamWithValue>
       <name>fuselage_nose_diameter</name>
       <typeCode>mm</typeCode>
-      <value>250.539 mm</value>
+      <value>220.478 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -54,7 +54,7 @@
     <ParamWithValue>
       <name>fuselage_center_a_diameter</name>
       <typeCode>mm</typeCode>
-      <value>265.200 mm</value>
+      <value>245.000 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -82,7 +82,7 @@
     <ParamWithValue>
       <name>fuselage_center_b_diameter</name>
       <typeCode>mm</typeCode>
-      <value>255.897 mm</value>
+      <value>238.381 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -110,7 +110,7 @@
     <ParamWithValue>
       <name>fuselage_tail_diameter</name>
       <typeCode>mm</typeCode>
-      <value>255.897 mm</value>
+      <value>238.381 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -138,7 +138,7 @@
     <ParamWithValue>
       <name>fuselage_max_diameter</name>
       <typeCode>mm</typeCode>
-      <value>265.200 mm</value>
+      <value>245.000 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -194,7 +194,7 @@
     <ParamWithValue>
       <name>wing_z</name>
       <typeCode>mm</typeCode>
-      <value>115.455 mm</value>
+      <value>105.355 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -299,21 +299,21 @@
     <ParamWithValue>
       <name>fuselage_longeron_top_z</name>
       <typeCode>mm</typeCode>
-      <value>129.350 mm</value>
+      <value>119.250 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>fuselage_longeron_bottom_z</name>
       <typeCode>mm</typeCode>
-      <value>-129.350 mm</value>
+      <value>-119.250 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>fuselage_top_z</name>
       <typeCode>mm</typeCode>
-      <value>132.600 mm</value>
+      <value>122.500 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -376,7 +376,7 @@
     <ParamWithValue>
       <name>horizontal_tail_z</name>
       <typeCode>mm</typeCode>
-      <value>115.455 mm</value>
+      <value>105.355 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -530,28 +530,28 @@
     <ParamWithValue>
       <name>boom_left_y</name>
       <typeCode>mm</typeCode>
-      <value>-432.000 mm</value>
+      <value>-421.900 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>boom_right_y</name>
       <typeCode>mm</typeCode>
-      <value>432.000 mm</value>
+      <value>421.900 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>boom_spacing</name>
       <typeCode>mm</typeCode>
-      <value>864.000 mm</value>
+      <value>843.800 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>boom_z</name>
       <typeCode>mm</typeCode>
-      <value>115.455 mm</value>
+      <value>105.355 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -586,14 +586,14 @@
     <ParamWithValue>
       <name>lift_motor_y_abs</name>
       <typeCode>mm</typeCode>
-      <value>432.000 mm</value>
+      <value>421.900 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>lift_motor_z</name>
       <typeCode>mm</typeCode>
-      <value>146.480 mm</value>
+      <value>136.380 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -705,7 +705,7 @@
     <ParamWithValue>
       <name>payload_z</name>
       <typeCode>mm</typeCode>
-      <value>53.200 mm</value>
+      <value>-59.500 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -733,7 +733,7 @@
     <ParamWithValue>
       <name>battery_x</name>
       <typeCode>mm</typeCode>
-      <value>236.000 mm</value>
+      <value>507.600 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -747,7 +747,7 @@
     <ParamWithValue>
       <name>battery_z</name>
       <typeCode>mm</typeCode>
-      <value>38.700 mm</value>
+      <value>49.000 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -775,7 +775,7 @@
     <ParamWithValue>
       <name>fuel_cell_x</name>
       <typeCode>mm</typeCode>
-      <value>202.250 mm</value>
+      <value>255.250 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -789,7 +789,7 @@
     <ParamWithValue>
       <name>fuel_cell_z</name>
       <typeCode>mm</typeCode>
-      <value>-49.700 mm</value>
+      <value>-39.600 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -817,7 +817,7 @@
     <ParamWithValue>
       <name>fuel_cell_control_box_x</name>
       <typeCode>mm</typeCode>
-      <value>651.100 mm</value>
+      <value>255.250 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -831,7 +831,7 @@
     <ParamWithValue>
       <name>fuel_cell_control_box_z</name>
       <typeCode>mm</typeCode>
-      <value>35.975 mm</value>
+      <value>45.875 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -873,7 +873,7 @@
     <ParamWithValue>
       <name>hydrogen_cylinder_z</name>
       <typeCode>mm</typeCode>
-      <value>-49.600 mm</value>
+      <value>-39.500 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -888,6 +888,132 @@
       <name>hydrogen_cylinder_diameter</name>
       <typeCode>mm</typeCode>
       <value>120.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cube_orange_x</name>
+      <typeCode>mm</typeCode>
+      <value>92.750 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cube_orange_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cube_orange_z</name>
+      <typeCode>mm</typeCode>
+      <value>-1.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cube_orange_length</name>
+      <typeCode>mm</typeCode>
+      <value>94.500 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cube_orange_width</name>
+      <typeCode>mm</typeCode>
+      <value>44.300 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>cube_orange_height</name>
+      <typeCode>mm</typeCode>
+      <value>31.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb_x</name>
+      <typeCode>mm</typeCode>
+      <value>651.100 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb_y</name>
+      <typeCode>mm</typeCode>
+      <value>35.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb_z</name>
+      <typeCode>mm</typeCode>
+      <value>52.250 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb_length</name>
+      <typeCode>mm</typeCode>
+      <value>80.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb_width</name>
+      <typeCode>mm</typeCode>
+      <value>60.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb_height</name>
+      <typeCode>mm</typeCode>
+      <value>23.500 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb2_x</name>
+      <typeCode>mm</typeCode>
+      <value>651.100 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb2_y</name>
+      <typeCode>mm</typeCode>
+      <value>-35.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb2_z</name>
+      <typeCode>mm</typeCode>
+      <value>52.250 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb2_length</name>
+      <typeCode>mm</typeCode>
+      <value>80.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb2_width</name>
+      <typeCode>mm</typeCode>
+      <value>60.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>pdb2_height</name>
+      <typeCode>mm</typeCode>
+      <value>23.500 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>

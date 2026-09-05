@@ -74,6 +74,10 @@ def default_space_for_config(cfg: Mapping[str, Any]) -> Dict[str, Tuple[float,fl
             "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",
         ):
             space.pop(k, None)
+        # Discrete bay-order sweep: 0 = fuel_cell_forward, 1 = hydrogen_forward.
+        pl = cfg.get("packaging_layout") or {}
+        if str(pl.get("energy_bay_order_mode", d.get("energy_bay_order_mode", "hardcoded"))).lower() == "auto":
+            space["energy_bay_order_code"] = (0.0, 1.0)
     if str(d.get("main_wing_span_mode","auto")).lower()=="auto":
         space["main_wing_span_m"] = tuple(float(x) for x in d["main_wing_span_bounds_m"])
     if str(d.get("horizontal_tail_span_mode","auto")).lower()=="auto":

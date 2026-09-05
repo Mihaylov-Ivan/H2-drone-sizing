@@ -248,6 +248,20 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     # -------- Rule-based packaging layout (clearances + PDB / Cube Orange) --------
     if u.get("packaging_layout"):
         cfg["packaging_layout"] = deepcopy(u["packaging_layout"])
+        pl = cfg["packaging_layout"]
+        order = str(pl.get("energy_bay_order", "fuel_cell_forward")).lower().strip()
+        if order not in {"fuel_cell_forward", "hydrogen_forward"}:
+            raise ValueError(
+                "packaging_layout.energy_bay_order must be 'fuel_cell_forward' or 'hydrogen_forward'"
+            )
+        pl["energy_bay_order"] = order
+        mode = str(pl.get("energy_bay_order_mode", "hardcoded")).lower().strip()
+        if mode not in {"hardcoded", "auto"}:
+            raise ValueError("packaging_layout.energy_bay_order_mode must be 'hardcoded' or 'auto'")
+        pl["energy_bay_order_mode"] = mode
+        d["energy_bay_order"] = order
+        d["energy_bay_order_mode"] = mode
+        d["energy_bay_order_code"] = 0.0 if order == "fuel_cell_forward" else 1.0
 
     # -------- Selected energy-system hardware --------
     hw = u.get("hardware", {})
@@ -356,6 +370,12 @@ def user_inputs_from_design_values(
         if key in vals:
             pos[key] = _round(vals[key])
 
+    if "energy_bay_order_code" in vals:
+        pl = u.setdefault("packaging_layout", {})
+        order = "hydrogen_forward" if float(vals["energy_bay_order_code"]) >= 0.5 else "fuel_cell_forward"
+        pl["energy_bay_order"] = order
+        pl["energy_bay_order_mode"] = "hardcoded"
+
     if notes is not None:
         u["notes"] = str(notes)
     elif not str(u.get("notes", "")).strip():
@@ -378,6 +398,7 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "user_editable_groups": [
             "mission", "fuselage", "lifting_surfaces", "propulsion",
             "component_positions", "hardware", "hardware_selection", "manufacturing_mass_model", "cad_export", "optimizer",
+            "packaging_layout",
         ],
         "auto_calculated_examples": [
             "fuselage total length from section lengths",
