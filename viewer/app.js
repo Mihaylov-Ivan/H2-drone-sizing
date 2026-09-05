@@ -112,10 +112,9 @@ function makeMaterial(color, opts = {}) {
 }
 
 /**
- * Single closed surface-of-revolution for the central pod.
- * Section diameters from CAD are lofted; named nose/tail sections get
- * elliptical fairings even when the CAD diameter is constant (this design
- * stores mass-section max diameters, not a full body of revolution).
+ * Central pod loft.
+ * square_filleted (default): midbody is a rounded square; nose/tail morph from
+ * that square base to a circular tip. circular: legacy surface of revolution.
  */
 function fuselageMesh() {
   const sections = ['nose', 'center_a', 'center_b', 'tail']
@@ -135,10 +134,18 @@ function fuselageMesh() {
   const x1 = sections[sections.length - 1].end;
   const length = x1 - x0;
   const maxR = Math.max(...sections.map((s) => s.dia / 2));
+  const cross = String(str('fuselage_cross_section', 'rectangular_filleted')).toLowerCase();
+  const halfW0 = 0.5 * mm('fuselage_width', mm('fuselage_max_diameter', 180));
+  const halfH0 = 0.5 * mm('fuselage_height', mm('fuselage_max_diameter', 180));
+  // CAD stores fillet in mm; mm() converts to metres.
+  const filletM = Math.max(
+    0,
+    mm('fuselage_fillet_radius', Math.min(20, 0.35 * Math.min(halfW0, halfH0) * 1000)),
+  );
+  const useRect = cross !== 'circular';
+  const forceSquare = cross === 'square_filleted';
 
-  // Sample radius along fuselage centreline (piecewise + fairings).
-  function radiusAt(x) {
-    // Find owning section
+  function halfAt(x) {
     let sec = sections[sections.length - 1];
     for (const s of sections) {
       if (x <= s.end + 1e-9) {
@@ -147,33 +154,88 @@ function fuselageMesh() {
       }
     }
     const R = sec.dia / 2;
-    const u = (x - sec.start) / Math.max(sec.end - sec.start, 1e-9); // 0..1 in section
-
+    const u = (x - sec.start) / Math.max(sec.end - sec.start, 1e-9);
+    // Scale factor for nose/tail taper (1 at full section, 0 at tip).
+    let scale = 1;
     if (sec.name === 'nose') {
-      // Prolate half-ellipse from tip (r=0) to section max radius.
       const t = Math.min(Math.max(u, 0), 1);
-      return R * Math.sqrt(Math.max(0, 1 - (1 - t) * (1 - t)));
-    }
-    if (sec.name === 'tail') {
-      // Aft boat-tail: ellipse from full radius down to ~18% tip (central pod, not a single boom).
+      scale = Math.sqrt(Math.max(0, 1 - (1 - t) * (1 - t)));
+    } else if (sec.name === 'tail') {
       const t = Math.min(Math.max(u, 0), 1);
-      const rTip = Math.max(0.18 * R, 0.008);
-      return rTip + (R - rTip) * Math.sqrt(Math.max(0, 1 - t * t));
+      const rTip = Math.max(0.18, 0.008 / Math.max(R, 1e-6));
+      scale = rTip + (1 - rTip) * Math.sqrt(Math.max(0, 1 - t * t));
+    } else {
+      const idx = sections.indexOf(sec);
+      const rA = sections[Math.max(0, idx - 1)].dia / 2;
+      const rB = R;
+      const rC = sections[Math.min(sections.length - 1, idx + 1)].dia / 2;
+      const rStart = 0.5 * (rA + rB);
+      const rEnd = 0.5 * (rB + rC);
+      const s = u * u * (3 - 2 * u);
+      const r = rStart + (rEnd - rStart) * s;
+      scale = r / Math.max(maxR, 1e-6);
     }
-    // Midbody: linear loft between adjacent section diameters at station ends.
-    const idx = sections.indexOf(sec);
-    const rA = sections[Math.max(0, idx - 1)].dia / 2;
-    const rB = R;
-    const rC = sections[Math.min(sections.length - 1, idx + 1)].dia / 2;
-    // Smoothstep blend of neighbouring radii across the section.
-    const rStart = 0.5 * (rA + rB);
-    const rEnd = 0.5 * (rB + rC);
-    const s = u * u * (3 - 2 * u);
-    return rStart + (rEnd - rStart) * s;
+    let hw = halfW0 * scale;
+    let hh = halfH0 * scale;
+    if (forceSquare) {
+      const s = Math.max(hw, hh);
+      hw = hh = s;
+    }
+    return [hw, hh, scale];
   }
 
-  const axial = 64;
-  const radial = 48;
+  /** morph: 0 = circle, 1 = rounded rectangle. */
+  function morphAt(x) {
+    if (!useRect) return 0;
+    let sec = sections[sections.length - 1];
+    for (const s of sections) {
+      if (x <= s.end + 1e-9) {
+        sec = s;
+        break;
+      }
+    }
+    const u = (x - sec.start) / Math.max(sec.end - sec.start, 1e-9);
+    if (sec.name === 'nose') return Math.min(Math.max(u, 0), 1);
+    if (sec.name === 'tail') return 1 - Math.min(Math.max(u, 0), 1);
+    return 1;
+  }
+
+  function roundedRectPoint(halfW, halfH, fillet, theta) {
+    const aw = Math.max(halfW, 1e-6);
+    const ah = Math.max(halfH, 1e-6);
+    const rf = Math.min(Math.max(fillet, 0), 0.49 * Math.min(aw, ah));
+    const c = Math.cos(theta);
+    const s = Math.sin(theta);
+    const tx = Math.abs(c) > 1e-9 ? aw / Math.abs(c) : 1e9;
+    const ty = Math.abs(s) > 1e-9 ? ah / Math.abs(s) : 1e9;
+    const t = Math.min(tx, ty);
+    let y = t * c;
+    let z = t * s;
+    const flatY = aw - rf;
+    const flatZ = ah - rf;
+    if (rf > 1e-9 && Math.abs(y) > flatY && Math.abs(z) > flatZ) {
+      const cx = Math.sign(y) * flatY;
+      const cz = Math.sign(z) * flatZ;
+      const ang = Math.atan2(z - cz, y - cx);
+      y = cx + rf * Math.cos(ang);
+      z = cz + rf * Math.sin(ang);
+    }
+    return [y, z];
+  }
+
+  function sectionPoint(halfW, halfH, fillet, theta, morph) {
+    // Circle uses the max half-size so tips stay round and contain the rect.
+    const rc = Math.max(halfW, halfH);
+    const cy = rc * Math.cos(theta);
+    const cz = rc * Math.sin(theta);
+    if (morph <= 1e-6) return [cy, cz];
+    const [sy, sz] = roundedRectPoint(halfW, halfH, fillet, theta);
+    const m = Math.min(Math.max(morph, 0), 1);
+    return [cy + (sy - cy) * m, cz + (sz - cz) * m];
+  }
+
+  const axial = 72;
+  const radial = 64;
   const positions = [];
   const indices = [];
   const tipEps = 1e-4;
@@ -181,12 +243,24 @@ function fuselageMesh() {
   for (let i = 0; i <= axial; i++) {
     const t = i / axial;
     const x = x0 + t * length;
-    let r = radiusAt(x);
-    if (i === 0) r = tipEps; // close nose to a point
-    if (i === axial) r = Math.max(radiusAt(x1 - 1e-6) * 0.02, tipEps); // close aft tip
+    let [halfW, halfH] = halfAt(x);
+    let morph = morphAt(x);
+    let fillet = filletM * Math.min(halfW / Math.max(halfW0, 1e-6), halfH / Math.max(halfH0, 1e-6));
+    if (i === 0) {
+      halfW = tipEps;
+      halfH = tipEps;
+      morph = 0;
+    }
+    if (i === axial) {
+      const tip = Math.max(Math.min(halfW0, halfH0) * 0.02, tipEps);
+      halfW = tip;
+      halfH = tip;
+      morph = 0;
+    }
     for (let j = 0; j < radial; j++) {
       const a = (j / radial) * Math.PI * 2;
-      positions.push(x, r * Math.cos(a), r * Math.sin(a));
+      const [y, z] = sectionPoint(halfW, halfH, fillet, a, morph);
+      positions.push(x, y, z);
     }
   }
 
@@ -201,7 +275,6 @@ function fuselageMesh() {
     }
   }
 
-  // Cap aft tip with a tiny fan so the boat-tail is closed.
   const tipCenter = positions.length / 3;
   positions.push(x1, 0, 0);
   const lastRing = axial * radial;
@@ -216,7 +289,6 @@ function fuselageMesh() {
   geo.computeVertexNormals();
 
   const mesh = new THREE.Mesh(geo, makeMaterial(COLORS.fuselage));
-  // Keep a faint reference of max diameter for scale checks (invisible to picking).
   mesh.userData.maxRadius_m = maxR;
   g.add(mesh);
   return g;
@@ -675,7 +747,7 @@ function fmt(m) {
 
 function updateDims() {
   const rows = [
-    ['Fuselage L × ⌀', `${fmt(mm('fuselage_total_length'))} × ${fmt(mm('fuselage_max_diameter'))}`],
+    ['Fuselage L × W × H', `${fmt(mm('fuselage_total_length'))} × ${fmt(mm('fuselage_width', mm('fuselage_max_diameter')))} × ${fmt(mm('fuselage_height', mm('fuselage_max_diameter')))} (${str('fuselage_cross_section', 'rectangular_filleted')})`],
     ['Wing span', fmt(mm('wing_span'))],
     ['Wing root / tip', `${fmt(mm('wing_root_chord'))} / ${fmt(mm('wing_tip_chord'))}`],
     ['Wing airfoil', str('wing_NACA', '—')],

@@ -97,32 +97,69 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["fuselage_midbody_length_mode"] = str(fus.get("midbody_length_mode", "hardcoded"))
     d["fuselage_minimum_diameter_m"] = float(fus.get("minimum_diameter_m", 0.12))
     d["fuselage_diameter_margin_m"] = float(fus.get("diameter_margin_m", 0.0))
+    xs = str(fus.get("cross_section", "rectangular_filleted")).lower().strip()
+    if xs in {"rectangular", "rounded_rectangle", "rect_filleted", "filleted_rectangle"}:
+        xs = "rectangular_filleted"
+    if xs in {"square", "square_fillet", "rounded_square", "filleted_square"}:
+        xs = "square_filleted"
+    if xs not in {"circular", "square_filleted", "rectangular_filleted"}:
+        raise ValueError(
+            "fuselage.cross_section must be 'rectangular_filleted', 'square_filleted', or 'circular'"
+        )
+    d["fuselage_cross_section"] = xs
     max_d = max(float(x["diameter_m"]) for x in sections)
     if str(fus.get("diameter_mode", "hardcoded")).lower() == "auto":
         max_d = max(max_d, float(fus.get("minimum_diameter_m", 0.12)))
+    # Optional explicit width/height seeds (else use diameter_m as both).
+    fuse_w = float(fus.get("width_m", max_d))
+    fuse_h = float(fus.get("height_m", max_d))
+    if xs == "square_filleted":
+        fuse_w = fuse_h = max(fuse_w, fuse_h)
+    elif xs == "circular":
+        fuse_w = fuse_h = max_d
+    fillet = fus.get("fillet_radius_m")
+    if fillet is None:
+        fillet = min(0.020, 0.35 * 0.5 * min(fuse_w, fuse_h))
+    else:
+        fillet = float(fillet)
+    d["fuselage_fillet_radius_m"] = float(fillet)
     d["fuselage_length_m"] = total_len
-    d["fuselage_max_diameter_m"] = max_d
+    d["fuselage_width_m"] = fuse_w
+    d["fuselage_height_m"] = fuse_h
+    d["fuselage_max_diameter_m"] = max(fuse_w, fuse_h)
     cfg["geometry_mass"]["geometry_model"]["geometry"]["central_pod_outer"] = {
         "center_m": [total_len / 2.0, 0.0, 0.0],
-        "dimensions_m": [total_len, max_d, max_d],
+        "dimensions_m": [total_len, fuse_w, fuse_h],
     }
     env = cfg["geometry_mass"]["geometry_model"]["packaging"]["envelopes"]["central_pod"]
-    # Standard wall keepout matches CAD component_keepout_clearance (default 3 mm).
-    keepout_mm = float(
-        u.get("cad_export", {}).get("tolerances_mm", {}).get("component_keepout_clearance", 3.0)
-    )
-    wall_clearance_m = keepout_mm / 1000.0
+    # Prefer packaging fuselage_wall_m; else CAD component_keepout_clearance (mm).
+    pl_clear = ((u.get("packaging_layout") or {}).get("clearances_m") or {})
+    if "fuselage_wall_m" in pl_clear:
+        wall_clearance_m = float(pl_clear["fuselage_wall_m"])
+    else:
+        keepout_mm = float(
+            u.get("cad_export", {}).get("tolerances_mm", {}).get("component_keepout_clearance", 3.0)
+        )
+        wall_clearance_m = keepout_mm / 1000.0
+    if wall_clearance_m < 0:
+        raise ValueError("packaging_layout.clearances_m.fuselage_wall_m must be >= 0")
     env.update({
         "center_m": [total_len / 2.0, 0.0, 0.0],
-        "dimensions_m": [total_len, max_d, max_d],
+        "dimensions_m": [total_len, fuse_w, fuse_h],
         "wall_clearance_m": wall_clearance_m,
         "note": (
-            "Circular fuselage outer envelope with CAD wall keepout; AABB screening alone "
-            "does not prove radial fit inside the pod shell."
+            "Filleted rectangular fuselage outer envelope with wall keepout; "
+            "nose/tail fair from that base to circular tips in the viewer/CAD."
+            if xs != "circular"
+            else (
+                "Circular fuselage outer envelope with wall keepout; AABB screening alone "
+                "does not prove radial fit inside the pod shell."
+            )
         ),
     })
     pkg = cfg["geometry_mass"]["geometry_model"]["packaging"]
-    pkg["fuselage_cross_section"] = "circular"
+    pkg["fuselage_cross_section"] = xs
+    pkg["fuselage_fillet_radius_m"] = float(fillet)
     pkg["component_clearance_m"] = wall_clearance_m
     cfg["geometry_mass"]["geometry_model"]["geometry"]["overall_reference_length_m"] = float(fus.get("overall_reference_length_m", max(total_len, 1.15)))
     # Lift-motor station bounds follow the user-fixed fuselage longitudinal envelope.
@@ -265,6 +302,13 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         d["energy_bay_order_code"] = 0.0 if order == "fuel_cell_forward" else 1.0
 
         clear = pl.setdefault("clearances_m", {})
+        wall_clear = float(clear.get("fuselage_wall_m", env.get("wall_clearance_m", 0.01)))
+        if wall_clear < 0:
+            raise ValueError("packaging_layout.clearances_m.fuselage_wall_m must be >= 0")
+        clear["fuselage_wall_m"] = wall_clear
+        d["fuselage_wall_clearance_m"] = wall_clear
+        env["wall_clearance_m"] = wall_clear
+        pkg["component_clearance_m"] = wall_clear
         boss_clear = float(clear.get("longeron_boss_clearance_m", 0.01))
         if boss_clear < 0:
             raise ValueError("packaging_layout.clearances_m.longeron_boss_clearance_m must be >= 0")

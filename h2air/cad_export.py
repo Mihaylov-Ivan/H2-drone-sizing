@@ -43,7 +43,14 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
         L=float(sec['length_m']); dia=float(sec['diameter_m'])
         out += [_param(f'fuselage_{n}_length',_mm(L)),_param(f'fuselage_{n}_diameter',_mm(dia)),_param(f'fuselage_{n}_start_x',_mm(x)),_param(f'fuselage_{n}_end_x',_mm(x+L))]
         x += L
-    out += [_param('fuselage_total_length',_mm(d['fuselage_length_m'])),_param('fuselage_max_diameter',_mm(d['fuselage_max_diameter_m']))]
+    out += [
+        _param('fuselage_total_length', _mm(d['fuselage_length_m'])),
+        _param('fuselage_max_diameter', _mm(d['fuselage_max_diameter_m'])),
+        _param('fuselage_width', _mm(float(d.get('fuselage_width_m', d['fuselage_max_diameter_m'])))),
+        _param('fuselage_height', _mm(float(d.get('fuselage_height_m', d['fuselage_max_diameter_m'])))),
+        _param('fuselage_cross_section', str(d.get('fuselage_cross_section', 'rectangular_filleted')), 'String'),
+        _param('fuselage_fillet_radius', _mm(float(d.get('fuselage_fillet_radius_m', 0.0)))),
+    ]
 
     # Main wing.
     cr=float(d['main_wing_root_chord_m']); lam=float(d['main_wing_taper_ratio']); mac=float(d['wing_mac_m']); b=float(d['wing_span_m']); xac=float(d['wing_ac_x_m']); le=xac-0.25*mac

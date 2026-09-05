@@ -24,7 +24,8 @@ The complete resolved/internal configuration is written after each run as `resol
 - `midbody_length_mode: "hardcoded"` — `center_a` / `center_b` `length_m` values are used as given.
 - `midbody_length_mode: "auto"` — `center_a` / `center_b` are sized so the FC–H₂ facing gap equals `packaging_layout.clearances_m.component_axial_m`. Section break is at mid-gap. Seed midbody lengths are only an initial guess.
 - `diameter_mode: "hardcoded"` — section `diameter_m` values are used as given; packaging fails if components do not fit.
-- `diameter_mode: "auto"` — one OD for all sections (nose / center / tail), sized from the max packed radial extent + wall keepout (+ optional `diameter_margin_m`), not below `minimum_diameter_m`. Seed `diameter_m` values are only an initial guess.
+- `cross_section: "rectangular_filleted"` (default) — rounded-rectangle midbody; **width (Y)** and **height (Z)** sized independently from packed AABB + wall keepout. `square_filleted` forces W=H. `"circular"` keeps the legacy tube. Nose/tail fair from that base to circular tips.
+- `fillet_radius_m` — corner fillet on the rectangular/square outer profile.
 
 ## Packaging layout (when enabled)
 
@@ -33,10 +34,11 @@ The complete resolved/internal configuration is written after each run as `resol
 - Payload in the nose, aft face 10 mm forward of the nose-section end, as low as bottom clearance allows, plus optional `nose_bay_raise_m` (raises payload and Cube together).
 - Cube Orange on top of the payload with the same aft station; connector keepout forward of the Cube.
 - Forward energy item flush with the nose-section end; aft energy item as aft as possible with pusher keepout.
+- `fuselage_wall_m` — keepout between component outer faces and the fuselage inner wall in Y (and for circular, radial); default 10 mm. Sets `wall_clearance_m` used for auto width/OD sizing.
 - Component Z is auto-placed above the bottom longeron boss with `packaging_layout.clearances_m.longeron_boss_clearance_m` (default 10 mm) to both top and bottom bosses; independent bay groups are lifted to minimise fuselage diameter.
 - Control box and battery seats (`fc_top` / `fc_side` / `h2_top`) are searched to minimise fuselage diameter (split to H₂ preferred on OD ties). Top seats pack as far forward as `component_axial_m` allows (aft-host tops may overhang the host front into the bay gap; nose bay stays fixed).
 - `component_axial_m` is the required X clearance between non-nose components that overlap in YZ (also sets the FC–H₂ gap in midbody auto).
-- Two PDBs sit on the H₂ cylinder top shelf (not stacked on CB/battery).
+- Two PDBs sit on the H₂ cylinder top shelf (not stacked on CB/battery); tandem in X is preferred when that shrinks the required fuselage section.
 
 ## Airfoil note
 

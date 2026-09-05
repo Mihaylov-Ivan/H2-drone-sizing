@@ -236,8 +236,10 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     longr = mm_model.setdefault("fuselage_longerons", {})
 
     Dm = float(d["lift_propeller_diameter_in"]) * INCH_TO_M
-    pod_w = float(d.get("fuselage_max_diameter_m", lay.get("central_pod_width_m", 0.18)))
+    pod_w = float(d.get("fuselage_width_m", d.get("fuselage_max_diameter_m", lay.get("central_pod_width_m", 0.18))))
+    pod_h = float(d.get("fuselage_height_m", d.get("fuselage_max_diameter_m", pod_w)))
     pod_half = 0.5 * pod_w
+    fuse_top = 0.5 * pod_h
     clear_pod = float(lay.get("required_disk_to_pod_clearance_m", 0.02))
     clear_wing = float(lay.get("required_disk_edge_clearance_m", clear_pod))
     y_min = pod_half + 0.5 * Dm + clear_pod
@@ -258,7 +260,6 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     # Longerons: one on the fuselage top, one on the bottom (centreline).
     # Wing stack-up uses the TOP longeron only.
     # ------------------------------------------------------------------
-    fuse_top = pod_half
     long_od = float(longr.get("tube_od_m", 0.0065))
     long_r = 0.5 * long_od
     boss_od = float(longr.get("boss_od_m", max(2.0 * long_od + 0.004, long_od + 0.006)))

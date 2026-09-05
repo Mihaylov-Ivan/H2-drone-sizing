@@ -101,9 +101,18 @@ def write_markdown_report(
         "## Configuration / look",
         "",
         "### Fuselage / pod",
-        f"- Length x max diameter: **{_f(Lf, 3)} m x {_f(Df, 3)} m** ({_f(Df * 1000, 0)} mm)"
+        f"- Length x outer size: **{_f(Lf, 3)} m x {_f(Df, 3)} m** ({_f(Df * 1000, 0)} mm)"
         + (
-            f" (auto OD {_f(1000 * float(d.get('fuselage_max_diameter_m') or 0), 0)} mm, uniform sections)"
+            f" ({d.get('fuselage_cross_section', 'square_filleted')}"
+            + (
+                f", fillet {_f(1000 * float(d.get('fuselage_fillet_radius_m') or 0), 0)} mm"
+                if d.get("fuselage_cross_section", "square_filleted") != "circular"
+                else ""
+            )
+            + ")"
+        )
+        + (
+            f" (auto side {_f(1000 * float(d.get('fuselage_max_diameter_m') or 0), 0)} mm, uniform sections)"
             if d.get("fuselage_diameter_mode") == "auto"
             else ""
         )

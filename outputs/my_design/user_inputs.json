@@ -15,56 +15,66 @@
     "diameter_mode": "auto",
     "minimum_diameter_m": 0.18,
     "diameter_margin_m": 0.0,
+    "cross_section": "rectangular_filleted",
+    "fillet_radius_m": 0.02,
     "midbody_length_mode": "auto",
-    "note": "diameter_mode auto: one OD for all sections from max packed radial extent + wall keepout. midbody_length_mode auto: center_a/center_b lengths from FC+H2 envelopes + component_axial_m clearance (nose/tail lengths stay fixed). Seed section length_m/diameter_m are initial guesses when auto.",
+    "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H).",
     "sections": [
       {
         "name": "nose",
         "length_m": 0.14,
-        "diameter_m": 0.245,
+        "diameter_m": 0.23485917308926407,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.13999999999999999,
+        "height_m": 0.23485917308926407
       },
       {
         "name": "center_a",
-        "length_m": 0.24050000000000002,
-        "diameter_m": 0.245,
+        "length_m": 0.23550000000000001,
+        "diameter_m": 0.23485917308926407,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.13999999999999999,
+        "height_m": 0.23485917308926407
       },
       {
         "name": "center_b",
-        "length_m": 0.3739,
-        "diameter_m": 0.245,
+        "length_m": 0.3689,
+        "diameter_m": 0.23485917308926407,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.13999999999999999,
+        "height_m": 0.23485917308926407
       },
       {
         "name": "tail",
         "length_m": 0.14,
-        "diameter_m": 0.245,
+        "diameter_m": 0.23485917308926407,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.13999999999999999,
+        "height_m": 0.23485917308926407
       }
     ]
   },
@@ -141,7 +151,8 @@
     "energy_bay_order_mode": "auto",
     "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
     "clearances_m": {
-      "fuselage_bottom_m": 0.02,
+      "fuselage_bottom_m": 0.016,
+      "fuselage_wall_m": 0.01,
       "aft_tail_beyond_motor_m": 0.02,
       "component_m": 0.003,
       "bottom_to_top_m": 0.003,
@@ -149,7 +160,7 @@
       "cube_front_connector_m": 0.05,
       "nose_bay_raise_m": 0.02,
       "cylinder_to_top_inner_m": 0.03,
-      "component_axial_m": 0.02,
+      "component_axial_m": 0.01,
       "longeron_boss_clearance_m": 0.01
     },
     "hardware": {

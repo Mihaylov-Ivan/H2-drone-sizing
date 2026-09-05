@@ -1,6 +1,6 @@
 {
   "geometry": {
-    "fuselage_total_length_m": 0.8944000000000001,
+    "fuselage_total_length_m": 0.8844000000000001,
     "fuselage_max_diameter_m": 0.245,
     "main_wing_span_m": 3.3742,
     "main_wing_area_m2": 0.879451488,
@@ -29,20 +29,20 @@
       }
     }
   },
-  "closed_mtow_kg": 14.35243773232625,
+  "closed_mtow_kg": 14.33966993232625,
   "closed_cg_m": [
-    0.4074157246043405,
-    9.754440507668988e-05,
-    0.0453758463302238
+    0.4252513876548576,
+    0.0,
+    0.04465786612136448
   ],
   "neutral_point_x_m": 0.4253206802603421,
-  "static_margin": 0.06729415438043218,
-  "cruise_bus_power_W": 382.853982995044,
-  "mission_energy_Wh": 792.895337840999,
-  "h2_used_kg": 0.04643139206210067,
-  "final_battery_soc": 0.9164710540748628,
+  "static_margin": 0.00026042998265304044,
+  "cruise_bus_power_W": 382.7230279297668,
+  "mission_energy_Wh": 792.5811855256993,
+  "h2_used_kg": 0.04641445028913679,
+  "final_battery_soc": 0.9166036175134232,
   "wing_spar_od_mm": 22.75000000000001,
   "boom_od_mm": 21.250000000000007,
-  "front_motor_15kg_N": 54.96312341288075,
-  "rear_motor_15kg_N": 63.79918908711926
+  "front_motor_15kg_N": 51.30347484886863,
+  "rear_motor_15kg_N": 67.45883765113138
 }

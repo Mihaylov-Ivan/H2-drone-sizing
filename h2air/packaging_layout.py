@@ -50,6 +50,49 @@ def _max_yz_radius(y0: float, z0: float, wy: float, hz: float) -> float:
     return max(hypot(y0 + sy * hy, z0 + sz * hh) for sy in (-1.0, 1.0) for sz in (-1.0, 1.0))
 
 
+def _max_yz_half_extent(y0: float, z0: float, wy: float, hz: float) -> float:
+    """Max axis-aligned half-extent from centreline (legacy square metric)."""
+    return max(abs(float(y0)) + 0.5 * float(wy), abs(float(z0)) + 0.5 * float(hz))
+
+
+def _yz_half_extents(y0: float, z0: float, wy: float, hz: float) -> Tuple[float, float]:
+    return abs(float(y0)) + 0.5 * float(wy), abs(float(z0)) + 0.5 * float(hz)
+
+
+def _cross_section_mode(cfg: Mapping[str, Any]) -> str:
+    pkg = (
+        (cfg.get("geometry_mass") or {})
+        .get("geometry_model", {})
+        .get("packaging", {})
+    )
+    snap = (cfg.get("user_input_snapshot") or {}).get("fuselage") or {}
+    mode = str(
+        snap.get("cross_section")
+        or pkg.get("fuselage_cross_section")
+        or cfg.get("design", {}).get("fuselage_cross_section")
+        or "rectangular_filleted"
+    ).lower()
+    if mode in {"rectangular", "rounded_rectangle", "rect_filleted", "filleted_rectangle"}:
+        return "rectangular_filleted"
+    if mode in {"square", "square_fillet", "rounded_square", "filleted_square", "square_filleted"}:
+        return "square_filleted"
+    if mode == "circular":
+        return "circular"
+    return "rectangular_filleted"
+
+
+def _fillet_radius_m(cfg: Mapping[str, Any], width_m: float, height_m: float | None = None) -> float:
+    snap = (cfg.get("user_input_snapshot") or {}).get("fuselage") or {}
+    d = cfg.get("design") or {}
+    raw = snap.get("fillet_radius_m", d.get("fuselage_fillet_radius_m"))
+    h = float(height_m) if height_m is not None else float(width_m)
+    half = 0.5 * min(float(width_m), h)
+    if raw is None:
+        return min(0.020, max(0.0, 0.35 * half))
+    f = max(0.0, _f(raw))
+    return min(f, max(0.0, 0.49 * half))
+
+
 def _require_circular_fit(
     name: str,
     *,
@@ -67,11 +110,71 @@ def _require_circular_fit(
         )
 
 
+def _require_square_fit(
+    name: str,
+    *,
+    y0: float,
+    z0: float,
+    wy: float,
+    hz: float,
+    allowed_half: float,
+) -> None:
+    e = _max_yz_half_extent(y0, z0, wy, hz)
+    if e > allowed_half + EPS:
+        raise ValueError(
+            f"Packaging layout: {name} protrudes past fuselage wall keepout "
+            f"(half-extent {1000 * e:.1f} mm > allowed {1000 * allowed_half:.1f} mm)."
+        )
+
+
 def _od_from_placed(placed: Sequence[Placed], *, wall_m: float, margin_m: float = 0.0) -> float:
+    """Required outer size: circular OD or square side length from packed envelopes."""
     if not placed:
         return 0.0
+    # Caller selects metric via wall packing helpers; default circular for legacy.
     r = max(_max_yz_radius(float(y), float(z), float(wy), float(hz)) for _n, _x, y, _lx, wy, hz, z in placed)
     return 2.0 * (r + float(wall_m) + float(margin_m))
+
+
+def _side_from_placed(placed: Sequence[Placed], *, wall_m: float, margin_m: float = 0.0) -> float:
+    if not placed:
+        return 0.0
+    e = max(
+        _max_yz_half_extent(float(y), float(z), float(wy), float(hz))
+        for _n, _x, y, _lx, wy, hz, z in placed
+    )
+    return 2.0 * (e + float(wall_m) + float(margin_m))
+
+
+def _wh_from_placed(placed: Sequence[Placed], *, wall_m: float, margin_m: float = 0.0) -> Tuple[float, float]:
+    """Required outer width (Y) and height (Z) from packed AABB extents + wall keepout."""
+    if not placed:
+        return 0.0, 0.0
+    max_y = 0.0
+    max_z = 0.0
+    for _n, _x, y, _lx, wy, hz, z in placed:
+        ye, ze = _yz_half_extents(float(y), float(z), float(wy), float(hz))
+        max_y = max(max_y, ye)
+        max_z = max(max_z, ze)
+    pad = float(wall_m) + float(margin_m)
+    return 2.0 * (max_y + pad), 2.0 * (max_z + pad)
+
+
+def _section_size_from_placed(
+    placed: Sequence[Placed],
+    *,
+    wall_m: float,
+    margin_m: float = 0.0,
+    cross_section: str = "rectangular_filleted",
+) -> float:
+    """Scalar size used for seat/PDB scoring (area proxy or max side)."""
+    xs = str(cross_section).lower()
+    if xs == "circular":
+        return _od_from_placed(placed, wall_m=wall_m, margin_m=margin_m)
+    if xs == "square_filleted":
+        return _side_from_placed(placed, wall_m=wall_m, margin_m=margin_m)
+    w, h = _wh_from_placed(placed, wall_m=wall_m, margin_m=margin_m)
+    return float(w) * float(h)
 
 
 def _longeron_cabin_band(
@@ -124,18 +227,26 @@ def _pack_z_valid(
     *,
     z_floor: float,
     z_ceil: float,
-    allowed_r: float,
+    allowed_y: float,
+    allowed_z: float,
     wall_m: float,
     comp_c: float,
+    cross_section: str = "rectangular_filleted",
 ) -> bool:
     del wall_m
+    circular = str(cross_section).lower() == "circular"
     for n, _x, y, _lx, wy, hz, z in placed:
         if (z - 0.5 * hz) < z_floor - EPS:
             return False
         if (z + 0.5 * hz) > z_ceil + EPS:
             return False
-        if _max_yz_radius(y, z, wy, hz) > allowed_r + EPS:
-            return False
+        if circular:
+            if _max_yz_radius(y, z, wy, hz) > allowed_y + EPS:
+                return False
+        else:
+            ye, ze = _yz_half_extents(y, z, wy, hz)
+            if ye > allowed_y + EPS or ze > allowed_z + EPS:
+                return False
     for i in range(len(placed)):
         for j in range(i + 1, len(placed)):
             if _boxes_collide(placed[i], placed[j], clearance=comp_c):
@@ -149,14 +260,19 @@ def _optimize_pack_z(
     *,
     z_floor: float,
     z_ceil: float,
-    allowed_r: float,
+    allowed_y: float,
+    allowed_z: float,
     wall_m: float,
     fuse_od: float,
+    fuse_w: float,
+    fuse_h: float,
     comp_c: float,
+    cross_section: str = "rectangular_filleted",
 ) -> Tuple[List[Placed], Dict[str, float], float]:
-    """Raise independent Z groups to minimise required fuselage OD (fit current OD if possible)."""
+    """Raise independent Z groups to minimise required fuselage outer size."""
     group_names = sorted({g for g in groups.values() if g})
     lifts = {g: 0.0 for g in group_names}
+    del fuse_od
 
     def _max_lift_for(g: str, cur: Mapping[str, float]) -> float:
         trial = dict(cur)
@@ -172,21 +288,39 @@ def _optimize_pack_z(
         return float(cap)
 
     def _score(lifted: Sequence[Placed]) -> float:
-        return _od_from_placed(lifted, wall_m=wall_m)
+        return _section_size_from_placed(
+            lifted, wall_m=wall_m, cross_section=cross_section
+        )
 
-    # Prefer layouts that fit the current shell; among those (or all), minimise OD need.
+    def _fits_shell(lifted: Sequence[Placed]) -> bool:
+        xs = str(cross_section).lower()
+        if xs == "circular":
+            need = _od_from_placed(lifted, wall_m=wall_m)
+            return need <= max(fuse_w, fuse_h) + 5e-5
+        if xs == "square_filleted":
+            need = _side_from_placed(lifted, wall_m=wall_m)
+            return need <= max(fuse_w, fuse_h) + 5e-5
+        nw, nh = _wh_from_placed(lifted, wall_m=wall_m)
+        return nw <= fuse_w + 5e-5 and nh <= fuse_h + 5e-5
+
     def _key(lifted: Sequence[Placed]) -> Tuple[float, float, float]:
         need = _score(lifted)
-        fit_pen = 0.0 if need <= fuse_od + 5e-5 else 1.0
+        fit_pen = 0.0 if _fits_shell(lifted) else 1.0
         lift_sum = sum(lifts.values())
         return (fit_pen, need, lift_sum)
 
     best_lifts = dict(lifts)
     best_placed = _lift_placed(placed, groups, best_lifts)
     if not _pack_z_valid(
-        best_placed, z_floor=z_floor, z_ceil=z_ceil, allowed_r=allowed_r, wall_m=wall_m, comp_c=comp_c
+        best_placed,
+        z_floor=z_floor,
+        z_ceil=z_ceil,
+        allowed_y=allowed_y,
+        allowed_z=allowed_z,
+        wall_m=wall_m,
+        comp_c=comp_c,
+        cross_section=cross_section,
     ):
-        # Still search lifts; floor placement may already violate circular fit at this OD.
         best_key = (1.0, 1e9, 0.0)
     else:
         best_key = _key(best_placed)
@@ -205,7 +339,14 @@ def _optimize_pack_z(
                 lifts[g] = dz
                 lifted = _lift_placed(placed, groups, lifts)
                 if not _pack_z_valid(
-                    lifted, z_floor=z_floor, z_ceil=z_ceil, allowed_r=allowed_r, wall_m=wall_m, comp_c=comp_c
+                    lifted,
+                    z_floor=z_floor,
+                    z_ceil=z_ceil,
+                    allowed_y=allowed_y,
+                    allowed_z=allowed_z,
+                    wall_m=wall_m,
+                    comp_c=comp_c,
+                    cross_section=cross_section,
                 ):
                     continue
                 k = _key(lifted)
@@ -221,7 +362,14 @@ def _optimize_pack_z(
             break
 
     if not _pack_z_valid(
-        best_placed, z_floor=z_floor, z_ceil=z_ceil, allowed_r=allowed_r, wall_m=wall_m, comp_c=comp_c
+        best_placed,
+        z_floor=z_floor,
+        z_ceil=z_ceil,
+        allowed_y=allowed_y,
+        allowed_z=allowed_z,
+        wall_m=wall_m,
+        comp_c=comp_c,
+        cross_section=cross_section,
     ):
         raise ValueError("Z-lift search could not fit packaging in the cabin/longeron band")
     return best_placed, best_lifts, _score(best_placed)
@@ -433,31 +581,66 @@ def _section_x_ranges(sections: Sequence[Mapping[str, Any]]) -> list[tuple[str, 
 
 
 def _apply_uniform_fuse_od(cfg: MutableMapping[str, Any], od: float) -> None:
-    """Write a uniform fuselage OD into design + section records (placement frame)."""
-    od = float(od)
+    """Backward-compatible wrapper: equal width/height outer size."""
+    _apply_uniform_fuse_size(cfg, float(od), float(od))
+
+
+def _apply_uniform_fuse_size(cfg: MutableMapping[str, Any], width_m: float, height_m: float) -> None:
+    """Write uniform fuselage outer width/height into design + section records.
+
+    ``fuselage_max_diameter_m`` stays ``max(width, height)`` for legacy consumers.
+    For ``square_filleted``, width and height are forced equal.
+    """
+    xs = _cross_section_mode(cfg)
+    w = float(width_m)
+    h = float(height_m)
+    if xs == "square_filleted":
+        s = max(w, h)
+        w = h = s
+    elif xs == "circular":
+        s = max(w, h)
+        w = h = s
     d = cfg["design"]
-    d["fuselage_max_diameter_m"] = od
+    d["fuselage_width_m"] = w
+    d["fuselage_height_m"] = h
+    d["fuselage_max_diameter_m"] = max(w, h)
+    d["fuselage_cross_section"] = xs
+    fillet = _fillet_radius_m(cfg, w, h)
+    d["fuselage_fillet_radius_m"] = fillet
     fuse_len = _f(d.get("fuselage_length_m"))
     geom = cfg["geometry_mass"]["geometry_model"]["geometry"]
     geom["central_pod_outer"] = {
         "center_m": [fuse_len / 2.0, 0.0, 0.0],
-        "dimensions_m": [fuse_len, od, od],
+        "dimensions_m": [fuse_len, w, h],
     }
     env = cfg["geometry_mass"]["geometry_model"]["packaging"]["envelopes"]["central_pod"]
     env["center_m"] = [fuse_len / 2.0, 0.0, 0.0]
-    env["dimensions_m"] = [fuse_len, od, od]
-    cfg["aero_propulsion"]["lift_layout"]["central_pod_width_m"] = od
+    env["dimensions_m"] = [fuse_len, w, h]
+    pkg = cfg["geometry_mass"]["geometry_model"]["packaging"]
+    pkg["fuselage_cross_section"] = xs
+    pkg["fuselage_fillet_radius_m"] = fillet
+    cfg["aero_propulsion"]["lift_layout"]["central_pod_width_m"] = w
+    # Section diameter_m stores max face size for mass kg/m consumers; WH kept on design.
+    side = max(w, h)
     section_ods: Dict[str, float] = {}
     for sec in _fuselage_sections(cfg):
-        sec["diameter_m"] = od
+        sec["diameter_m"] = side
+        sec["width_m"] = w
+        sec["height_m"] = h
         name = str(sec.get("name", ""))
         if name:
-            section_ods[name] = od
+            section_ods[name] = side
     d["fuselage_section_diameters_m"] = dict(section_ods)
+    d["fuselage_section_widths_m"] = {k: w for k in section_ods}
+    d["fuselage_section_heights_m"] = {k: h for k in section_ods}
     snap = cfg.get("user_input_snapshot")
     if isinstance(snap, dict) and isinstance(snap.get("fuselage"), dict):
+        snap["fuselage"]["cross_section"] = xs
+        snap["fuselage"]["fillet_radius_m"] = fillet
         for sec in snap["fuselage"].get("sections") or []:
-            sec["diameter_m"] = od
+            sec["diameter_m"] = side
+            sec["width_m"] = w
+            sec["height_m"] = h
 
 
 def _commit_section_ods(
@@ -498,19 +681,65 @@ def _section_ods_from_placed(
     wall_m: float,
     margin_m: float = 0.0,
     min_od_m: float = 0.12,
+    cross_section: str = "rectangular_filleted",
 ) -> Dict[str, float]:
-    """Required outer diameter per fuselage section from component YZ radial extent + wall keepout."""
+    """Required outer size per section (max of W/H need, or circular OD)."""
+    wh = _section_wh_from_placed(
+        placed, sections, wall_m=wall_m, margin_m=margin_m, min_od_m=min_od_m, cross_section=cross_section
+    )
+    return {k: max(float(v[0]), float(v[1])) for k, v in wh.items()}
+
+
+def _section_wh_from_placed(
+    placed: Sequence[Placed],
+    sections: Sequence[Mapping[str, Any]],
+    *,
+    wall_m: float,
+    margin_m: float = 0.0,
+    min_od_m: float = 0.12,
+    cross_section: str = "rectangular_filleted",
+) -> Dict[str, Tuple[float, float]]:
+    """Required outer (width, height) per fuselage section.
+
+    ``min_od_m`` floors only the larger face of each section (or both faces when
+    square/circular), so rectangular width can shrink below the diameter floor.
+    """
     ranges = _section_x_ranges(sections)
-    needs = {name: float(min_od_m) for name, _a, _b in ranges}
+    needs = {name: (0.0, 0.0) for name, _a, _b in ranges}
+    xs = str(cross_section).lower()
+    pad = float(wall_m) + float(margin_m)
     for _name, x, y, lx, wy, hz, z in placed:
-        r = _max_yz_radius(float(y), float(z), float(wy), float(hz))
-        need = 2.0 * (r + float(wall_m) + float(margin_m))
+        if xs == "circular":
+            ext = _max_yz_radius(float(y), float(z), float(wy), float(hz))
+            need = 2.0 * (ext + pad)
+            nw = nh = need
+        else:
+            ye, ze = _yz_half_extents(float(y), float(z), float(wy), float(hz))
+            nw, nh = 2.0 * (ye + pad), 2.0 * (ze + pad)
+            if xs == "square_filleted":
+                s = max(nw, nh)
+                nw = nh = s
         x0, x1 = float(x) - 0.5 * float(lx), float(x) + 0.5 * float(lx)
         for sec_name, a, b in ranges:
             if x1 <= a + EPS or x0 >= b - EPS:
                 continue
-            needs[sec_name] = max(needs[sec_name], need)
-    return needs
+            pw, ph = needs[sec_name]
+            needs[sec_name] = (max(pw, nw), max(ph, nh))
+    floored: Dict[str, Tuple[float, float]] = {}
+    for name, (nw, nh) in needs.items():
+        if xs in {"square_filleted", "circular"}:
+            s = max(float(nw), float(nh), float(min_od_m))
+            floored[name] = (s, s)
+        else:
+            nw = float(nw)
+            nh = float(nh)
+            if max(nw, nh) + EPS < float(min_od_m):
+                if nh >= nw:
+                    nh = float(min_od_m)
+                else:
+                    nw = float(min_od_m)
+            floored[name] = (nw, nh)
+    return floored
 
 
 def _commit_fuselage_length(cfg: MutableMapping[str, Any], fuse_len: float) -> None:
@@ -659,9 +888,10 @@ def _autosize_midbody_lengths(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
 def apply_packaging_layout(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     """Resolve internal stations from ``packaging_layout`` rules; raise on violation.
 
-    When ``fuselage.diameter_mode`` is ``auto``, fuselage outer diameter is iterated
-    from the maximum packed-component radial extent + wall keepout (+ optional margin)
-    and applied uniformly to nose, center, and tail sections.
+    When ``fuselage.diameter_mode`` is ``auto``, fuselage outer size is iterated
+    from packed-component extents + wall keepout (+ optional margin) and applied
+    uniformly. With ``cross_section: square_filleted`` (default), size is the
+    outer face-to-face side; ``circular`` keeps legacy OD sizing.
     When ``fuselage.midbody_length_mode`` is ``auto``, center_a/center_b lengths are
     sized so the FC–H₂ facing gap equals ``component_axial_m``.
     """
@@ -672,6 +902,7 @@ def apply_packaging_layout(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     midbody_info = _autosize_midbody_lengths(cfg)
 
     fus_snap = (cfg.get("user_input_snapshot") or {}).get("fuselage") or {}
+    cross_section = _cross_section_mode(cfg)
     auto = str(fus_snap.get("diameter_mode", "hardcoded")).lower() == "auto"
     if not auto:
         summary = _packaging_layout_core(cfg)
@@ -691,11 +922,13 @@ def apply_packaging_layout(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     )
     margin = _f(fus_snap.get("diameter_margin_m"), 0.0)
     min_od = _f(fus_snap.get("minimum_diameter_m"), 0.12)
-    od = max(_f(cfg["design"].get("fuselage_max_diameter_m"), min_od), min_od)
+    # Seed from minimum; rectangular will shrink width to the packed Y need.
+    fuse_w = float(min_od)
+    fuse_h = float(min_od)
     last_err: Exception | None = None
     summary: Dict[str, Any] = {}
-    for _ in range(32):
-        _apply_uniform_fuse_od(cfg, od)
+    for _ in range(64):
+        _apply_uniform_fuse_size(cfg, fuse_w, fuse_h)
         try:
             summary = _packaging_layout_core(cfg)
         except ValueError as e:
@@ -714,9 +947,39 @@ def apply_packaging_layout(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                     "does not fit",
                     "no room",
                     "collides",
+                    "only ",
+                    "available at OD",
+                    "axial clearance",
+                    "Z-lift",
+                    "no control-box",
+                    "cabin/longeron",
+                    "layout needs",
                 )
             ):
-                od = max(od + 0.010, od * 1.04)
+                z_driven = any(
+                    k in msg
+                    for k in (
+                        "headroom",
+                        "top bay",
+                        "available at OD",
+                        "cylinder_to_top",
+                        "longeron",
+                        "Z-lift",
+                        "cabin",
+                    )
+                )
+                y_driven = any(k in msg for k in ("protrudes", "width", "side-by-side", "fc_side"))
+                if z_driven and not y_driven:
+                    fuse_h = max(fuse_h + 0.005, fuse_h * 1.03)
+                elif y_driven and not z_driven:
+                    fuse_w = max(fuse_w + 0.005, fuse_w * 1.03)
+                else:
+                    # Seat / layout failures: grow the tighter axis first (usually height).
+                    fuse_h = max(fuse_h + 0.005, fuse_h * 1.03)
+                    fuse_w = max(fuse_w + 0.005, fuse_w * 1.03)
+                if cross_section in {"square_filleted", "circular"}:
+                    s = max(fuse_w, fuse_h)
+                    fuse_w = fuse_h = s
                 continue
             raise
         placed_raw = summary.get("placed_envelopes") or []
@@ -733,21 +996,48 @@ def apply_packaging_layout(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
             for p in placed_raw
         ]
         sections = _fuselage_sections(cfg)
-        section_needs = _section_ods_from_placed(
-            placed_tuples, sections, wall_m=wall, margin_m=margin, min_od_m=min_od
+        section_wh = _section_wh_from_placed(
+            placed_tuples,
+            sections,
+            wall_m=wall,
+            margin_m=margin,
+            min_od_m=min_od,
+            cross_section=cross_section,
         )
-        need = max(section_needs.values()) if section_needs else od
-        if need > od + 5e-5:
-            od = need
+        need_w = max((v[0] for v in section_wh.values()), default=fuse_w)
+        need_h = max((v[1] for v in section_wh.values()), default=fuse_h)
+        grew = False
+        # Height must not shrink: AABB need ignores longeron boss reservation outside
+        # the component stack, so shrinking H re-breaks cylinder-to-top headroom.
+        if need_h > fuse_h + 5e-5:
+            fuse_h = float(need_h)
+            grew = True
+        if cross_section == "rectangular_filleted":
+            # Width may shrink to the packed Y need (no side longerons).
+            if abs(float(need_w) - float(fuse_w)) > 5e-5:
+                fuse_w = float(need_w)
+                grew = True
+        else:
+            if need_w > fuse_w + 5e-5:
+                fuse_w = float(need_w)
+                grew = True
+            s = max(fuse_w, fuse_h, min_od)
+            if abs(s - fuse_w) > 5e-5 or abs(s - fuse_h) > 5e-5:
+                fuse_w = fuse_h = s
+                grew = True
+        if grew:
             continue
-        # Keep one constant diameter for every fuselage section.
-        od = max(float(od), float(need))
-        _apply_uniform_fuse_od(cfg, od)
+        _apply_uniform_fuse_size(cfg, fuse_w, fuse_h)
         summary = _packaging_layout_core(cfg)
         section_ods = dict(cfg["design"].get("fuselage_section_diameters_m") or {})
         summary["fuselage_diameter_mode"] = "auto"
+        summary["fuselage_cross_section"] = cross_section
+        summary["fuselage_fillet_radius_m"] = float(cfg["design"].get("fuselage_fillet_radius_m") or 0.0)
+        summary["fuselage_width_m"] = float(cfg["design"]["fuselage_width_m"])
+        summary["fuselage_height_m"] = float(cfg["design"]["fuselage_height_m"])
         summary["fuselage_section_ods_m"] = section_ods
-        summary["fuselage_section_od_needs_m"] = dict(section_needs)
+        summary["fuselage_section_od_needs_m"] = {k: max(v) for k, v in section_wh.items()}
+        summary["fuselage_section_wh_needs_m"] = {k: {"width_m": v[0], "height_m": v[1]} for k, v in section_wh.items()}
         summary["fuselage_od_m"] = float(cfg["design"]["fuselage_max_diameter_m"])
         if midbody_info:
             summary["fuselage_midbody"] = midbody_info
@@ -824,10 +1114,13 @@ def _place_pdbs_on_cylinder(
     comp_c: float,
     axial: float,
     occupants: Sequence[Placed],
+    wall_m: float = 0.003,
+    cross_section: str = "square_filleted",
 ) -> List[Placed]:
     """Two PDBs on the cylinder top shelf — never stacked on CB/battery.
 
-    Packed as far forward as ``component_axial_m`` against occupants allows.
+    Prefers the arrangement that minimises required fuselage outer size (tandem on
+    centreline when side-by-side would widen the section).
     """
     z = cyl_top + pdb_around + 0.5 * pdb_H
     gap = max(comp_c, 0.5 * pdb_around, 0.5 * axial)
@@ -846,65 +1139,70 @@ def _place_pdbs_on_cylinder(
                 return False
         return True
 
-    # Prefer side-by-side, shifted as far forward as axial clearance allows.
-    y_off = 0.5 * pdb_W + 0.5 * gap
+    def _score(cands: Sequence[Placed]) -> float:
+        return _section_size_from_placed(
+            list(occupants) + list(cands), wall_m=wall_m, cross_section=cross_section
+        )
+
+    candidates: List[List[Placed]] = []
+
+    # Tandem on centreline (usually narrower for square fuselage).
     aft_of = x_cyl_fwd
     for occ in occupants:
-        if _yz_overlap(
-            ("power_module", x_cyl, y_off, pdb_L, pdb_W, pdb_H, z),
-            occ,
-        ) or _yz_overlap(
-            ("power_module", x_cyl, -y_off, pdb_L, pdb_W, pdb_H, z),
-            occ,
-        ):
+        if _yz_overlap(("power_module", x_cyl, 0.0, pdb_L, pdb_W, pdb_H, z), occ):
             aft_of = max(aft_of, _fwd_aft(occ)[1] + axial)
-    # Also clear each other when tandem; for side-by-side same x is fine (no Y overlap issue - they don't overlap Y).
-    x_side = aft_of + 0.5 * pdb_L
-    # Keep on cylinder.
-    x_side = min(x_side, x_cyl_aft - 0.5 * pdb_L)
-    x_side = max(x_side, x_cyl_fwd + 0.5 * pdb_L)
-    side_by_side = [
-        ("power_module", x_side, +y_off, pdb_L, pdb_W, pdb_H, z),
-        ("power_module_2", x_side, -y_off, pdb_L, pdb_W, pdb_H, z),
-    ]
-    if _ok(side_by_side):
-        return side_by_side
+    x1 = aft_of + 0.5 * pdb_L
+    x1 = min(max(x1, x_cyl_fwd + 0.5 * pdb_L), x_cyl_aft - 0.5 * pdb_L)
+    x2 = x1 + 0.5 * pdb_L + axial + 0.5 * pdb_L
+    if x2 + 0.5 * pdb_L <= x_cyl_aft + EPS:
+        tandem = [
+            ("power_module", x1, 0.0, pdb_L, pdb_W, pdb_H, z),
+            ("power_module_2", x2, 0.0, pdb_L, pdb_W, pdb_H, z),
+        ]
+        if _ok(tandem):
+            candidates.append(tandem)
 
-    # Fallback: try host-centre side-by-side (legacy).
-    side_by_side_c = [
-        ("power_module", x_cyl, +y_off, pdb_L, pdb_W, pdb_H, z),
-        ("power_module_2", x_cyl, -y_off, pdb_L, pdb_W, pdb_H, z),
-    ]
-    if _ok(side_by_side_c):
-        return side_by_side_c
+    # Side-by-side options.
+    y_off = 0.5 * pdb_W + 0.5 * gap
+    aft_side = x_cyl_fwd
+    for occ in occupants:
+        if _yz_overlap(
+            ("power_module", x_cyl, y_off, pdb_L, pdb_W, pdb_H, z), occ
+        ) or _yz_overlap(("power_module", x_cyl, -y_off, pdb_L, pdb_W, pdb_H, z), occ):
+            aft_side = max(aft_side, _fwd_aft(occ)[1] + axial)
+    x_side = min(max(aft_side + 0.5 * pdb_L, x_cyl_fwd + 0.5 * pdb_L), x_cyl_aft - 0.5 * pdb_L)
+    for x_try in (x_side, x_cyl):
+        side_by_side = [
+            ("power_module", x_try, +y_off, pdb_L, pdb_W, pdb_H, z),
+            ("power_module_2", x_try, -y_off, pdb_L, pdb_W, pdb_H, z),
+        ]
+        if _ok(side_by_side):
+            candidates.append(side_by_side)
 
-    # Aft of the forward-most occupant on the cylinder.
     aft_of = x_cyl_fwd
     for _n, x, _y, lx, _w, _h, _z in occupants:
         aft_of = max(aft_of, x + 0.5 * lx)
     x_pdb = aft_of + axial + 0.5 * pdb_L
-    aft_pair = [
-        ("power_module", x_pdb, +y_off, pdb_L, pdb_W, pdb_H, z),
-        ("power_module_2", x_pdb, -y_off, pdb_L, pdb_W, pdb_H, z),
-    ]
-    if _ok(aft_pair):
-        return aft_pair
+    if x_pdb + 0.5 * pdb_L <= x_cyl_aft + EPS:
+        aft_pair = [
+            ("power_module", x_pdb, +y_off, pdb_L, pdb_W, pdb_H, z),
+            ("power_module_2", x_pdb, -y_off, pdb_L, pdb_W, pdb_H, z),
+        ]
+        if _ok(aft_pair):
+            candidates.append(aft_pair)
 
-    # Single-file aft on centreline if sides are blocked.
-    x1 = aft_of + axial + 0.5 * pdb_L
-    x2 = x1 + 0.5 * pdb_L + axial + 0.5 * pdb_L
-    tandem = [
-        ("power_module", x1, 0.0, pdb_L, pdb_W, pdb_H, z),
-        ("power_module_2", x2, 0.0, pdb_L, pdb_W, pdb_H, z),
-    ]
-    if _ok(tandem):
-        return tandem
+    if not candidates:
+        raise ValueError(
+            "Packaging layout: cannot place two PDBs on the H₂ cylinder top without stacking "
+            "on the control box/battery or leaving the cylinder bay. Increase fuselage diameter "
+            "or lengthen the cylinder bay."
+        )
 
-    raise ValueError(
-        "Packaging layout: cannot place two PDBs on the H₂ cylinder top without stacking "
-        "on the control box/battery or leaving the cylinder bay. Increase fuselage diameter "
-        "or lengthen the cylinder bay."
-    )
+    def _pick_key(cands: Sequence[Placed]) -> Tuple[float, float]:
+        return (_score(cands), sum(abs(float(p[2])) for p in cands))
+
+    return list(min(candidates, key=_pick_key))
+
 
 
 def _candidate_plans() -> List[Dict[str, Any]]:
@@ -964,14 +1262,18 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     )
 
     fuse_len = _f(d.get("fuselage_length_m"))
-    fuse_od = _f(d.get("fuselage_max_diameter_m"))
+    fuse_w = _f(d.get("fuselage_width_m"), _f(d.get("fuselage_max_diameter_m")))
+    fuse_h = _f(d.get("fuselage_height_m"), _f(d.get("fuselage_max_diameter_m")))
+    fuse_od = max(fuse_w, fuse_h)
     if fuse_len <= 0 or fuse_od <= 0:
         raise ValueError("Packaging layout requires positive fuselage length and diameter")
-    R = 0.5 * fuse_od
-    z_bot = -R + wall
-    z_top = R - wall
-    allowed_r = R - wall
-    cabin = _longeron_cabin_band(cfg, fuse_od_m=fuse_od, boss_clearance_m=boss_clear)
+    cross_section = _cross_section_mode(cfg)
+    # Cabin / longerons follow height; lateral keepout follows width.
+    z_bot = -0.5 * fuse_h + wall
+    z_top = 0.5 * fuse_h - wall
+    allowed_y = 0.5 * fuse_w - wall
+    allowed_z = 0.5 * fuse_h - wall
+    cabin = _longeron_cabin_band(cfg, fuse_od_m=fuse_h, boss_clearance_m=boss_clear)
     # Floor sits above the bottom longeron boss (+ optional legacy skin bottom clear).
     z_floor = max(float(cabin["z_floor_m"]), z_bot + bottom_c)
     z_ceil = float(cabin["z_ceil_m"])
@@ -1345,6 +1647,8 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                 comp_c=comp_c,
                 axial=axial_c,
                 occupants=h2_occupants,
+                wall_m=wall,
+                cross_section=cross_section,
             )
             if pdb_count < 2:
                 pdbs = pdbs[:1]
@@ -1377,10 +1681,14 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                 z_groups,
                 z_floor=z_floor,
                 z_ceil=z_ceil,
-                allowed_r=allowed_r,
+                allowed_y=allowed_y,
+                allowed_z=allowed_z,
                 wall_m=wall,
                 fuse_od=fuse_od,
+                fuse_w=fuse_w,
+                fuse_h=fuse_h,
                 comp_c=comp_c,
+                cross_section=cross_section,
             )
             axial_bad = _axial_gap_violations(placed, axial=axial_c)
             if axial_bad:
@@ -1401,12 +1709,24 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                     if abs(z - z_cube_now) < 0.5 * (hz + cube_H) - EPS and abs(y) < 0.5 * (wy + cube_W) + comp_c:
                         raise ValueError(f"{n} intrudes into Cube Orange connector bay")
 
-            if od_need > fuse_od + 5e-5:
-                raise ValueError(
-                    f"layout needs OD {1000 * od_need:.1f} mm > current {1000 * fuse_od:.1f} mm"
-                )
+            # Reject plans that still need a larger shell after Z-lift.
+            xs = str(cross_section).lower()
+            if xs == "rectangular_filleted":
+                nw, nh = _wh_from_placed(placed, wall_m=wall)
+                if nw > fuse_w + 5e-5 or nh > fuse_h + 5e-5:
+                    raise ValueError(
+                        f"layout needs {1000 * nw:.1f}x{1000 * nh:.1f} mm > "
+                        f"current {1000 * fuse_w:.1f}x{1000 * fuse_h:.1f} mm"
+                    )
+                size_need = nw * nh
+            else:
+                size_need = float(od_need)
+                if size_need > fuse_od + 5e-5:
+                    raise ValueError(
+                        f"layout needs OD {1000 * size_need:.1f} mm > current {1000 * fuse_od:.1f} mm"
+                    )
 
-            score = (od_need, int(plan["tie_rank"]))
+            score = (size_need, int(plan["tie_rank"]))
             if best is None or score < best["score"]:
                 best = {
                     "score": score,
@@ -1416,7 +1736,7 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                     "p_cb": p_cb,
                     "p_bat": p_bat,
                     "pdbs": pdbs,
-                    "od_need": od_need,
+                    "od_need": size_need,
                     "z_lifts_m": dict(z_lifts),
                 }
         except ValueError as e:
@@ -1570,6 +1890,10 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
         "energy_bay_order": energy_bay_order,
         "fuselage_length_m": fuse_len,
         "fuselage_od_m": fuse_od,
+        "fuselage_width_m": fuse_w,
+        "fuselage_height_m": fuse_h,
+        "fuselage_cross_section": cross_section,
+        "fuselage_fillet_radius_m": _fillet_radius_m(cfg, fuse_w, fuse_h),
         "wall_clearance_m": wall,
         "pusher_motor_length_m": motor_len,
         "aft_keepout_m": aft_keepout,
@@ -1577,7 +1901,8 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
             (x_cyl_fwd - x_fc_aft) if energy_bay_order == "fuel_cell_forward" else (x_fc_fwd - x_cyl_aft)
         ),
         "component_axial_clearance_m": axial_c,
-        "energy_bay_axial_clearance_m": axial_c,        "longeron_boss_clearance_m": boss_clear,
+        "energy_bay_axial_clearance_m": axial_c,
+        "longeron_boss_clearance_m": boss_clear,
         "cabin_z_floor_m": z_floor,
         "cabin_z_ceil_m": z_ceil,
         "z_lifts_m": best.get("z_lifts_m") or {},
@@ -1604,6 +1929,7 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                 "height": float(hz),
                 "z": float(z),
                 "radial_m": _max_yz_radius(float(y), float(z), float(wy), float(hz)),
+                "half_extent_m": _max_yz_half_extent(float(y), float(z), float(wy), float(hz)),
             }
             for n, x, y, lx, wy, hz, z in placed
         ],

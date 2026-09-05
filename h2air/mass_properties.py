@@ -465,6 +465,67 @@ def evaluate_packaging(
                     ),
                     affected=radial_unknown,
                 ))
+        elif str(cross_section).lower() in {"square_filleted", "square", "rounded_square"}:
+            wall_clear = float(env.clearance_m)
+            outer_half = _circular_pod_radius_m(env)  # face half-side from Y/Z dims
+            allowed_half = outer_half - wall_clear
+            axis_y, axis_z = float(env.center_m[1]), float(env.center_m[2])
+            failed: List[str] = []
+            unknown_sq: List[str] = []
+            worst = 0.0
+            for c in items:
+                dims = c.known_box_dimensions()
+                shape = Shape(c.shape)
+                y0, z0 = float(c.position_m[1]) - axis_y, float(c.position_m[2]) - axis_z
+                if shape == Shape.CYLINDER_X:
+                    D = c.dimensions_m.get("diameter")
+                    if D is None or float(D) <= 0:
+                        unknown_sq.append(c.name)
+                        continue
+                    ext = max(abs(y0), abs(z0)) + 0.5 * float(D)
+                elif dims is None:
+                    unknown_sq.append(c.name)
+                    continue
+                else:
+                    _lx, ly, lz = dims
+                    ext = max(abs(y0) + 0.5 * float(ly), abs(z0) + 0.5 * float(lz))
+                protrusion = ext - allowed_half
+                if protrusion > EPS:
+                    failed.append(
+                        f"{c.name} (half-extent {1000.0 * ext:.1f} mm > "
+                        f"allowed {1000.0 * allowed_half:.1f} mm)"
+                    )
+                    worst = max(worst, protrusion)
+            if failed:
+                checks.append(Check(
+                    name=f"square_wall_clearance:{zone_name}",
+                    status=CheckStatus.FAIL.value,
+                    value=worst,
+                    limit=wall_clear,
+                    message=(
+                        f"Component envelope(s) violate the square fuselage wall keepout "
+                        f"({1000.0 * wall_clear:.1f} mm clearance inside side "
+                        f"{1000.0 * 2.0 * outer_half:.1f} mm)."
+                    ),
+                    affected=failed,
+                ))
+            else:
+                checks.append(Check(
+                    name=f"square_wall_clearance:{zone_name}",
+                    status=(CheckStatus.NOT_EVALUATED.value if unknown_sq else CheckStatus.PASS.value),
+                    value=0.0,
+                    limit=wall_clear,
+                    message=(
+                        "Known envelopes keep the required wall clearance, but some components "
+                        "have incomplete dimensions."
+                        if unknown_sq
+                        else (
+                            f"All evaluated envelopes stay inside the square fuselage with "
+                            f"{1000.0 * wall_clear:.1f} mm wall keepout."
+                        )
+                    ),
+                    affected=unknown_sq,
+                ))
 
         colliding: List[str] = []
         eval_count = 0

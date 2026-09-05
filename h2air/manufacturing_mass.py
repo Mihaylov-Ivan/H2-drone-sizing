@@ -80,20 +80,25 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
     # Fuselage printed sections.
     x0 = 0.0
     max_d = float(d["fuselage_max_diameter_m"])
+    fuse_w = float(d.get("fuselage_width_m", max_d))
+    fuse_h = float(d.get("fuselage_height_m", max_d))
     for sec in mm["fuselage_sections"]:
-        L = float(sec["length_m"]); dia = float(sec["diameter_m"])
+        L = float(sec["length_m"])
+        dia = float(sec["diameter_m"])
+        w = float(sec.get("width_m", fuse_w if fuse_w > 0 else dia))
+        h = float(sec.get("height_m", fuse_h if fuse_h > 0 else dia))
         rule = sec["mass"]
         m = _mass(rule, L)
         name = f"fuselage_{sec['name']}_shell"
         _add_box(out, name=name, group="fuselage_structure", mass=m,
-                 pos=[x0 + L/2, 0, 0], dims=[L, dia, dia], rule=rule, collide=False)
+                 pos=[x0 + L/2, 0, 0], dims=[L, w, h], rule=rule, collide=False)
         ledger.append({"name":name,"length_m":L,"count":1,"mass_mode":rule.get("mass_mode"),"specific_mass_kg_per_m":rule.get("specific_mass_kg_per_m"),"mass_kg":m,"hardcoded":rule.get("mass_mode")=="hardcoded"})
         x0 += L
 
     # Two full-length CFRP fuselage longerons: top and bottom centreline.
     longr = mm["fuselage_longerons"]
     Lfus = float(mm["fuselage_total_length_m"]); nlong = int(longr.get("count",2)); mlong = _mass(longr,Lfus,nlong)
-    Rfuse = 0.5 * float(d.get("fuselage_max_diameter_m", gm.get("central_pod_outer", {}).get("dimensions_m", [0,0.18])[1] if gm.get("central_pod_outer") else 0.18))
+    Rfuse = 0.5 * float(d.get("fuselage_height_m", d.get("fuselage_max_diameter_m", 0.18)))
     long_od = float(longr.get("tube_od_m", 0.006))
     stations = longr.get("stations_yz_m")
     if not stations:
