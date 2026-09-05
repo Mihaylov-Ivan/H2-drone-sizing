@@ -1205,24 +1205,58 @@ def _place_pdbs_on_cylinder(
 
 
 
-def _candidate_plans() -> List[Dict[str, Any]]:
-    """Enumerate CB/battery seats. Prefer split-to-H2 on OD ties."""
-    plans: List[Dict[str, Any]] = []
-    # Split layouts first in tie-break order (lower rank preferred when OD equal).
-    for cb_site, bat_site, rank in [
-        ("fc_top", "h2_top", 0),
-        ("fc_side", "h2_top", 1),
-        ("h2_top", "fc_top", 2),
-        ("h2_top", "fc_side", 3),
-        ("fc_top", "fc_side", 4),
-        ("fc_side", "fc_top", 5),
-        ("fc_top", "fc_top", 6),
-        ("fc_side", "fc_side", 7),
-        ("h2_top", "h2_top", 8),
-    ]:
-        plans.append({"cb": cb_site, "bat": bat_site, "tie_rank": rank})
-    return plans
+def _candidate_plans(
+    *,
+    energy_bay_order: str = "fuel_cell_forward",
+    cb_battery_order: str = "battery_forward",
+) -> List[Dict[str, Any]]:
+    """Enumerate CB/battery seats as tandem-X pairs on opposite energy hosts.
 
+    The preferred-forward item is always assigned to the forward energy host; the
+    other sits on the aft host. Same-shelf / side-by-side plans are excluded.
+    """
+    fwd_is_fc = str(energy_bay_order).lower() == "fuel_cell_forward"
+    prefer_bat = str(cb_battery_order).lower() == "battery_forward"
+    if fwd_is_fc:
+        # (cb_site, bat_site)
+        if prefer_bat:
+            pairs = [("h2_top", "fc_top"), ("h2_top", "fc_side")]
+        else:
+            pairs = [("fc_top", "h2_top"), ("fc_side", "h2_top")]
+    else:
+        if prefer_bat:
+            pairs = [("fc_top", "h2_top"), ("fc_side", "h2_top")]
+        else:
+            pairs = [("h2_top", "fc_top"), ("h2_top", "fc_side")]
+    return [
+        {"cb": cb_site, "bat": bat_site, "tie_rank": i}
+        for i, (cb_site, bat_site) in enumerate(pairs)
+    ]
+
+
+def _require_cb_battery_x_tandem(
+    p_cb: Placed,
+    p_bat: Placed,
+    *,
+    axial: float,
+    prefer_battery_forward: bool,
+) -> None:
+    """CB and battery must sit one behind the other in X (no side-by-side)."""
+    if prefer_battery_forward:
+        fwd, aft = p_bat, p_cb
+        label = "battery_forward"
+    else:
+        fwd, aft = p_cb, p_bat
+        label = "control_box_forward"
+    _ff, fwd_aft = _fwd_aft(fwd)
+    aft_fwd, _aa = _fwd_aft(aft)
+    gap = float(aft_fwd) - float(fwd_aft)
+    if gap + EPS < float(axial):
+        raise ValueError(
+            f"cb/battery must be tandem in X per {label} "
+            f"(aft face of forward item to forward face of aft item "
+            f"{1000 * gap:.1f} mm < axial {1000 * axial:.0f} mm); side-by-side seats are not allowed"
+        )
 
 def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     """One packaging placement pass at the current fuselage max OD (min-OD seat search)."""
@@ -1331,6 +1365,16 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
             "Packaging layout: energy_bay_order must be 'fuel_cell_forward' or 'hydrogen_forward'"
         )
     energy_bay_order = order_raw
+    cb_battery_order = str(
+        d.get("cb_battery_order")
+        or layout.get("cb_battery_order")
+        or "battery_forward"
+    ).lower().strip()
+    if cb_battery_order not in {"battery_forward", "control_box_forward"}:
+        raise ValueError(
+            "Packaging layout: cb_battery_order must be 'battery_forward' or 'control_box_forward'"
+        )
+    prefer_battery_forward = cb_battery_order == "battery_forward"
 
     z_cyl = z_floor + 0.5 * D_cyl
     cyl_top = z_cyl + 0.5 * D_cyl
@@ -1501,21 +1545,27 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     best: Optional[Dict[str, Any]] = None
     errors: List[str] = []
 
-    for plan in _candidate_plans():
+    for plan in _candidate_plans(
+        energy_bay_order=energy_bay_order,
+        cb_battery_order=cb_battery_order,
+    ):
         try:
             cb_site = str(plan["cb"])
             bat_site = str(plan["bat"])
-            # Side signs: opposite sides when both beside/on-top of FC; centred when alone on top.
-            if cb_site == "fc_side" and bat_site == "fc_side":
-                cb_sign, bat_sign = 1.0, -1.0
-            elif cb_site == "fc_top" and bat_site == "fc_top":
-                cb_sign, bat_sign = 1.0, -1.0
+            # Side signs only when one item is alone on an FC side seat.
+            # Same-host dual tops pack on centreline (tandem X), never side-by-side.
+            if cb_site == "fc_top" and bat_site == "fc_top":
+                cb_sign, bat_sign = 0.0, 0.0
             elif cb_site == "fc_top":
                 cb_sign, bat_sign = 0.0, -1.0
             elif bat_site == "fc_top":
                 cb_sign, bat_sign = 1.0, 0.0
+            elif cb_site == "fc_side" and bat_site != "fc_side":
+                cb_sign, bat_sign = 1.0, 0.0
+            elif bat_site == "fc_side" and cb_site != "fc_side":
+                cb_sign, bat_sign = 0.0, -1.0
             else:
-                cb_sign, bat_sign = 1.0, -1.0
+                cb_sign, bat_sign = 0.0, 0.0
 
             # Forward energy host tops stay host-front flush; aft-host tops may
             # overhang forward into the bay gap, packed against component_axial_m.
@@ -1550,15 +1600,24 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                 }
             )
 
-            def _host_rank(s: Dict[str, Any]) -> Tuple[int, int]:
-                # Forward host first; tops before sides on same host.
+            fwd_name = "buffer_battery" if prefer_battery_forward else "fuel_cell_control_box"
+
+            def _host_rank(s: Dict[str, Any]) -> Tuple[int, int, int]:
+                # Forward energy host first; preferred-forward item first on that host.
                 on_fwd = (s["on_fc"] and fwd_host_is_fc) or ((not s["on_fc"]) and (not fwd_host_is_fc))
-                return (0 if on_fwd else 1, 0 if s["is_top"] else 1)
+                return (
+                    0 if on_fwd else 1,
+                    0 if s["name"] == fwd_name else 1,
+                    0 if s["is_top"] else 1,
+                )
 
             seats.sort(key=_host_rank)
 
             placed_seats: Dict[str, Placed] = {}
-            blockers: List[Placed] = []
+            # Energy hosts act as X blockers so aft-host tops clear the forward bay.
+            blockers: List[Placed] = [
+                p for p in base if p[0] in {"fuel_cell_system", "hydrogen_cylinder"}
+            ]
 
             for s in seats:
                 site = str(s["site"])
@@ -1566,10 +1625,6 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                     if float(s["L"]) > L_cyl + EPS:
                         raise ValueError(f"{s['name']} longer than H₂ cylinder")
                     y = 0.0
-                    if s["name"] == "buffer_battery" and cb_site == "h2_top":
-                        y = 0.5 * cb_W + comp_c + 0.5 * bat_W
-                    elif s["name"] == "fuel_cell_control_box" and bat_site == "h2_top" and "buffer_battery" in placed_seats:
-                        y = -(0.5 * bat_W + comp_c + 0.5 * cb_W)
                     z = cyl_top + stack_v + 0.5 * float(s["H"])
                     p = _pack_top_forward_x(
                         name=str(s["name"]),
@@ -1607,7 +1662,6 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                         allow_forward_of_host=fc_is_aft_host,
                     )
                 else:
-                    # fc_side — keep X centred on FC (not a second-level top shelf).
                     p = _seat_on_fc(
                         site=site,
                         name=str(s["name"]),
@@ -1628,7 +1682,12 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
 
             p_cb = placed_seats["fuel_cell_control_box"]
             p_bat = placed_seats["buffer_battery"]
-
+            _require_cb_battery_x_tandem(
+                p_cb,
+                p_bat,
+                axial=axial_c,
+                prefer_battery_forward=prefer_battery_forward,
+            )
             h2_occupants = [
                 p
                 for p in (p_cb, p_bat)
@@ -1697,9 +1756,14 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
             p_cb = by_p["fuel_cell_control_box"]
             p_bat = by_p["buffer_battery"]
             pdbs = [by_p[p[0]] for p in pdbs]
+            _require_cb_battery_x_tandem(
+                p_cb,
+                p_bat,
+                axial=axial_c,
+                prefer_battery_forward=prefer_battery_forward,
+            )
 
-            # Cube forward connector bay at cube height (after Z lift).
-            z_cube_now = by_p["autopilot"][6]
+            # Cube forward connector bay at cube height (after Z lift).            z_cube_now = by_p["autopilot"][6]
             bay = (connector_start, cube_fwd)
             for n, x, y, lx, wy, hz, z in placed:
                 if n == "autopilot":
@@ -1786,6 +1850,7 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     d["energy_bay_axial_clearance_m"] = axial_c
     d["packaging_control_box_site"] = best["cb_site"]
     d["packaging_battery_site"] = best["bat_site"]
+    d["cb_battery_order"] = cb_battery_order
     if isinstance(layout, dict):
         layout["energy_bay_order"] = energy_bay_order
 
@@ -1915,6 +1980,7 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
         "fuel_cell_control_box_mass_kg": cb_mass,
         "control_box_site": best["cb_site"],
         "battery_site": best["bat_site"],
+        "cb_battery_order": cb_battery_order,
         "layout_od_need_m": best["od_need"],
         "cube_front_connector_bay_m": [connector_start, cube_fwd],
         "cube_front_connector_available_m": connector_len,

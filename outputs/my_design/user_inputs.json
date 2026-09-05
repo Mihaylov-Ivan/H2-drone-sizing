@@ -23,7 +23,7 @@
       {
         "name": "nose",
         "length_m": 0.14,
-        "diameter_m": 0.23485917308926407,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -31,13 +31,13 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       },
       {
         "name": "center_a",
         "length_m": 0.23550000000000001,
-        "diameter_m": 0.23485917308926407,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -45,13 +45,13 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       },
       {
         "name": "center_b",
-        "length_m": 0.3689,
-        "diameter_m": 0.23485917308926407,
+        "length_m": 0.3439000000000001,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -59,13 +59,13 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       },
       {
         "name": "tail",
         "length_m": 0.14,
-        "diameter_m": 0.23485917308926407,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -73,8 +73,8 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       }
     ]
   },
@@ -149,7 +149,8 @@
     "enabled": true,
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "auto",
-    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
+    "cb_battery_order": "battery_forward",
+    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (which of CB/battery sits more forward in X). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
     "clearances_m": {
       "fuselage_bottom_m": 0.016,
       "fuselage_wall_m": 0.01,
@@ -214,15 +215,24 @@
     },
     "hydrogen": {
       "storage_name": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
+      "cylinder_model": "3 CF",
+      "design_standard": "ISO 11119-2",
+      "certification": "TPED, DOT",
+      "cylinder_type": 3,
       "pressure_bar": 300.0,
       "water_volume_L": 3.0,
-      "nominal_h2_mass_kg": 0.0619,
+      "cylinder_length_m": 0.425,
+      "cylinder_diameter_m": 0.115,
       "cylinder_mass_kg": 1.62,
+      "nominal_h2_mass_kg": 0.0619,
+      "h2_mass_fraction_wt_pct": 3.7,
+      "thread": "M18 x 1.5",
       "regulator_mass_kg": 0.315,
       "reference_load_W": 400.0,
       "reference_endurance_h": 2.575,
       "reference_net_energy_Wh": 1030.0,
-      "mission_energy_reserve_fraction": 0.15
+      "mission_energy_reserve_fraction": 0.15,
+      "note": "AMS Composites 3 CF datasheet row: 3.0 L, 115 mm OD, 425 mm length, 1620 g, 300 bar, 61.9 g H2, 1030 Wh."
     }
   },
   "manufacturing_mass_model": {

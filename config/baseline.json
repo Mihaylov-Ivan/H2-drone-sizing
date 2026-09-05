@@ -587,13 +587,13 @@
           ],
           "shape": "cylinder_x",
           "dimensions_m": {
-            "length": 0.45,
-            "diameter": 0.12
+            "length": 0.425,
+            "diameter": 0.115
           },
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
-          "source": "AMS Composites 3 CF datasheet (3.0 L / 300 bar Type III); mass supplier-confirmed, envelope still approximate",
-          "note": "Cylinder mass 1.62 kg from supplier; length/diameter remain packaging placeholders until drawing closure."
+          "source": "AMS Composites 3 CF datasheet (3.0 L / 300 bar Type III); mass supplier-confirmed",
+          "note": "Envelope from AMS 3 CF datasheet: 425 mm length x 115 mm diameter, 1.62 kg."
         },
         {
           "name": "hydrogen_regulator",

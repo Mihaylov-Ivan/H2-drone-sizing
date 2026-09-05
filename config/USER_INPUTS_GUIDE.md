@@ -12,7 +12,11 @@ Normal users should edit **`config/user_inputs.json` only**.
 
 ## User-defined versus calculated
 
-User-defined examples: payload, mission duration, fuselage section lengths/diameters, root chords, taper ratios, NACA codes, twist/sweep/dihedral, propeller sizes, hardware data, component positions, kg/m values and hardcode switches.
+User-defined examples: payload, mission duration, fuselage section lengths/diameters, root chords, taper ratios, NACA codes, twist/sweep/dihedral, propeller sizes, hardware data (including H₂ cylinder length/diameter/mass from `hardware.hydrogen`), component positions, kg/m values and hardcode switches.
+
+## Hydrogen cylinder
+
+`hardware.hydrogen` is the source of truth for the selected tank (AMS 3 CF by default): `cylinder_length_m`, `cylinder_diameter_m`, `cylinder_mass_kg`, `water_volume_L`, `pressure_bar`, `nominal_h2_mass_kg`, `reference_net_energy_Wh`, etc. Those length/diameter values are written into the `hydrogen_cylinder` packaging envelope before layout/sizing runs.
 
 Auto-calculated examples: fuselage total length, lifting-surface spans in AUTO mode, wing/tail areas and MACs, detailed structural component masses from kg/m, CG/inertias, neutral point/static margin, drag/cruise power, VTOL requirements, transitions, mission energy, H2 use, battery SOC, primary structural sizing and converged MTOW.
 
@@ -31,6 +35,7 @@ The complete resolved/internal configuration is written after each run as `resol
 
 - `energy_bay_order`: `fuel_cell_forward` (FC at nose break, H₂ aft) or `hydrogen_forward` (H₂ at nose break, FC aft).
 - `energy_bay_order_mode`: `hardcoded` uses `energy_bay_order`; `auto` sweeps both in the design-study optimizer via `energy_bay_order_code` (0 / 1).
+- `cb_battery_order`: `battery_forward` or `control_box_forward` — which of the buffer battery / FCPM control box sits more forward in X. They are always packed **tandem in X** (never side-by-side); the preferred item is on/near the forward energy host, the other behind it with at least `component_axial_m` clearance.
 - Payload in the nose, aft face 10 mm forward of the nose-section end, as low as bottom clearance allows, plus optional `nose_bay_raise_m` (raises payload and Cube together).
 - Cube Orange on top of the payload with the same aft station; connector keepout forward of the Cube.
 - Forward energy item flush with the nose-section end; aft energy item as aft as possible with pusher keepout.

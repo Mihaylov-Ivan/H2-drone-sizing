@@ -92,6 +92,13 @@ def _components_with_power(cfg:Mapping[str,Any]):
         c=by["buffer_battery"]; c.mass_takeoff_kg=c.mass_end_kg=float(batt["mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
     if "hydrogen_cylinder" in by and h.get("cylinder_mass_kg") is not None:
         c=by["hydrogen_cylinder"]; c.mass_takeoff_kg=c.mass_end_kg=float(h["cylinder_mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
+        dims = dict(c.dimensions_m or {})
+        if h.get("cylinder_length_m") is not None:
+            dims["length"] = float(h["cylinder_length_m"])
+        if h.get("cylinder_diameter_m") is not None:
+            dims["diameter"] = float(h["cylinder_diameter_m"])
+        if dims:
+            c.dimensions_m = dims
     comps, manufacturing_ledger = apply_manufacturing_mass_model(cfg, comps)
     if isinstance(cfg, dict):
         cfg.setdefault("_runtime", {})["manufacturing_mass_ledger"] = manufacturing_ledger

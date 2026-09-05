@@ -144,6 +144,27 @@ def test_top_seats_pack_forward_with_component_axial():
         assert gap + 1e-9 >= axial
 
 
+def test_cb_battery_order_battery_forward():
+    c = load_model_config(ROOT / "config" / "user_inputs.json")
+    pl = c["coupling"]["packaging_layout"]
+    assert str(c["design"].get("cb_battery_order") or pl.get("cb_battery_order")) == "battery_forward"
+    by = {e["name"]: e for e in pl["placed_envelopes"]}
+    bat = by["buffer_battery"]
+    cb = by["fuel_cell_control_box"]
+    bat_aft = float(bat["x"]) + 0.5 * float(bat["length"])
+    cb_fwd = float(cb["x"]) - 0.5 * float(cb["length"])
+    axial = float(
+        c["design"].get("component_axial_clearance_m")
+        or pl.get("component_axial_clearance_m")
+        or 0.01
+    )
+    assert bat_aft + axial <= cb_fwd + 1e-9
+    assert abs(float(bat.get("y", 0.0))) < 1e-9
+    assert abs(float(cb.get("y", 0.0))) < 1e-9
+    assert pl["battery_site"].startswith("fc")
+    assert pl["control_box_site"] == "h2_top"
+
+
 def test_energy_bay_order_in_optimizer_space_when_auto():
     from h2air.optimization import default_space_for_config
 

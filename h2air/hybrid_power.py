@@ -169,6 +169,9 @@ class HydrogenConfig:
     nominal_h2_mass_kg: float = 0.0619
     regulator_mass_kg: float = 0.315
     cylinder_mass_kg: Optional[float] = 1.62
+    # Packaging / CAD envelope from supplier datasheet (3 CF: 425 x 115 mm).
+    cylinder_length_m: Optional[float] = 0.425
+    cylinder_diameter_m: Optional[float] = 0.115
 
     # Supplier cylinder usable electrical energy (~1030 Wh) already at typical FC
     # efficiency; do not multiply by efficiency again. 15% mission reserve -> ~875.5 Wh.
@@ -199,6 +202,10 @@ class HydrogenConfig:
             e.append("hydrogen reference_net_energy_Wh must be > 0")
         if self.cylinder_mass_kg is not None and self.cylinder_mass_kg <= 0:
             e.append("hydrogen cylinder_mass_kg must be > 0 when supplied")
+        if self.cylinder_length_m is not None and self.cylinder_length_m <= 0:
+            e.append("hydrogen cylinder_length_m must be > 0 when supplied")
+        if self.cylinder_diameter_m is not None and self.cylinder_diameter_m <= 0:
+            e.append("hydrogen cylinder_diameter_m must be > 0 when supplied")
         return e
 
     @property

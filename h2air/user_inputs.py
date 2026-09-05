@@ -301,6 +301,14 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         d["energy_bay_order_mode"] = mode
         d["energy_bay_order_code"] = 0.0 if order == "fuel_cell_forward" else 1.0
 
+        cb_bat = str(pl.get("cb_battery_order", "battery_forward")).lower().strip()
+        if cb_bat not in {"battery_forward", "control_box_forward"}:
+            raise ValueError(
+                "packaging_layout.cb_battery_order must be 'battery_forward' or 'control_box_forward'"
+            )
+        pl["cb_battery_order"] = cb_bat
+        d["cb_battery_order"] = cb_bat
+
         clear = pl.setdefault("clearances_m", {})
         wall_clear = float(clear.get("fuselage_wall_m", env.get("wall_clearance_m", 0.01)))
         if wall_clear < 0:
@@ -337,8 +345,32 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         for k, v in hw["battery"].items():
             cfg["power_system"]["battery"][k] = v
     if "hydrogen" in hw:
-        for k, v in hw["hydrogen"].items():
+        h = hw["hydrogen"]
+        for k, v in h.items():
             cfg["power_system"]["hydrogen"][k] = v
+        # Apply supplier envelope + mass into the packaging component ledger.
+        L = h.get("cylinder_length_m")
+        Dia = h.get("cylinder_diameter_m")
+        m_cyl = h.get("cylinder_mass_kg")
+        for c in cfg["geometry_mass"]["component_ledger"]["components"]:
+            if c.get("name") != "hydrogen_cylinder":
+                continue
+            dims = c.setdefault("dimensions_m", {})
+            if L is not None:
+                dims["length"] = float(L)
+            if Dia is not None:
+                dims["diameter"] = float(Dia)
+            if m_cyl is not None:
+                c["mass_takeoff_kg"] = float(m_cyl)
+            c["shape"] = "cylinder_x"
+            c["status"] = "supplier_confirmed"
+            c["source"] = str(h.get("storage_name") or "hardware.hydrogen")
+            c["note"] = (
+                f"Envelope from user_inputs hardware.hydrogen "
+                f"({1000 * float(dims.get('length', 0)):.0f} x {1000 * float(dims.get('diameter', 0)):.0f} mm); "
+                f"mass {float(m_cyl) if m_cyl is not None else c.get('mass_takeoff_kg')} kg."
+            )
+            break
 
     # -------- Discrete motor/prop/battery database selection --------
     if u.get("hardware_selection"):

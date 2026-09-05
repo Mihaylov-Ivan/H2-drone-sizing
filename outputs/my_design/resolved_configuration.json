@@ -29,12 +29,12 @@
     "horizontal_tail_area_m2": 0.16098864,
     "horizontal_tail_ac_x_m": 1.048942,
     "lift_row_center_x_m": 0.385884,
-    "battery_x_m": 0.43370000000000003,
-    "battery_z_m": 0.05707041345536795,
+    "battery_x_m": 0.22150000000000003,
+    "battery_z_m": 0.06029069267511453,
     "fuel_cell_x_m": 0.25525000000000003,
-    "fuel_cell_z_m": -0.03152958654463204,
-    "hydrogen_cylinder_x_m": 0.6055,
-    "hydrogen_cylinder_z_m": -0.03142958654463204,
+    "fuel_cell_z_m": -0.028109307324885473,
+    "hydrogen_cylinder_x_m": 0.5930000000000001,
+    "hydrogen_cylinder_z_m": -0.030509307324885472,
     "neutral_point_model": "calibrated_tail_volume",
     "fuselage_diameter_mode": "auto",
     "fuselage_midbody_length_mode": "auto",
@@ -42,10 +42,10 @@
     "fuselage_diameter_margin_m": 0.0,
     "fuselage_cross_section": "rectangular_filleted",
     "fuselage_fillet_radius_m": 0.02,
-    "fuselage_length_m": 0.8844000000000001,
-    "fuselage_width_m": 0.13999999999999999,
-    "fuselage_height_m": 0.23485917308926407,
-    "fuselage_max_diameter_m": 0.23485917308926407,
+    "fuselage_length_m": 0.8594000000000002,
+    "fuselage_width_m": 0.135,
+    "fuselage_height_m": 0.22801861464977094,
+    "fuselage_max_diameter_m": 0.22801861464977094,
     "main_wing_root_chord_m": 0.3258,
     "main_wing_taper_ratio": 0.6,
     "main_wing_naca_code": "NACA4412",
@@ -85,6 +85,7 @@
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "auto",
     "energy_bay_order_code": 0.0,
+    "cb_battery_order": "battery_forward",
     "fuselage_wall_clearance_m": 0.01,
     "longeron_boss_clearance_m": 0.01,
     "component_axial_clearance_m": 0.01,
@@ -95,48 +96,48 @@
     "fuselage_section_lengths_m": {
       "nose": 0.14,
       "center_a": 0.23550000000000001,
-      "center_b": 0.3689,
+      "center_b": 0.3439000000000001,
       "tail": 0.14
     },
     "fuselage_section_diameters_m": {
-      "nose": 0.23485917308926407,
-      "center_a": 0.23485917308926407,
-      "center_b": 0.23485917308926407,
-      "tail": 0.23485917308926407
+      "nose": 0.22801861464977094,
+      "center_a": 0.22801861464977094,
+      "center_b": 0.22801861464977094,
+      "tail": 0.22801861464977094
     },
     "fuselage_section_widths_m": {
-      "nose": 0.13999999999999999,
-      "center_a": 0.13999999999999999,
-      "center_b": 0.13999999999999999,
-      "tail": 0.13999999999999999
+      "nose": 0.135,
+      "center_a": 0.135,
+      "center_b": 0.135,
+      "tail": 0.135
     },
     "fuselage_section_heights_m": {
-      "nose": 0.23485917308926407,
-      "center_a": 0.23485917308926407,
-      "center_b": 0.23485917308926407,
-      "tail": 0.23485917308926407
+      "nose": 0.22801861464977094,
+      "center_a": 0.22801861464977094,
+      "center_b": 0.22801861464977094,
+      "tail": 0.22801861464977094
     },
-    "fuel_cell_control_box_x_m": 0.2411,
+    "fuel_cell_control_box_x_m": 0.48160000000000003,
     "fuel_cell_control_box_y_m": 0.0,
-    "fuel_cell_control_box_z_m": 0.05394541345536796,
+    "fuel_cell_control_box_z_m": 0.05256569267511453,
     "fuel_cell_stack_mass_kg": 1.0932,
     "fuel_cell_control_box_mass_kg": 0.3568,
     "battery_y_m": 0.0,
     "cube_orange_x_m": 0.08275,
-    "cube_orange_z_m": 0.027070413455367964,
+    "cube_orange_z_m": 0.03049069267511453,
     "payload_x_m": 0.10350000000000001,
-    "payload_z_m": -0.031429586544632036,
+    "payload_z_m": -0.02800930732488547,
     "nose_section_end_x_m": 0.14,
-    "packaging_control_box_site": "fc_top",
-    "packaging_battery_site": "h2_top",
-    "pdb_x_m": 0.5652,
+    "packaging_control_box_site": "h2_top",
+    "packaging_battery_site": "fc_top",
+    "pdb_x_m": 0.6327,
     "pdb_y_m": 0.0,
-    "pdb_z_m": 0.060320413455367955,
-    "pdb2_x_m": 0.6552000000000001,
+    "pdb_z_m": 0.05874069267511453,
+    "pdb2_x_m": 0.7227000000000001,
     "pdb2_y_m": 0.0,
-    "pdb2_z_m": 0.060320413455367955,
-    "main_wing_z_m": 0.10028458654463203,
-    "horizontal_tail_z_m": 0.10028458654463203
+    "pdb2_z_m": 0.05874069267511453,
+    "main_wing_z_m": 0.09686430732488546,
+    "horizontal_tail_z_m": 0.09686430732488546
   },
   "power_system": {
     "model_version": "H2AIR-phase2-hybrid-power-1.0",
@@ -185,7 +186,16 @@
       "mission_energy_reserve_fraction": 0.15,
       "physical_usable_fraction": 1.0,
       "minimum_residual_h2_kg": null,
-      "h2_LHV_kWh_per_kg": 33.33
+      "h2_LHV_kWh_per_kg": 33.33,
+      "cylinder_model": "3 CF",
+      "design_standard": "ISO 11119-2",
+      "certification": "TPED, DOT",
+      "cylinder_type": 3,
+      "cylinder_length_m": 0.425,
+      "cylinder_diameter_m": 0.115,
+      "h2_mass_fraction_wt_pct": 3.7,
+      "thread": "M18 x 1.5",
+      "note": "AMS Composites 3 CF datasheet row: 3.0 L, 115 mm OD, 425 mm length, 1620 g, 300 bar, 61.9 g H2, 1030 Wh."
     },
     "battery": {
       "name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
@@ -269,14 +279,14 @@
         "overall_reference_length_m": 1.25,
         "central_pod_outer": {
           "center_m": [
-            0.44220000000000004,
+            0.4297000000000001,
             0.0,
             0.0
           ],
           "dimensions_m": [
-            0.8844000000000001,
-            0.13999999999999999,
-            0.23485917308926407
+            0.8594000000000002,
+            0.135,
+            0.22801861464977094
           ]
         },
         "wing_area_m2": 0.879451488,
@@ -289,8 +299,8 @@
         "horizontal_tail_span_m": 0.8688,
         "vertical_fin_height_m": 0.3,
         "boom_center_y_m": [
-          -0.3694,
-          0.3694
+          -0.3669,
+          0.3669
         ],
         "boom_outer_diameter_m": 0.035,
         "boom_x_start_m": 0.09648400000000001,
@@ -298,23 +308,23 @@
         "lift_prop_centers_m": [
           [
             0.09648400000000001,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           [
             0.09648400000000001,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ],
           [
             0.675284,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           [
             0.675284,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ]
         ],
         "lift_prop_diameter_m": 0.5588,
@@ -323,7 +333,7 @@
         "lift_prop_to_pod_required_clearance_m": 0.02,
         "pusher": {
           "center_m": [
-            0.9213500000000001,
+            0.8963500000000002,
             0.0,
             0.0
           ],
@@ -340,19 +350,19 @@
           0.15,
           0.0
         ],
-        "fuselage_top_z_m": 0.11742958654463204,
-        "fuselage_longeron_top_z_m": 0.11417958654463203,
-        "fuselage_longeron_bottom_z_m": -0.11417958654463203,
-        "fuselage_longeron_z_m": 0.11417958654463203,
+        "fuselage_top_z_m": 0.11400930732488547,
+        "fuselage_longeron_top_z_m": 0.11075930732488547,
+        "fuselage_longeron_bottom_z_m": -0.11075930732488547,
+        "fuselage_longeron_z_m": 0.11075930732488547,
         "fuselage_longeron_y_abs_m": 0.0,
         "fuselage_longeron_boss_od_m": 0.0125,
-        "wing_upper_z_m": 0.11428458654463203,
-        "wing_lower_z_m": 0.08628458654463203,
-        "wing_z_flush_m": 0.10342958654463204,
+        "wing_upper_z_m": 0.11086430732488546,
+        "wing_lower_z_m": 0.08286430732488546,
+        "wing_z_flush_m": 0.10000930732488547,
         "wing_drop_from_flush_m": 0.003145000000000009,
-        "boom_z_m": 0.10028458654463203,
-        "lift_prop_disk_z_m": 0.14483458654463205,
-        "lift_prop_wing_clearance_m": 0.03055000000000002
+        "boom_z_m": 0.09686430732488546,
+        "lift_prop_disk_z_m": 0.14141430732488547,
+        "lift_prop_wing_clearance_m": 0.030550000000000008
       },
       "packaging": {
         "component_clearance_m": 0.01,
@@ -360,14 +370,14 @@
         "envelopes": {
           "central_pod": {
             "center_m": [
-              0.44220000000000004,
+              0.4297000000000001,
               0.0,
               0.0
             ],
             "dimensions_m": [
-              0.8844000000000001,
-              0.13999999999999999,
-              0.23485917308926407
+              0.8594000000000002,
+              0.135,
+              0.22801861464977094
             ],
             "wall_clearance_m": 0.01,
             "status": "calculated",
@@ -421,8 +431,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.09648400000000001,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -433,8 +443,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.09648400000000001,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -445,8 +455,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.675284,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -457,8 +467,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.675284,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -642,7 +652,7 @@
           "position_m": [
             0.10350000000000001,
             0.0,
-            -0.031429586544632036
+            -0.02800930732488547
           ],
           "shape": "box",
           "dimensions_m": {
@@ -661,9 +671,9 @@
           "group": "energy",
           "mass_takeoff_kg": 1.634,
           "position_m": [
-            0.43370000000000003,
+            0.22150000000000003,
             0.0,
-            0.05707041345536795
+            0.06029069267511453
           ],
           "shape": "box",
           "dimensions_m": {
@@ -674,7 +684,7 @@
           "package_zone": "central_pod",
           "status": "derived_from_user_supplied_pack_data",
           "source": "Derived from user-supplied batteries(2).py; two identical 6S packs in series",
-          "note": "Buffer battery seat=h2_top (min-diameter search).",
+          "note": "Buffer battery seat=fc_top (min-diameter search).",
           "mass_end_kg": 1.634,
           "include_in_collision_check": true
         },
@@ -685,7 +695,7 @@
           "position_m": [
             0.25525000000000003,
             0.0,
-            -0.03152958654463204
+            -0.028109307324885473
           ],
           "shape": "box",
           "dimensions_m": {
@@ -705,19 +715,19 @@
           "group": "energy",
           "mass_takeoff_kg": 1.62,
           "position_m": [
-            0.6055,
+            0.5930000000000001,
             0.0,
-            -0.03142958654463204
+            -0.030509307324885472
           ],
           "shape": "cylinder_x",
           "dimensions_m": {
-            "length": 0.45,
-            "diameter": 0.12
+            "length": 0.425,
+            "diameter": 0.115
           },
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
-          "source": "AMS Composites 3 CF datasheet (3.0 L / 300 bar Type III); mass supplier-confirmed, envelope still approximate",
-          "note": "Cylinder mass 1.62 kg from supplier; length/diameter remain packaging placeholders until drawing closure."
+          "source": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
+          "note": "Envelope from user_inputs hardware.hydrogen (425 x 115 mm); mass 1.62 kg."
         },
         {
           "name": "hydrogen_regulator",
@@ -726,7 +736,7 @@
           "position_m": [
             0.24525000000000002,
             0.0,
-            -0.03152958654463204
+            -0.028109307324885473
           ],
           "shape": "point",
           "dimensions_m": {},
@@ -740,9 +750,9 @@
           "mass_takeoff_kg": 0.12,
           "mass_end_kg": 0.0643,
           "position_m": [
-            0.6055,
+            0.5930000000000001,
             0.0,
-            -0.03142958654463204
+            -0.030509307324885472
           ],
           "shape": "point",
           "dimensions_m": {},
@@ -756,8 +766,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.09648400000000001,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -774,8 +784,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.09648400000000001,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -792,8 +802,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.675284,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -810,8 +820,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.675284,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -827,7 +837,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.191,
           "position_m": [
-            0.9213500000000001,
+            0.8963500000000002,
             0.0,
             0.0
           ],
@@ -846,8 +856,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.09648400000000001,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -858,8 +868,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.09648400000000001,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -870,8 +880,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.675284,
-            -0.3694,
-            0.13130958654463204
+            -0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -882,8 +892,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.675284,
-            0.3694,
-            0.13130958654463204
+            0.3669,
+            0.12788930732488546
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -908,7 +918,7 @@
           "position_m": [
             0.08275,
             0.0,
-            0.027070413455367964
+            0.03049069267511453
           ],
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
@@ -979,9 +989,9 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.04,
           "position_m": [
-            0.5652,
+            0.6327,
             0.0,
-            0.060320413455367955
+            0.05874069267511453
           ],
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
@@ -1039,9 +1049,9 @@
           "mass_takeoff_kg": 0.3568,
           "mass_end_kg": 0.3568,
           "position_m": [
-            0.2411,
+            0.48160000000000003,
             0.0,
-            0.05394541345536796
+            0.05256569267511453
           ],
           "shape": "box",
           "dimensions_m": {
@@ -1053,7 +1063,7 @@
           "include_in_collision_check": true,
           "status": "supplier_confirmed",
           "source": "FCPM datasheet control-box envelope 202.2 x 107 x 45.15 mm; mass is volume share of 1450 g module",
-          "note": "FCPM control box seat=fc_top (min-diameter search)."
+          "note": "FCPM control box seat=h2_top (min-diameter search)."
         },
         {
           "name": "power_module_2",
@@ -1061,9 +1071,9 @@
           "mass_takeoff_kg": 0.0,
           "mass_end_kg": 0.0,
           "position_m": [
-            0.6552000000000001,
+            0.7227000000000001,
             0.0,
-            0.060320413455367955
+            0.05874069267511453
           ],
           "shape": "box",
           "dimensions_m": {
@@ -1164,11 +1174,11 @@
       "current_rear_x_m": 0.675284,
       "common_midpoint_x_m": 0.385884,
       "minimum_front_x_m": 0.0,
-      "maximum_rear_x_m": 0.8844000000000001,
-      "y_abs_m": 0.3694,
-      "z_m": 0.13130958654463204,
+      "maximum_rear_x_m": 0.8594000000000002,
+      "y_abs_m": 0.3669,
+      "z_m": 0.12788930732488546,
       "required_disk_edge_clearance_m": 0.02,
-      "central_pod_width_m": 0.13999999999999999,
+      "central_pod_width_m": 0.135,
       "required_disk_to_pod_clearance_m": 0.02
     },
     "pusher_screen": {
@@ -1435,23 +1445,23 @@
       "lift_motor_stations_m": [
         [
           0.09648400000000001,
-          -0.3694,
-          0.13130958654463204
+          -0.3669,
+          0.12788930732488546
         ],
         [
           0.09648400000000001,
-          0.3694,
-          0.13130958654463204
+          0.3669,
+          0.12788930732488546
         ],
         [
           0.675284,
-          -0.3694,
-          0.13130958654463204
+          -0.3669,
+          0.12788930732488546
         ],
         [
           0.675284,
-          0.3694,
-          0.13130958654463204
+          0.3669,
+          0.12788930732488546
         ]
       ],
       "lift_motor_rotation_sign": [
@@ -1461,7 +1471,7 @@
         -1
       ],
       "pusher_station_m": [
-        0.9213500000000001,
+        0.8963500000000002,
         0.0,
         0.0
       ],
@@ -1601,7 +1611,7 @@
         0.09648400000000001,
         0.675284
       ],
-      "motor_y_m": 0.3694,
+      "motor_y_m": 0.3669,
       "phase4_equal_share_design_thrust_N": 59.38,
       "phase6_reference_hover_thrusts_N": [
         32.89,
@@ -1725,27 +1735,27 @@
       ],
       "high_wing_boom_through_wing": true,
       "boom_mounted_lift_motors": true,
-      "boom_y_abs_m": 0.3694,
-      "boom_y_input_m": 0.3694,
-      "boom_z_m": 0.10028458654463203,
+      "boom_y_abs_m": 0.3669,
+      "boom_y_input_m": 0.3669,
+      "boom_z_m": 0.09686430732488546,
       "boom_widened_for_pod_clearance": false,
-      "main_wing_z_m": 0.10028458654463203,
-      "main_wing_z_flush_m": 0.10342958654463204,
+      "main_wing_z_m": 0.09686430732488546,
+      "main_wing_z_flush_m": 0.10000930732488547,
       "main_wing_drop_from_flush_m": 0.003145000000000009,
-      "fuselage_top_z_m": 0.11742958654463204,
+      "fuselage_top_z_m": 0.11400930732488547,
       "fuselage_longeron_layout": "top_bottom",
-      "fuselage_longeron_top_z_m": 0.11417958654463203,
-      "fuselage_longeron_bottom_z_m": -0.11417958654463203,
-      "fuselage_longeron_z_m": 0.11417958654463203,
+      "fuselage_longeron_top_z_m": 0.11075930732488547,
+      "fuselage_longeron_bottom_z_m": -0.11075930732488547,
+      "fuselage_longeron_z_m": 0.11075930732488547,
       "fuselage_longeron_boss_od_m": 0.0125,
-      "lift_motor_z_m": 0.13130958654463204,
-      "lift_prop_disk_z_m": 0.14483458654463205,
-      "lift_prop_wing_clearance_m": 0.03055000000000002,
-      "horizontal_tail_z_m": 0.10028458654463203,
+      "lift_motor_z_m": 0.12788930732488546,
+      "lift_prop_disk_z_m": 0.14141430732488547,
+      "lift_prop_wing_clearance_m": 0.030550000000000008,
+      "horizontal_tail_z_m": 0.09686430732488546,
       "horizontal_tail_span_widened_to_boom": false,
       "pusher_fuselage_mount": true,
       "pusher_station_m": [
-        0.9213500000000001,
+        0.8963500000000002,
         0.0,
         0.0
       ],
@@ -1756,21 +1766,21 @@
       "midbody_length_mode": "auto",
       "component_axial_clearance_m": 0.01,
       "energy_bay_axial_clearance_m": 0.01,
-      "fuselage_length_m": 0.8844000000000001,
+      "fuselage_length_m": 0.8594000000000002,
       "center_a_length_m": 0.23550000000000001,
-      "center_b_length_m": 0.3689,
+      "center_b_length_m": 0.3439000000000001,
       "forward_energy_length_m": 0.2305,
-      "aft_energy_length_m": 0.45,
+      "aft_energy_length_m": 0.425,
       "aft_keepout_m": 0.0539,
       "energy_bay_order": "fuel_cell_forward"
     },
     "packaging_layout": {
       "enabled": true,
       "energy_bay_order": "fuel_cell_forward",
-      "fuselage_length_m": 0.8844000000000001,
-      "fuselage_od_m": 0.23485917308926407,
-      "fuselage_width_m": 0.13999999999999999,
-      "fuselage_height_m": 0.23485917308926407,
+      "fuselage_length_m": 0.8594000000000002,
+      "fuselage_od_m": 0.22801861464977094,
+      "fuselage_width_m": 0.135,
+      "fuselage_height_m": 0.22801861464977094,
       "fuselage_cross_section": "rectangular_filleted",
       "fuselage_fillet_radius_m": 0.02,
       "wall_clearance_m": 0.01,
@@ -1780,23 +1790,24 @@
       "component_axial_clearance_m": 0.01,
       "energy_bay_axial_clearance_m": 0.01,
       "longeron_boss_clearance_m": 0.01,
-      "cabin_z_floor_m": -0.09142958654463204,
-      "cabin_z_ceil_m": 0.09792958654463203,
+      "cabin_z_floor_m": -0.08800930732488547,
+      "cabin_z_ceil_m": 0.09450930732488547,
       "z_lifts_m": {
         "fc": 0.0,
         "h2": 0.0,
         "nose": 0.0
       },
-      "cylinder_top_gap_m": 0.06935917308926408,
+      "cylinder_top_gap_m": 0.06751861464977094,
       "cylinder_top_gap_required_m": 0.0635,
       "bottom_to_top_clearance_m": 0.003,
       "nose_section_end_x_m": 0.14,
       "fuel_cell_module_mass_kg": 1.45,
       "fuel_cell_stack_mass_kg": 1.0932,
       "fuel_cell_control_box_mass_kg": 0.3568,
-      "control_box_site": "fc_top",
-      "battery_site": "h2_top",
-      "layout_od_need_m": 0.028400284232496967,
+      "control_box_site": "h2_top",
+      "battery_site": "fc_top",
+      "cb_battery_order": "battery_forward",
+      "layout_od_need_m": 0.02646251297771908,
       "cube_front_connector_bay_m": [
         0.01,
         0.035500000000000004
@@ -1811,9 +1822,9 @@
           "length": 0.053,
           "width": 0.08,
           "height": 0.08,
-          "z": -0.031429586544632036,
-          "radial_m": 0.08186687873576882,
-          "half_extent_m": 0.07142958654463204
+          "z": -0.02800930732488547,
+          "radial_m": 0.07890035413615532,
+          "half_extent_m": 0.06800930732488547
         },
         {
           "name": "autopilot",
@@ -1822,9 +1833,9 @@
           "length": 0.0945,
           "width": 0.0443,
           "height": 0.031,
-          "z": 0.027070413455367964,
-          "radial_m": 0.04798815063910021,
-          "half_extent_m": 0.04257041345536797
+          "z": 0.03049069267511453,
+          "radial_m": 0.05104670716840444,
+          "half_extent_m": 0.04599069267511453
         },
         {
           "name": "fuel_cell_system",
@@ -1833,120 +1844,120 @@
           "length": 0.2305,
           "width": 0.1084,
           "height": 0.1198,
-          "z": -0.03152958654463204,
-          "radial_m": 0.10628739010683422,
-          "half_extent_m": 0.09142958654463204
+          "z": -0.028109307324885473,
+          "radial_m": 0.10335994473588954,
+          "half_extent_m": 0.08800930732488547
         },
         {
           "name": "hydrogen_cylinder",
-          "x": 0.6055,
+          "x": 0.5930000000000001,
           "y": 0.0,
-          "length": 0.45,
-          "width": 0.12,
-          "height": 0.12,
-          "z": -0.03142958654463204,
-          "radial_m": 0.1093589013099636,
-          "half_extent_m": 0.09142958654463204
+          "length": 0.425,
+          "width": 0.115,
+          "height": 0.115,
+          "z": -0.030509307324885472,
+          "radial_m": 0.10512796096094579,
+          "half_extent_m": 0.08800930732488547
         },
         {
           "name": "fuel_cell_control_box",
-          "x": 0.2411,
+          "x": 0.48160000000000003,
           "y": 0.0,
           "length": 0.2022,
           "width": 0.107,
           "height": 0.04515,
-          "z": 0.05394541345536796,
-          "radial_m": 0.0933682155520842,
-          "half_extent_m": 0.07652041345536796
+          "z": 0.05256569267511453,
+          "radial_m": 0.09224084613497434,
+          "half_extent_m": 0.07514069267511453
         },
         {
           "name": "buffer_battery",
-          "x": 0.43370000000000003,
+          "x": 0.22150000000000003,
           "y": 0.0,
           "length": 0.163,
           "width": 0.092,
           "height": 0.051,
-          "z": 0.05707041345536795,
-          "radial_m": 0.09451916831093261,
-          "half_extent_m": 0.08257041345536795
+          "z": 0.06029069267511453,
+          "radial_m": 0.0973449687948789,
+          "half_extent_m": 0.08579069267511452
         },
         {
           "name": "power_module",
-          "x": 0.5652,
+          "x": 0.6327,
           "y": 0.0,
           "length": 0.08,
           "width": 0.06,
           "height": 0.0235,
-          "z": 0.060320413455367955,
-          "radial_m": 0.07806500173334835,
-          "half_extent_m": 0.07207041345536795
+          "z": 0.05874069267511453,
+          "radial_m": 0.07660899264327553,
+          "half_extent_m": 0.07049069267511453
         },
         {
           "name": "power_module_2",
-          "x": 0.6552000000000001,
+          "x": 0.7227000000000001,
           "y": 0.0,
           "length": 0.08,
           "width": 0.06,
           "height": 0.0235,
-          "z": 0.060320413455367955,
-          "radial_m": 0.07806500173334835,
-          "half_extent_m": 0.07207041345536795
+          "z": 0.05874069267511453,
+          "radial_m": 0.07660899264327553,
+          "half_extent_m": 0.07049069267511453
         }
       ],
       "stations_m": {
         "hydrogen_cylinder": [
-          0.6055,
+          0.5930000000000001,
           0.0,
-          -0.03142958654463204
+          -0.030509307324885472
         ],
         "fuel_cell_system": [
           0.25525000000000003,
           0.0,
-          -0.03152958654463204
+          -0.028109307324885473
         ],
         "fuel_cell_control_box": [
-          0.2411,
+          0.48160000000000003,
           0.0,
-          0.05394541345536796
+          0.05256569267511453
         ],
         "buffer_battery": [
-          0.43370000000000003,
+          0.22150000000000003,
           0.0,
-          0.05707041345536795
+          0.06029069267511453
         ],
         "autopilot_cube_orange": [
           0.08275,
           0.0,
-          0.027070413455367964
+          0.03049069267511453
         ],
         "payload": [
           0.10350000000000001,
           0.0,
-          -0.031429586544632036
+          -0.02800930732488547
         ],
         "power_module": [
-          0.5652,
+          0.6327,
           0.0,
-          0.060320413455367955
+          0.05874069267511453
         ],
         "power_module_2": [
-          0.6552000000000001,
+          0.7227000000000001,
           0.0,
-          0.060320413455367955
+          0.05874069267511453
         ]
       },
       "fuselage_diameter_mode": "auto",
       "fuselage_section_ods_m": {
-        "nose": 0.23485917308926407,
-        "center_a": 0.23485917308926407,
-        "center_b": 0.23485917308926407,
-        "tail": 0.23485917308926407
+        "nose": 0.22801861464977094,
+        "center_a": 0.22801861464977094,
+        "center_b": 0.22801861464977094,
+        "tail": 0.22801861464977094
       },
       "fuselage_section_od_needs_m": {
         "nose": 0.18,
-        "center_a": 0.20285917308926407,
-        "center_b": 0.20285917308926407,
-        "tail": 0.20285917308926407
+        "center_a": 0.19601861464977094,
+        "center_b": 0.19601861464977094,
+        "tail": 0.19601861464977094
       },
       "fuselage_section_wh_needs_m": {
         "nose": {
@@ -1955,26 +1966,26 @@
         },
         "center_a": {
           "width_m": 0.1284,
-          "height_m": 0.20285917308926407
+          "height_m": 0.19601861464977094
         },
         "center_b": {
-          "width_m": 0.13999999999999999,
-          "height_m": 0.20285917308926407
+          "width_m": 0.135,
+          "height_m": 0.19601861464977094
         },
         "tail": {
-          "width_m": 0.13999999999999999,
-          "height_m": 0.20285917308926407
+          "width_m": 0.135,
+          "height_m": 0.19601861464977094
         }
       },
       "fuselage_midbody": {
         "midbody_length_mode": "auto",
         "component_axial_clearance_m": 0.01,
         "energy_bay_axial_clearance_m": 0.01,
-        "fuselage_length_m": 0.8844000000000001,
+        "fuselage_length_m": 0.8594000000000002,
         "center_a_length_m": 0.23550000000000001,
-        "center_b_length_m": 0.3689,
+        "center_b_length_m": 0.3439000000000001,
         "forward_energy_length_m": 0.2305,
-        "aft_energy_length_m": 0.45,
+        "aft_energy_length_m": 0.425,
         "aft_keepout_m": 0.0539,
         "energy_bay_order": "fuel_cell_forward"
       }
@@ -4065,7 +4076,8 @@
     "enabled": true,
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "auto",
-    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
+    "cb_battery_order": "battery_forward",
+    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (which of CB/battery sits more forward in X). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
     "clearances_m": {
       "fuselage_bottom_m": 0.016,
       "fuselage_wall_m": 0.01,
@@ -4232,16 +4244,16 @@
       "stations_yz_m": [
         [
           0.0,
-          0.11417958654463203
+          0.11075930732488547
         ],
         [
           0.0,
-          -0.11417958654463203
+          -0.11075930732488547
         ]
       ]
     },
     "main_wing": {
-      "z_m": 0.10028458654463203,
+      "z_m": 0.09686430732488546,
       "thickness_m": 0.028,
       "shell": {
         "mass_mode": "linear",
@@ -4271,7 +4283,7 @@
       "shell_cg_chord_fraction": 0.45
     },
     "horizontal_tail": {
-      "z_m": 0.10028458654463203,
+      "z_m": 0.09686430732488546,
       "thickness_m": 0.022,
       "shell": {
         "mass_mode": "linear",
@@ -4334,12 +4346,12 @@
       "status": "engineering_assumption",
       "source": "Legacy kg/m reference; structural sizing scales by tube area; replace with supplier tube kg/m"
     },
-    "fuselage_total_length_m": 0.8844000000000001,
+    "fuselage_total_length_m": 0.8594000000000002,
     "fuselage_sections": [
       {
         "name": "nose",
         "length_m": 0.14,
-        "diameter_m": 0.23485917308926407,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -4347,13 +4359,13 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       },
       {
         "name": "center_a",
         "length_m": 0.23550000000000001,
-        "diameter_m": 0.23485917308926407,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -4361,13 +4373,13 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       },
       {
         "name": "center_b",
-        "length_m": 0.3689,
-        "diameter_m": 0.23485917308926407,
+        "length_m": 0.3439000000000001,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -4375,13 +4387,13 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       },
       {
         "name": "tail",
         "length_m": 0.14,
-        "diameter_m": 0.23485917308926407,
+        "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -4389,8 +4401,8 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.13999999999999999,
-        "height_m": 0.23485917308926407
+        "width_m": 0.135,
+        "height_m": 0.22801861464977094
       }
     ]
   },
@@ -4419,7 +4431,7 @@
         {
           "name": "nose",
           "length_m": 0.14,
-          "diameter_m": 0.23485917308926407,
+          "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
             "specific_mass_kg_per_m": 1.0973,
@@ -4427,13 +4439,13 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.13999999999999999,
-          "height_m": 0.23485917308926407
+          "width_m": 0.135,
+          "height_m": 0.22801861464977094
         },
         {
           "name": "center_a",
           "length_m": 0.23550000000000001,
-          "diameter_m": 0.23485917308926407,
+          "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
             "specific_mass_kg_per_m": 1.0973,
@@ -4441,13 +4453,13 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.13999999999999999,
-          "height_m": 0.23485917308926407
+          "width_m": 0.135,
+          "height_m": 0.22801861464977094
         },
         {
           "name": "center_b",
-          "length_m": 0.3689,
-          "diameter_m": 0.23485917308926407,
+          "length_m": 0.3439000000000001,
+          "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
             "specific_mass_kg_per_m": 1.0973,
@@ -4455,13 +4467,13 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.13999999999999999,
-          "height_m": 0.23485917308926407
+          "width_m": 0.135,
+          "height_m": 0.22801861464977094
         },
         {
           "name": "tail",
           "length_m": 0.14,
-          "diameter_m": 0.23485917308926407,
+          "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
             "specific_mass_kg_per_m": 1.0973,
@@ -4469,8 +4481,8 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.13999999999999999,
-          "height_m": 0.23485917308926407
+          "width_m": 0.135,
+          "height_m": 0.22801861464977094
         }
       ]
     },
@@ -4545,7 +4557,8 @@
       "enabled": true,
       "energy_bay_order": "fuel_cell_forward",
       "energy_bay_order_mode": "auto",
-      "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
+      "cb_battery_order": "battery_forward",
+      "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (which of CB/battery sits more forward in X). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
       "clearances_m": {
         "fuselage_bottom_m": 0.016,
         "fuselage_wall_m": 0.01,
@@ -4610,15 +4623,24 @@
       },
       "hydrogen": {
         "storage_name": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
+        "cylinder_model": "3 CF",
+        "design_standard": "ISO 11119-2",
+        "certification": "TPED, DOT",
+        "cylinder_type": 3,
         "pressure_bar": 300.0,
         "water_volume_L": 3.0,
-        "nominal_h2_mass_kg": 0.0619,
+        "cylinder_length_m": 0.425,
+        "cylinder_diameter_m": 0.115,
         "cylinder_mass_kg": 1.62,
+        "nominal_h2_mass_kg": 0.0619,
+        "h2_mass_fraction_wt_pct": 3.7,
+        "thread": "M18 x 1.5",
         "regulator_mass_kg": 0.315,
         "reference_load_W": 400.0,
         "reference_endurance_h": 2.575,
         "reference_net_energy_Wh": 1030.0,
-        "mission_energy_reserve_fraction": 0.15
+        "mission_energy_reserve_fraction": 0.15,
+        "note": "AMS Composites 3 CF datasheet row: 3.0 L, 115 mm OD, 425 mm length, 1620 g, 300 bar, 61.9 g H2, 1030 Wh."
       }
     },
     "manufacturing_mass_model": {
@@ -4805,7 +4827,7 @@
     }
   },
   "derived_geometry_v3": {
-    "fuselage_total_length_m": 0.8844000000000001,
+    "fuselage_total_length_m": 0.8594000000000002,
     "fuselage_max_diameter_m": 0.245,
     "main_wing_span_m": 3.3742,
     "main_wing_area_m2": 0.879451488,

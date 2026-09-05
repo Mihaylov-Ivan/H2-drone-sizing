@@ -1,9 +1,9 @@
 name,length_m,count,mass_mode,specific_mass_kg_per_m,mass_kg,hardcoded
 fuselage_nose_shell,0.14,1,linear,1.0973,0.153622,False
 fuselage_center_a_shell,0.23550000000000001,1,linear,1.0973,0.25841415,False
-fuselage_center_b_shell,0.3689,1,linear,1.0973,0.40479397,False
+fuselage_center_b_shell,0.3439000000000001,1,linear,1.0973,0.3773614700000001,False
 fuselage_tail_shell,0.14,1,linear,1.0973,0.153622,False
-fuselage_longerons,0.8844000000000001,2,linear,0.08974,0.158732112,False
+fuselage_longerons,0.8594000000000002,2,linear,0.08974,0.15424511200000002,False
 main_wing_shell,3.3742,1,linear,0.937,3.1616254,False
 main_wing_primary_spar,3.3742,1,structural_linear,0.08784,0.296389728,False
 main_wing_secondary_spar,3.3742,1,linear,0.05007,0.16894619400000002,False
