@@ -22,11 +22,11 @@ def test_packaging_layout_resolves_on_current_user_inputs():
 
     pay = next(x for x in c["geometry_mass"]["component_ledger"]["components"] if x["name"] == "payload")
     pay_L = float(pay["dimensions_m"]["length_x"])
-    assert abs((d["payload_x_m"] + 0.5 * pay_L) - nose) < 1e-9
+    assert abs((d["payload_x_m"] + 0.5 * pay_L) - (nose - 0.01)) < 1e-9
 
     cube = next(x for x in c["geometry_mass"]["component_ledger"]["components"] if x["name"] == "autopilot")
     cube_L = float(cube["dimensions_m"]["length_x"])
-    assert abs((d["cube_orange_x_m"] + 0.5 * cube_L) - nose) < 1e-9
+    assert abs((d["cube_orange_x_m"] + 0.5 * cube_L) - (nose - 0.01)) < 1e-9
     assert d["cube_orange_z_m"] > d["payload_z_m"]
 
     fc = next(x for x in c["geometry_mass"]["component_ledger"]["components"] if x["name"] == "fuel_cell_system")
@@ -51,7 +51,11 @@ def test_packaging_layout_resolves_on_current_user_inputs():
     if str(d.get("fuselage_diameter_mode", "")).lower() == "auto":
         sec_ods = d.get("fuselage_section_diameters_m") or {}
         assert sec_ods
-        assert float(d["fuselage_max_diameter_m"]) == pytest.approx(max(sec_ods.values()), abs=1e-9)
+        vals = [float(v) for v in sec_ods.values()]
+        assert max(vals) - min(vals) < 1e-9
+        assert float(d["fuselage_max_diameter_m"]) == pytest.approx(vals[0], abs=1e-9)
+        for sec in c["manufacturing_mass_model"]["fuselage_sections"]:
+            assert float(sec["diameter_m"]) == pytest.approx(vals[0], abs=1e-9)
 
 
 def test_packaging_hydrogen_forward_order(tmp_path):
@@ -70,6 +74,76 @@ def test_packaging_hydrogen_forward_order(tmp_path):
     assert d["fuel_cell_x_m"] > d["hydrogen_cylinder_x_m"]
 
 
+def test_midbody_auto_sets_energy_bay_axial_gap():
+    c = load_model_config(ROOT / "config" / "user_inputs.json")
+    d = c["design"]
+    pl = c["coupling"]["packaging_layout"]
+    if str(d.get("fuselage_midbody_length_mode", "")).lower() != "auto":
+        return
+    target = float(
+        d.get("component_axial_clearance_m")
+        or d.get("energy_bay_axial_clearance_m")
+        or pl.get("component_axial_clearance_m")
+        or pl.get("fuselage_midbody", {}).get("energy_bay_axial_clearance_m")
+        or 0.02
+    )
+    gap = float(pl["energy_bay_axial_gap_m"])
+    assert abs(gap - target) < 1e-6
+    lens = d.get("fuselage_section_lengths_m") or {}
+    assert float(lens.get("center_a", 0)) > 0
+    assert float(lens.get("center_b", 0)) > 0
+    assert abs(sum(float(v) for v in lens.values()) - float(d["fuselage_length_m"])) < 1e-9
+
+
+def test_packaging_respects_longeron_boss_cabin_band():
+    c = load_model_config(ROOT / "config" / "user_inputs.json")
+    pl = c["coupling"]["packaging_layout"]
+    z_floor = float(pl["cabin_z_floor_m"])
+    z_ceil = float(pl["cabin_z_ceil_m"])
+    assert float(pl["longeron_boss_clearance_m"]) == pytest.approx(0.01, abs=1e-9)
+    assert float(c["design"]["longeron_boss_clearance_m"]) == pytest.approx(0.01, abs=1e-9)
+    assert float(c["packaging_layout"]["clearances_m"]["longeron_boss_clearance_m"]) == pytest.approx(
+        0.01, abs=1e-9
+    )
+    for env in pl.get("placed_envelopes") or []:
+        z = float(env["z"])
+        hz = float(env["height"])
+        assert z - 0.5 * hz >= z_floor - 1e-9
+        assert z + 0.5 * hz <= z_ceil + 1e-9
+    assert "z_lifts_m" in pl
+
+
+def test_top_seats_pack_forward_with_component_axial():
+    c = load_model_config(ROOT / "config" / "user_inputs.json")
+    d = c["design"]
+    pl = c["coupling"]["packaging_layout"]
+    by = {e["name"]: e for e in pl["placed_envelopes"]}
+    axial = float(d.get("component_axial_clearance_m") or pl.get("component_axial_clearance_m") or 0.02)
+    fc = by["fuel_cell_system"]
+    cyl = by["hydrogen_cylinder"]
+    fc_fwd = float(fc["x"]) - 0.5 * float(fc["length"])
+    cyl_fwd = float(cyl["x"]) - 0.5 * float(cyl["length"])
+
+    def _fwd(name: str) -> float:
+        e = by[name]
+        return float(e["x"]) - 0.5 * float(e["length"])
+
+    def _aft(name: str) -> float:
+        e = by[name]
+        return float(e["x"]) + 0.5 * float(e["length"])
+
+    if pl["battery_site"] == "fc_top" and pl["control_box_site"] == "h2_top":
+        assert abs(_fwd("buffer_battery") - fc_fwd) < 1e-9
+        assert _fwd("fuel_cell_control_box") <= cyl_fwd + 1e-9
+        gap = _fwd("fuel_cell_control_box") - _aft("buffer_battery")
+        assert gap + 1e-9 >= axial
+    if pl["control_box_site"] == "fc_top" and pl["battery_site"] == "h2_top":
+        assert abs(_fwd("fuel_cell_control_box") - fc_fwd) < 1e-9
+        assert _fwd("buffer_battery") <= cyl_fwd + 1e-9
+        gap = _fwd("buffer_battery") - _aft("fuel_cell_control_box")
+        assert gap + 1e-9 >= axial
+
+
 def test_energy_bay_order_in_optimizer_space_when_auto():
     from h2air.optimization import default_space_for_config
 
@@ -83,6 +157,7 @@ def test_energy_bay_order_in_optimizer_space_when_auto():
 def test_packaging_layout_errors_when_pod_too_small(tmp_path):
     u = json.loads((ROOT / "config" / "user_inputs.json").read_text(encoding="utf-8"))
     u["fuselage"]["diameter_mode"] = "hardcoded"
+    u["fuselage"]["midbody_length_mode"] = "hardcoded"
     for sec in u["fuselage"]["sections"]:
         sec["diameter_m"] = 0.12
     p = tmp_path / "user_inputs.json"

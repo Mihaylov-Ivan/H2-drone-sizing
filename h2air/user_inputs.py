@@ -87,13 +87,14 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         "stability_screen_static_margin": float(mission["target_static_margin"]),
     })
 
-    # -------- Fuselage geometry (lengths fixed; diameters may auto-size in packaging) --------
+    # -------- Fuselage geometry (nose/tail lengths fixed; midbody/diameters may auto in packaging) --------
     fus = u["fuselage"]
     sections = fus["sections"]
     total_len = sum(float(x["length_m"]) for x in sections)
     if total_len <= 0:
         raise ValueError("Fuselage section lengths must sum to > 0")
     d["fuselage_diameter_mode"] = str(fus.get("diameter_mode", "hardcoded"))
+    d["fuselage_midbody_length_mode"] = str(fus.get("midbody_length_mode", "hardcoded"))
     d["fuselage_minimum_diameter_m"] = float(fus.get("minimum_diameter_m", 0.12))
     d["fuselage_diameter_margin_m"] = float(fus.get("diameter_margin_m", 0.0))
     max_d = max(float(x["diameter_m"]) for x in sections)
@@ -262,6 +263,26 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         d["energy_bay_order"] = order
         d["energy_bay_order_mode"] = mode
         d["energy_bay_order_code"] = 0.0 if order == "fuel_cell_forward" else 1.0
+
+        clear = pl.setdefault("clearances_m", {})
+        boss_clear = float(clear.get("longeron_boss_clearance_m", 0.01))
+        if boss_clear < 0:
+            raise ValueError("packaging_layout.clearances_m.longeron_boss_clearance_m must be >= 0")
+        clear["longeron_boss_clearance_m"] = boss_clear
+        d["longeron_boss_clearance_m"] = boss_clear
+        # Prefer component_axial_m; migrate legacy energy_bay_axial_m.
+        if "component_axial_m" in clear:
+            axial = float(clear["component_axial_m"])
+        elif "energy_bay_axial_m" in clear:
+            axial = float(clear["energy_bay_axial_m"])
+        else:
+            axial = float(clear.get("component_m", 0.003))
+        if axial < 0:
+            raise ValueError("packaging_layout.clearances_m.component_axial_m must be >= 0")
+        clear["component_axial_m"] = axial
+        clear.pop("energy_bay_axial_m", None)
+        d["component_axial_clearance_m"] = axial
+        d["energy_bay_axial_clearance_m"] = axial
 
     # -------- Selected energy-system hardware --------
     hw = u.get("hardware", {})

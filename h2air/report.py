@@ -103,13 +103,23 @@ def write_markdown_report(
         "### Fuselage / pod",
         f"- Length x max diameter: **{_f(Lf, 3)} m x {_f(Df, 3)} m** ({_f(Df * 1000, 0)} mm)"
         + (
-            f" (auto section ODs: "
+            f" (auto OD {_f(1000 * float(d.get('fuselage_max_diameter_m') or 0), 0)} mm, uniform sections)"
+            if d.get("fuselage_diameter_mode") == "auto"
+            else ""
+        )
+        + (
+            f"; midbody auto lengths: "
             + ", ".join(
                 f"{k} {_f(1000 * float(v), 0)} mm"
-                for k, v in (d.get("fuselage_section_diameters_m") or {}).items()
+                for k, v in (d.get("fuselage_section_lengths_m") or {}).items()
+                if str(k).startswith("center")
             )
-            + ")"
-            if d.get("fuselage_diameter_mode") == "auto" and d.get("fuselage_section_diameters_m")
+            + (
+                f"; component axial {_f(1000 * float(d.get('component_axial_clearance_m') or d.get('energy_bay_axial_clearance_m') or 0), 0)} mm"
+                if d.get("component_axial_clearance_m") is not None or d.get("energy_bay_axial_clearance_m") is not None
+                else ""
+            )
+            if d.get("fuselage_midbody_length_mode") == "auto" and d.get("fuselage_section_lengths_m")
             else ""
         ),
         (
@@ -165,6 +175,16 @@ def write_markdown_report(
         + (
             f" (mode {d.get('energy_bay_order_mode', '—')})"
             if d.get("energy_bay_order_mode") is not None else ""
+        ),
+        (
+            f"- Longeron boss cabin clear: **{_f(1000 * float(_get(cfg, 'coupling', 'packaging_layout', 'longeron_boss_clearance_m', default=0) or 0), 0)} mm**; "
+            f"Z lifts (mm): "
+            + ", ".join(
+                f"{k} {_f(1000 * float(v), 1)}"
+                for k, v in ((_get(cfg, 'coupling', 'packaging_layout', 'z_lifts_m', default={}) or {}).items())
+            )
+            if _get(cfg, "coupling", "packaging_layout", "z_lifts_m", default=None) is not None
+            else ""
         ),
         f"- Fuel cell: **x = {_f(d.get('fuel_cell_x_m'), 4)} m**, z = **{_f(d.get('fuel_cell_z_m'), 4)} m**"
         + (

@@ -15,12 +15,13 @@
     "diameter_mode": "auto",
     "minimum_diameter_m": 0.18,
     "diameter_margin_m": 0.0,
-    "note": "diameter_mode auto: each section OD is sized from packed component radial extent + wall keepout (+ diameter_margin_m). Section diameter_m values are only an initial seed when auto.",
+    "midbody_length_mode": "auto",
+    "note": "diameter_mode auto: one OD for all sections from max packed radial extent + wall keepout. midbody_length_mode auto: center_a/center_b lengths from FC+H2 envelopes + component_axial_m clearance (nose/tail lengths stay fixed). Seed section length_m/diameter_m are initial guesses when auto.",
     "sections": [
       {
         "name": "nose",
         "length_m": 0.14,
-        "diameter_m": 0.22047843714462298,
+        "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -31,7 +32,7 @@
       },
       {
         "name": "center_a",
-        "length_m": 0.35,
+        "length_m": 0.24050000000000002,
         "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
@@ -43,8 +44,8 @@
       },
       {
         "name": "center_b",
-        "length_m": 0.3,
-        "diameter_m": 0.23838115241989827,
+        "length_m": 0.3739,
+        "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -56,7 +57,7 @@
       {
         "name": "tail",
         "length_m": 0.14,
-        "diameter_m": 0.23838115241989827,
+        "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -138,7 +139,7 @@
     "enabled": true,
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "auto",
-    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward. Mode hardcoded uses energy_bay_order; auto sweeps both in the design study. Payload+Cube stay in the nose. CB/battery seats and dual PDBs still min-OD searched.",
+    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
     "clearances_m": {
       "fuselage_bottom_m": 0.02,
       "aft_tail_beyond_motor_m": 0.02,
@@ -146,7 +147,10 @@
       "bottom_to_top_m": 0.003,
       "pdb_all_around_m": 0.02,
       "cube_front_connector_m": 0.05,
-      "cylinder_to_top_inner_m": 0.03
+      "nose_bay_raise_m": 0.02,
+      "cylinder_to_top_inner_m": 0.03,
+      "component_axial_m": 0.02,
+      "longeron_boss_clearance_m": 0.01
     },
     "hardware": {
       "holybro_pdb_300a": {
