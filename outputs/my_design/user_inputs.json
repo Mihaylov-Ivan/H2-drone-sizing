@@ -151,12 +151,15 @@
     "enabled": true,
     "fuselage_longerons": {
       "count": 2,
+      "layout": "top_bottom",
       "mass_mode": "linear",
       "specific_mass_kg_per_m": 0.08974,
       "hardcoded_mass_kg": null,
       "tube_od_m": 0.0065,
+      "boss_od_m": 0.0125,
+      "spar_stack_gap_m": 0.001,
       "status": "engineering_assumption",
-      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m"
+      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; wing Z uses TOP longeron boss only."
     },
     "main_wing": {
       "z_m": 0.1,
@@ -189,7 +192,7 @@
       "shell_cg_chord_fraction": 0.45
     },
     "horizontal_tail": {
-      "z_m": 0.03,
+      "z_m": 0.1,
       "thickness_m": 0.022,
       "shell": {
         "mass_mode": "linear",

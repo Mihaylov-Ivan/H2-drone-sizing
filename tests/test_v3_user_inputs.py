@@ -39,7 +39,8 @@ def test_linear_mass_uses_kg_per_m():
     mm=c['manufacturing_mass_model']
     L=c['design']['fuselage_length_m']
     expect=float(mm['fuselage_longerons']['specific_mass_kg_per_m'])*L*2
-    assert abs(by['fuselage_longerons'].mass_takeoff_kg-expect)<1e-10
+    mlong=by['fuselage_longeron_top'].mass_takeoff_kg+by['fuselage_longeron_bottom'].mass_takeoff_kg
+    assert abs(mlong-expect)<1e-10
     b=c['design']['wing_span_m']
     expect_shell=float(mm['main_wing']['shell']['specific_mass_kg_per_m'])*b
     assert abs(by['main_wing_shell'].mass_takeoff_kg-expect_shell)<1e-10

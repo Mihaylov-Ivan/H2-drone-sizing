@@ -75,10 +75,7 @@
       "dihedral_deg": 0.0,
       "aerodynamic_center_x_m": 0.386844,
       "span_mode": "hardcoded",
-      "span_bounds_m": [
-        3.15,
-        3.6
-      ],
+      "span_bounds_m": [3.15, 3.6],
       "hardcoded_span_m": 3.3742,
       "minimum_transition_speed_over_stall": 1.3,
       "auto_area_margin_factor": 1.1,
@@ -93,10 +90,7 @@
       "sweep_deg": 0.0,
       "aerodynamic_center_x_m": 1.048942,
       "span_mode": "hardcoded",
-      "span_bounds_m": [
-        0.8,
-        1.3
-      ],
+      "span_bounds_m": [0.8, 1.3],
       "hardcoded_span_m": 0.8688,
       "target_tail_volume_coefficient": 0.44,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
@@ -108,10 +102,7 @@
       "naca_code": "NACA0012",
       "aerodynamic_center_x_m": 1.021592,
       "span_mode": "hardcoded",
-      "span_bounds_m": [
-        0.3,
-        0.6
-      ],
+      "span_bounds_m": [0.3, 0.6],
       "hardcoded_span_m": 0.3,
       "target_vertical_tail_volume_coefficient": 0.0255,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
@@ -151,12 +142,15 @@
     "enabled": true,
     "fuselage_longerons": {
       "count": 2,
+      "layout": "top_bottom",
       "mass_mode": "linear",
       "specific_mass_kg_per_m": 0.08974,
       "hardcoded_mass_kg": null,
       "tube_od_m": 0.0065,
+      "boss_od_m": 0.0125,
+      "spar_stack_gap_m": 0.001,
       "status": "engineering_assumption",
-      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m"
+      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; wing Z uses TOP longeron boss only."
     },
     "main_wing": {
       "z_m": 0.1,
@@ -189,7 +183,7 @@
       "shell_cg_chord_fraction": 0.45
     },
     "horizontal_tail": {
-      "z_m": 0.03,
+      "z_m": 0.1,
       "thickness_m": 0.022,
       "shell": {
         "mass_mode": "linear",
@@ -258,34 +252,13 @@
     "target_static_margin": 0.12,
     "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. Z stations are fixed at component_positions. X/AC bounds are a tight packaging-feasible niche.",
     "design_space": {
-      "wing_ac_x_m": [
-        0.36,
-        0.42
-      ],
-      "horizontal_tail_ac_x_m": [
-        1.0,
-        1.1
-      ],
-      "vertical_tail_ac_x_m": [
-        1.0,
-        1.1
-      ],
-      "lift_row_center_x_m": [
-        0.38,
-        0.46
-      ],
-      "battery_x_m": [
-        0.3,
-        0.38
-      ],
-      "fuel_cell_x_m": [
-        0.145,
-        0.17
-      ],
-      "hydrogen_cylinder_x_m": [
-        0.51,
-        0.54
-      ]
+      "wing_ac_x_m": [0.36, 0.42],
+      "horizontal_tail_ac_x_m": [1.0, 1.1],
+      "vertical_tail_ac_x_m": [1.0, 1.1],
+      "lift_row_center_x_m": [0.38, 0.46],
+      "battery_x_m": [0.3, 0.38],
+      "fuel_cell_x_m": [0.145, 0.17],
+      "hydrogen_cylinder_x_m": [0.51, 0.54]
     }
   },
   "hardware_selection": {

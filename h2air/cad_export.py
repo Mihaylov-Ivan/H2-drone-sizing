@@ -57,6 +57,16 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     out += [_param('wing_primary_spar_OD',_mm(wsec['od_m'])),_param('wing_primary_spar_ID',_mm(wsec['id_m']))]
     if mw:
         s2=mw['secondary_spar']; out += [_param('wing_primary_spar_chord_fraction',float(mw['primary_spar'].get('chord_fraction',0.25)),'unitless'),_param('wing_secondary_spar_chord_fraction',float(s2.get('chord_fraction',0.65)),'unitless'),_param('wing_secondary_spar_OD',_mm(s2.get('tube_od_m',0.0)))]
+    longr=mm.get('fuselage_longerons',{})
+    if longr:
+        out += [
+            _param('fuselage_longeron_OD',_mm(float(longr.get('tube_od_m',0.0065)))),
+            _param('fuselage_longeron_boss_OD',_mm(float(longr.get('boss_od_m',0.016)))),
+            _param('fuselage_longeron_top_z',_mm(float(gm.get('fuselage_longeron_top_z_m',gm.get('fuselage_longeron_z_m',0.0))))),
+            _param('fuselage_longeron_bottom_z',_mm(float(gm.get('fuselage_longeron_bottom_z_m',0.0)))),
+            _param('fuselage_top_z',_mm(float(gm.get('fuselage_top_z_m',0.0)))),
+            _param('wing_drop_from_flush',_mm(float(gm.get('wing_drop_from_flush_m',0.0)))),
+        ]
 
     # Horizontal tail.
     hr=float(d['horizontal_tail_root_chord_m']); hl=float(d['horizontal_tail_taper_ratio']); hm=float(d['horizontal_tail_mac_m']); hb=float(d['horizontal_tail_span_m']); hx=float(d['horizontal_tail_ac_x_m']); hle=hx-0.25*hm
@@ -84,7 +94,7 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
 
     # Twin booms.
     bs=structure['structural_checks']['booms']['recommended_screen']['section']; bx0=float(gm['boom_x_start_m']); bx1=float(gm['boom_x_end_m']); ys=gm['boom_center_y_m']
-    out += [_param('boom_length',_mm(bx1-bx0)),_param('boom_start_x',_mm(bx0)),_param('boom_end_x',_mm(bx1)),_param('boom_left_y',_mm(ys[0])),_param('boom_right_y',_mm(ys[1])),_param('boom_spacing',_mm(abs(float(ys[1])-float(ys[0])))),_param('boom_OD',_mm(bs['od_m'])),_param('boom_ID',_mm(bs['id_m']))]
+    out += [_param('boom_length',_mm(bx1-bx0)),_param('boom_start_x',_mm(bx0)),_param('boom_end_x',_mm(bx1)),_param('boom_left_y',_mm(ys[0])),_param('boom_right_y',_mm(ys[1])),_param('boom_spacing',_mm(abs(float(ys[1])-float(ys[0])))),_param('boom_z',_mm(float(gm.get('boom_z_m',0.0)))),_param('boom_OD',_mm(bs['od_m'])),_param('boom_ID',_mm(bs['id_m']))]
 
     # Lift rows and selected hardware.
     centers=gm['lift_prop_centers_m']; front=float(centers[0][0]); rear=float(centers[2][0]); yabs=abs(float(centers[0][1])); z=float(centers[0][2])

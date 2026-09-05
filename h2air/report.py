@@ -80,6 +80,7 @@ def write_markdown_report(
     wing_z = float(_get(mm, "main_wing", "z_m", default=0.10) or 0.10)
     ht_z = float(_get(mm, "horizontal_tail", "z_m", default=0.03) or 0.03)
     np_x = float(d.get("neutral_point_station_x_m", 0.0) or 0.0)
+    pusher_xyz = _get(cfg, "sixdof_control", "aircraft", "pusher_station_m", default=[None, None, None]) or [None, None, None]
 
     lines = [
         "# H2AIR Integrated Model — Run Summary",
@@ -137,9 +138,16 @@ def write_markdown_report(
         ),
         f"- Lift-row midpoint: **x = {_f(d.get('lift_row_center_x_m'), 4)} m**; "
         f"front/rear rotor rows at **{_f(layout.get('proposed_front_x_m'), 3)} / {_f(layout.get('proposed_rear_x_m'), 3)} m**",
-        f"- Rotor lateral station: **|y| = {_f(y_lift, 3)} m**; prop diameter **{_f(layout.get('prop_diameter_in', d.get('lift_propeller_diameter_in')), 1)} in**; "
+        f"- Rotor lateral station: **|y| = {_f(y_lift, 3)} m** (boom-mounted through wing); "
+        f"motor z = **{_f(lay_cfg.get('z_m'), 3)} m**; "
+        f"prop diameter **{_f(layout.get('prop_diameter_in', d.get('lift_propeller_diameter_in')), 1)} in**; "
         f"edge clearance **{_f(1000 * float(layout.get('proposed_edge_clearance_m', 0) or 0), 0)} mm**",
         f"- Cruise lift-prop state: **{d.get('cruise_lift_propeller_state', '—')}**",
+        f"- Cruise pusher: fuselage-aft mount at **x = {_f(pusher_xyz[0], 3)} m**",
+        f"- Empennage waterline: HT z = **{_f(ht_z, 3)} m** (aligned with main wing z = **{_f(wing_z, 3)} m**)",
+        f"- Wing/fuselage junction: fuse top z = **{_f(geom.get('fuselage_top_z_m'), 3)} m**; "
+        f"wing drop from flush = **{_f(1000*float(geom.get('wing_drop_from_flush_m') or 0), 1)} mm**; "
+        f"longerons **top/bottom** (wing uses top boss only)",
         "",
         "### Energy / avionics packaging (stations)",
         f"- Fuel cell: **x = {_f(d.get('fuel_cell_x_m'), 4)} m**, z = **{_f(d.get('fuel_cell_z_m'), 4)} m**",

@@ -19,7 +19,8 @@ def main():
         checks.append(('hardware_auto_selection',sel.get('mode')=='auto' and bool(sel.get('selected_lift_combo')) and bool(sel.get('selected_pusher_combo')) and bool(sel.get('selected_battery')),''))
         comps=_components_with_power(c);by={x.name:x for x in comps}
         expected=float(c['manufacturing_mass_model']['fuselage_longerons']['specific_mass_kg_per_m'])*float(c['design']['fuselage_length_m'])*2
-        checks.append(('linear_mass',abs(by['fuselage_longerons'].mass_takeoff_kg-expected)<1e-10,''))
+        mlong=by['fuselage_longeron_top'].mass_takeoff_kg+by['fuselage_longeron_bottom'].mass_takeoff_kg
+        checks.append(('linear_mass',abs(mlong-expected)<1e-10,''))
         vals={k:c['design'][k] for k in default_space_for_config(c)}
         screen=screening_evaluate(c,vals)
         checks.append(('current_design_screening_feasible',screen.feasible,','.join(screen.violations)))

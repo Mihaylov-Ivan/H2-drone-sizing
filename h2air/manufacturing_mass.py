@@ -90,11 +90,20 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
         ledger.append({"name":name,"length_m":L,"count":1,"mass_mode":rule.get("mass_mode"),"specific_mass_kg_per_m":rule.get("specific_mass_kg_per_m"),"mass_kg":m,"hardcoded":rule.get("mass_mode")=="hardcoded"})
         x0 += L
 
-    # Two full-length CFRP fuselage longerons.
+    # Two full-length CFRP fuselage longerons: top and bottom centreline.
     longr = mm["fuselage_longerons"]
     Lfus = float(mm["fuselage_total_length_m"]); nlong = int(longr.get("count",2)); mlong = _mass(longr,Lfus,nlong)
-    _add_tube(out,name="fuselage_longerons",group="fuselage_structure",mass=mlong,
-              pos=[Lfus/2,0,0],length=Lfus,diameter=float(longr.get("tube_od_m",0.006)),axis="x",rule=longr)
+    Rfuse = 0.5 * float(d.get("fuselage_max_diameter_m", gm.get("central_pod_outer", {}).get("dimensions_m", [0,0.18])[1] if gm.get("central_pod_outer") else 0.18))
+    long_od = float(longr.get("tube_od_m", 0.006))
+    stations = longr.get("stations_yz_m")
+    if not stations:
+        r_axis = max(Rfuse - 0.5 * long_od, 0.5 * Rfuse)
+        stations = [[0.0, r_axis], [0.0, -r_axis]]
+    labels = ("top", "bottom")
+    for i, (y_l, z_l) in enumerate(stations[:nlong]):
+        label = labels[i] if i < len(labels) else f"{i}"
+        _add_tube(out,name=f"fuselage_longeron_{label}",group="fuselage_structure",mass=mlong/max(nlong,1),
+                  pos=[Lfus/2,float(y_l),float(z_l)],length=Lfus,diameter=long_od,axis="x",rule=longr)
     ledger.append({"name":"fuselage_longerons","length_m":Lfus,"count":nlong,"mass_mode":longr.get("mass_mode"),"specific_mass_kg_per_m":longr.get("specific_mass_kg_per_m"),"mass_kg":mlong,"hardcoded":longr.get("mass_mode")=="hardcoded"})
 
     # Main wing shell and two spanwise spars.
@@ -120,22 +129,23 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
         _add_tube(out,name=f"horizontal_tail_{label}",group="tail_structure",mass=m,pos=[hle+frac*hmac,0,zh],length=bh,diameter=float(rule.get("tube_od_m",0.009)),axis="y",rule=rule)
         ledger.append({"name":f"horizontal_tail_{label}","length_m":bh,"count":1,"mass_mode":rule.get("mass_mode"),"specific_mass_kg_per_m":rule.get("specific_mass_kg_per_m"),"mass_kg":m,"hardcoded":rule.get("mass_mode")=="hardcoded"})
 
-    # Two vertical fins, each with two CFRP spars.
+    # Two vertical fins, each with two CFRP spars (roots on the boom waterline).
     vt=mm["vertical_tail"]; hv=float(d["vertical_tail_height_m"]); nfin=int(vt.get("count",2)); yabs=abs(float(gm.get("boom_center_y_m",[-0.35,0.35])[1])); xv=float(d.get("vertical_tail_ac_x_m",d["horizontal_tail_ac_x_m"])); vroot=float(d["vertical_tail_root_chord_m"])
+    boom_z=float(gm.get("boom_z_m",0.0))
     mvs=_mass(vt["shell"],hv,nfin)
     for side,y in (("left",-yabs),("right",yabs)):
-        _add_box(out,name=f"vertical_tail_{side}_shell",group="tail_structure",mass=mvs/nfin,pos=[xv,y,hv/2],dims=[vroot,float(vt.get("thickness_m",0.012)),hv],rule=vt["shell"],collide=False)
+        _add_box(out,name=f"vertical_tail_{side}_shell",group="tail_structure",mass=mvs/nfin,pos=[xv,y,boom_z+hv/2],dims=[vroot,float(vt.get("thickness_m",0.012)),hv],rule=vt["shell"],collide=False)
     ledger.append({"name":"vertical_tail_shells","length_m":hv,"count":nfin,"mass_mode":vt["shell"].get("mass_mode"),"specific_mass_kg_per_m":vt["shell"].get("specific_mass_kg_per_m"),"mass_kg":mvs,"hardcoded":vt["shell"].get("mass_mode")=="hardcoded"})
     for label in ("primary_spar","secondary_spar"):
         rule=vt[label]; mt=_mass(rule,hv,nfin)
         for side,y in (("left",-yabs),("right",yabs)):
-            _add_tube(out,name=f"vertical_tail_{side}_{label}",group="tail_structure",mass=mt/nfin,pos=[xv,y,hv/2],length=hv,diameter=float(rule.get("tube_od_m",0.009)),axis="z",rule=rule)
+            _add_tube(out,name=f"vertical_tail_{side}_{label}",group="tail_structure",mass=mt/nfin,pos=[xv,y,boom_z+hv/2],length=hv,diameter=float(rule.get("tube_od_m",0.009)),axis="z",rule=rule)
         ledger.append({"name":f"vertical_tail_{label}s","length_m":hv,"count":nfin,"mass_mode":rule.get("mass_mode"),"specific_mass_kg_per_m":rule.get("specific_mass_kg_per_m"),"mass_kg":mt,"hardcoded":rule.get("mass_mode")=="hardcoded"})
 
-    # Twin booms.
+    # Twin booms (through the wing structural station).
     br=mm["boom_tubes"]; Lb=float(gm["boom_x_end_m"])-float(gm["boom_x_start_m"]); mb=_mass(br,Lb,2); xmid=(float(gm["boom_x_start_m"])+float(gm["boom_x_end_m"]))/2
     for side,y in (("left",-yabs),("right",yabs)):
-        _add_tube(out,name=f"boom_tube_{side}",group="tail_structure",mass=mb/2,pos=[xmid,y,0],length=Lb,diameter=float(br.get("tube_od_m",gm.get("boom_outer_diameter_m",0.035))),axis="x",rule=br)
+        _add_tube(out,name=f"boom_tube_{side}",group="tail_structure",mass=mb/2,pos=[xmid,y,boom_z],length=Lb,diameter=float(br.get("tube_od_m",gm.get("boom_outer_diameter_m",0.035))),axis="x",rule=br)
     ledger.append({"name":"boom_tubes","length_m":Lb,"count":2,"mass_mode":br.get("mass_mode"),"specific_mass_kg_per_m":br.get("specific_mass_kg_per_m"),"mass_kg":mb,"hardcoded":br.get("mass_mode")=="hardcoded"})
 
     return out, ledger

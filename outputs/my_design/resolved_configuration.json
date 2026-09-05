@@ -76,7 +76,9 @@
     "vertical_tail_area_total_m2": 0.07103999999999999,
     "selected_lift_combo_name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
     "selected_pusher_combo_name": "Tmotor_MN501S_240kV_P15x5_12S",
-    "selected_battery_name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh"
+    "selected_battery_name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
+    "main_wing_z_m": 0.07285499999999999,
+    "horizontal_tail_z_m": 0.07285499999999999
   },
   "power_system": {
     "model_version": "H2AIR-phase2-hybrid-power-1.0",
@@ -227,32 +229,32 @@
         "horizontal_tail_span_m": 0.8688,
         "vertical_fin_height_m": 0.3,
         "boom_center_y_m": [
-          -0.35,
-          0.35
+          -0.38939999999999997,
+          0.38939999999999997
         ],
         "boom_outer_diameter_m": 0.035,
-        "boom_x_start_m": 0.34,
+        "boom_x_start_m": 0.09648400000000001,
         "boom_x_end_m": 1.1,
         "lift_prop_centers_m": [
           [
             0.09648400000000001,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           [
             0.09648400000000001,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ],
           [
             0.675284,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           [
             0.675284,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ]
         ],
         "lift_prop_diameter_m": 0.5588,
@@ -261,9 +263,9 @@
         "lift_prop_to_pod_required_clearance_m": 0.02,
         "pusher": {
           "center_m": [
-            0.94,
+            0.8169500000000001,
             0.0,
-            0.02
+            0.0
           ],
           "diameter_m": 0.381,
           "diameter_status": "legacy_placeholder"
@@ -277,7 +279,20 @@
           0.25,
           0.15,
           0.0
-        ]
+        ],
+        "fuselage_top_z_m": 0.09,
+        "fuselage_longeron_top_z_m": 0.08675,
+        "fuselage_longeron_bottom_z_m": -0.08675,
+        "fuselage_longeron_z_m": 0.08675,
+        "fuselage_longeron_y_abs_m": 0.0,
+        "fuselage_longeron_boss_od_m": 0.0125,
+        "wing_upper_z_m": 0.08685499999999999,
+        "wing_lower_z_m": 0.05885499999999999,
+        "wing_z_flush_m": 0.076,
+        "wing_drop_from_flush_m": 0.003145000000000009,
+        "boom_z_m": 0.07285499999999999,
+        "lift_prop_disk_z_m": 0.11740499999999998,
+        "lift_prop_wing_clearance_m": 0.030549999999999994
       },
       "packaging": {
         "component_clearance_m": 0.003,
@@ -344,8 +359,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.09648400000000001,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -356,8 +371,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.09648400000000001,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -368,8 +383,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.675284,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -380,8 +395,8 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.675284,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -675,8 +690,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.09648400000000001,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -693,8 +708,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.09648400000000001,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -711,8 +726,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.675284,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -729,8 +744,8 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.675284,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -746,9 +761,9 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.191,
           "position_m": [
-            0.94,
+            0.8169500000000001,
             0.0,
-            0.02
+            0.0
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_from_user_database",
           "source": "T-MOTOR MN501-S KV240 official product/test table; P15x5 at 12S",
@@ -765,8 +780,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.09648400000000001,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -777,8 +792,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.09648400000000001,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -789,8 +804,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.675284,
-            -0.48,
-            0.1
+            -0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -801,8 +816,8 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.675284,
-            0.48,
-            0.1
+            0.38939999999999997,
+            0.10387999999999999
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -1023,8 +1038,8 @@
       "common_midpoint_x_m": 0.385884,
       "minimum_front_x_m": 0.0,
       "maximum_rear_x_m": 0.78,
-      "y_abs_m": 0.48,
-      "z_m": 0.1,
+      "y_abs_m": 0.38939999999999997,
+      "z_m": 0.10387999999999999,
       "required_disk_edge_clearance_m": 0.02,
       "central_pod_width_m": 0.18,
       "required_disk_to_pod_clearance_m": 0.02
@@ -1293,23 +1308,23 @@
       "lift_motor_stations_m": [
         [
           0.09648400000000001,
-          -0.48,
-          0.1
+          -0.38939999999999997,
+          0.10387999999999999
         ],
         [
           0.09648400000000001,
-          0.48,
-          0.1
+          0.38939999999999997,
+          0.10387999999999999
         ],
         [
           0.675284,
-          -0.48,
-          0.1
+          -0.38939999999999997,
+          0.10387999999999999
         ],
         [
           0.675284,
-          0.48,
-          0.1
+          0.38939999999999997,
+          0.10387999999999999
         ]
       ],
       "lift_motor_rotation_sign": [
@@ -1319,9 +1334,9 @@
         -1
       ],
       "pusher_station_m": [
-        0.94,
+        0.8169500000000001,
         0.0,
-        0.02
+        0.0
       ],
       "horizontal_tail_area_m2": 0.16098864,
       "horizontal_tail_ac_station_x_m": 1.048942,
@@ -1459,7 +1474,7 @@
         0.09648400000000001,
         0.675284
       ],
-      "motor_y_m": 0.48,
+      "motor_y_m": 0.38939999999999997,
       "phase4_equal_share_design_thrust_N": 59.38,
       "phase6_reference_hover_thrusts_N": [
         32.89,
@@ -1581,7 +1596,34 @@
         0.09648400000000001,
         0.675284
       ],
-      "evidence_note": "Neutral-point and geometry mass scaling are screening relations calibrated to the accessible baseline. Replace with AVL/CFD/CAD/test correlations before design freeze."
+      "high_wing_boom_through_wing": true,
+      "boom_mounted_lift_motors": true,
+      "boom_y_abs_m": 0.38939999999999997,
+      "boom_y_input_m": 0.38939999999999997,
+      "boom_z_m": 0.07285499999999999,
+      "boom_widened_for_pod_clearance": false,
+      "main_wing_z_m": 0.07285499999999999,
+      "main_wing_z_flush_m": 0.076,
+      "main_wing_drop_from_flush_m": 0.003145000000000009,
+      "fuselage_top_z_m": 0.09,
+      "fuselage_longeron_layout": "top_bottom",
+      "fuselage_longeron_top_z_m": 0.08675,
+      "fuselage_longeron_bottom_z_m": -0.08675,
+      "fuselage_longeron_z_m": 0.08675,
+      "fuselage_longeron_boss_od_m": 0.0125,
+      "lift_motor_z_m": 0.10387999999999999,
+      "lift_prop_disk_z_m": 0.11740499999999998,
+      "lift_prop_wing_clearance_m": 0.030549999999999994,
+      "horizontal_tail_z_m": 0.07285499999999999,
+      "horizontal_tail_span_widened_to_boom": false,
+      "pusher_fuselage_mount": true,
+      "pusher_station_m": [
+        0.8169500000000001,
+        0.0,
+        0.0
+      ],
+      "pusher_fuselage_axial_clearance_m": 0.02,
+      "evidence_note": "Neutral-point and geometry mass scaling are screening relations calibrated to the accessible baseline. High-wing layout: fuselage longerons are top+bottom on the centreline; wing Z is auto-set so the TOP longeron boss sits just above the mid-wing primary spar (wing top flush-or-below the fuselage crown); twin booms pass through the wing; HT shares the wing waterline; lift motors sit on the boom tubes with prop-disk clearance above the wing; boom/HT spacing widens only if disk-to-pod clearance requires it. Cruise pusher mounts on the fuselage aft bulkhead. Replace with AVL/CFD/CAD/test correlations before design freeze."
     }
   },
   "airfoil_model": {
@@ -3774,15 +3816,28 @@
     "enabled": true,
     "fuselage_longerons": {
       "count": 2,
+      "layout": "top_bottom",
       "mass_mode": "linear",
       "specific_mass_kg_per_m": 0.08974,
       "hardcoded_mass_kg": null,
       "tube_od_m": 0.0065,
+      "boss_od_m": 0.0125,
+      "spar_stack_gap_m": 0.001,
       "status": "engineering_assumption",
-      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m"
+      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; wing Z uses TOP longeron boss only.",
+      "stations_yz_m": [
+        [
+          0.0,
+          0.08675
+        ],
+        [
+          0.0,
+          -0.08675
+        ]
+      ]
     },
     "main_wing": {
-      "z_m": 0.1,
+      "z_m": 0.07285499999999999,
       "thickness_m": 0.028,
       "shell": {
         "mass_mode": "linear",
@@ -3812,7 +3867,7 @@
       "shell_cg_chord_fraction": 0.45
     },
     "horizontal_tail": {
-      "z_m": 0.03,
+      "z_m": 0.07285499999999999,
       "thickness_m": 0.022,
       "shell": {
         "mass_mode": "linear",
@@ -4080,12 +4135,15 @@
       "enabled": true,
       "fuselage_longerons": {
         "count": 2,
+        "layout": "top_bottom",
         "mass_mode": "linear",
         "specific_mass_kg_per_m": 0.08974,
         "hardcoded_mass_kg": null,
         "tube_od_m": 0.0065,
+        "boss_od_m": 0.0125,
+        "spar_stack_gap_m": 0.001,
         "status": "engineering_assumption",
-        "source": "Calibrated placeholder; replace with measured CFRP tube kg/m"
+        "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; wing Z uses TOP longeron boss only."
       },
       "main_wing": {
         "z_m": 0.1,
@@ -4118,7 +4176,7 @@
         "shell_cg_chord_fraction": 0.45
       },
       "horizontal_tail": {
-        "z_m": 0.03,
+        "z_m": 0.1,
         "thickness_m": 0.022,
         "shell": {
           "mass_mode": "linear",

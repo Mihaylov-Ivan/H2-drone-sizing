@@ -213,17 +213,148 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         # Keep regulator near FC unless a future selected hardware layout overrides it.
         _set_position(by["hydrogen_regulator"], x=float(d["fuel_cell_x_m"]) - 0.01, z=float(d["fuel_cell_z_m"]))
 
-    # Lift rotor rows: enforce propeller edge-clearance geometry about a design centre.
+    # ------------------------------------------------------------------
+    # Layout architecture (high-wing twin-boom):
+    #   • boom tubes pass through the main wing at wing z
+    #   • HT is high-mounted on the same z-plane as the main wing
+    #   • lift motors sit on the boom tubes above the wing with disk clearance
+    #   • boom spacing widens if disk-to-pod clearance requires it
+    #   • HT span grows with boom spacing when fins sit on the boom tips
+    #   • cruise pusher mounts on the fuselage aft bulkhead
+    # ------------------------------------------------------------------
     lay = cfg["aero_propulsion"]["lift_layout"]
+    mm_model = cfg.setdefault("manufacturing_mass_model", {})
+    mw = mm_model.setdefault("main_wing", {})
+    ht_mm = mm_model.setdefault("horizontal_tail", {})
+    longr = mm_model.setdefault("fuselage_longerons", {})
+
     Dm = float(d["lift_propeller_diameter_in"]) * INCH_TO_M
+    pod_w = float(d.get("fuselage_max_diameter_m", lay.get("central_pod_width_m", 0.18)))
+    pod_half = 0.5 * pod_w
+    clear_pod = float(lay.get("required_disk_to_pod_clearance_m", 0.02))
+    clear_wing = float(lay.get("required_disk_edge_clearance_m", clear_pod))
+    y_min = pod_half + 0.5 * Dm + clear_pod
+
+    boom_ys = [float(v) for v in geom.get("boom_center_y_m", [-0.35, 0.35])]
+    y_boom_in = max(abs(boom_ys[0]), abs(boom_ys[1])) if boom_ys else 0.35
+    y = max(y_boom_in, y_min)
+    boom_widened = y > y_boom_in + 1e-9
+    geom["boom_center_y_m"] = [-y, y]
+    lay["y_abs_m"] = y
+    lay["central_pod_width_m"] = pod_w
+
+    boom_od = float(geom.get("boom_outer_diameter_m", 0.035))
+    wing_th = float(mw.get("thickness_m", 0.028))
+
+    # ------------------------------------------------------------------
+    # High-wing Z from fuselage crown + top longeron/boss over wing spars.
+    # Longerons: one on the fuselage top, one on the bottom (centreline).
+    # Wing stack-up uses the TOP longeron only.
+    # ------------------------------------------------------------------
+    fuse_top = pod_half
+    long_od = float(longr.get("tube_od_m", 0.0065))
+    long_r = 0.5 * long_od
+    boss_od = float(longr.get("boss_od_m", max(2.0 * long_od + 0.004, long_od + 0.006)))
+    boss_r = 0.5 * boss_od
+    stack_gap = float(longr.get("spar_stack_gap_m", 0.001))
+    # Axes just inside the skin at top and bottom dead centre.
+    r_axis = max(fuse_top - long_r, 0.5 * fuse_top)
+    z_longeron_top = r_axis
+    z_longeron_bot = -r_axis
+    boss_bottom = z_longeron_top - boss_r
+
+    spar_od = float((mw.get("primary_spar") or {}).get("tube_od_m", 0.013))
+    st = cfg.get("structures", {}).get("structure", {})
+    if st.get("current_wing_spar_od_m"):
+        spar_od = max(spar_od, float(st["current_wing_spar_od_m"]))
+    spar_r = 0.5 * spar_od
+
+    wing_z_flush = fuse_top - 0.5 * wing_th  # tops coplanar
+    wing_z = boss_bottom - stack_gap - spar_r  # spar just under TOP longeron boss
+    wing_z = min(wing_z_flush, wing_z)
+
+    mw["z_m"] = wing_z
+    d["main_wing_z_m"] = wing_z
+    wing_upper = wing_z + 0.5 * wing_th
+    wing_lower = wing_z - 0.5 * wing_th
+
+    longr["layout"] = "top_bottom"
+    longr["boss_od_m"] = boss_od
+    longr["spar_stack_gap_m"] = stack_gap
+    longr["stations_yz_m"] = [[0.0, z_longeron_top], [0.0, z_longeron_bot]]
+
+    geom["fuselage_top_z_m"] = fuse_top
+    geom["fuselage_longeron_top_z_m"] = z_longeron_top
+    geom["fuselage_longeron_bottom_z_m"] = z_longeron_bot
+    geom["fuselage_longeron_z_m"] = z_longeron_top  # wing junction uses top
+    geom["fuselage_longeron_y_abs_m"] = 0.0
+    geom["fuselage_longeron_boss_od_m"] = boss_od
+    geom["wing_upper_z_m"] = wing_upper
+    geom["wing_lower_z_m"] = wing_lower
+    geom["wing_z_flush_m"] = wing_z_flush
+    geom["wing_drop_from_flush_m"] = max(0.0, wing_z_flush - wing_z)
+
+    boom_z = wing_z  # tubes pass through the wing structural station
+    geom["boom_z_m"] = boom_z
+
+    # HT shares the main-wing waterline (high tail on the boom).
+    ht_mm["z_m"] = wing_z
+    d["horizontal_tail_z_m"] = wing_z
+
+    hw = cfg.get("hardware_selection_result") or {}
+    lift_hw = hw.get("selected_lift_combo") or {}
+    motor_len = float(lift_hw.get("motor_length_m") or 0.0)
+    if motor_len <= 0.0:
+        motor_len = 0.03
+
+    # Prop disk above wing upper surface + clearance; motor stack on the boom.
+    z_disk = wing_upper + clear_wing
+    z_on_boom = boom_z + 0.5 * boom_od + 0.5 * motor_len
+    z = max(z_disk - 0.5 * motor_len, z_on_boom)
+    lay["z_m"] = z
+    geom["lift_prop_disk_z_m"] = z + 0.5 * motor_len
+    geom["lift_prop_wing_clearance_m"] = float(geom["lift_prop_disk_z_m"]) - wing_upper
+
+    # Twin-fin / HT layout: horizontal-tail span must reach the boom stations.
+    ht_span_in = float(d.get("horizontal_tail_span_m", 2.0 * y))
+    ht_widened = False
+    if ht_span_in + 1e-9 < 2.0 * y:
+        ht_widened = True
+        d["horizontal_tail_span_m"] = 2.0 * y
+        if str(d.get("surface_geometry_mode", "")) == "root_taper_span":
+            chr_ = float(d["horizontal_tail_root_chord_m"])
+            lamh = float(d["horizontal_tail_taper_ratio"])
+            Sh = float(d["horizontal_tail_span_m"]) * chr_ * (1.0 + lamh) / 2.0
+            d["horizontal_tail_area_m2"] = Sh
+            d["horizontal_tail_mac_m"] = (2.0 / 3.0) * chr_ * (1.0 + lamh + lamh * lamh) / (1.0 + lamh)
+            if str(d.get("neutral_point_model")) == "calibrated_tail_volume":
+                d["neutral_point_station_x_m"] = calibrated_neutral_point(
+                    wing_ac_x_m=wing_ac, wing_area_m2=S,
+                    horizontal_tail_area_m2=Sh, horizontal_tail_ac_x_m=xh,
+                )
+            geom["reference_neutral_point_x_m"] = float(d["neutral_point_station_x_m"])
+            geom["horizontal_tail_span_m"] = float(d["horizontal_tail_span_m"])
+            s6a.update({
+                "neutral_point_station_x_m": float(d["neutral_point_station_x_m"]),
+                "horizontal_tail_area_m2": Sh,
+            })
+            cfg["structures"]["aircraft"]["horizontal_tail_area_m2"] = Sh
+            cfg["structures"]["structure"]["horizontal_tail_semispan_m"] = 0.5 * float(d["horizontal_tail_span_m"])
+            if "horizontal_tail_structure" in by:
+                h = by["horizontal_tail_structure"]
+                h["mass_takeoff_kg"] = REF["horizontal_tail_structure_mass_kg"] * Sh / REF["horizontal_tail_area_m2"]
+                h["mass_end_kg"] = h["mass_takeoff_kg"]
+
+    # Lift rotor rows: enforce propeller edge-clearance geometry about a design centre.
     separation = Dm + float(lay["required_disk_edge_clearance_m"])
     center = float(d["lift_row_center_x_m"])
     xf, xr = center - separation / 2.0, center + separation / 2.0
     lay.update({"current_front_x_m": xf, "current_rear_x_m": xr, "common_midpoint_x_m": center})
-    y = abs(float(lay["y_abs_m"])); z = float(lay["z_m"])
     centers = [[xf, -y, z], [xf, y, z], [xr, -y, z], [xr, y, z]]
     geom["lift_prop_centers_m"] = centers
     geom["lift_prop_diameter_m"] = Dm
+    geom["lift_prop_required_edge_clearance_m"] = float(lay["required_disk_edge_clearance_m"])
+    geom["lift_prop_to_pod_required_clearance_m"] = clear_pod
     for idx, p in enumerate(centers, start=1):
         for prefix in ("lift_motor_mount_", "lift_propulsion_", "lift_ESC_"):
             name = f"{prefix}{idx}"
@@ -231,6 +362,27 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
                 by[name]["position_m"] = list(p)
     cfg["sixdof_control"]["aircraft"]["lift_motor_stations_m"] = centers
     cfg["structures"]["rotor_system"]["row_x_m"] = [xf, xr]
+    cfg["structures"]["rotor_system"]["motor_y_m"] = y
+
+    # Boom tubes carry front/rear lift motors and the empennage (through the wing).
+    boom_x0 = min(float(geom.get("boom_x_start_m", xf)), xf)
+    boom_x1 = max(float(geom.get("boom_x_end_m", xr)), float(d.get("horizontal_tail_ac_x_m", xr)), xr)
+    geom["boom_x_start_m"] = boom_x0
+    geom["boom_x_end_m"] = boom_x1
+
+    # Cruise pusher: mount on fuselage aft bulkhead with standard axial clearance.
+    fuse_len = float(d.get("fuselage_length_m", 0.78))
+    push_hw = hw.get("selected_pusher_combo") or {}
+    p_len = float(push_hw.get("motor_length_m") or 0.034)
+    axial_clear = float(geom.get("pusher_required_axial_clearance_m", 0.02))
+    px = fuse_len + axial_clear + 0.5 * p_len
+    pusher_station = [px, 0.0, 0.0]
+    s6a["pusher_station_m"] = pusher_station
+    if isinstance(geom.get("pusher"), dict):
+        geom["pusher"]["center_m"] = list(pusher_station)
+        geom["pusher"]["diameter_m"] = float(d["pusher_propeller_diameter_in"]) * INCH_TO_M
+    if "cruise_propulsion" in by:
+        _set_position(by["cruise_propulsion"], x=px, y=0.0, z=0.0)
 
     # Update pusher design power/diameter where those are user-level variables.
     cfg["transition_mission"]["propulsion"]["pusher_max_electrical_power_W"] = float(d["pusher_max_electrical_power_W"])
@@ -244,8 +396,36 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "wing_mac_shape_factor": _MAC_SHAPE_FACTOR,
         "lift_row_separation_m": separation,
         "resolved_lift_rows_x_m": [xf, xr],
+        "high_wing_boom_through_wing": True,
+        "boom_mounted_lift_motors": True,
+        "boom_y_abs_m": y,
+        "boom_y_input_m": y_boom_in,
+        "boom_z_m": boom_z,
+        "boom_widened_for_pod_clearance": boom_widened,
+        "main_wing_z_m": wing_z,
+        "main_wing_z_flush_m": wing_z_flush,
+        "main_wing_drop_from_flush_m": float(geom["wing_drop_from_flush_m"]),
+        "fuselage_top_z_m": fuse_top,
+        "fuselage_longeron_layout": "top_bottom",
+        "fuselage_longeron_top_z_m": z_longeron_top,
+        "fuselage_longeron_bottom_z_m": z_longeron_bot,
+        "fuselage_longeron_z_m": z_longeron_top,
+        "fuselage_longeron_boss_od_m": boss_od,
+        "lift_motor_z_m": z,
+        "lift_prop_disk_z_m": float(geom["lift_prop_disk_z_m"]),
+        "lift_prop_wing_clearance_m": float(geom["lift_prop_wing_clearance_m"]),
+        "horizontal_tail_z_m": wing_z,
+        "horizontal_tail_span_widened_to_boom": ht_widened,
+        "pusher_fuselage_mount": True,
+        "pusher_station_m": pusher_station,
+        "pusher_fuselage_axial_clearance_m": axial_clear,
         "evidence_note": (
             "Neutral-point and geometry mass scaling are screening relations calibrated to the accessible baseline. "
+            "High-wing layout: fuselage longerons are top+bottom on the centreline; wing Z is auto-set so the "
+            "TOP longeron boss sits just above the mid-wing primary spar (wing top flush-or-below the fuselage crown); "
+            "twin booms pass through the wing; HT shares the wing waterline; lift motors sit on the boom tubes with "
+            "prop-disk clearance above the wing; boom/HT spacing widens only if disk-to-pod clearance requires it. "
+            "Cruise pusher mounts on the fuselage aft bulkhead. "
             "Replace with AVL/CFD/CAD/test correlations before design freeze."
         ),
     }

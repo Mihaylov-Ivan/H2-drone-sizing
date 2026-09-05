@@ -4,7 +4,7 @@
 
 ## Aircraft at a glance
 
-A **14.145 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main wing, **0.78 m x 180 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **20.0 m/s** for **120 min** with **1.2 kg** payload.
+A **14.149 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main wing, **0.78 m x 180 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **20.0 m/s** for **120 min** with **1.2 kg** payload.
 
 ## Configuration / look
 
@@ -18,18 +18,21 @@ A **14.145 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - Airfoil: **NACA4412**, CLmax screen **1.185**
 - Aerodynamic centre: **x = 0.3868 m**
 - Twist root to tip: **0.0 deg to -2.0 deg**; sweep **0.0 deg**; dihedral **0.0 deg**
-- Vertical station (structure CG height): **z = 0.100 m**
+- Vertical station (structure CG height): **z = 0.073 m**
 
 ### Empennage
-- Horizontal tail: span **0.869 m**, area **0.161 m²**, root/tip **0.218/0.153 m**, **NACA0012**, AC **x = 1.0489 m**, z = **0.030 m**
+- Horizontal tail: span **0.869 m**, area **0.161 m²**, root/tip **0.218/0.153 m**, **NACA0012**, AC **x = 1.0489 m**, z = **0.073 m**
 - Vertical tails: **twin fins**, height **0.300 m** each, total area **0.071 m²**, root/tip **0.148/0.089 m**, **NACA0012**, AC **x = 1.0216 m**
 
 ### Booms & lift layout
-- Twin boom spacing (centre-to-centre): **0.700 m**
-- Boom longitudinal extent: **x = 0.340 to 1.100 m**
+- Twin boom spacing (centre-to-centre): **0.779 m**
+- Boom longitudinal extent: **x = 0.096 to 1.100 m**
 - Lift-row midpoint: **x = 0.3859 m**; front/rear rotor rows at **0.096 / 0.675 m**
-- Rotor lateral station: **|y| = 0.480 m**; prop diameter **22.0 in**; edge clearance **20 mm**
+- Rotor lateral station: **|y| = 0.389 m** (boom-mounted through wing); motor z = **0.104 m**; prop diameter **22.0 in**; edge clearance **20 mm**
 - Cruise lift-prop state: **folded**
+- Cruise pusher: fuselage-aft mount at **x = 0.817 m**
+- Empennage waterline: HT z = **0.073 m** (aligned with main wing z = **0.073 m**)
+- Wing/fuselage junction: fuse top z = **0.090 m**; wing drop from flush = **3.1 mm**; longerons **top/bottom** (wing uses top boss only)
 
 ### Energy / avionics packaging (stations)
 - Fuel cell: **x = 0.1529 m**, z = **-0.0255 m**
@@ -38,15 +41,15 @@ A **14.145 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 
 ## Mass & balance
 
-- Closed MTOW: **14.145 kg** (pre-structure **13.516 kg**; margin to ceiling **0.855 kg**)
-- CG: **(0.3938, 0.0000, 0.0426) m**
-- Neutral point / static margin: **x_NP = 0.4253 m**, **11.85% MAC**
+- Closed MTOW: **14.149 kg** (pre-structure **13.524 kg**; margin to ceiling **0.851 kg**)
+- CG: **(0.3921, 0.0000, 0.0357) m**
+- Neutral point / static margin: **x_NP = 0.4253 m**, **12.49% MAC**
 
 ### Mass breakdown (takeoff)
 - payload: **1.200 kg**
 - wing structure: **4.200 kg**
 - fuselage structure: **0.996 kg**
-- tail structure: **0.288 kg**
+- tail structure: **0.293 kg**
 - energy: **5.081 kg**
 - propulsion: **1.327 kg**
 - avionics: **0.586 kg**
@@ -59,13 +62,13 @@ A **14.145 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - Battery: **SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh** (1.634 kg, **244.2 Wh**, 5.5 Ah)
 - Fuel cell: **800 W** net, module **1.45 kg**
 - Hydrogen store: **3.0 L** / **300 bar**, nominal H2 **62 g**, cylinder **1.62 kg**
-- 15 kg zero-pitch motor need: front/rear **57.8 / 61.0 N**
+- 15 kg zero-pitch motor need: front/rear **58.1 / 60.7 N**
 
 ## Performance / mission
 
-- Cruise drag / bus power: **12.45 N / 380.7 W** (lift props **folded**)
-- Forward / reverse transition: **18.94 s / 18.58 s**
-- Mission energy (120 min): **787.9 Wh**
+- Cruise drag / bus power: **12.45 N / 380.8 W** (lift props **folded**)
+- Forward / reverse transition: **18.94 s / 18.56 s**
+- Mission energy (120 min): **788.0 Wh**
 - H2 used / final battery SOC: **46.2 g / 92.0%**
 
 ## Structures (recommended screen)
@@ -76,18 +79,18 @@ A **14.145 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 
 ## Integrated gates
 
-- **PASS** — mass_ceiling: Structurally closed mass 14.145 kg vs 15.0 kg ceiling.
+- **PASS** — mass_ceiling: Structurally closed mass 14.149 kg vs 15.0 kg ceiling.
 - **PASS** — packaging: 0 packaging collision/containment failures remain.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
 - **PASS** — 15kg_stall_margin: Wing area 0.879 m² vs minimum 0.874 m² screen.
-- **PASS** — cruise_power: 380.7 W vs configured gate.
+- **PASS** — cruise_power: 380.8 W vs configured gate.
 - **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
-- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 11.85% MAC.
+- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 12.49% MAC.
 - **FAIL** — current_layout_6dof: Actual closed geometry/control 6-DOF gate set.
-- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 6.4 deg.
+- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 7.9 deg.
 - **FAIL** — stability_screen_6dof: Explicit +12% SM reference screen.
-- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 57.8/61.0 N vs 71.0 N available screen.
+- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 58.1/60.7 N vs 71.0 N available screen.
 - **PASS** — recommended_structure_screen: Recommended structural member screens. The legacy partial-feedback mass gate is excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.
 - **NOT_EVALUATED** — motor_mount: Controlled mount CAD, fasteners and material allowables are still required.
 - **PASS** — selected_battery_database_record: Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation.

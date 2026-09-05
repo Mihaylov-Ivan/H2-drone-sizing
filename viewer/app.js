@@ -298,9 +298,9 @@ function horizontalSurface({
 }
 
 /**
- * Vertical fin in the x–z plane at lateral station y.
+ * Vertical fin in the x–z plane at lateral station y, root on boom waterline.
  */
-function verticalFin({ le, y, height, rootChord, tipChord, thickness, naca, color }) {
+function verticalFin({ le, y, height, rootChord, tipChord, thickness, naca, color, z0 = 0 }) {
   const profile = nacaThicknessPoints(naca, 24);
   const stations = 12;
   const positions = [];
@@ -309,7 +309,7 @@ function verticalFin({ le, y, height, rootChord, tipChord, thickness, naca, colo
 
   for (let i = 0; i <= stations; i++) {
     const eta = i / stations;
-    const z = eta * height;
+    const z = z0 + eta * height;
     const chord = rootChord + (tipChord - rootChord) * eta;
     const tScale = tScaleRoot * (chord / rootChord);
     for (const side of [1, -1]) {
@@ -352,13 +352,14 @@ function boomMeshes() {
   const x1 = mm('boom_end_x');
   const L = x1 - x0;
   const r = mm('boom_OD', 21) / 2;
+  const z = mm('boom_z', mm('wing_z', 100));
   const ys = [mm('boom_left_y', -350), mm('boom_right_y', 350)];
   const mat = makeMaterial(COLORS.boom);
   for (const y of ys) {
     const geo = new THREE.CylinderGeometry(r, r, L, 20);
     geo.rotateZ(Math.PI / 2);
     const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set((x0 + x1) / 2, y, 0);
+    mesh.position.set((x0 + x1) / 2, y, z);
     g.add(mesh);
   }
   return g;
@@ -392,57 +393,25 @@ function tubeBetween(a, b, radius, material) {
 }
 
 /**
- * Structural tubes that carry the lift motors and pusher.
- * Layout matches the twin-boom / wing-mount screening geometry:
- * outboard longitudinal rails at the lift stations, lateral links to the
- * main booms, forward boom stubs to the front row, and an aft pusher stalk.
+ * Structural tubes: twin booms already carry the lift motors. Only add the
+ * short fuselage→pusher bulkhead stub (motors sit directly on the boom rods).
  */
 function mountTubeMeshes() {
   const g = new THREE.Group();
   g.name = 'mounts';
   const mat = makeMaterial(COLORS.boom);
   const boomR = mm('boom_OD', 21) / 2;
-  const armR = Math.max(boomR * 0.75, mm('wing_secondary_spar_OD', 10) / 2);
-  const pusherR = Math.max(armR * 0.9, 0.006);
+  const pusherR = Math.max(boomR * 0.85, 0.006);
 
-  const frontX = mm('lift_motor_front_x');
-  const rearX = mm('lift_motor_rear_x');
-  const yAbs = mm('lift_motor_y_abs');
-  const zMot = mm('lift_motor_z', mm('wing_z', 100));
-  const boomYs = [mm('boom_left_y', -350), mm('boom_right_y', 350)];
-  const boomX0 = mm('boom_start_x');
-
-  for (let i = 0; i < 2; i++) {
-    const sign = i === 0 ? -1 : 1;
-    const yMot = sign * yAbs;
-    const yBoom = boomYs[i];
-
-    // Outboard rail holding front and rear lift motors.
-    const rail = tubeBetween([frontX, yMot, zMot], [rearX, yMot, zMot], armR, mat);
-    if (rail) g.add(rail);
-
-    // Forward boom stub from main-boom start up to the front motor station.
-    const fwd = tubeBetween([boomX0, yBoom, 0], [frontX, yBoom, zMot * 0.35], boomR * 0.85, mat);
-    if (fwd) g.add(fwd);
-    const fwdUp = tubeBetween([frontX, yBoom, zMot * 0.35], [frontX, yMot, zMot], armR, mat);
-    if (fwdUp) g.add(fwdUp);
-
-    // Lateral / vertical links from twin boom onto the outboard rail at each row.
-    for (const x of [frontX, rearX]) {
-      const boomX = Math.min(Math.max(x, boomX0), mm('boom_end_x', rearX));
-      const link = tubeBetween([boomX, yBoom, 0], [x, yMot, zMot], armR, mat);
-      if (link) g.add(link);
-    }
-  }
-
-  // Pusher mount stalk: fuselage aft → pusher motor centreline.
   const fuseEnd = mm('fuselage_total_length', 780);
   const px = mm('pusher_motor_x');
   const py = mm('pusher_motor_y');
   const pz = mm('pusher_motor_z');
-  const stalk = tubeBetween([fuseEnd, 0, 0], [px, py, pz], pusherR, mat);
-  if (stalk) g.add(stalk);
-
+  // Short bulkhead stub only if the motor centre is clearly aft of the skin.
+  if (px > fuseEnd + 0.005) {
+    const stalk = tubeBetween([fuseEnd, 0, 0], [px, py, pz], pusherR, mat);
+    if (stalk) g.add(stalk);
+  }
   return g;
 }
 
@@ -535,6 +504,7 @@ function buildAircraft() {
   const vtGroup = new THREE.Group();
   vtGroup.name = 'vt';
   const boomYs = [mm('boom_left_y', -350), mm('boom_right_y', 350)];
+  const boomZ = mm('boom_z', mm('wing_z', 100));
   for (const y of boomYs) {
     vtGroup.add(
       verticalFin({
@@ -546,6 +516,7 @@ function buildAircraft() {
         thickness: mm('vertical_tail_thickness', 12),
         naca: str('vertical_tail_NACA', 'NACA0012'),
         color: COLORS.tail,
+        z0: boomZ,
       }),
     );
   }
