@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>H2AIR exterior geometry</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside id="panel">
+      <header>
+        <p class="eyebrow">H2AIR</p>
+        <h1>Exterior architecture</h1>
+        <p id="source-label" class="muted">Loading CAD parameters…</p>
+      </header>
+
+      <section>
+        <h2>View</h2>
+        <label class="row"><input type="checkbox" id="toggle-fuselage" checked /> Fuselage</label>
+        <label class="row"><input type="checkbox" id="toggle-wing" checked /> Main wing</label>
+        <label class="row"><input type="checkbox" id="toggle-booms" checked /> Twin booms</label>
+        <label class="row"><input type="checkbox" id="toggle-mounts" checked /> Motor mount tubes</label>
+        <label class="row"><input type="checkbox" id="toggle-ht" checked /> Horizontal tail</label>
+        <label class="row"><input type="checkbox" id="toggle-vt" checked /> Vertical fins</label>
+        <label class="row"><input type="checkbox" id="toggle-props" checked /> Motors / props</label>
+        <label class="row"><input type="checkbox" id="toggle-grid" checked /> Ground grid</label>
+        <label class="row"><input type="checkbox" id="toggle-axes" checked /> Body axes</label>
+      </section>
+
+      <section>
+        <h2>Display</h2>
+        <label class="row"><input type="checkbox" id="toggle-wire" /> Wireframe</label>
+        <label class="row"><input type="checkbox" id="toggle-transparent" /> Soft translucency</label>
+        <button type="button" id="btn-reset">Reset camera</button>
+        <label class="file-btn">
+          Load CAD JSON
+          <input type="file" id="file-input" accept="application/json,.json" />
+        </label>
+      </section>
+
+      <section id="dims">
+        <h2>Key dimensions</h2>
+        <dl id="dim-list"></dl>
+      </section>
+
+      <footer class="muted">
+        Units from <code>cad_parameters.json</code>. Nose at x=0, +x aft/forward layout as modelled, +z up.
+      </footer>
+    </aside>
+    <main id="viewport"></main>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

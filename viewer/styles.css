@@ -1,0 +1,73 @@
+:root {
+  --bg: #0f1419;
+  --panel: #161c24;
+  --ink: #e8eef5;
+  --muted: #8b98a8;
+  --line: #2a3442;
+  --accent: #6eb6ff;
+  --fuselage: #c9d2dc;
+  --wing: #7aa8d4;
+  --boom: #5f6b78;
+  --tail: #9bb8a5;
+  --prop: #d4a574;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+  font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+
+#app { display: grid; grid-template-columns: 300px 1fr; height: 100%; }
+
+#panel {
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  padding: 1.25rem 1.1rem 1.5rem;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+h1 { margin: 0.2rem 0 0.35rem; font-size: 1.35rem; font-weight: 600; }
+h2 { margin: 0 0 0.55rem; font-size: 0.78rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+.muted { color: var(--muted); font-size: 0.85rem; }
+.muted code { color: var(--accent); font-size: 0.8em; }
+
+section { border-top: 1px solid var(--line); padding-top: 0.9rem; }
+
+.row {
+  display: flex; align-items: center; gap: 0.55rem;
+  margin: 0.28rem 0; cursor: pointer; user-select: none;
+}
+.row input { accent-color: var(--accent); }
+
+button, .file-btn {
+  display: block; width: 100%; margin-top: 0.55rem;
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 6px;
+  padding: 0.55rem 0.7rem; cursor: pointer; text-align: center;
+}
+button:hover, .file-btn:hover { border-color: var(--accent); color: var(--accent); }
+.file-btn input { display: none; }
+
+#dim-list { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 0.75rem; }
+#dim-list dt { color: var(--muted); }
+#dim-list dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+
+#viewport { position: relative; min-width: 0; }
+#viewport canvas { display: block; width: 100%; height: 100%; }
+
+@media (max-width: 860px) {
+  #app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  #panel { max-height: 42vh; border-right: none; border-bottom: 1px solid var(--line); }
+}

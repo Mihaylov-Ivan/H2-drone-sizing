@@ -40,7 +40,7 @@ def test_cad_export_is_geometry_only(integrated_result):
     _,out=integrated_result
     d=json.loads((out/'details'/'cad_parameters.json').read_text())
     names={x['name'] for x in d['parameters']}
-    for needed in ('wing_span','wing_primary_spar_OD','boom_OD','boom_spacing','lift_motor_front_x','pusher_prop_diameter','general_print_tolerance','bolt_M4_clearance_hole_OD'):
+    for needed in ('wing_span','wing_z','wing_thickness','horizontal_tail_z','vertical_tail_thickness','wing_primary_spar_OD','boom_OD','boom_spacing','lift_motor_front_x','pusher_prop_diameter','general_print_tolerance','bolt_M4_clearance_hole_OD'):
         assert needed in names
     forbidden=('mass','weight','power','stress','mpa','energy','thrust','soc','current')
     assert not [n for n in names if any(x in n.lower() for x in forbidden)]

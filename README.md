@@ -16,6 +16,16 @@ Each run folder keeps only the essentials at the top level:
 
 Everything else (ledgers, histories, CAD params, manifests) is under `details/`.
 
+## Exterior geometry viewer
+
+Interactive 3-D web view of the outside architecture (fuselage, wing, twin booms, tails, motors/props) driven by `cad_parameters.json`:
+
+```bash
+python viewer/serve.py outputs/my_design
+```
+
+Opens a local page with orbit controls and layer toggles. Pass any run folder (or a `cad_parameters.json` path). Re-run the model after pulling CAD export updates to pick up wing/tail vertical stations in the JSON.
+
 ## Full multidisciplinary design study
 
 ```bash

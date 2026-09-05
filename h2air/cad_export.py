@@ -46,31 +46,41 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
 
     # Main wing.
     cr=float(d['main_wing_root_chord_m']); lam=float(d['main_wing_taper_ratio']); mac=float(d['wing_mac_m']); b=float(d['wing_span_m']); xac=float(d['wing_ac_x_m']); le=xac-0.25*mac
+    mw=mm.get('main_wing',{})
     out += [
         _param('wing_span',_mm(b)),_param('wing_half_span',_mm(b/2)),_param('wing_root_chord',_mm(cr)),_param('wing_tip_chord',_mm(_tip(cr,lam))),_param('wing_mac',_mm(mac)),
-        _param('wing_le_x',_mm(le)),_param('wing_ac_x',_mm(xac)),_param('wing_taper_ratio',lam,'unitless'),_param('wing_sweep',float(d.get('main_wing_sweep_deg',0)),'deg'),
+        _param('wing_le_x',_mm(le)),_param('wing_ac_x',_mm(xac)),_param('wing_z',_mm(float(mw.get('z_m',0.1)))),_param('wing_thickness',_mm(float(mw.get('thickness_m',0.028)))),
+        _param('wing_taper_ratio',lam,'unitless'),_param('wing_sweep',float(d.get('main_wing_sweep_deg',0)),'deg'),
         _param('wing_dihedral',float(d.get('main_wing_dihedral_deg',0)),'deg'),_param('wing_twist_root',float(d.get('main_wing_twist_root_deg',0)),'deg'),_param('wing_twist_tip',float(d.get('main_wing_twist_tip_deg',0)),'deg'),
         _param('wing_NACA',str(d.get('main_wing_naca_code','')),'String')]
     wsec=structure['structural_checks']['wing']['recommended_screen']['section']
     out += [_param('wing_primary_spar_OD',_mm(wsec['od_m'])),_param('wing_primary_spar_ID',_mm(wsec['id_m']))]
-    if mm.get('main_wing'):
-        s2=mm['main_wing']['secondary_spar']; out += [_param('wing_primary_spar_chord_fraction',float(mm['main_wing']['primary_spar'].get('chord_fraction',0.25)),'unitless'),_param('wing_secondary_spar_chord_fraction',float(s2.get('chord_fraction',0.65)),'unitless'),_param('wing_secondary_spar_OD',_mm(s2.get('tube_od_m',0.0)))]
+    if mw:
+        s2=mw['secondary_spar']; out += [_param('wing_primary_spar_chord_fraction',float(mw['primary_spar'].get('chord_fraction',0.25)),'unitless'),_param('wing_secondary_spar_chord_fraction',float(s2.get('chord_fraction',0.65)),'unitless'),_param('wing_secondary_spar_OD',_mm(s2.get('tube_od_m',0.0)))]
 
     # Horizontal tail.
     hr=float(d['horizontal_tail_root_chord_m']); hl=float(d['horizontal_tail_taper_ratio']); hm=float(d['horizontal_tail_mac_m']); hb=float(d['horizontal_tail_span_m']); hx=float(d['horizontal_tail_ac_x_m']); hle=hx-0.25*hm
-    out += [_param('horizontal_tail_span',_mm(hb)),_param('horizontal_tail_half_span',_mm(hb/2)),_param('horizontal_tail_root_chord',_mm(hr)),_param('horizontal_tail_tip_chord',_mm(_tip(hr,hl))),_param('horizontal_tail_mac',_mm(hm)),_param('horizontal_tail_le_x',_mm(hle)),_param('horizontal_tail_ac_x',_mm(hx)),_param('horizontal_tail_taper_ratio',hl,'unitless'),_param('horizontal_tail_NACA',str(d.get('horizontal_tail_naca_code','')),'String')]
+    ht=mm.get('horizontal_tail',{})
+    out += [
+        _param('horizontal_tail_span',_mm(hb)),_param('horizontal_tail_half_span',_mm(hb/2)),_param('horizontal_tail_root_chord',_mm(hr)),_param('horizontal_tail_tip_chord',_mm(_tip(hr,hl))),_param('horizontal_tail_mac',_mm(hm)),
+        _param('horizontal_tail_le_x',_mm(hle)),_param('horizontal_tail_ac_x',_mm(hx)),_param('horizontal_tail_z',_mm(float(ht.get('z_m',0.03)))),_param('horizontal_tail_thickness',_mm(float(ht.get('thickness_m',0.022)))),
+        _param('horizontal_tail_taper_ratio',hl,'unitless'),_param('horizontal_tail_NACA',str(d.get('horizontal_tail_naca_code','')),'String')]
     hsec=structure['structural_checks']['tails']['horizontal_recommended_screen']['section']
     out += [_param('horizontal_tail_primary_spar_OD',_mm(hsec['od_m'])),_param('horizontal_tail_primary_spar_ID',_mm(hsec['id_m']))]
-    if mm.get('horizontal_tail'):
-        out += [_param('horizontal_tail_secondary_spar_OD',_mm(mm['horizontal_tail']['secondary_spar'].get('tube_od_m',0.0)))]
+    if ht:
+        out += [_param('horizontal_tail_secondary_spar_OD',_mm(ht['secondary_spar'].get('tube_od_m',0.0)))]
 
     # Vertical tails.
     vr=float(d['vertical_tail_root_chord_m']); vl=float(d['vertical_tail_taper_ratio']); vh=float(d['vertical_tail_height_m']); vx=float(d.get('vertical_tail_ac_x_m',d['horizontal_tail_ac_x_m'])); vm=(2/3)*vr*(1+vl+vl*vl)/(1+vl); vle=vx-0.25*vm
-    out += [_param('vertical_tail_count',2,'unitless'),_param('vertical_tail_height',_mm(vh)),_param('vertical_tail_root_chord',_mm(vr)),_param('vertical_tail_tip_chord',_mm(_tip(vr,vl))),_param('vertical_tail_le_x',_mm(vle)),_param('vertical_tail_ac_x',_mm(vx)),_param('vertical_tail_taper_ratio',vl,'unitless'),_param('vertical_tail_NACA',str(d.get('vertical_tail_naca_code','')),'String')]
+    vt=mm.get('vertical_tail',{})
+    out += [
+        _param('vertical_tail_count',int(vt.get('count',2)),'unitless'),_param('vertical_tail_height',_mm(vh)),_param('vertical_tail_root_chord',_mm(vr)),_param('vertical_tail_tip_chord',_mm(_tip(vr,vl))),
+        _param('vertical_tail_le_x',_mm(vle)),_param('vertical_tail_ac_x',_mm(vx)),_param('vertical_tail_thickness',_mm(float(vt.get('thickness_m',0.012)))),
+        _param('vertical_tail_taper_ratio',vl,'unitless'),_param('vertical_tail_NACA',str(d.get('vertical_tail_naca_code','')),'String')]
     vsec=structure['structural_checks']['tails']['vertical_recommended_screen']['section']
     out += [_param('vertical_tail_primary_spar_OD',_mm(vsec['od_m'])),_param('vertical_tail_primary_spar_ID',_mm(vsec['id_m']))]
-    if mm.get('vertical_tail'):
-        out += [_param('vertical_tail_secondary_spar_OD',_mm(mm['vertical_tail']['secondary_spar'].get('tube_od_m',0.0)))]
+    if vt:
+        out += [_param('vertical_tail_secondary_spar_OD',_mm(vt['secondary_spar'].get('tube_od_m',0.0)))]
 
     # Twin booms.
     bs=structure['structural_checks']['booms']['recommended_screen']['section']; bx0=float(gm['boom_x_start_m']); bx1=float(gm['boom_x_end_m']); ys=gm['boom_center_y_m']
