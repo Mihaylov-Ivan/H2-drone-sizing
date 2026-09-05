@@ -157,18 +157,18 @@ class FuelCellConfig:
 
 @dataclass
 class HydrogenConfig:
-    storage_name: str = "Certified 3.0 L / 350 bar package reference"
-    pressure_bar: float = 350.0
+    storage_name: str = "AMS Composites 3 CF, 3.0 L / 300 bar Type III"
+    pressure_bar: float = 300.0
     water_volume_L: float = 3.0
-    nominal_h2_mass_kg: float = 0.070
+    nominal_h2_mass_kg: float = 0.0619
     regulator_mass_kg: float = 0.315
-    cylinder_mass_kg: Optional[float] = None
+    cylinder_mass_kg: Optional[float] = 1.62
 
-    # 2.6 h x 400 W = 1.04 kWh system reference.  The current application then
-    # applies a preliminary 15% mission reserve -> ~0.884 kWh.
+    # Supplier cylinder usable electrical energy (~1030 Wh) already at typical FC
+    # efficiency; do not multiply by efficiency again. 15% mission reserve -> ~875.5 Wh.
     reference_load_W: float = 400.0
-    reference_endurance_h: float = 2.6
-    reference_net_energy_Wh: float = 1040.0
+    reference_endurance_h: float = 2.575
+    reference_net_energy_Wh: float = 1030.0
     mission_energy_reserve_fraction: float = 0.15
 
     # The actual residual pressure / physical unusable H2 is not yet in the sources.
@@ -1015,15 +1015,17 @@ def phase2_reference_sources() -> Dict[str, SourceTaggedValue]:
         "fuel_cell_module_mass_kg": SourceTaggedValue(1.45, EvidenceStatus.SUPPLIER_CONFIRMED.value, src),
         "fuel_cell_output_voltage_V": SourceTaggedValue([24.0, 48.0], EvidenceStatus.SUPPLIER_CONFIRMED.value, src),
         "regulator_mass_kg": SourceTaggedValue(0.315, EvidenceStatus.SUPPLIER_CONFIRMED.value, src),
-        "hydrogen_storage": SourceTaggedValue("3.0 L / 350 bar", EvidenceStatus.SUPPLIER_CONFIRMED.value, src),
-        "hydrogen_inventory_kg": SourceTaggedValue(0.070, EvidenceStatus.PRELIMINARY_TARGET.value, src, "approximate; to be pressure-temperature corrected and supplier-confirmed"),
+        "hydrogen_storage": SourceTaggedValue("AMS Composites 3 CF, 3.0 L / 300 bar Type III", EvidenceStatus.SUPPLIER_CONFIRMED.value, src, "1.62 kg cylinder, M18x1.5"),
+        "hydrogen_inventory_kg": SourceTaggedValue(0.0619, EvidenceStatus.SUPPLIER_CONFIRMED.value, src, "61.9 g H2 from AMS cylinder datasheet"),
+        "cylinder_mass_kg": SourceTaggedValue(1.62, EvidenceStatus.SUPPLIER_CONFIRMED.value, src, "AMS Composites 3 CF"),
         "hybrid_peak_power_W": SourceTaggedValue(7500.0, EvidenceStatus.SUPPLIER_REPORTED_CONDITIONAL.value, src, "depends on selected battery"),
-        "reference_400W_endurance_h": SourceTaggedValue(2.6, EvidenceStatus.SUPPLIER_CONFIRMED.value, src, "complete 4.0 kg reference system using certified 3.0 L cylinder"),
-        "reference_net_energy_Wh": SourceTaggedValue(1040.0, EvidenceStatus.DERIVED_FROM_SUPPLIER_REFERENCE.value, src, "2.6 h x 400 W"),
+        "reference_400W_endurance_h": SourceTaggedValue(2.575, EvidenceStatus.DERIVED_FROM_SUPPLIER_REFERENCE.value, src, "1030 Wh / 400 W; ~131 min before reserve"),
+        "reference_net_energy_Wh": SourceTaggedValue(1030.0, EvidenceStatus.SUPPLIER_CONFIRMED.value, src, "AMS/IE usable electrical Wh; already at typical FC efficiency"),
         "mission_energy_reserve_fraction": SourceTaggedValue(0.15, EvidenceStatus.PRELIMINARY_TARGET.value, "Hydrogenera IH-MIE Application Draft v8"),
         "battery_architecture": SourceTaggedValue("12S 4-5 Ah / 178-222 Wh", EvidenceStatus.PRELIMINARY_TARGET.value, "Hydrogenera IH-MIE Application Draft v8"),
         "application_peak_screening_W": SourceTaggedValue(5000.0, EvidenceStatus.PRELIMINARY_TARGET.value, "Hydrogenera IH-MIE Application Draft v8"),
         "cruise_power_gate_W": SourceTaggedValue(550.0, EvidenceStatus.PRELIMINARY_TARGET.value, "Hydrogenera IH-MIE Application Draft v8"),
+        "cruise_power_target_band_W": SourceTaggedValue([400.0, 435.0], EvidenceStatus.PRELIMINARY_TARGET.value, src, "450 W sensitivity; ~438 W is exact 2 h at 875.5 Wh post-reserve"),
     }
 
 # Clean integrated API alias; legacy development name retained for compatibility.

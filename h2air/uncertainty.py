@@ -51,7 +51,7 @@ def _perturb(base: Mapping[str,Any], factors: Mapping[str,float]) -> Dict[str,An
     baseline_batt=float(b["mass_kg"] if b.get("mass_kg") is not None else 0.75)
     b["mass_kg"]=baseline_batt*float(factors["battery_mass_factor"])
     h=c["power_system"]["hydrogen"]
-    baseline_cyl=float(h["cylinder_mass_kg"] if h.get("cylinder_mass_kg") is not None else 1.10)
+    baseline_cyl=float(h["cylinder_mass_kg"] if h.get("cylinder_mass_kg") is not None else 1.62)
     h["cylinder_mass_kg"]=baseline_cyl*float(factors["cylinder_mass_factor"])
     fc=c["power_system"]["fuel_cell"]
     fc["module_mass_kg"]=float(fc["module_mass_kg"])*float(factors["fuel_cell_mass_factor"])

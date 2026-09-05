@@ -1,0 +1,249 @@
+{
+  "selection": {
+    "selected": "nominal_mass_optimized",
+    "rule": "full integrated verification must pass; prefer margin-biased candidate when uncertainty pass probability is >= nominal",
+    "nominal_uncertainty_pass_probability": 0.59375,
+    "robust_uncertainty_pass_probability": 0.59375
+  },
+  "optimization_best_screening": {
+    "index": 75,
+    "values": {
+      "wing_ac_x_m": 0.38684439413960003,
+      "horizontal_tail_ac_x_m": 1.048941782853524,
+      "vertical_tail_ac_x_m": 1.0215921814472606,
+      "lift_row_center_x_m": 0.38588448753971805,
+      "battery_x_m": 0.3302874994984061,
+      "fuel_cell_x_m": 0.15284963758135406,
+      "hydrogen_cylinder_x_m": 0.526501761579615
+    },
+    "score": 14.395491476600425,
+    "feasible": true,
+    "metrics": {
+      "pre_structure_mass_kg": 13.516439978,
+      "post_structure_mass_kg": 14.14485119648625,
+      "cg_x_m": 0.39379426772522846,
+      "neutral_point_x_m": 0.42532103887610895,
+      "static_margin": 0.11849051434164128,
+      "packaging_fail_count": 0,
+      "layout_pass": true,
+      "lift_rows_x_m": [
+        0.09648448753971806,
+        0.675284487539718
+      ],
+      "cruise_bus_power_W": 374.52545271258845,
+      "cruise_drag_N": 12.222916297653184,
+      "wing_required_15kg_m2": 0.8741159546413503,
+      "mission_energy_Wh": 773.2130042153499,
+      "energy_target_Wh": 875.5,
+      "forward_transition_success": true,
+      "reverse_transition_success": true,
+      "forward_transition_duration_s": 17.579999999999714,
+      "reverse_transition_duration_s": 18.73999999999969,
+      "front_motor_15kg_N": 57.75817113217364,
+      "rear_motor_15kg_N": 61.004141367826364,
+      "max_motor_15kg_N": 61.004141367826364,
+      "available_motor_thrust_N": 71.02956594999999,
+      "structural_screen_fail": false,
+      "wing_spar_od_mm": 22.75000000000001,
+      "boom_od_mm": 21.250000000000007,
+      "static_margin_target": 0.12
+    },
+    "violations": []
+  },
+  "nominal_selected_after_full_verification": {
+    "index": 75,
+    "values": {
+      "wing_ac_x_m": 0.38684439413960003,
+      "horizontal_tail_ac_x_m": 1.048941782853524,
+      "vertical_tail_ac_x_m": 1.0215921814472606,
+      "lift_row_center_x_m": 0.38588448753971805,
+      "battery_x_m": 0.3302874994984061,
+      "fuel_cell_x_m": 0.15284963758135406,
+      "hydrogen_cylinder_x_m": 0.526501761579615
+    },
+    "score": 14.395491476600425,
+    "feasible": true,
+    "metrics": {
+      "pre_structure_mass_kg": 13.516439978,
+      "post_structure_mass_kg": 14.14485119648625,
+      "cg_x_m": 0.39379426772522846,
+      "neutral_point_x_m": 0.42532103887610895,
+      "static_margin": 0.11849051434164128,
+      "packaging_fail_count": 0,
+      "layout_pass": true,
+      "lift_rows_x_m": [
+        0.09648448753971806,
+        0.675284487539718
+      ],
+      "cruise_bus_power_W": 374.52545271258845,
+      "cruise_drag_N": 12.222916297653184,
+      "wing_required_15kg_m2": 0.8741159546413503,
+      "mission_energy_Wh": 773.2130042153499,
+      "energy_target_Wh": 875.5,
+      "forward_transition_success": true,
+      "reverse_transition_success": true,
+      "forward_transition_duration_s": 17.579999999999714,
+      "reverse_transition_duration_s": 18.73999999999969,
+      "front_motor_15kg_N": 57.75817113217364,
+      "rear_motor_15kg_N": 61.004141367826364,
+      "max_motor_15kg_N": 61.004141367826364,
+      "available_motor_thrust_N": 71.02956594999999,
+      "structural_screen_fail": false,
+      "wing_spar_od_mm": 22.75000000000001,
+      "boom_od_mm": 21.250000000000007,
+      "static_margin_target": 0.12
+    },
+    "violations": []
+  },
+  "robust_derivation_best": {
+    "index": 0,
+    "values": {
+      "wing_ac_x_m": 0.39,
+      "horizontal_tail_ac_x_m": 1.048941782853524,
+      "vertical_tail_ac_x_m": 1.0215921814472606,
+      "lift_row_center_x_m": 0.38588448753971805,
+      "battery_x_m": 0.3302874994984061,
+      "fuel_cell_x_m": 0.15284963758135406,
+      "hydrogen_cylinder_x_m": 0.526501761579615
+    },
+    "score": 14.404752631078475,
+    "feasible": true,
+    "metrics": {
+      "pre_structure_mass_kg": 13.516439978,
+      "post_structure_mass_kg": 14.14485119648625,
+      "cg_x_m": 0.3947311756240219,
+      "neutral_point_x_m": 0.4282932621591287,
+      "static_margin": 0.12614006289738358,
+      "packaging_fail_count": 0,
+      "layout_pass": true,
+      "lift_rows_x_m": [
+        0.09648448753971806,
+        0.675284487539718
+      ],
+      "cruise_bus_power_W": 374.52545271258845,
+      "cruise_drag_N": 12.222916297653184,
+      "wing_required_15kg_m2": 0.8741159546413503,
+      "mission_energy_Wh": 773.2130042153499,
+      "energy_target_Wh": 875.5,
+      "forward_transition_success": true,
+      "reverse_transition_success": true,
+      "forward_transition_duration_s": 17.579999999999714,
+      "reverse_transition_duration_s": 18.73999999999969,
+      "front_motor_15kg_N": 57.565929686665314,
+      "rear_motor_15kg_N": 61.196382813334694,
+      "max_motor_15kg_N": 61.196382813334694,
+      "available_motor_thrust_N": 71.02956594999999,
+      "structural_screen_fail": false,
+      "wing_spar_od_mm": 22.75000000000001,
+      "boom_od_mm": 21.250000000000007,
+      "static_margin_target": 0.12
+    },
+    "violations": []
+  },
+  "nominal_verified_summary": {
+    "design_status": "SCREENING_FAIL",
+    "reference_mass_kg": 13.516439978,
+    "post_structure_mass_kg": 14.14485119648625,
+    "post_structure_cg_x_m": 0.39379426772522846,
+    "mass_margin_to_15kg_kg": 0.8551488035137496,
+    "current_static_margin": 0.11849051434164128,
+    "post_structure_static_margin_if_np_fixed": 0.11849051434164128,
+    "cruise_drag_N": 12.446614583919093,
+    "cruise_bus_power_W": 380.7392939977526,
+    "forward_transition_duration_s": 18.939999999999685,
+    "reverse_transition_duration_s": 18.579999999999693,
+    "mission_energy_Wh": 787.8980175719064,
+    "h2_used_kg": 0.04617948817223343,
+    "final_battery_soc": 0.9197867521042071,
+    "wing_spar_od_mm": 22.75000000000001,
+    "wing_spar_id_mm": 17.062500000000007,
+    "boom_od_mm": 21.250000000000007,
+    "boom_id_mm": 17.250000000000007,
+    "motor_mount_limit_thrust_N": 79.553113864,
+    "post_structure_15kg_zero_pitch_front_motor_N": 57.75817113217364,
+    "post_structure_15kg_zero_pitch_rear_motor_N": 61.004141367826364,
+    "structural_closure_iterations": 2
+  },
+  "robust_verified_summary": {
+    "design_status": "SCREENING_FAIL",
+    "reference_mass_kg": 13.516439978,
+    "post_structure_mass_kg": 14.14485119648625,
+    "post_structure_cg_x_m": 0.3947311756240219,
+    "mass_margin_to_15kg_kg": 0.8551488035137496,
+    "current_static_margin": 0.12614006289738358,
+    "post_structure_static_margin_if_np_fixed": 0.12614006289738358,
+    "cruise_drag_N": 12.446614583919093,
+    "cruise_bus_power_W": 380.7392939977526,
+    "forward_transition_duration_s": 18.939999999999685,
+    "reverse_transition_duration_s": 18.579999999999693,
+    "mission_energy_Wh": 787.8980175719064,
+    "h2_used_kg": 0.04617948817223343,
+    "final_battery_soc": 0.9197867521042071,
+    "wing_spar_od_mm": 22.75000000000001,
+    "wing_spar_id_mm": 17.062500000000007,
+    "boom_od_mm": 21.250000000000007,
+    "boom_id_mm": 17.250000000000007,
+    "motor_mount_limit_thrust_N": 79.553113864,
+    "post_structure_15kg_zero_pitch_front_motor_N": 57.565929686665314,
+    "post_structure_15kg_zero_pitch_rear_motor_N": 61.196382813334694,
+    "structural_closure_iterations": 2
+  },
+  "selected_verified_summary": {
+    "design_status": "SCREENING_FAIL",
+    "reference_mass_kg": 13.516439978,
+    "post_structure_mass_kg": 14.14485119648625,
+    "post_structure_cg_x_m": 0.39379426772522846,
+    "mass_margin_to_15kg_kg": 0.8551488035137496,
+    "current_static_margin": 0.11849051434164128,
+    "post_structure_static_margin_if_np_fixed": 0.11849051434164128,
+    "cruise_drag_N": 12.446614583919093,
+    "cruise_bus_power_W": 380.7392939977526,
+    "forward_transition_duration_s": 18.939999999999685,
+    "reverse_transition_duration_s": 18.579999999999693,
+    "mission_energy_Wh": 787.8980175719064,
+    "h2_used_kg": 0.04617948817223343,
+    "final_battery_soc": 0.9197867521042071,
+    "wing_spar_od_mm": 22.75000000000001,
+    "wing_spar_id_mm": 17.062500000000007,
+    "boom_od_mm": 21.250000000000007,
+    "boom_id_mm": 17.250000000000007,
+    "motor_mount_limit_thrust_N": 79.553113864,
+    "post_structure_15kg_zero_pitch_front_motor_N": 57.75817113217364,
+    "post_structure_15kg_zero_pitch_rear_motor_N": 61.004141367826364,
+    "structural_closure_iterations": 2
+  },
+  "selected_uncertainty_summary": {
+    "samples": 32,
+    "seed": 77,
+    "screening_pass_probability": 0.59375,
+    "post_structure_mass_kg": {
+      "p05": 13.734798564400593,
+      "p50": 14.14486900410074,
+      "p95": 14.572225518200925
+    },
+    "static_margin": {
+      "p05": 0.10790169862851601,
+      "p50": 0.11916954625618961,
+      "p95": 0.13038375486936118
+    },
+    "cruise_bus_power_W": {
+      "p05": 338.84041402298334,
+      "p50": 374.6603665390222,
+      "p95": 406.28589849946104
+    },
+    "mission_energy_Wh": {
+      "p05": 702.5621552663288,
+      "p50": 773.2659034155654,
+      "p95": 835.34036488939
+    },
+    "max_motor_15kg_N": {
+      "p05": 60.35484012416515,
+      "p50": 60.96707020412003,
+      "p95": 61.58222865996571
+    },
+    "failure_counts": {
+      "structural_screen": 11,
+      "120min_h2_energy_target": 3
+    }
+  }
+}

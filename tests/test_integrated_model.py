@@ -12,7 +12,9 @@ def test_v4_default_run_closes(integrated_result):
     assert r['summary']['post_structure_mass_kg']<15.0
     assert r['coupled_closure']['converged'] is True
     assert r['summary']['current_static_margin']>0.05
-    assert (out/'model_results.json').exists() and (out/'SUMMARY.md').exists()
+    assert (out/'SUMMARY.md').exists()
+    assert (out/'details'/'model_results.json').exists()
+    assert not (out/'model_results.json').exists()
 
 def test_structural_closure_is_fixed_point(integrated_result):
     r,_=integrated_result

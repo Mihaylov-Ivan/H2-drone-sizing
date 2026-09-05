@@ -243,13 +243,20 @@ def screening_evaluate(raw_cfg: Mapping[str, Any], values: Mapping[str, float], 
 
     feasible = not violations
     # Mass is primary; power/energy and SM-centering are secondary objectives.
+    # Aim SM comes from optimizer.target_static_margin (user_inputs), with fallbacks.
+    opt = cfg.get("optimizer_settings", {}) or {}
+    sm_target = float(opt.get(
+        "target_static_margin", 
+        d.get("stability_screen_static_margin", 0.08),
+    ))
     objective = (
         mass_post.takeoff.total_mass_kg
         + 0.0020 * max(drag.total_cruise_bus_power_W - 300.0, 0.0)
         + 0.0008 * max(mission["total_profile_energy_Wh"] - 650.0, 0.0)
-        + 2.0 * abs(sm - 0.08)
+        + 2.0 * abs(sm - sm_target)
     )
     score = objective + penalty
+    metrics["static_margin_target"] = sm_target
     return Candidate(index=index, values={k: float(v) for k,v in values.items()}, score=float(score), feasible=feasible, metrics=metrics, violations=violations)
 
 

@@ -66,14 +66,37 @@ def test_fixed_fuselage_does_not_autogrow_to_fit(tmp_path):
     assert abs(c['design']['fuselage_max_diameter_m']-0.12)<1e-12
 
 
+def test_user_inputs_from_design_values_locks_spans(tmp_path):
+    from h2air.user_inputs import user_inputs_from_design_values
+    base=json.loads((ROOT/'config'/'user_inputs.json').read_text())
+    out=user_inputs_from_design_values(base,{
+        'wing_ac_x_m':0.401,'main_wing_span_m':3.37,
+        'horizontal_tail_ac_x_m':1.04,'horizontal_tail_span_m':0.87,
+        'vertical_tail_ac_x_m':1.02,'vertical_tail_height_m':0.3,
+        'lift_row_center_x_m':0.43,'battery_x_m':0.38,'fuel_cell_x_m':0.15,
+        'hydrogen_cylinder_x_m':0.53,
+    })
+    assert out['lifting_surfaces']['main_wing']['span_mode']=='hardcoded'
+    assert abs(out['lifting_surfaces']['main_wing']['hardcoded_span_m']-3.37)<1e-9
+    assert abs(out['lifting_surfaces']['main_wing']['aerodynamic_center_x_m']-0.401)<1e-9
+    assert abs(out['component_positions']['battery_x_m']-0.38)<1e-9
+    path=tmp_path/'u.json'
+    path.write_text(json.dumps(out))
+    c=load_model_config(path)
+    assert abs(c['design']['wing_span_m']-3.37)<1e-9
+    assert abs(c['design']['wing_ac_x_m']-0.401)<1e-9
+
+
 def test_v4_default_user_design_full_pipeline_runs(tmp_path):
     c=load_model_config(ROOT/'config'/'user_inputs.json')
     r=run_model(c,tmp_path/'run',write_histories=False)
     assert r['coupled_closure']['converged']
+    assert (tmp_path/'run'/'SUMMARY.md').exists()
     assert (tmp_path/'run'/'resolved_configuration.json').exists()
-    assert (tmp_path/'run'/'AUTO_CALCULATED_VALUES.json').exists()
-    assert (tmp_path/'run'/'manufacturing_mass_ledger.csv').exists()
-    assert (tmp_path/'run'/'cad_parameters.xml').exists()
-    assert (tmp_path/'run'/'params.xml').exists()
-    assert (tmp_path/'run'/'params.xlsx').exists()
-    assert (tmp_path/'run'/'HARDWARE_SELECTION.json').exists()
+    assert (tmp_path/'run'/'user_inputs.json').exists()
+    assert (tmp_path/'run'/'details'/'AUTO_CALCULATED_VALUES.json').exists()
+    assert (tmp_path/'run'/'details'/'manufacturing_mass_ledger.csv').exists()
+    assert (tmp_path/'run'/'details'/'cad_parameters.xml').exists()
+    assert (tmp_path/'run'/'details'/'params.xml').exists()
+    assert (tmp_path/'run'/'details'/'params.xlsx').exists()
+    assert (tmp_path/'run'/'details'/'HARDWARE_SELECTION.json').exists()

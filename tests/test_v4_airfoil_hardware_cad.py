@@ -38,11 +38,11 @@ def test_hardcoded_hardware_mode_preserves_requested_combo(tmp_path):
 
 def test_cad_export_is_geometry_only(integrated_result):
     _,out=integrated_result
-    d=json.loads((out/'cad_parameters.json').read_text())
+    d=json.loads((out/'details'/'cad_parameters.json').read_text())
     names={x['name'] for x in d['parameters']}
     for needed in ('wing_span','wing_primary_spar_OD','boom_OD','boom_spacing','lift_motor_front_x','pusher_prop_diameter','general_print_tolerance','bolt_M4_clearance_hole_OD'):
         assert needed in names
     forbidden=('mass','weight','power','stress','mpa','energy','thrust','soc','current')
     assert not [n for n in names if any(x in n.lower() for x in forbidden)]
-    assert (out/'params.xml').exists()
-    assert (out/'params.xlsx').exists()
+    assert (out/'details'/'params.xml').exists()
+    assert (out/'details'/'params.xlsx').exists()

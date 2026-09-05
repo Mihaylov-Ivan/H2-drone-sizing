@@ -5,24 +5,30 @@ This is the Phase-8 development of the single-entry H2AIR model. Runtime code is
 ## Normal aircraft run
 
 ```bash
-python run_model.py
+python run_model.py --output outputs/my_design --no-histories
 ```
 
-Use another configuration:
+Each run folder keeps only the essentials at the top level:
 
-```bash
-python run_model.py --config config/robust_screening_case.json --output outputs/my_case
-```
+- `SUMMARY.md` — status, MTOW, gates
+- `user_inputs.json` — the user file used for this run
+- `resolved_configuration.json` — full internal model parameters
+
+Everything else (ledgers, histories, CAD params, manifests) is under `details/`.
 
 ## Full multidisciplinary design study
 
 ```bash
-python run_model.py --design-study
+python run_model.py --design-study --output outputs/design_sweep
 ```
 
-That command performs:
+Study top level:
 
-`design variables -> cross-subsystem resolver -> screening MDO search -> full EMS/6-DOF/structure verification -> uncertainty propagation -> local sensitivity -> flight-envelope export -> calibration template`
+- `DESIGN_STUDY_SUMMARY.json` — selection, scores, uncertainty
+- `user_inputs.json` — **copy-ready** file; replace `config/user_inputs.json` with this to adopt the chosen design
+- `resolved_configuration.json` — full internal config for the selected design
+
+Supporting search/verification artifacts are under `details/`.
 
 Use `--samples`, `--uncertainty-samples` and `--seed` to change study size/reproducibility.
 

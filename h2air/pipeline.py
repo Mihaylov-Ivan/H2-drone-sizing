@@ -214,25 +214,42 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
          "Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation." if battery_known else "Selected battery mass/envelope are incomplete.")
     cylinder_known = cfg["power_system"]["hydrogen"].get("cylinder_mass_kg") is not None
     gate("certified_hydrogen_cylinder_mass","PASS" if cylinder_known else "NOT_EVALUATED",
-         "Certified cylinder mass is present." if cylinder_known else "Selected certified 3.0 L / 350 bar cylinder mass remains open and is not released.")
+         "Certified cylinder mass is present." if cylinder_known else "Selected certified 3.0 L / 300 bar cylinder mass remains open and is not released.")
     hard=[g for g in gates if g["status"]=="FAIL"]
     status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","current_longitudinal_stability","15kg_zero_pitch_motor_thrust","15kg_stall_margin"} for g in hard) else "SCREENING_FAIL")
 
     result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
-    (out/"model_results.json").write_text(json.dumps(result,indent=2,default=str)+"\n",encoding="utf-8");write_markdown_report(out/"SUMMARY.md",result)
-    rows=[]
-    for c in comps:rows.append({"name":c.name,"group":c.group,"mass_takeoff_kg":c.mass_takeoff_kg,"mass_end_kg":c.mass_end_kg,"x_m":c.position_m[0],"y_m":c.position_m[1],"z_m":c.position_m[2],"status":c.status,"source":c.source})
-    _csv(out/"component_ledger.csv",rows);_csv(out/"mission_profile.csv",[{"time_s":p.time_s,"bus_power_W":p.bus_power_W,"stage":p.stage} for p in mission["profile"]]);_csv(out/"structure_load_cases.csv",structure["load_cases"]);_csv(out/"closure_history.csv",closure_history)
-    if cfg.get("_runtime",{}).get("manufacturing_mass_ledger"):
-        _csv(out/"manufacturing_mass_ledger.csv",cfg["_runtime"]["manufacturing_mass_ledger"])
-    # Derived/internal configuration is emitted for audit, not intended for hand editing.
-    resolved={k:v for k,v in cfg.items() if k!="_runtime"}
-    (out/"resolved_configuration.json").write_text(json.dumps(resolved,indent=2,default=str)+"\n",encoding="utf-8")
+
+    # Top-level: summary + configs. Supporting artifacts live under details/.
+    details = out / "details"
+    details.mkdir(parents=True, exist_ok=True)
+    write_markdown_report(out / "SUMMARY.md", result, cfg=cfg)
+    resolved = {k: v for k, v in cfg.items() if k != "_runtime"}
+    (out / "resolved_configuration.json").write_text(json.dumps(resolved, indent=2, default=str) + "\n", encoding="utf-8")
+    if cfg.get("user_input_snapshot") is not None:
+        from .user_inputs import write_user_inputs_json
+        write_user_inputs_json(out / "user_inputs.json", cfg["user_input_snapshot"])
+
+    (details / "model_results.json").write_text(json.dumps(result, indent=2, default=str) + "\n", encoding="utf-8")
+    rows = []
+    for c in comps:
+        rows.append({
+            "name": c.name, "group": c.group,
+            "mass_takeoff_kg": c.mass_takeoff_kg, "mass_end_kg": c.mass_end_kg,
+            "x_m": c.position_m[0], "y_m": c.position_m[1], "z_m": c.position_m[2],
+            "status": c.status, "source": c.source,
+        })
+    _csv(details / "component_ledger.csv", rows)
+    _csv(details / "mission_profile.csv", [{"time_s": p.time_s, "bus_power_W": p.bus_power_W, "stage": p.stage} for p in mission["profile"]])
+    _csv(details / "structure_load_cases.csv", structure["load_cases"])
+    _csv(details / "closure_history.csv", closure_history)
+    if cfg.get("_runtime", {}).get("manufacturing_mass_ledger"):
+        _csv(details / "manufacturing_mass_ledger.csv", cfg["_runtime"]["manufacturing_mass_ledger"])
     if cfg.get("user_input_snapshot") is not None:
         from .user_inputs import input_classification
-        (out/"INPUT_CLASSIFICATION.json").write_text(json.dumps(input_classification(cfg),indent=2)+"\n",encoding="utf-8")
-        auto_values={
-            "geometry": cfg.get("derived_geometry_v3",{}),
+        (details / "INPUT_CLASSIFICATION.json").write_text(json.dumps(input_classification(cfg), indent=2) + "\n", encoding="utf-8")
+        auto_values = {
+            "geometry": cfg.get("derived_geometry_v3", {}),
             "closed_mtow_kg": mass_final.takeoff.total_mass_kg,
             "closed_cg_m": list(mass_final.takeoff.cg_m),
             "neutral_point_x_m": float(d["neutral_point_station_x_m"]),
@@ -246,13 +263,26 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
             "front_motor_15kg_N": front_each,
             "rear_motor_15kg_N": rear_each,
         }
-        (out/"AUTO_CALCULATED_VALUES.json").write_text(json.dumps(auto_values,indent=2)+"\n",encoding="utf-8")
+        (details / "AUTO_CALCULATED_VALUES.json").write_text(json.dumps(auto_values, indent=2) + "\n", encoding="utf-8")
     if cfg.get("hardware_selection_result") is not None:
-        (out/"HARDWARE_SELECTION.json").write_text(json.dumps(cfg["hardware_selection_result"],indent=2,default=str)+"\n",encoding="utf-8")
-    write_cad_exports(out, cfg, structure)
+        (details / "HARDWARE_SELECTION.json").write_text(json.dumps(cfg["hardware_selection_result"], indent=2, default=str) + "\n", encoding="utf-8")
+    write_cad_exports(details, cfg, structure)
     if write_histories:
-        _csv(out/"transition_forward.csv",[x.to_dict() for x in mission["forward_transition"].samples]);_csv(out/"transition_reverse.csv",[x.to_dict() for x in mission["reverse_transition"].samples])
-        if ems.steps:_csv(out/"hybrid_power_history.csv",[x.__dict__ for x in ems.steps])
-        for label,(f,r,g) in control_hist.items():_csv(out/f"sixdof_forward_{label}.csv",_sample_rows(f));_csv(out/f"sixdof_reverse_{label}.csv",_sample_rows(r));_csv(out/f"sixdof_gust_{label}.csv",_sample_rows(g))
-    manifest={"model_version":cfg["model"]["version"],"config_hash":result["config_hash"],"outputs":sorted(p.name for p in out.iterdir() if p.is_file())};(out/"run_manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
+        _csv(details / "transition_forward.csv", [x.to_dict() for x in mission["forward_transition"].samples])
+        _csv(details / "transition_reverse.csv", [x.to_dict() for x in mission["reverse_transition"].samples])
+        if ems.steps:
+            _csv(details / "hybrid_power_history.csv", [x.__dict__ for x in ems.steps])
+        for label, (f, r, g) in control_hist.items():
+            _csv(details / f"sixdof_forward_{label}.csv", _sample_rows(f))
+            _csv(details / f"sixdof_reverse_{label}.csv", _sample_rows(r))
+            _csv(details / f"sixdof_gust_{label}.csv", _sample_rows(g))
+    detail_files = sorted(p.name for p in details.iterdir() if p.is_file())
+    top_files = sorted(p.name for p in out.iterdir() if p.is_file())
+    manifest = {
+        "model_version": cfg["model"]["version"],
+        "config_hash": result["config_hash"],
+        "layout": {"top_level": top_files, "details": detail_files},
+        "outputs": top_files + [f"details/{n}" for n in detail_files],
+    }
+    (details / "run_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return result

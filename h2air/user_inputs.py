@@ -282,6 +282,69 @@ def load_user_input_config(path: str | Path) -> Dict[str, Any]:
     return build_internal_config(user, root=root)
 
 
+def _round(x: float, nd: int = 6) -> float:
+    return float(round(float(x), nd))
+
+
+def user_inputs_from_design_values(
+    base_user: Mapping[str, Any],
+    values: Mapping[str, float],
+    *,
+    notes: str | None = None,
+) -> Dict[str, Any]:
+    """Return a user_inputs.json-compatible dict with optimizer design values applied.
+
+    Spans present in ``values`` are locked to ``span_mode='hardcoded'`` so a later
+    normal run reproduces the selected sweep geometry instead of re-autosizing.
+    """
+    u = deepcopy(dict(base_user))
+    vals = {str(k): float(v) for k, v in values.items()}
+    surf = u.setdefault("lifting_surfaces", {})
+    main = surf.setdefault("main_wing", {})
+    htail = surf.setdefault("horizontal_tail", {})
+    vtail = surf.setdefault("vertical_tail", {})
+    pos = u.setdefault("component_positions", {})
+
+    if "wing_ac_x_m" in vals:
+        main["aerodynamic_center_x_m"] = _round(vals["wing_ac_x_m"])
+    if "horizontal_tail_ac_x_m" in vals:
+        htail["aerodynamic_center_x_m"] = _round(vals["horizontal_tail_ac_x_m"])
+    if "vertical_tail_ac_x_m" in vals:
+        vtail["aerodynamic_center_x_m"] = _round(vals["vertical_tail_ac_x_m"])
+
+    if "main_wing_span_m" in vals:
+        main["span_mode"] = "hardcoded"
+        main["hardcoded_span_m"] = _round(vals["main_wing_span_m"])
+    if "horizontal_tail_span_m" in vals:
+        htail["span_mode"] = "hardcoded"
+        htail["hardcoded_span_m"] = _round(vals["horizontal_tail_span_m"])
+    if "vertical_tail_height_m" in vals:
+        vtail["span_mode"] = "hardcoded"
+        vtail["hardcoded_span_m"] = _round(vals["vertical_tail_height_m"])
+
+    for key in (
+        "lift_row_center_x_m",
+        "battery_x_m", "battery_z_m",
+        "fuel_cell_x_m", "fuel_cell_z_m",
+        "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",
+    ):
+        if key in vals:
+            pos[key] = _round(vals[key])
+
+    if notes is not None:
+        u["notes"] = str(notes)
+    elif not str(u.get("notes", "")).strip():
+        u["notes"] = "Exported from design-study selection; spans hardcoded to reproduce the chosen layout."
+    return u
+
+
+def write_user_inputs_json(path: str | Path, user: Mapping[str, Any]) -> Path:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(user, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
 def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
     """Return a concise machine-readable user-input vs derived classification."""
     u = cfg.get("user_input_snapshot", {})

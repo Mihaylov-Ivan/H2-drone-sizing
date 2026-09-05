@@ -39,21 +39,21 @@
     },
     {
       "field": "hydrogen_storage_pressure_bar",
-      "status": "placeholder",
-      "source": "current design_inputs.py",
-      "note": "Current code uses 300 bar; newer application package is 3.0 L/350 bar."
+      "status": "supplier_confirmed",
+      "source": "AMS Composites 3 CF datasheet",
+      "note": "Design basis is 3.0 L / 300 bar Type III (AMS Composites 3 CF)."
     },
     {
       "field": "hydrogen_mass_nominal_kg",
-      "status": "placeholder",
-      "source": "current design_inputs.py",
-      "note": "Current 120 g is not the newer application preliminary ~70 g inventory and must not be treated as validated."
+      "status": "supplier_confirmed",
+      "source": "AMS Composites 3 CF datasheet",
+      "note": "61.9 g H2; ~1030 Wh usable electrical energy already at typical FC efficiency."
     },
     {
       "field": "hydrogen_tank_mass_kg",
-      "status": "placeholder",
-      "source": "current design_inputs.py",
-      "note": "Replace with actual certified cylinder mass including installed hardware boundary."
+      "status": "supplier_confirmed",
+      "source": "AMS Composites 3 CF datasheet",
+      "note": "1.62 kg cylinder mass."
     },
     {
       "field": "hydrogen_regulator_valves_mass_kg",

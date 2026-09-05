@@ -21,19 +21,19 @@
     "lift_motor_structural_limit_thrust_per_motor_N": 79.553113864,
     "pusher_propeller_diameter_in": 15.0,
     "pusher_max_electrical_power_W": 1121.0,
-    "neutral_point_station_x_m": 0.437744795149439,
-    "stability_screen_static_margin": 0.08,
+    "neutral_point_station_x_m": 0.4253206802603421,
+    "stability_screen_static_margin": 0.12,
     "mission_duration_min": 120.0,
     "integration_note": "Primary aircraft-level source of truth. Integrated-v2 resolves geometry, packaging, stability and lift-row variables across all subsystems.",
-    "wing_ac_x_m": 0.4005,
+    "wing_ac_x_m": 0.386844,
     "horizontal_tail_area_m2": 0.16098864,
-    "horizontal_tail_ac_x_m": 1.0414,
-    "lift_row_center_x_m": 0.4336,
-    "battery_x_m": 0.38,
+    "horizontal_tail_ac_x_m": 1.048942,
+    "lift_row_center_x_m": 0.385884,
+    "battery_x_m": 0.330287,
     "battery_z_m": 0.0631,
-    "fuel_cell_x_m": 0.1508,
+    "fuel_cell_x_m": 0.15285,
     "fuel_cell_z_m": -0.025465,
-    "hydrogen_cylinder_x_m": 0.538,
+    "hydrogen_cylinder_x_m": 0.526502,
     "hydrogen_cylinder_z_m": -0.02828,
     "neutral_point_model": "calibrated_tail_volume",
     "fuselage_length_m": 0.78,
@@ -70,7 +70,7 @@
       0.3,
       0.6
     ],
-    "vertical_tail_ac_x_m": 1.0221,
+    "vertical_tail_ac_x_m": 1.021592,
     "vertical_tail_height_m": 0.3,
     "vertical_tail_area_each_m2": 0.035519999999999996,
     "vertical_tail_area_total_m2": 0.07103999999999999,
@@ -111,15 +111,15 @@
       "ambient_temperature_C": 25.0
     },
     "hydrogen": {
-      "storage_name": "Certified 3.0 L / 350 bar package reference",
-      "pressure_bar": 350.0,
+      "storage_name": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
+      "pressure_bar": 300.0,
       "water_volume_L": 3.0,
-      "nominal_h2_mass_kg": 0.07,
+      "nominal_h2_mass_kg": 0.0619,
       "regulator_mass_kg": 0.315,
-      "cylinder_mass_kg": null,
+      "cylinder_mass_kg": 1.62,
       "reference_load_W": 400.0,
-      "reference_endurance_h": 2.6,
-      "reference_net_energy_Wh": 1040.0,
+      "reference_endurance_h": 2.575,
+      "reference_net_energy_Wh": 1030.0,
       "mission_energy_reserve_fraction": 0.15,
       "physical_usable_fraction": 1.0,
       "minimum_residual_h2_kg": null,
@@ -221,8 +221,8 @@
         "wing_span_m": 3.3742,
         "wing_MAC_m": 0.2660699999999999,
         "wing_mean_geometric_chord_m": 0.26064,
-        "wing_ac_x_m": 0.4005,
-        "reference_neutral_point_x_m": 0.437744795149439,
+        "wing_ac_x_m": 0.386844,
+        "reference_neutral_point_x_m": 0.4253206802603421,
         "horizontal_tail_le_x_m": 0.976,
         "horizontal_tail_span_m": 0.8688,
         "vertical_fin_height_m": 0.3,
@@ -235,22 +235,22 @@
         "boom_x_end_m": 1.1,
         "lift_prop_centers_m": [
           [
-            0.1442,
+            0.09648400000000001,
             -0.48,
             0.1
           ],
           [
-            0.1442,
+            0.09648400000000001,
             0.48,
             0.1
           ],
           [
-            0.723,
+            0.675284,
             -0.48,
             0.1
           ],
           [
-            0.723,
+            0.675284,
             0.48,
             0.1
           ]
@@ -323,7 +323,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 3.6278067453728706,
           "position_m": [
-            0.4535,
+            0.439844,
             0.0,
             0.1
           ],
@@ -343,7 +343,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.1442,
+            0.09648400000000001,
             -0.48,
             0.1
           ],
@@ -355,7 +355,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.1442,
+            0.09648400000000001,
             0.48,
             0.1
           ],
@@ -367,7 +367,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.723,
+            0.675284,
             -0.48,
             0.1
           ],
@@ -379,7 +379,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.723,
+            0.675284,
             0.48,
             0.1
           ],
@@ -506,7 +506,7 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.16464747272727273,
           "position_m": [
-            1.0414,
+            1.048942,
             0.0,
             0.03
           ],
@@ -583,7 +583,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.634,
           "position_m": [
-            0.38,
+            0.330287,
             0.0,
             0.0631
           ],
@@ -604,7 +604,7 @@
           "group": "energy",
           "mass_takeoff_kg": 1.35,
           "position_m": [
-            0.1508,
+            0.15285,
             0.0,
             -0.025465
           ],
@@ -622,9 +622,9 @@
         {
           "name": "hydrogen_cylinder",
           "group": "energy",
-          "mass_takeoff_kg": 1.1,
+          "mass_takeoff_kg": 1.62,
           "position_m": [
-            0.538,
+            0.526502,
             0.0,
             -0.02828
           ],
@@ -634,16 +634,16 @@
             "diameter": 0.12
           },
           "package_zone": "central_pod",
-          "status": "legacy_placeholder",
-          "source": "Legacy cylinder mass/dimensions retained because current certified 3.0 L/350 bar cylinder mass/envelope is open",
-          "note": "Do not treat as selected-cylinder mass or geometry."
+          "status": "supplier_confirmed",
+          "source": "AMS Composites 3 CF datasheet (3.0 L / 300 bar Type III); mass supplier-confirmed, envelope still approximate",
+          "note": "Cylinder mass 1.62 kg from supplier; length/diameter remain packaging placeholders until drawing closure."
         },
         {
           "name": "hydrogen_regulator",
           "group": "energy",
           "mass_takeoff_kg": 0.18,
           "position_m": [
-            0.14079999999999998,
+            0.14285,
             0.0,
             -0.025465
           ],
@@ -659,7 +659,7 @@
           "mass_takeoff_kg": 0.12,
           "mass_end_kg": 0.0643,
           "position_m": [
-            0.538,
+            0.526502,
             0.0,
             -0.02828
           ],
@@ -674,7 +674,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.1442,
+            0.09648400000000001,
             -0.48,
             0.1
           ],
@@ -692,7 +692,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.1442,
+            0.09648400000000001,
             0.48,
             0.1
           ],
@@ -710,7 +710,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.723,
+            0.675284,
             -0.48,
             0.1
           ],
@@ -728,7 +728,7 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.723,
+            0.675284,
             0.48,
             0.1
           ],
@@ -764,7 +764,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.1442,
+            0.09648400000000001,
             -0.48,
             0.1
           ],
@@ -776,7 +776,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.1442,
+            0.09648400000000001,
             0.48,
             0.1
           ],
@@ -788,7 +788,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.723,
+            0.675284,
             -0.48,
             0.1
           ],
@@ -800,7 +800,7 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.0366,
           "position_m": [
-            0.723,
+            0.675284,
             0.48,
             0.1
           ],
@@ -961,7 +961,7 @@
       "continuous_auxiliary_power_W": 35.0,
       "cruise_propulsive_efficiency_reference": 0.72,
       "cruise_power_target_low_W": 400.0,
-      "cruise_power_target_high_W": 450.0,
+      "cruise_power_target_high_W": 435.0,
       "cruise_power_gate_W": 550.0,
       "minimum_transition_stall_ratio": 1.3,
       "stall_model": "direct_CLmax"
@@ -1018,9 +1018,9 @@
       "supplier_conditional_hybrid_peak_W": 7500.0
     },
     "lift_layout": {
-      "current_front_x_m": 0.1442,
-      "current_rear_x_m": 0.723,
-      "common_midpoint_x_m": 0.4336,
+      "current_front_x_m": 0.09648400000000001,
+      "current_rear_x_m": 0.675284,
+      "common_midpoint_x_m": 0.385884,
       "minimum_front_x_m": 0.0,
       "maximum_rear_x_m": 0.78,
       "y_abs_m": 0.48,
@@ -1272,7 +1272,7 @@
       "wing_mac_m": 0.2660699999999999,
       "cg_station_x_m": 0.4496127355,
       "cg_z_up_m": 0.0395143938,
-      "neutral_point_station_x_m": 0.437744795149439,
+      "neutral_point_station_x_m": 0.4253206802603421,
       "inertia_tensor_kgm2": [
         [
           2.2780978456,
@@ -1292,22 +1292,22 @@
       ],
       "lift_motor_stations_m": [
         [
-          0.1442,
+          0.09648400000000001,
           -0.48,
           0.1
         ],
         [
-          0.1442,
+          0.09648400000000001,
           0.48,
           0.1
         ],
         [
-          0.723,
+          0.675284,
           -0.48,
           0.1
         ],
         [
-          0.723,
+          0.675284,
           0.48,
           0.1
         ]
@@ -1324,7 +1324,7 @@
         0.02
       ],
       "horizontal_tail_area_m2": 0.16098864,
-      "horizontal_tail_ac_station_x_m": 1.0414,
+      "horizontal_tail_ac_station_x_m": 1.048942,
       "vertical_tail_total_area_m2": 0.1504,
       "vertical_tail_ac_station_x_m": 1.05
     },
@@ -1456,8 +1456,8 @@
     },
     "rotor_system": {
       "row_x_m": [
-        0.1442,
-        0.723
+        0.09648400000000001,
+        0.675284
       ],
       "motor_y_m": 0.48,
       "phase4_equal_share_design_thrust_N": 59.38,
@@ -1480,7 +1480,7 @@
       "wing_tip_deflection_limit_fraction": 0.03,
       "wing_root_slope_limit_deg": 3.0,
       "current_total_wing_spar_mass_kg": 0.471,
-      "wing_structure_station_x_m": 0.4535,
+      "wing_structure_station_x_m": 0.439844,
       "boom_x_start_m": 0.34,
       "boom_length_m": 0.76,
       "n_booms": 2,
@@ -1506,7 +1506,7 @@
       "tail_spar_reference_area_mm2": 6.45,
       "tail_deflection_limit_fraction": 0.05,
       "tail_root_slope_limit_deg": 3.0,
-      "tail_structure_station_x_m": 1.0414,
+      "tail_structure_station_x_m": 1.048942,
       "pod_reference_bending_moment_Nm": 136.2,
       "pod_reference_bending_stress_MPa": 1.0,
       "pod_reference_shear_stress_MPa": 0.53,
@@ -1549,12 +1549,12 @@
         178.0,
         222.0
       ],
-      "hydrogen_storage": "certified 3.0 L / 350 bar package",
-      "preliminary_hydrogen_inventory_kg": 0.07,
-      "preliminary_usable_electrical_energy_after_reserve_kWh": 0.88,
+      "hydrogen_storage": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
+      "preliminary_hydrogen_inventory_kg": 0.0619,
+      "preliminary_usable_electrical_energy_after_reserve_kWh": 0.8755,
       "cruise_base_load_target_W": [
         400.0,
-        450.0
+        435.0
       ],
       "cruise_power_max_design_gate_W": 550.0,
       "vtol_transition_peak_power_screening_W": 5000.0
@@ -1578,8 +1578,8 @@
       "wing_mac_shape_factor": 1.0270662460567823,
       "lift_row_separation_m": 0.5788,
       "resolved_lift_rows_x_m": [
-        0.1442,
-        0.723
+        0.09648400000000001,
+        0.675284
       ],
       "evidence_note": "Neutral-point and geometry mass scaling are screening relations calibrated to the accessible baseline. Replace with AVL/CFD/CAD/test correlations before design freeze."
     }
@@ -3737,7 +3737,8 @@
   },
   "optimizer_settings": {
     "keep_existing_objective_and_constraint_logic": true,
-    "note": "LHS + local-refinement + robust uncertainty selection. Spans from span_bounds when auto. Z stations are fixed at component_positions (pod clearance is only a few mm). X/AC bounds are a tight niche around the known packaging-feasible layout.",
+    "target_static_margin": 0.12,
+    "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. Z stations are fixed at component_positions. X/AC bounds are a tight packaging-feasible niche.",
     "design_space": {
       "wing_ac_x_m": [
         0.36,
@@ -3928,7 +3929,7 @@
   },
   "user_input_snapshot": {
     "schema": "H2AIR-user-inputs-v4",
-    "notes": "NORMAL USER FILE. Edit this file only. AUTO geometry/hardware are resolved by the model; HARD-CODE modes lock the selected value. CAD outputs contain only geometry/assembly parameters. Layout/spans synced from design_sweep nominal_mass_optimized (index 75); Z stations unchanged.",
+    "notes": "Ready-to-use design from study 'design_sweep' (nominal_mass_optimized). Copy over config/user_inputs.json to adopt. Selected spans are hardcoded.",
     "mission": {
       "payload_mass_kg": 1.2,
       "mtow_target_low_kg": 12.0,
@@ -3936,7 +3937,7 @@
       "mtow_ceiling_kg": 15.0,
       "cruise_speed_mps": 20.0,
       "mission_duration_min": 120.0,
-      "target_static_margin": 0.08
+      "target_static_margin": 0.12
     },
     "fuselage": {
       "overall_reference_length_m": 1.15,
@@ -4001,7 +4002,7 @@
         "twist_tip_deg": -2.0,
         "sweep_deg": 0.0,
         "dihedral_deg": 0.0,
-        "aerodynamic_center_x_m": 0.4005,
+        "aerodynamic_center_x_m": 0.386844,
         "span_mode": "hardcoded",
         "span_bounds_m": [
           3.15,
@@ -4019,7 +4020,7 @@
         "twist_root_deg": 0.0,
         "twist_tip_deg": 0.0,
         "sweep_deg": 0.0,
-        "aerodynamic_center_x_m": 1.0414,
+        "aerodynamic_center_x_m": 1.048942,
         "span_mode": "hardcoded",
         "span_bounds_m": [
           0.8,
@@ -4034,7 +4035,7 @@
         "root_chord_m": 0.148,
         "taper_ratio": 0.6,
         "naca_code": "NACA0012",
-        "aerodynamic_center_x_m": 1.0221,
+        "aerodynamic_center_x_m": 1.021592,
         "span_mode": "hardcoded",
         "span_bounds_m": [
           0.3,
@@ -4049,12 +4050,12 @@
       "cruise_lift_propeller_state": "folded"
     },
     "component_positions": {
-      "lift_row_center_x_m": 0.4336,
-      "battery_x_m": 0.38,
+      "lift_row_center_x_m": 0.385884,
+      "battery_x_m": 0.330287,
       "battery_z_m": 0.0631,
-      "fuel_cell_x_m": 0.1508,
+      "fuel_cell_x_m": 0.15285,
       "fuel_cell_z_m": -0.025465,
-      "hydrogen_cylinder_x_m": 0.538,
+      "hydrogen_cylinder_x_m": 0.526502,
       "hydrogen_cylinder_z_m": -0.02828
     },
     "hardware": {
@@ -4063,11 +4064,16 @@
         "module_mass_kg": 1.45
       },
       "hydrogen": {
-        "pressure_bar": 350.0,
+        "storage_name": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
+        "pressure_bar": 300.0,
         "water_volume_L": 3.0,
-        "nominal_h2_mass_kg": 0.07,
-        "cylinder_mass_kg": null,
-        "regulator_mass_kg": 0.315
+        "nominal_h2_mass_kg": 0.0619,
+        "cylinder_mass_kg": 1.62,
+        "regulator_mass_kg": 0.315,
+        "reference_load_W": 400.0,
+        "reference_endurance_h": 2.575,
+        "reference_net_energy_Wh": 1030.0,
+        "mission_energy_reserve_fraction": 0.15
       }
     },
     "manufacturing_mass_model": {
@@ -4178,7 +4184,8 @@
     },
     "optimizer": {
       "keep_existing_objective_and_constraint_logic": true,
-      "note": "LHS + local-refinement + robust uncertainty selection. Spans from span_bounds when auto. Z stations are fixed at component_positions (pod clearance is only a few mm). X/AC bounds are a tight niche around the known packaging-feasible layout.",
+      "target_static_margin": 0.12,
+      "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. Z stations are fixed at component_positions. X/AC bounds are a tight packaging-feasible niche.",
       "design_space": {
         "wing_ac_x_m": [
           0.36,
