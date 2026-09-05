@@ -87,13 +87,18 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         "stability_screen_static_margin": float(mission["target_static_margin"]),
     })
 
-    # -------- Fixed user-defined fuselage geometry. Never auto-sized. --------
+    # -------- Fuselage geometry (lengths fixed; diameters may auto-size in packaging) --------
     fus = u["fuselage"]
     sections = fus["sections"]
     total_len = sum(float(x["length_m"]) for x in sections)
     if total_len <= 0:
         raise ValueError("Fuselage section lengths must sum to > 0")
+    d["fuselage_diameter_mode"] = str(fus.get("diameter_mode", "hardcoded"))
+    d["fuselage_minimum_diameter_m"] = float(fus.get("minimum_diameter_m", 0.12))
+    d["fuselage_diameter_margin_m"] = float(fus.get("diameter_margin_m", 0.0))
     max_d = max(float(x["diameter_m"]) for x in sections)
+    if str(fus.get("diameter_mode", "hardcoded")).lower() == "auto":
+        max_d = max(max_d, float(fus.get("minimum_diameter_m", 0.12)))
     d["fuselage_length_m"] = total_len
     d["fuselage_max_diameter_m"] = max_d
     cfg["geometry_mass"]["geometry_model"]["geometry"]["central_pod_outer"] = {
@@ -101,7 +106,23 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         "dimensions_m": [total_len, max_d, max_d],
     }
     env = cfg["geometry_mass"]["geometry_model"]["packaging"]["envelopes"]["central_pod"]
-    env.update({"center_m": [total_len / 2.0, 0.0, 0.0], "dimensions_m": [total_len, max_d, max_d]})
+    # Standard wall keepout matches CAD component_keepout_clearance (default 3 mm).
+    keepout_mm = float(
+        u.get("cad_export", {}).get("tolerances_mm", {}).get("component_keepout_clearance", 3.0)
+    )
+    wall_clearance_m = keepout_mm / 1000.0
+    env.update({
+        "center_m": [total_len / 2.0, 0.0, 0.0],
+        "dimensions_m": [total_len, max_d, max_d],
+        "wall_clearance_m": wall_clearance_m,
+        "note": (
+            "Circular fuselage outer envelope with CAD wall keepout; AABB screening alone "
+            "does not prove radial fit inside the pod shell."
+        ),
+    })
+    pkg = cfg["geometry_mass"]["geometry_model"]["packaging"]
+    pkg["fuselage_cross_section"] = "circular"
+    pkg["component_clearance_m"] = wall_clearance_m
     cfg["geometry_mass"]["geometry_model"]["geometry"]["overall_reference_length_m"] = float(fus.get("overall_reference_length_m", max(total_len, 1.15)))
     # Lift-motor station bounds follow the user-fixed fuselage longitudinal envelope.
     # This replaces the legacy Phase-4 hidden 0.18/0.76 m limits; the fuselage is
@@ -223,6 +244,10 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         "fuel_cell_z_m", "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",
     ):
         d[key] = float(pos[key])
+
+    # -------- Rule-based packaging layout (clearances + PDB / Cube Orange) --------
+    if u.get("packaging_layout"):
+        cfg["packaging_layout"] = deepcopy(u["packaging_layout"])
 
     # -------- Selected energy-system hardware --------
     hw = u.get("hardware", {})

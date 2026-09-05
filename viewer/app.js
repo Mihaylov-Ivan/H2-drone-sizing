@@ -9,6 +9,11 @@ const COLORS = {
   prop: 0xd4a574,
   motor: 0x3d4550,
   accent: 0x6eb6ff,
+  battery: 0xc4a35a,
+  fuelCell: 0x6aa84f,
+  fuelCellControl: 0x8fbc6b,
+  hydrogen: 0x5b8def,
+  payload: 0xc27a6a,
 };
 
 /** @type {Record<string, number|string>} */
@@ -415,6 +420,104 @@ function mountTubeMeshes() {
   return g;
 }
 
+function addBoxAt(g, x, y, z, L, W, H, color) {
+  if (!(L > 0) || !(W > 0) || !(H > 0)) return;
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(L, W, H),
+    makeMaterial(color, { transparent: true, opacity: 0.92, metalness: 0.05, roughness: 0.55 }),
+  );
+  mesh.position.set(x, y, z);
+  g.add(mesh);
+}
+
+function addCylinderX(g, x, y, z, length, diameter, color) {
+  if (!(length > 0) || !(diameter > 0)) return;
+  const mesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(diameter / 2, diameter / 2, length, 28),
+    makeMaterial(color, { transparent: true, opacity: 0.92, metalness: 0.08, roughness: 0.45 }),
+  );
+  mesh.rotation.z = Math.PI / 2;
+  mesh.position.set(x, y, z);
+  g.add(mesh);
+}
+
+/** Packaging envelopes inside the central pod. */
+function internalPackMeshes() {
+  const g = new THREE.Group();
+  g.name = 'internals';
+
+  // Payload — box (width/height may be screening fallbacks from CAD export).
+  if (P.payload_length != null) {
+    addBoxAt(
+      g,
+      mm('payload_x'),
+      mm('payload_y'),
+      mm('payload_z'),
+      mm('payload_length'),
+      mm('payload_width', 80),
+      mm('payload_height', 80),
+      COLORS.payload,
+    );
+  }
+
+  // Fuel cell stack — box
+  if (P.fuel_cell_length != null) {
+    addBoxAt(
+      g,
+      mm('fuel_cell_x'),
+      mm('fuel_cell_y'),
+      mm('fuel_cell_z'),
+      mm('fuel_cell_length'),
+      mm('fuel_cell_width'),
+      mm('fuel_cell_height'),
+      COLORS.fuelCell,
+    );
+  }
+
+  // FCPM control box — aft of fuel cell, over H₂ cylinder
+  if (P.fuel_cell_control_box_length != null) {
+    addBoxAt(
+      g,
+      mm('fuel_cell_control_box_x'),
+      mm('fuel_cell_control_box_y'),
+      mm('fuel_cell_control_box_z'),
+      mm('fuel_cell_control_box_length'),
+      mm('fuel_cell_control_box_width'),
+      mm('fuel_cell_control_box_height'),
+      COLORS.fuelCellControl,
+    );
+  }
+
+  // Buffer battery — box
+  if (P.battery_length != null) {
+    addBoxAt(
+      g,
+      mm('battery_x'),
+      mm('battery_y'),
+      mm('battery_z'),
+      mm('battery_length'),
+      mm('battery_width'),
+      mm('battery_height'),
+      COLORS.battery,
+    );
+  }
+
+  // H2 cylinder — axial cylinder
+  if (P.hydrogen_cylinder_length != null && P.hydrogen_cylinder_diameter != null) {
+    addCylinderX(
+      g,
+      mm('hydrogen_cylinder_x'),
+      mm('hydrogen_cylinder_y'),
+      mm('hydrogen_cylinder_z'),
+      mm('hydrogen_cylinder_length'),
+      mm('hydrogen_cylinder_diameter'),
+      COLORS.hydrogen,
+    );
+  }
+
+  return g;
+}
+
 function propulsionMeshes() {
   const g = new THREE.Group();
   g.name = 'props';
@@ -522,8 +625,9 @@ function buildAircraft() {
   }
   groups.vt = vtGroup;
   groups.props = propulsionMeshes();
+  groups.internals = internalPackMeshes();
 
-  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props']) {
+  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props', 'internals']) {
     aircraft.add(groups[key]);
   }
   scene.add(aircraft);
@@ -551,6 +655,18 @@ function updateDims() {
     ['Lift prop ⌀', fmt(mm('lift_prop_diameter'))],
     ['Pusher prop ⌀', fmt(mm('pusher_prop_diameter'))],
   ];
+  if (P.payload_length != null) {
+    rows.push(['Payload L×W×H', `${fmt(mm('payload_length'))} × ${fmt(mm('payload_width', 80))} × ${fmt(mm('payload_height', 80))}`]);
+  }
+  if (P.fuel_cell_length != null) {
+    rows.push(['Fuel cell L×W×H', `${fmt(mm('fuel_cell_length'))} × ${fmt(mm('fuel_cell_width'))} × ${fmt(mm('fuel_cell_height'))}`]);
+  }
+  if (P.battery_length != null) {
+    rows.push(['Battery L×W×H', `${fmt(mm('battery_length'))} × ${fmt(mm('battery_width'))} × ${fmt(mm('battery_height'))}`]);
+  }
+  if (P.hydrogen_cylinder_length != null) {
+    rows.push(['H₂ cylinder L×⌀', `${fmt(mm('hydrogen_cylinder_length'))} × ${fmt(mm('hydrogen_cylinder_diameter'))}`]);
+  }
   const dl = document.getElementById('dim-list');
   dl.innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
 }
@@ -574,32 +690,61 @@ function applyVisibility() {
     ht: 'toggle-ht',
     vt: 'toggle-vt',
     props: 'toggle-props',
+    internals: 'toggle-internals',
   };
   for (const [g, id] of Object.entries(map)) {
     if (groups[g]) groups[g].visible = document.getElementById(id).checked;
   }
   grid.visible = document.getElementById('toggle-grid').checked;
   axes.visible = document.getElementById('toggle-axes').checked;
+
+  // Auto-ghost the fuselage when internals are shown so packs remain visible.
+  const showInternals = document.getElementById('toggle-internals').checked;
+  const soft = document.getElementById('toggle-transparent').checked;
+  if (groups.fuselage) {
+    groups.fuselage.traverse((obj) => {
+      if (!obj.isMesh || !obj.material) return;
+      const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+      for (const m of mats) {
+        const ghost = showInternals || soft;
+        m.transparent = ghost;
+        m.opacity = showInternals ? 0.28 : soft ? 0.72 : 1;
+        m.depthWrite = !ghost;
+        m.needsUpdate = true;
+      }
+    });
+  }
 }
 
 function applyMaterials() {
   const wire = document.getElementById('toggle-wire').checked;
   const soft = document.getElementById('toggle-transparent').checked;
+  const showInternals = document.getElementById('toggle-internals').checked;
   if (!aircraft) return;
   aircraft.traverse((obj) => {
     if (!obj.isMesh || !obj.material) return;
     const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    const inFuselage = obj.parent === groups.fuselage || (obj.parent && obj.parent.parent === groups.fuselage);
+    const inPropsDisk = obj.parent?.name === 'props' || obj.parent?.parent?.name === 'props';
     for (const m of mats) {
       m.wireframe = wire;
-      if (obj.parent?.name === 'props' && m.transparent && m.opacity < 0.5) {
+      if (inPropsDisk && m.transparent && m.opacity < 0.5) {
         continue;
       }
-      m.transparent = soft;
-      m.opacity = soft ? 0.72 : 1;
-      m.depthWrite = !soft;
+      if (inFuselage && showInternals) {
+        m.transparent = true;
+        m.opacity = 0.28;
+        m.depthWrite = false;
+      } else {
+        m.transparent = soft || (m.opacity < 1 && m.transparent);
+        m.opacity = soft ? Math.min(m.opacity || 1, 0.72) : m.userData?.baseOpacity || (m.transparent ? m.opacity : 1);
+        if (!soft && !m.transparent) m.opacity = 1;
+        m.depthWrite = !m.transparent;
+      }
       m.needsUpdate = true;
     }
   });
+  applyVisibility();
 }
 
 function setSourceLabel(text) {
@@ -637,6 +782,7 @@ for (const id of [
   'toggle-ht',
   'toggle-vt',
   'toggle-props',
+  'toggle-internals',
   'toggle-grid',
   'toggle-axes',
 ]) {

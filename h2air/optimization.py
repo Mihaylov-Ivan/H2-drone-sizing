@@ -67,6 +67,13 @@ def default_space_for_config(cfg: Mapping[str, Any]) -> Dict[str, Tuple[float,fl
         }
     else:
         space = dict(defaults)
+    # Rule-based packaging owns these stations when enabled.
+    if bool((cfg.get("packaging_layout") or {}).get("enabled", False)):
+        for k in (
+            "battery_x_m", "battery_z_m", "fuel_cell_x_m", "fuel_cell_z_m",
+            "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",
+        ):
+            space.pop(k, None)
     if str(d.get("main_wing_span_mode","auto")).lower()=="auto":
         space["main_wing_span_m"] = tuple(float(x) for x in d["main_wing_span_bounds_m"])
     if str(d.get("horizontal_tail_span_mode","auto")).lower()=="auto":

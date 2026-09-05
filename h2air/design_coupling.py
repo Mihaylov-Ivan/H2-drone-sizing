@@ -16,6 +16,8 @@ from copy import deepcopy
 from math import sqrt
 from typing import Any, Dict, Mapping, MutableMapping, Sequence
 
+from .packaging_layout import apply_packaging_layout
+
 INCH_TO_M = 0.0254
 
 # Accessible integrated-v1 reference state.  These are calibration anchors,
@@ -143,7 +145,7 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     if str(d.get("surface_geometry_mode", "")) == "root_taper_span":
         geom["horizontal_tail_span_m"] = float(d["horizontal_tail_span_m"])
         geom["vertical_fin_height_m"] = float(d["vertical_tail_height_m"])
-        # Preserve the user's fixed fuselage/pod geometry. No component-fit driven pod sizing is performed.
+        # Fuselage length is user-fixed; diameters may later auto-size via packaging_layout.
         if "fuselage_length_m" in d:
             geom["central_pod_outer"]["center_m"] = [float(d["fuselage_length_m"])/2.0, 0.0, 0.0]
             geom["central_pod_outer"]["dimensions_m"] = [float(d["fuselage_length_m"]), float(d["fuselage_max_diameter_m"]), float(d["fuselage_max_diameter_m"])]
@@ -212,6 +214,11 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     if "hydrogen_regulator" in by:
         # Keep regulator near FC unless a future selected hardware layout overrides it.
         _set_position(by["hydrogen_regulator"], x=float(d["fuel_cell_x_m"]) - 0.01, z=float(d["fuel_cell_z_m"]))
+
+    # Rule-based internal packaging (may auto-size fuselage section ODs). Run
+    # before boom/wing junction so pod diameter drives clearance and longerons.
+    apply_packaging_layout(cfg)
+    d = cfg["design"]
 
     # ------------------------------------------------------------------
     # Layout architecture (high-wing twin-boom):

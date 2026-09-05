@@ -35,9 +35,10 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     gm=cfg['geometry_mass']['geometry_model']['geometry']; mm=cfg.get('manufacturing_mass_model',{})
     hw=cfg.get('hardware_selection_result',{})
     out=[]
-    # Fuselage sections, fixed by user.
+    # Fuselage sections (lengths user-fixed; diameters may be packaging-auto).
+    fuse_secs = mm.get('fuselage_sections') or u.get('fuselage',{}).get('sections',[])
     x=0.0
-    for sec in u.get('fuselage',{}).get('sections',[]):
+    for sec in fuse_secs:
         n=str(sec['name']).lower()
         L=float(sec['length_m']); dia=float(sec['diameter_m'])
         out += [_param(f'fuselage_{n}_length',_mm(L)),_param(f'fuselage_{n}_diameter',_mm(dia)),_param(f'fuselage_{n}_start_x',_mm(x)),_param(f'fuselage_{n}_end_x',_mm(x+L))]
@@ -106,15 +107,43 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     if push.get('motor_diameter_m'): out += [_param('pusher_motor_OD',_mm(push['motor_diameter_m'])),_param('pusher_motor_body_length',_mm(push['motor_length_m']))]
 
     # Major component envelopes and stations (no masses).
-    for name,prefix in [('buffer_battery','battery'),('fuel_cell_system','fuel_cell'),('hydrogen_cylinder','hydrogen_cylinder')]:
-        c=_find_comp(cfg,name)
-        if not c: continue
-        pos=c.get('position_m',[0,0,0]); dims=c.get('dimensions_m',{})
-        out += [_param(f'{prefix}_x',_mm(pos[0])),_param(f'{prefix}_y',_mm(pos[1])),_param(f'{prefix}_z',_mm(pos[2]))]
-        if 'length_x' in dims:
-            out += [_param(f'{prefix}_length',_mm(dims['length_x'])),_param(f'{prefix}_width',_mm(dims['width_y'])),_param(f'{prefix}_height',_mm(dims['height_z']))]
-        elif 'length' in dims:
-            out += [_param(f'{prefix}_length',_mm(dims['length'])),_param(f'{prefix}_diameter',_mm(dims['diameter']))]
+    fuse_dia = float(d.get('fuselage_max_diameter_m', 0.18))
+    for name, prefix in [
+        ('payload', 'payload'),
+        ('buffer_battery', 'battery'),
+        ('fuel_cell_system', 'fuel_cell'),
+        ('fuel_cell_control_box', 'fuel_cell_control_box'),
+        ('hydrogen_cylinder', 'hydrogen_cylinder'),
+    ]:
+        c = _find_comp(cfg, name)
+        if not c:
+            continue
+        pos = c.get('position_m', [0, 0, 0])
+        dims = dict(c.get('dimensions_m', {}) or {})
+        out += [
+            _param(f'{prefix}_x', _mm(pos[0])),
+            _param(f'{prefix}_y', _mm(pos[1])),
+            _param(f'{prefix}_z', _mm(pos[2])),
+        ]
+        if 'diameter' in dims and 'length' in dims:
+            out += [
+                _param(f'{prefix}_length', _mm(float(dims['length']))),
+                _param(f'{prefix}_diameter', _mm(float(dims['diameter']))),
+            ]
+            continue
+        L = float(dims.get('length_x') or dims.get('length') or 0.0)
+        W = dims.get('width_y')
+        H = dims.get('height_z')
+        # Screening fallbacks when only length is controlled (e.g. payload).
+        if W is None or float(W or 0) <= 0:
+            W = min(0.08, 0.55 * fuse_dia)
+        if H is None or float(H or 0) <= 0:
+            H = min(0.08, 0.55 * fuse_dia)
+        out += [
+            _param(f'{prefix}_length', _mm(L)),
+            _param(f'{prefix}_width', _mm(float(W))),
+            _param(f'{prefix}_height', _mm(float(H))),
+        ]
 
     # Drawing/assembly parameters deliberately controlled by the user.
     tol=cad.get('tolerances_mm',{})

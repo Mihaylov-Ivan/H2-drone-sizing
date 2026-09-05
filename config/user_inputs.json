@@ -11,12 +11,16 @@
     "target_static_margin": 0.12
   },
   "fuselage": {
-    "overall_reference_length_m": 1.15,
+    "overall_reference_length_m": 1.25,
+    "diameter_mode": "auto",
+    "minimum_diameter_m": 0.18,
+    "diameter_margin_m": 0.0,
+    "note": "diameter_mode auto: each section OD is sized from packed component radial extent + wall keepout (+ diameter_margin_m). Section diameter_m values are only an initial seed when auto.",
     "sections": [
       {
         "name": "nose",
         "length_m": 0.14,
-        "diameter_m": 0.18,
+        "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -27,8 +31,8 @@
       },
       {
         "name": "center_a",
-        "length_m": 0.25,
-        "diameter_m": 0.18,
+        "length_m": 0.35,
+        "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -39,8 +43,8 @@
       },
       {
         "name": "center_b",
-        "length_m": 0.25,
-        "diameter_m": 0.18,
+        "length_m": 0.3,
+        "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -52,7 +56,7 @@
       {
         "name": "tail",
         "length_m": 0.14,
-        "diameter_m": 0.18,
+        "diameter_m": 0.245,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
@@ -116,9 +120,62 @@
     "battery_x_m": 0.330287,
     "battery_z_m": 0.0631,
     "fuel_cell_x_m": 0.15285,
-    "fuel_cell_z_m": -0.025465,
+    "fuel_cell_z_m": 0.0,
     "hydrogen_cylinder_x_m": 0.526502,
-    "hydrogen_cylinder_z_m": -0.02828
+    "hydrogen_cylinder_z_m": -0.02828,
+    "note": "With packaging_layout.enabled, battery/FC/H2 xyz are overwritten by rule-based placement; lift_row_center_x_m remains user-controlled."
+  },
+  "packaging_layout": {
+    "enabled": true,
+    "note": "Rule-based pod packaging. Raises ValueError when the fixed fuselage cannot satisfy clearances. Payload aft face flush with nose-section end, on top of FC; FC as aft as possible toward H2 while still under the payload; bottom_to_top_m clears the FC from upper packs.",
+    "clearances_m": {
+      "fuselage_bottom_m": 0.02,
+      "aft_tail_beyond_motor_m": 0.02,
+      "component_m": 0.003,
+      "bottom_to_top_m": 0.003,
+      "pdb_all_around_m": 0.02,
+      "cube_front_connector_m": 0.05,
+      "cylinder_to_top_inner_m": 0.03
+    },
+    "hardware": {
+      "holybro_pdb_300a": {
+        "name": "Holybro Power Distribution Board (PDB) 300A",
+        "length_m": 0.08,
+        "width_m": 0.06,
+        "height_m": 0.0235,
+        "mount_pattern_m": [0.05, 0.05],
+        "mass_kg": null,
+        "status": "supplier_confirmed",
+        "source": "Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
+      },
+      "cube_orange": {
+        "name": "CubePilot Cube Orange + carrier",
+        "length_m": 0.0945,
+        "width_m": 0.0443,
+        "height_m": 0.031,
+        "mass_kg": 0.073,
+        "status": "supplier_confirmed",
+        "source": "Cube Orange on carrier board outline (94.5 x 44.3 x 31 mm)"
+      },
+      "fuel_cell_stack": {
+        "name": "FCPM fuel cell",
+        "length_m": 0.2305,
+        "width_m": 0.1084,
+        "height_m": 0.1198,
+        "mass_kg": 1.0932,
+        "status": "supplier_confirmed",
+        "source": "FCPM datasheet fuel-cell envelope 230.5 x 108.4 x 119.8 mm; mass is volume share of 1450 g module"
+      },
+      "fuel_cell_control_box": {
+        "name": "FCPM control box",
+        "length_m": 0.2022,
+        "width_m": 0.107,
+        "height_m": 0.04515,
+        "mass_kg": 0.3568,
+        "status": "supplier_confirmed",
+        "source": "FCPM datasheet control-box envelope 202.2 x 107 x 45.15 mm; mass is volume share of 1450 g module"
+      }
+    }
   },
   "hardware": {
     "fuel_cell": {
@@ -250,15 +307,12 @@
   "optimizer": {
     "keep_existing_objective_and_constraint_logic": true,
     "target_static_margin": 0.12,
-    "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. Z stations are fixed at component_positions. X/AC bounds are a tight packaging-feasible niche.",
+    "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search.",
     "design_space": {
       "wing_ac_x_m": [0.36, 0.42],
       "horizontal_tail_ac_x_m": [1.0, 1.1],
       "vertical_tail_ac_x_m": [1.0, 1.1],
-      "lift_row_center_x_m": [0.38, 0.46],
-      "battery_x_m": [0.3, 0.38],
-      "fuel_cell_x_m": [0.145, 0.17],
-      "hydrogen_cylinder_x_m": [0.51, 0.54]
+      "lift_row_center_x_m": [0.38, 0.46]
     }
   },
   "hardware_selection": {

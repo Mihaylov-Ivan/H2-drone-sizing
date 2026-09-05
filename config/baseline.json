@@ -240,6 +240,7 @@
       },
       "packaging": {
         "component_clearance_m": 0.003,
+        "fuselage_cross_section": "circular",
         "envelopes": {
           "central_pod": {
             "center_m": [
@@ -252,9 +253,9 @@
               0.18,
               0.18
             ],
-            "wall_clearance_m": 0.0008,
+            "wall_clearance_m": 0.003,
             "status": "calculated",
-            "note": "Axis-aligned screening envelope only; it does not resolve nose taper, frames, ducts, mounts, ventilation zones or service access."
+            "note": "Circular fuselage outer envelope with 3 mm wall keepout; AABB screening alone does not prove radial fit. Does not resolve nose taper, frames, ducts, mounts, ventilation or service access."
           }
         },
         "critical_mass_items": [

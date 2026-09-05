@@ -20,7 +20,9 @@ The complete resolved/internal configuration is written after each run as `resol
 
 ## Fuselage rule
 
-The fuselage is **never enlarged to fit components**. Its section lengths and diameters come from the user input. If a known component envelope does not fit inside the resulting pod envelope, the packaging gate fails.
+- Section **lengths** are always user-fixed.
+- `diameter_mode: "hardcoded"` — section `diameter_m` values are used as given; packaging fails if components do not fit.
+- `diameter_mode: "auto"` — each section OD is sized from packed component radial extents + wall keepout (+ optional `diameter_margin_m`), not below `minimum_diameter_m`. Seed `diameter_m` values are only an initial guess.
 
 ## Airfoil note
 

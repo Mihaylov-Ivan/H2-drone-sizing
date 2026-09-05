@@ -78,6 +78,9 @@ class FuelCellConfig:
     output_voltage_min_V: float = 24.0
     output_voltage_max_V: float = 48.0
     module_mass_kg: float = 1.45
+    # Optional packaging split of module_mass_kg (stack + control box). Unused by EMS.
+    stack_mass_kg: Optional[float] = None
+    control_box_mass_kg: Optional[float] = None
 
     # Dynamic/control values below are not supported by the current source set.
     # They remain configurable engineering assumptions until supplier/test data replace them.
@@ -128,6 +131,9 @@ class FuelCellConfig:
                 e.append("fuel-cell efficiency_map power points must be positive and ascending")
             if any(not (0 < eta <= 1.0) for _, eta in self.efficiency_map):
                 e.append("fuel-cell efficiency_map efficiencies must be in (0,1]")
+        if self.stack_mass_kg is not None and self.control_box_mass_kg is not None:
+            if abs((self.stack_mass_kg + self.control_box_mass_kg) - self.module_mass_kg) > 1e-6:
+                e.append("fuel-cell stack_mass_kg + control_box_mass_kg must equal module_mass_kg")
         return e
 
     @property

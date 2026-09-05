@@ -44,6 +44,7 @@ def write_markdown_report(
     mm = (cfg or {}).get("manufacturing_mass_model", {}) if cfg else {}
     power = (cfg or {}).get("power_system", {}) if cfg else {}
     geom = _get(cfg, "geometry_mass", "geometry_model", "geometry", default={}) or {}
+    pkg_env = _get(cfg, "geometry_mass", "geometry_model", "packaging", "envelopes", "central_pod", default={}) or {}
     lay_cfg = _get(cfg, "aero_propulsion", "lift_layout", default={}) or {}
     layout = _get(r, "aero_propulsion", "layout", default={}) or {}
     hs = r.get("hardware_selection") or {}
@@ -100,7 +101,17 @@ def write_markdown_report(
         "## Configuration / look",
         "",
         "### Fuselage / pod",
-        f"- Length x max diameter: **{_f(Lf, 3)} m x {_f(Df, 3)} m** ({_f(Df * 1000, 0)} mm)",
+        f"- Length x max diameter: **{_f(Lf, 3)} m x {_f(Df, 3)} m** ({_f(Df * 1000, 0)} mm)"
+        + (
+            f" (auto section ODs: "
+            + ", ".join(
+                f"{k} {_f(1000 * float(v), 0)} mm"
+                for k, v in (d.get("fuselage_section_diameters_m") or {}).items()
+            )
+            + ")"
+            if d.get("fuselage_diameter_mode") == "auto" and d.get("fuselage_section_diameters_m")
+            else ""
+        ),
         (
             f"- Overall reference length (nose-to-tail layout): "
             f"**{_f(_get(cfg, 'user_input_snapshot', 'fuselage', 'overall_reference_length_m', default=None), 2)} m**"
@@ -150,9 +161,30 @@ def write_markdown_report(
         f"longerons **top/bottom** (wing uses top boss only)",
         "",
         "### Energy / avionics packaging (stations)",
-        f"- Fuel cell: **x = {_f(d.get('fuel_cell_x_m'), 4)} m**, z = **{_f(d.get('fuel_cell_z_m'), 4)} m**",
+        f"- Fuel cell: **x = {_f(d.get('fuel_cell_x_m'), 4)} m**, z = **{_f(d.get('fuel_cell_z_m'), 4)} m**"
+        + (
+            f" ({_f(d.get('fuel_cell_stack_mass_kg'), 3)} kg)"
+            if d.get("fuel_cell_stack_mass_kg") is not None else ""
+        ),
+        (
+            f"- FC control box: **x = {_f(d.get('fuel_cell_control_box_x_m'), 4)} m**, "
+            f"z = **{_f(d.get('fuel_cell_control_box_z_m'), 4)} m**"
+            + (
+                f" ({_f(d.get('fuel_cell_control_box_mass_kg'), 3)} kg)"
+                if d.get("fuel_cell_control_box_mass_kg") is not None else ""
+            )
+            if d.get("fuel_cell_control_box_x_m") is not None else ""
+        ),
         f"- Buffer battery: **x = {_f(d.get('battery_x_m'), 4)} m**, z = **{_f(d.get('battery_z_m'), 4)} m**",
         f"- H2 cylinder (+ stored H2): **x = {_f(d.get('hydrogen_cylinder_x_m'), 4)} m**, z = **{_f(d.get('hydrogen_cylinder_z_m'), 4)} m**",
+        (
+            f"- Cube Orange / PDB: **x,z = ({_f(d.get('cube_orange_x_m'), 4)}, {_f(d.get('cube_orange_z_m'), 4)}) / "
+            f"({_f(d.get('pdb_x_m'), 4)}, {_f(d.get('pdb_z_m'), 4)}) m**"
+            if d.get("cube_orange_x_m") is not None
+            else ""
+        ),
+        f"- Fuselage wall keepout: **{_f(1000 * float(pkg_env.get('wall_clearance_m') or 0), 1)} mm** "
+        f"(circular cross-section; packaging gate fails on radial protrusion)",
         "",
         "## Mass & balance",
         "",
@@ -190,7 +222,13 @@ def write_markdown_report(
         f"({_f(batt.get('mass_kg'), 3)} kg, **{_f(batt.get('energy_Wh'), 1)} Wh**, "
         f"{_f(batt.get('capacity_Ah'), 1)} Ah)",
         f"- Fuel cell: **{_f(_get(power, 'fuel_cell', 'rated_net_power_W'), 0)} W** net, "
-        f"module **{_f(_get(power, 'fuel_cell', 'module_mass_kg'), 2)} kg**",
+        f"module **{_f(_get(power, 'fuel_cell', 'module_mass_kg'), 2)} kg**"
+        + (
+            f" (stack {_f(_get(power, 'fuel_cell', 'stack_mass_kg'), 3)} kg + "
+            f"control {_f(_get(power, 'fuel_cell', 'control_box_mass_kg'), 3)} kg)"
+            if _get(power, "fuel_cell", "stack_mass_kg", default=None) is not None
+            else ""
+        ),
         f"- Hydrogen store: **{_f(_get(power, 'hydrogen', 'water_volume_L'), 1)} L** / "
         f"**{_f(_get(power, 'hydrogen', 'pressure_bar'), 0)} bar**, "
         f"nominal H2 **{_f(1000 * float(_get(power, 'hydrogen', 'nominal_h2_mass_kg', default=0) or 0), 0)} g**"

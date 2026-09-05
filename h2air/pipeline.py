@@ -63,16 +63,33 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
 def _components_with_power(cfg:Mapping[str,Any]):
     raw=deepcopy(cfg["geometry_mass"]["component_ledger"])
     comps=[component_from_mapping(x) for x in raw["components"]]
-    p=cfg["power_system"]; fc=p["fuel_cell"]; h=p["hydrogen"]; b=p["battery"]
+    p=cfg["power_system"]; fc=p["fuel_cell"]; h=p["hydrogen"]; batt=p["battery"]
     by={c.name:c for c in comps}
     if "fuel_cell_system" in by and fc.get("module_mass_kg") is not None:
-        c=by["fuel_cell_system"]; c.mass_takeoff_kg=c.mass_end_kg=float(fc["module_mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
+        # Prefer packaging split (stack + control box) when present; else whole module.
+        stack_m = fc.get("stack_mass_kg")
+        box_m = fc.get("control_box_mass_kg")
+        if stack_m is not None and box_m is not None:
+            c = by["fuel_cell_system"]
+            c.mass_takeoff_kg = c.mass_end_kg = float(stack_m)
+            c.status = "supplier_confirmed"
+            c.source = "FCPM stack mass (share of module_mass_kg)"
+            if "fuel_cell_control_box" in by:
+                cb = by["fuel_cell_control_box"]
+                cb.mass_takeoff_kg = cb.mass_end_kg = float(box_m)
+                cb.status = "supplier_confirmed"
+                cb.source = "FCPM control-box mass (share of module_mass_kg)"
+        else:
+            c = by["fuel_cell_system"]
+            c.mass_takeoff_kg = c.mass_end_kg = float(fc["module_mass_kg"])
+            c.status = "supplier_confirmed"
+            c.source = "Integrated power-system config"
     if "hydrogen_regulator" in by and h.get("regulator_mass_kg") is not None:
         c=by["hydrogen_regulator"]; c.mass_takeoff_kg=c.mass_end_kg=float(h["regulator_mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
     if "stored_hydrogen" in by and h.get("nominal_h2_mass_kg") is not None:
         c=by["stored_hydrogen"]; c.mass_takeoff_kg=float(h["nominal_h2_mass_kg"]); c.mass_end_kg=float(h["nominal_h2_mass_kg"]); c.status="preliminary_target"; c.source="Integrated power-system config"
-    if "buffer_battery" in by and b.get("mass_kg") is not None:
-        c=by["buffer_battery"]; c.mass_takeoff_kg=c.mass_end_kg=float(b["mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
+    if "buffer_battery" in by and batt.get("mass_kg") is not None:
+        c=by["buffer_battery"]; c.mass_takeoff_kg=c.mass_end_kg=float(batt["mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
     if "hydrogen_cylinder" in by and h.get("cylinder_mass_kg") is not None:
         c=by["hydrogen_cylinder"]; c.mass_takeoff_kg=c.mass_end_kg=float(h["cylinder_mass_kg"]); c.status="supplier_confirmed"; c.source="Integrated power-system config"
     comps, manufacturing_ledger = apply_manufacturing_mass_model(cfg, comps)

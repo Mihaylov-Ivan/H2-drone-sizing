@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from math import sqrt
+from math import hypot, sqrt
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 EPS = 1e-12
@@ -329,11 +329,43 @@ def _aabb_overlap(a, b, clearance_m: float = 0.0) -> Tuple[bool, Tuple[float, fl
     return collision, (float(overlaps[0]), float(overlaps[1]), float(overlaps[2]))
 
 
+def _max_yz_radius_from_axis(
+    c: Component,
+    *,
+    axis_y: float = 0.0,
+    axis_z: float = 0.0,
+) -> Optional[float]:
+    """Farthest YZ radial extent of the component envelope from a fuselage centreline."""
+    shape = Shape(c.shape)
+    y0, z0 = float(c.position_m[1]), float(c.position_m[2])
+    if shape == Shape.CYLINDER_X:
+        D = c.dimensions_m.get("diameter")
+        if D is None or float(D) <= 0:
+            return None
+        return hypot(y0 - axis_y, z0 - axis_z) + 0.5 * float(D)
+    dims = c.known_box_dimensions()
+    if dims is None:
+        return None
+    _lx, ly, lz = dims
+    hy, hz = 0.5 * float(ly), 0.5 * float(lz)
+    return max(
+        hypot(y0 + sy * hy - axis_y, z0 + sz * hz - axis_z)
+        for sy in (-1.0, 1.0)
+        for sz in (-1.0, 1.0)
+    )
+
+
+def _circular_pod_radius_m(env: BoxEnvelope) -> float:
+    """Treat packaging envelope Y/Z extents as the circular fuselage outer diameter."""
+    return 0.5 * min(float(env.dimensions_m[1]), float(env.dimensions_m[2]))
+
+
 def evaluate_packaging(
     components: Sequence[Component],
     envelopes: Mapping[str, BoxEnvelope],
     *,
     component_clearance_m: float = 0.003,
+    cross_section: str = "circular",
 ) -> List[Check]:
     checks: List[Check] = []
     by_zone: Dict[str, List[Component]] = {}
@@ -362,17 +394,69 @@ def evaluate_packaging(
         if failed:
             checks.append(Check(
                 name=f"fit_inside:{zone_name}", status=CheckStatus.FAIL.value,
-                message="One or more known component envelopes extend outside the packaging zone.",
+                message="One or more known component envelopes extend outside the packaging zone AABB.",
                 affected=failed,
             ))
         else:
             checks.append(Check(
                 name=f"fit_inside:{zone_name}",
                 status=(CheckStatus.NOT_EVALUATED.value if unknown else CheckStatus.PASS.value),
-                message=("All known envelopes fit, but some components have incomplete dimensions."
-                         if unknown else "All evaluated component envelopes fit inside the zone."),
+                message=("All known AABB envelopes fit, but some components have incomplete dimensions."
+                         if unknown else "All evaluated component AABB envelopes fit inside the zone."),
                 affected=unknown,
             ))
+
+        if str(cross_section).lower() == "circular":
+            wall_clear = float(env.clearance_m)
+            outer_r = _circular_pod_radius_m(env)
+            allowed_r = outer_r - wall_clear
+            axis_y, axis_z = float(env.center_m[1]), float(env.center_m[2])
+            radial_failed: List[str] = []
+            radial_unknown: List[str] = []
+            worst_protrusion_m = 0.0
+            for c in items:
+                r_ext = _max_yz_radius_from_axis(c, axis_y=axis_y, axis_z=axis_z)
+                if r_ext is None:
+                    radial_unknown.append(c.name)
+                    continue
+                protrusion = r_ext - allowed_r
+                if protrusion > EPS:
+                    radial_failed.append(
+                        f"{c.name} (radial extent {1000.0 * r_ext:.1f} mm > "
+                        f"allowed {1000.0 * allowed_r:.1f} mm; "
+                        f"protrudes {1000.0 * protrusion:.1f} mm past wall keepout)"
+                    )
+                    worst_protrusion_m = max(worst_protrusion_m, protrusion)
+            if radial_failed:
+                checks.append(Check(
+                    name=f"circular_wall_clearance:{zone_name}",
+                    status=CheckStatus.FAIL.value,
+                    value=worst_protrusion_m,
+                    limit=wall_clear,
+                    message=(
+                        f"Component envelope(s) violate the circular fuselage wall keepout "
+                        f"({1000.0 * wall_clear:.1f} mm clearance inside OD "
+                        f"{1000.0 * 2.0 * outer_r:.1f} mm)."
+                    ),
+                    affected=radial_failed,
+                ))
+            else:
+                checks.append(Check(
+                    name=f"circular_wall_clearance:{zone_name}",
+                    status=(CheckStatus.NOT_EVALUATED.value if radial_unknown else CheckStatus.PASS.value),
+                    value=0.0,
+                    limit=wall_clear,
+                    message=(
+                        "Known envelopes keep the required wall clearance, but some components "
+                        "have incomplete dimensions."
+                        if radial_unknown
+                        else (
+                            f"All evaluated envelopes stay inside the circular fuselage with "
+                            f"{1000.0 * wall_clear:.1f} mm wall keepout."
+                        )
+                    ),
+                    affected=radial_unknown,
+                ))
 
         colliding: List[str] = []
         eval_count = 0
@@ -618,6 +702,7 @@ def build_phase3_result(
     packaging_checks = evaluate_packaging(
         components, envelopes,
         component_clearance_m=float(packaging.get("component_clearance_m", 0.003)),
+        cross_section=str(packaging.get("fuselage_cross_section", "circular")),
     )
 
     lift_centers = [tuple(map(float, p)) for p in geometry.get("lift_prop_centers_m", [])]
