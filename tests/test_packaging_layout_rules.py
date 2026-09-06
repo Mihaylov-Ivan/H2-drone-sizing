@@ -119,10 +119,13 @@ def test_top_seats_pack_forward_with_component_axial():
     pl = c["coupling"]["packaging_layout"]
     by = {e["name"]: e for e in pl["placed_envelopes"]}
     axial = float(d.get("component_axial_clearance_m") or pl.get("component_axial_clearance_m") or 0.02)
+    order = str(d.get("energy_bay_order", pl.get("energy_bay_order", "fuel_cell_forward")))
+    cb_bat = str(d.get("cb_battery_order") or pl.get("cb_battery_order") or "battery_forward")
     fc = by["fuel_cell_system"]
     cyl = by["hydrogen_cylinder"]
     fc_fwd = float(fc["x"]) - 0.5 * float(fc["length"])
     cyl_fwd = float(cyl["x"]) - 0.5 * float(cyl["length"])
+    shelf_fwd = fc_fwd if order == "fuel_cell_forward" else cyl_fwd
 
     def _fwd(name: str) -> float:
         e = by[name]
@@ -132,16 +135,12 @@ def test_top_seats_pack_forward_with_component_axial():
         e = by[name]
         return float(e["x"]) + 0.5 * float(e["length"])
 
-    if pl["battery_site"] == "fc_top" and pl["control_box_site"] == "h2_top":
-        assert abs(_fwd("buffer_battery") - fc_fwd) < 1e-9
-        assert _fwd("fuel_cell_control_box") <= cyl_fwd + 1e-9
-        gap = _fwd("fuel_cell_control_box") - _aft("buffer_battery")
-        assert gap + 1e-9 >= axial
-    if pl["control_box_site"] == "fc_top" and pl["battery_site"] == "h2_top":
-        assert abs(_fwd("fuel_cell_control_box") - fc_fwd) < 1e-9
-        assert _fwd("buffer_battery") <= cyl_fwd + 1e-9
-        gap = _fwd("buffer_battery") - _aft("fuel_cell_control_box")
-        assert gap + 1e-9 >= axial
+    fwd_name = "buffer_battery" if cb_bat == "battery_forward" else "fuel_cell_control_box"
+    aft_name = "fuel_cell_control_box" if cb_bat == "battery_forward" else "buffer_battery"
+    # Only the first top item is host-front flush; the second is axial behind it.
+    assert abs(_fwd(fwd_name) - shelf_fwd) < 1e-9
+    gap = _fwd(aft_name) - _aft(fwd_name)
+    assert abs(gap - axial) < 1e-9
 
 
 def test_cb_battery_order_battery_forward():
@@ -158,11 +157,11 @@ def test_cb_battery_order_battery_forward():
         or pl.get("component_axial_clearance_m")
         or 0.01
     )
-    assert bat_aft + axial <= cb_fwd + 1e-9
+    assert abs(cb_fwd - (bat_aft + axial)) < 1e-9
     assert abs(float(bat.get("y", 0.0))) < 1e-9
     assert abs(float(cb.get("y", 0.0))) < 1e-9
-    assert pl["battery_site"].startswith("fc")
-    assert pl["control_box_site"] == "h2_top"
+    assert pl["battery_site"] in {"fc_top", "h2_top"}
+    assert pl["control_box_site"] in {"fc_top", "h2_top"}
 
 
 def test_energy_bay_order_in_optimizer_space_when_auto():

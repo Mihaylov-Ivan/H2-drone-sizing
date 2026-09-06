@@ -41,7 +41,7 @@ The complete resolved/internal configuration is written after each run as `resol
 - Forward energy item flush with the nose-section end; aft energy item as aft as possible with pusher keepout.
 - `fuselage_wall_m` — keepout between component outer faces and the fuselage inner wall in Y (and for circular, radial); default 10 mm. Sets `wall_clearance_m` used for auto width/OD sizing.
 - Component Z is auto-placed above the bottom longeron boss with `packaging_layout.clearances_m.longeron_boss_clearance_m` (default 10 mm) to both top and bottom bosses; independent bay groups are lifted to minimise fuselage diameter.
-- Control box and battery seats (`fc_top` / `fc_side` / `h2_top`) are searched to minimise fuselage diameter (split to H₂ preferred on OD ties). Top seats pack as far forward as `component_axial_m` allows (aft-host tops may overhang the host front into the bay gap; nose bay stays fixed).
+- Control box and battery sit on a shared energy-bay top shelf in X tandem (`cb_battery_order`). The forward top item is flush with the forward energy host front face; the second is placed `component_axial_m` behind it. Site labels (`fc_top` / `h2_top`) are overlap tags only. PDBs pack on the remaining top-shelf length.
 - `component_axial_m` is the required X clearance between non-nose components that overlap in YZ (also sets the FC–H₂ gap in midbody auto).
 - Two PDBs sit on the H₂ cylinder top shelf (not stacked on CB/battery); tandem in X is preferred when that shrinks the required fuselage section.
 

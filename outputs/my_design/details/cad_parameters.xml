@@ -845,7 +845,7 @@
     <ParamWithValue>
       <name>fuel_cell_control_box_x</name>
       <typeCode>mm</typeCode>
-      <value>481.600 mm</value>
+      <value>414.100 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -859,7 +859,7 @@
     <ParamWithValue>
       <name>fuel_cell_control_box_z</name>
       <typeCode>mm</typeCode>
-      <value>52.566 mm</value>
+      <value>57.366 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -964,7 +964,7 @@
     <ParamWithValue>
       <name>pdb_x</name>
       <typeCode>mm</typeCode>
-      <value>632.700 mm</value>
+      <value>565.200 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -978,7 +978,7 @@
     <ParamWithValue>
       <name>pdb_z</name>
       <typeCode>mm</typeCode>
-      <value>58.741 mm</value>
+      <value>63.541 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -1006,7 +1006,7 @@
     <ParamWithValue>
       <name>pdb2_x</name>
       <typeCode>mm</typeCode>
-      <value>722.700 mm</value>
+      <value>655.200 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -1020,7 +1020,7 @@
     <ParamWithValue>
       <name>pdb2_z</name>
       <typeCode>mm</typeCode>
-      <value>58.741 mm</value>
+      <value>63.541 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>

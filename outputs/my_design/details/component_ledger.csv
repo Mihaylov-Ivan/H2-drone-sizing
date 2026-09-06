@@ -29,12 +29,12 @@ gps,avionics,0.025,,0.43,0.0,0.1,calculated,Current H2AIR avionics model
 airspeed_sensor,avionics,0.022,,0.028,0.0,0.0,calculated,Current H2AIR avionics model
 rc_receiver,avionics,0.01,,0.371,0.0,0.0,calculated,Current H2AIR avionics model
 telemetry,avionics,0.02,,0.371,0.0,0.0,calculated,Current H2AIR avionics model
-power_module,avionics,0.04,,0.6327,0.0,0.05874069267511453,supplier_confirmed,"Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
+power_module,avionics,0.04,,0.5652,0.0,0.06354069267511453,supplier_confirmed,"Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
 servos,avionics,0.06,,0.88,0.0,0.03,calculated,Current H2AIR avionics model
 misc_electronics,avionics,0.1656,,0.575,0.0,0.0,engineering_assumption,Current H2AIR lumped allowance
 camera,avionics,0.028,,0.023,0.0,0.0,calculated,Current H2AIR avionics model
-fuel_cell_control_box,energy,0.3568,0.3568,0.48160000000000003,0.0,0.05256569267511453,supplier_confirmed,FCPM control-box mass (share of module_mass_kg)
-power_module_2,energy,0.0,0.0,0.7227000000000001,0.0,0.05874069267511453,supplier_confirmed,"Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
+fuel_cell_control_box,energy,0.3568,0.3568,0.4141,0.0,0.05736569267511453,supplier_confirmed,FCPM control-box mass (share of module_mass_kg)
+power_module_2,energy,0.0,0.0,0.6552000000000001,0.0,0.06354069267511453,supplier_confirmed,"Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
 fuselage_nose_shell,fuselage_structure,0.153622,0.153622,0.07,0.0,0.0,engineering_assumption,Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m
 fuselage_center_a_shell,fuselage_structure,0.25841415,0.25841415,0.25775000000000003,0.0,0.0,engineering_assumption,Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m
 fuselage_center_b_shell,fuselage_structure,0.3773614700000001,0.3773614700000001,0.5474500000000001,0.0,0.0,engineering_assumption,Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m

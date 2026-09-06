@@ -117,9 +117,9 @@
       "center_b": 0.22801861464977094,
       "tail": 0.22801861464977094
     },
-    "fuel_cell_control_box_x_m": 0.48160000000000003,
+    "fuel_cell_control_box_x_m": 0.4141,
     "fuel_cell_control_box_y_m": 0.0,
-    "fuel_cell_control_box_z_m": 0.05256569267511453,
+    "fuel_cell_control_box_z_m": 0.05736569267511453,
     "fuel_cell_stack_mass_kg": 1.0932,
     "fuel_cell_control_box_mass_kg": 0.3568,
     "battery_y_m": 0.0,
@@ -130,12 +130,12 @@
     "nose_section_end_x_m": 0.14,
     "packaging_control_box_site": "h2_top",
     "packaging_battery_site": "fc_top",
-    "pdb_x_m": 0.6327,
+    "pdb_x_m": 0.5652,
     "pdb_y_m": 0.0,
-    "pdb_z_m": 0.05874069267511453,
-    "pdb2_x_m": 0.7227000000000001,
+    "pdb_z_m": 0.06354069267511453,
+    "pdb2_x_m": 0.6552000000000001,
     "pdb2_y_m": 0.0,
-    "pdb2_z_m": 0.05874069267511453,
+    "pdb2_z_m": 0.06354069267511453,
     "main_wing_z_m": 0.09686430732488546,
     "horizontal_tail_z_m": 0.09686430732488546
   },
@@ -989,9 +989,9 @@
           "group": "avionics",
           "mass_takeoff_kg": 0.04,
           "position_m": [
-            0.6327,
+            0.5652,
             0.0,
-            0.05874069267511453
+            0.06354069267511453
           ],
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
@@ -1003,7 +1003,7 @@
             "height_z": 0.0235
           },
           "include_in_collision_check": true,
-          "note": "Holybro PDB 300A on H\u2082 cylinder top (not stacked on CB/battery)."
+          "note": "Holybro PDB 300A on energy-bay top shelf (not stacked on CB/battery)."
         },
         {
           "name": "servos",
@@ -1049,9 +1049,9 @@
           "mass_takeoff_kg": 0.3568,
           "mass_end_kg": 0.3568,
           "position_m": [
-            0.48160000000000003,
+            0.4141,
             0.0,
-            0.05256569267511453
+            0.05736569267511453
           ],
           "shape": "box",
           "dimensions_m": {
@@ -1071,9 +1071,9 @@
           "mass_takeoff_kg": 0.0,
           "mass_end_kg": 0.0,
           "position_m": [
-            0.7227000000000001,
+            0.6552000000000001,
             0.0,
-            0.05874069267511453
+            0.06354069267511453
           ],
           "shape": "box",
           "dimensions_m": {
@@ -1085,7 +1085,7 @@
           "include_in_collision_check": true,
           "status": "supplier_confirmed",
           "source": "Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)",
-          "note": "Holybro PDB 300A on H\u2082 cylinder top (not stacked on CB/battery)."
+          "note": "Holybro PDB 300A on energy-bay top shelf (not stacked on CB/battery)."
         }
       ]
     }
@@ -1795,7 +1795,8 @@
       "z_lifts_m": {
         "fc": 0.0,
         "h2": 0.0,
-        "nose": 0.0
+        "nose": 0.0,
+        "top": 0.0
       },
       "cylinder_top_gap_m": 0.06751861464977094,
       "cylinder_top_gap_required_m": 0.0635,
@@ -1861,14 +1862,14 @@
         },
         {
           "name": "fuel_cell_control_box",
-          "x": 0.48160000000000003,
+          "x": 0.4141,
           "y": 0.0,
           "length": 0.2022,
           "width": 0.107,
           "height": 0.04515,
-          "z": 0.05256569267511453,
-          "radial_m": 0.09224084613497434,
-          "half_extent_m": 0.07514069267511453
+          "z": 0.05736569267511453,
+          "radial_m": 0.09619129038211885,
+          "half_extent_m": 0.07994069267511453
         },
         {
           "name": "buffer_battery",
@@ -1883,25 +1884,25 @@
         },
         {
           "name": "power_module",
-          "x": 0.6327,
+          "x": 0.5652,
           "y": 0.0,
           "length": 0.08,
           "width": 0.06,
           "height": 0.0235,
-          "z": 0.05874069267511453,
-          "radial_m": 0.07660899264327553,
-          "half_extent_m": 0.07049069267511453
+          "z": 0.06354069267511453,
+          "radial_m": 0.08104744538539474,
+          "half_extent_m": 0.07529069267511453
         },
         {
           "name": "power_module_2",
-          "x": 0.7227000000000001,
+          "x": 0.6552000000000001,
           "y": 0.0,
           "length": 0.08,
           "width": 0.06,
           "height": 0.0235,
-          "z": 0.05874069267511453,
-          "radial_m": 0.07660899264327553,
-          "half_extent_m": 0.07049069267511453
+          "z": 0.06354069267511453,
+          "radial_m": 0.08104744538539474,
+          "half_extent_m": 0.07529069267511453
         }
       ],
       "stations_m": {
@@ -1916,9 +1917,9 @@
           -0.028109307324885473
         ],
         "fuel_cell_control_box": [
-          0.48160000000000003,
+          0.4141,
           0.0,
-          0.05256569267511453
+          0.05736569267511453
         ],
         "buffer_battery": [
           0.22150000000000003,
@@ -1936,14 +1937,14 @@
           -0.02800930732488547
         ],
         "power_module": [
-          0.6327,
+          0.5652,
           0.0,
-          0.05874069267511453
+          0.06354069267511453
         ],
         "power_module_2": [
-          0.7227000000000001,
+          0.6552000000000001,
           0.0,
-          0.05874069267511453
+          0.06354069267511453
         ]
       },
       "fuselage_diameter_mode": "auto",
@@ -4077,7 +4078,7 @@
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "auto",
     "cb_battery_order": "battery_forward",
-    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (which of CB/battery sits more forward in X). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
+    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (X order of CB/battery on the shared top shelf). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB+battery sit on top in X tandem (first flush with forward energy host front; second axial behind); dual PDBs min-OD searched.",
     "clearances_m": {
       "fuselage_bottom_m": 0.016,
       "fuselage_wall_m": 0.01,
@@ -4558,7 +4559,7 @@
       "energy_bay_order": "fuel_cell_forward",
       "energy_bay_order_mode": "auto",
       "cb_battery_order": "battery_forward",
-      "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (which of CB/battery sits more forward in X). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
+      "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (X order of CB/battery on the shared top shelf). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB+battery sit on top in X tandem (first flush with forward energy host front; second axial behind); dual PDBs min-OD searched.",
       "clearances_m": {
         "fuselage_bottom_m": 0.016,
         "fuselage_wall_m": 0.01,

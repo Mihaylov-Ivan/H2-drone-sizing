@@ -447,62 +447,26 @@ def _pack_top_forward_x(
     H: float,
     y: float,
     z: float,
-    host_fwd: float,
-    host_aft: float,
-    blockers: Sequence[Placed],
-    axial: float,
-    allow_forward_of_host: bool,
+    x_fwd: float,
 ) -> Placed:
-    """Seat a top-bay box as far forward as axial clearance / host support allow.
+    """Place a top-bay box with its forward face at ``x_fwd``."""
+    return (name, float(x_fwd) + 0.5 * float(L), float(y), float(L), float(W), float(H), float(z))
 
-    Nose stays fixed separately. Aft-host tops may overhang forward of the host
-    front face into the inter-bay gap, while keeping positive X-overlap on the host.
-    """
-    if L > (host_aft - host_fwd) + EPS and not allow_forward_of_host:
-        raise ValueError(f"{name} longer than its host bay")
 
-    # Lower bound on forward face from YZ-overlapping blockers.
-    x_fwd_lo = -1e9
-    probe = (name, 0.0, y, L, W, H, z)
-    for b in blockers:
-        if b[0] in _NOSE_NAMES:
-            continue
-        if not _yz_overlap(probe, b):
-            continue
-        _bf, ba = _fwd_aft(b)
-        x_fwd_lo = max(x_fwd_lo, ba + float(axial))
-
-    if allow_forward_of_host:
-        # Keep positive overlap with the host X-span (may overhang the front face).
-        x_fwd_min_support = host_fwd - L + 1e-6
-        x_fwd = max(x_fwd_lo, x_fwd_min_support)
-    else:
-        x_fwd = max(x_fwd_lo, host_fwd)
-
-    x_aft = x_fwd + L
-    if x_aft > host_aft + EPS:
-        # Push aft to fit on host; re-check blockers.
-        x_fwd = host_aft - L
-        x_aft = host_aft
-        if x_fwd + EPS < (x_fwd_lo if allow_forward_of_host else max(x_fwd_lo, host_fwd)):
-            raise ValueError(f"{name} cannot satisfy component_axial_m and host bay length")
-        probe = (name, x_fwd + 0.5 * L, y, L, W, H, z)
-        for b in blockers:
-            if b[0] in _NOSE_NAMES:
-                continue
-            if not _yz_overlap(probe, b):
-                continue
-            _bf, ba = _fwd_aft(b)
-            if x_fwd + EPS < ba + float(axial):
-                raise ValueError(f"{name} cannot clear {b[0]} with component_axial_m on host")
-
-    # Final support check for overhanging seats.
-    if allow_forward_of_host and x_aft <= host_fwd + EPS:
-        raise ValueError(f"{name} would leave its host bay entirely")
-    if (not allow_forward_of_host) and x_fwd + EPS < host_fwd:
-        raise ValueError(f"{name} cannot sit forward of its host front face")
-
-    return (name, x_fwd + 0.5 * L, y, L, W, H, z)
+def _top_site_from_overlap(
+    *,
+    x: float,
+    L: float,
+    x_fc_fwd: float,
+    x_fc_aft: float,
+    x_cyl_fwd: float,
+    x_cyl_aft: float,
+) -> str:
+    """Label a top seat by which energy host its X-span overlaps most."""
+    lo, hi = float(x) - 0.5 * float(L), float(x) + 0.5 * float(L)
+    fc_ov = max(0.0, min(hi, x_fc_aft) - max(lo, x_fc_fwd))
+    h2_ov = max(0.0, min(hi, x_cyl_aft) - max(lo, x_cyl_fwd))
+    return "fc_top" if fc_ov + EPS >= h2_ov else "h2_top"
 
 
 def _set_ledger_box(
@@ -1101,6 +1065,111 @@ def _seat_on_h2(
     return (name, x, y, L, W, H, z)
 
 
+def _place_pdbs_on_top_shelf(
+    *,
+    pdb_L: float,
+    pdb_W: float,
+    pdb_H: float,
+    bay_fwd: float,
+    bay_aft: float,
+    shelf_top: float,
+    pdb_around: float,
+    comp_c: float,
+    axial: float,
+    occupants: Sequence[Placed],
+    wall_m: float = 0.003,
+    cross_section: str = "square_filleted",
+    x_prefer: float | None = None,
+) -> List[Placed]:
+    """Two PDBs on the energy-bay top shelf — never stacked on CB/battery.
+
+    Prefers the arrangement that minimises required fuselage outer size (tandem on
+    centreline when side-by-side would widen the section). ``bay_fwd``/``bay_aft``
+    span the usable top shelf (typically forward energy-host front to aft-host aft).
+    """
+    z = float(shelf_top) + float(pdb_around) + 0.5 * float(pdb_H)
+    gap = max(comp_c, 0.5 * pdb_around, 0.5 * axial)
+    x_mid = 0.5 * (float(bay_fwd) + float(bay_aft)) if x_prefer is None else float(x_prefer)
+
+    def _ok(cands: Sequence[Placed]) -> bool:
+        all_boxes = list(occupants) + list(cands)
+        for i in range(len(all_boxes)):
+            for j in range(i + 1, len(all_boxes)):
+                if _boxes_collide(all_boxes[i], all_boxes[j], clearance=comp_c):
+                    return False
+        if _axial_gap_violations(all_boxes, axial=axial):
+            return False
+        for c in cands:
+            lo, hi = _fwd_aft(c)
+            if lo < bay_fwd - EPS or hi > bay_aft + EPS:
+                return False
+        return True
+
+    def _score(cands: Sequence[Placed]) -> float:
+        return _section_size_from_placed(
+            list(occupants) + list(cands), wall_m=wall_m, cross_section=cross_section
+        )
+
+    candidates: List[List[Placed]] = []
+
+    # Tandem on centreline (usually narrower for square fuselage).
+    aft_of = float(bay_fwd)
+    for occ in occupants:
+        if _yz_overlap(("power_module", x_mid, 0.0, pdb_L, pdb_W, pdb_H, z), occ):
+            aft_of = max(aft_of, _fwd_aft(occ)[1] + axial)
+    x1 = aft_of + 0.5 * pdb_L
+    x1 = min(max(x1, bay_fwd + 0.5 * pdb_L), bay_aft - 0.5 * pdb_L)
+    x2 = x1 + 0.5 * pdb_L + axial + 0.5 * pdb_L
+    if x2 + 0.5 * pdb_L <= bay_aft + EPS:
+        tandem = [
+            ("power_module", x1, 0.0, pdb_L, pdb_W, pdb_H, z),
+            ("power_module_2", x2, 0.0, pdb_L, pdb_W, pdb_H, z),
+        ]
+        if _ok(tandem):
+            candidates.append(tandem)
+
+    # Side-by-side options.
+    y_off = 0.5 * pdb_W + 0.5 * gap
+    aft_side = float(bay_fwd)
+    for occ in occupants:
+        if _yz_overlap(
+            ("power_module", x_mid, y_off, pdb_L, pdb_W, pdb_H, z), occ
+        ) or _yz_overlap(("power_module", x_mid, -y_off, pdb_L, pdb_W, pdb_H, z), occ):
+            aft_side = max(aft_side, _fwd_aft(occ)[1] + axial)
+    x_side = min(max(aft_side + 0.5 * pdb_L, bay_fwd + 0.5 * pdb_L), bay_aft - 0.5 * pdb_L)
+    for x_try in (x_side, x_mid):
+        side_by_side = [
+            ("power_module", x_try, +y_off, pdb_L, pdb_W, pdb_H, z),
+            ("power_module_2", x_try, -y_off, pdb_L, pdb_W, pdb_H, z),
+        ]
+        if _ok(side_by_side):
+            candidates.append(side_by_side)
+
+    aft_of = float(bay_fwd)
+    for _n, x, _y, lx, _w, _h, _z in occupants:
+        aft_of = max(aft_of, x + 0.5 * lx)
+    x_pdb = aft_of + axial + 0.5 * pdb_L
+    if x_pdb + 0.5 * pdb_L <= bay_aft + EPS:
+        aft_pair = [
+            ("power_module", x_pdb, +y_off, pdb_L, pdb_W, pdb_H, z),
+            ("power_module_2", x_pdb, -y_off, pdb_L, pdb_W, pdb_H, z),
+        ]
+        if _ok(aft_pair):
+            candidates.append(aft_pair)
+
+    if not candidates:
+        raise ValueError(
+            "Packaging layout: cannot place two PDBs on the energy-bay top shelf without stacking "
+            "on the control box/battery or leaving the bay. Increase fuselage diameter "
+            "or lengthen the energy bay."
+        )
+
+    def _pick_key(cands: Sequence[Placed]) -> Tuple[float, float]:
+        return (_score(cands), sum(abs(float(p[2])) for p in cands))
+
+    return list(min(candidates, key=_pick_key))
+
+
 def _place_pdbs_on_cylinder(
     *,
     pdb_L: float,
@@ -1117,120 +1186,37 @@ def _place_pdbs_on_cylinder(
     wall_m: float = 0.003,
     cross_section: str = "square_filleted",
 ) -> List[Placed]:
-    """Two PDBs on the cylinder top shelf — never stacked on CB/battery.
-
-    Prefers the arrangement that minimises required fuselage outer size (tandem on
-    centreline when side-by-side would widen the section).
-    """
-    z = cyl_top + pdb_around + 0.5 * pdb_H
-    gap = max(comp_c, 0.5 * pdb_around, 0.5 * axial)
-
-    def _ok(cands: Sequence[Placed]) -> bool:
-        all_boxes = list(occupants) + list(cands)
-        for i in range(len(all_boxes)):
-            for j in range(i + 1, len(all_boxes)):
-                if _boxes_collide(all_boxes[i], all_boxes[j], clearance=comp_c):
-                    return False
-        if _axial_gap_violations(all_boxes, axial=axial):
-            return False
-        for c in cands:
-            lo, hi = _fwd_aft(c)
-            if lo < x_cyl_fwd - EPS or hi > x_cyl_aft + EPS:
-                return False
-        return True
-
-    def _score(cands: Sequence[Placed]) -> float:
-        return _section_size_from_placed(
-            list(occupants) + list(cands), wall_m=wall_m, cross_section=cross_section
-        )
-
-    candidates: List[List[Placed]] = []
-
-    # Tandem on centreline (usually narrower for square fuselage).
-    aft_of = x_cyl_fwd
-    for occ in occupants:
-        if _yz_overlap(("power_module", x_cyl, 0.0, pdb_L, pdb_W, pdb_H, z), occ):
-            aft_of = max(aft_of, _fwd_aft(occ)[1] + axial)
-    x1 = aft_of + 0.5 * pdb_L
-    x1 = min(max(x1, x_cyl_fwd + 0.5 * pdb_L), x_cyl_aft - 0.5 * pdb_L)
-    x2 = x1 + 0.5 * pdb_L + axial + 0.5 * pdb_L
-    if x2 + 0.5 * pdb_L <= x_cyl_aft + EPS:
-        tandem = [
-            ("power_module", x1, 0.0, pdb_L, pdb_W, pdb_H, z),
-            ("power_module_2", x2, 0.0, pdb_L, pdb_W, pdb_H, z),
-        ]
-        if _ok(tandem):
-            candidates.append(tandem)
-
-    # Side-by-side options.
-    y_off = 0.5 * pdb_W + 0.5 * gap
-    aft_side = x_cyl_fwd
-    for occ in occupants:
-        if _yz_overlap(
-            ("power_module", x_cyl, y_off, pdb_L, pdb_W, pdb_H, z), occ
-        ) or _yz_overlap(("power_module", x_cyl, -y_off, pdb_L, pdb_W, pdb_H, z), occ):
-            aft_side = max(aft_side, _fwd_aft(occ)[1] + axial)
-    x_side = min(max(aft_side + 0.5 * pdb_L, x_cyl_fwd + 0.5 * pdb_L), x_cyl_aft - 0.5 * pdb_L)
-    for x_try in (x_side, x_cyl):
-        side_by_side = [
-            ("power_module", x_try, +y_off, pdb_L, pdb_W, pdb_H, z),
-            ("power_module_2", x_try, -y_off, pdb_L, pdb_W, pdb_H, z),
-        ]
-        if _ok(side_by_side):
-            candidates.append(side_by_side)
-
-    aft_of = x_cyl_fwd
-    for _n, x, _y, lx, _w, _h, _z in occupants:
-        aft_of = max(aft_of, x + 0.5 * lx)
-    x_pdb = aft_of + axial + 0.5 * pdb_L
-    if x_pdb + 0.5 * pdb_L <= x_cyl_aft + EPS:
-        aft_pair = [
-            ("power_module", x_pdb, +y_off, pdb_L, pdb_W, pdb_H, z),
-            ("power_module_2", x_pdb, -y_off, pdb_L, pdb_W, pdb_H, z),
-        ]
-        if _ok(aft_pair):
-            candidates.append(aft_pair)
-
-    if not candidates:
-        raise ValueError(
-            "Packaging layout: cannot place two PDBs on the H₂ cylinder top without stacking "
-            "on the control box/battery or leaving the cylinder bay. Increase fuselage diameter "
-            "or lengthen the cylinder bay."
-        )
-
-    def _pick_key(cands: Sequence[Placed]) -> Tuple[float, float]:
-        return (_score(cands), sum(abs(float(p[2])) for p in cands))
-
-    return list(min(candidates, key=_pick_key))
+    """Backward-compatible wrapper: PDBs on the H₂ cylinder top only."""
+    return _place_pdbs_on_top_shelf(
+        pdb_L=pdb_L,
+        pdb_W=pdb_W,
+        pdb_H=pdb_H,
+        bay_fwd=x_cyl_fwd,
+        bay_aft=x_cyl_aft,
+        shelf_top=cyl_top,
+        pdb_around=pdb_around,
+        comp_c=comp_c,
+        axial=axial,
+        occupants=occupants,
+        wall_m=wall_m,
+        cross_section=cross_section,
+        x_prefer=x_cyl,
+    )
 
 
 
 def _candidate_plans(
     *,
-    energy_bay_order: str = "fuel_cell_forward",
     cb_battery_order: str = "battery_forward",
 ) -> List[Dict[str, Any]]:
-    """Enumerate CB/battery seats as tandem-X pairs on opposite energy hosts.
-
-    The preferred-forward item is always assigned to the forward energy host; the
-    other sits on the aft host. Same-shelf / side-by-side plans are excluded.
-    """
-    fwd_is_fc = str(energy_bay_order).lower() == "fuel_cell_forward"
+    """Single top-shelf tandem plan for CB/battery (order from ``cb_battery_order``)."""
     prefer_bat = str(cb_battery_order).lower() == "battery_forward"
-    if fwd_is_fc:
-        # (cb_site, bat_site)
-        if prefer_bat:
-            pairs = [("h2_top", "fc_top"), ("h2_top", "fc_side")]
-        else:
-            pairs = [("fc_top", "h2_top"), ("fc_side", "h2_top")]
-    else:
-        if prefer_bat:
-            pairs = [("fc_top", "h2_top"), ("fc_side", "h2_top")]
-        else:
-            pairs = [("h2_top", "fc_top"), ("h2_top", "fc_side")]
     return [
-        {"cb": cb_site, "bat": bat_site, "tie_rank": i}
-        for i, (cb_site, bat_site) in enumerate(pairs)
+        {
+            "fwd": "buffer_battery" if prefer_bat else "fuel_cell_control_box",
+            "aft": "fuel_cell_control_box" if prefer_bat else "buffer_battery",
+            "tie_rank": 0,
+        }
     ]
 
 
@@ -1545,141 +1531,50 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
     best: Optional[Dict[str, Any]] = None
     errors: List[str] = []
 
-    for plan in _candidate_plans(
-        energy_bay_order=energy_bay_order,
-        cb_battery_order=cb_battery_order,
-    ):
+    # Shared top shelf over the energy bay: forward top item flush with the
+    # forward bottom energy host; second item tandem aft by component_axial_m.
+    if energy_bay_order == "fuel_cell_forward":
+        x_shelf_fwd, x_shelf_aft = x_fc_fwd, x_cyl_aft
+    else:
+        x_shelf_fwd, x_shelf_aft = x_cyl_fwd, x_fc_aft
+    shelf_top = max(fc_top, cyl_top) + stack_v
+
+    for plan in _candidate_plans(cb_battery_order=cb_battery_order):
         try:
-            cb_site = str(plan["cb"])
-            bat_site = str(plan["bat"])
-            # Side signs only when one item is alone on an FC side seat.
-            # Same-host dual tops pack on centreline (tandem X), never side-by-side.
-            if cb_site == "fc_top" and bat_site == "fc_top":
-                cb_sign, bat_sign = 0.0, 0.0
-            elif cb_site == "fc_top":
-                cb_sign, bat_sign = 0.0, -1.0
-            elif bat_site == "fc_top":
-                cb_sign, bat_sign = 1.0, 0.0
-            elif cb_site == "fc_side" and bat_site != "fc_side":
-                cb_sign, bat_sign = 1.0, 0.0
-            elif bat_site == "fc_side" and cb_site != "fc_side":
-                cb_sign, bat_sign = 0.0, -1.0
-            else:
-                cb_sign, bat_sign = 0.0, 0.0
-
-            # Forward energy host tops stay host-front flush; aft-host tops may
-            # overhang forward into the bay gap, packed against component_axial_m.
-            fwd_host_is_fc = energy_bay_order == "fuel_cell_forward"
-            fc_is_aft_host = not fwd_host_is_fc
-            h2_is_aft_host = fwd_host_is_fc
-
-            # Build seat specs, place forward-host top first, then aft-host top.
-            seats: List[Dict[str, Any]] = []
-            seats.append(
-                {
-                    "name": "fuel_cell_control_box",
-                    "site": cb_site,
-                    "L": cb_L,
-                    "W": cb_W,
-                    "H": cb_H,
-                    "sign": cb_sign,
-                    "on_fc": cb_site.startswith("fc"),
-                    "is_top": cb_site.endswith("top") or cb_site == "h2_top",
-                }
-            )
-            seats.append(
-                {
-                    "name": "buffer_battery",
-                    "site": bat_site,
-                    "L": bat_L,
-                    "W": bat_W,
-                    "H": bat_H,
-                    "sign": bat_sign,
-                    "on_fc": bat_site.startswith("fc"),
-                    "is_top": bat_site.endswith("top") or bat_site == "h2_top",
-                }
-            )
-
-            fwd_name = "buffer_battery" if prefer_battery_forward else "fuel_cell_control_box"
-
-            def _host_rank(s: Dict[str, Any]) -> Tuple[int, int, int]:
-                # Forward energy host first; preferred-forward item first on that host.
-                on_fwd = (s["on_fc"] and fwd_host_is_fc) or ((not s["on_fc"]) and (not fwd_host_is_fc))
-                return (
-                    0 if on_fwd else 1,
-                    0 if s["name"] == fwd_name else 1,
-                    0 if s["is_top"] else 1,
+            fwd_name = str(plan["fwd"])
+            aft_name = str(plan["aft"])
+            dims = {
+                "fuel_cell_control_box": (cb_L, cb_W, cb_H),
+                "buffer_battery": (bat_L, bat_W, bat_H),
+            }
+            L_fwd, W_fwd, H_fwd = dims[fwd_name]
+            L_aft, W_aft, H_aft = dims[aft_name]
+            need_L = L_fwd + axial_c + L_aft
+            if need_L > (x_shelf_aft - x_shelf_fwd) + EPS:
+                raise ValueError(
+                    f"top tandem {fwd_name}+{aft_name} needs {1000 * need_L:.1f} mm but energy "
+                    f"bay top shelf is only {1000 * (x_shelf_aft - x_shelf_fwd):.1f} mm"
                 )
 
-            seats.sort(key=_host_rank)
-
-            placed_seats: Dict[str, Placed] = {}
-            # Energy hosts act as X blockers so aft-host tops clear the forward bay.
-            blockers: List[Placed] = [
-                p for p in base if p[0] in {"fuel_cell_system", "hydrogen_cylinder"}
-            ]
-
-            for s in seats:
-                site = str(s["site"])
-                if site == "h2_top":
-                    if float(s["L"]) > L_cyl + EPS:
-                        raise ValueError(f"{s['name']} longer than H₂ cylinder")
-                    y = 0.0
-                    z = cyl_top + stack_v + 0.5 * float(s["H"])
-                    p = _pack_top_forward_x(
-                        name=str(s["name"]),
-                        L=float(s["L"]),
-                        W=float(s["W"]),
-                        H=float(s["H"]),
-                        y=y,
-                        z=z,
-                        host_fwd=x_cyl_fwd,
-                        host_aft=x_cyl_aft,
-                        blockers=blockers,
-                        axial=axial_c,
-                        allow_forward_of_host=h2_is_aft_host,
-                    )
-                    if p[1] + 0.5 * float(s["L"]) > x_cyl_aft + EPS:
-                        raise ValueError(f"{s['name']} overhangs H₂ cylinder aft")
-                elif site == "fc_top":
-                    if float(s["L"]) > fc_L + EPS:
-                        raise ValueError(f"{s['name']} longer than fuel cell for top seat")
-                    y = 0.0 if abs(float(s["sign"])) < EPS else float(s["sign"]) * (
-                        0.5 * float(s["W"]) + 0.5 * comp_c
-                    )
-                    z = fc_top + stack_v + 0.5 * float(s["H"])
-                    p = _pack_top_forward_x(
-                        name=str(s["name"]),
-                        L=float(s["L"]),
-                        W=float(s["W"]),
-                        H=float(s["H"]),
-                        y=y,
-                        z=z,
-                        host_fwd=x_fc_fwd,
-                        host_aft=x_fc_aft,
-                        blockers=blockers,
-                        axial=axial_c,
-                        allow_forward_of_host=fc_is_aft_host,
-                    )
-                else:
-                    p = _seat_on_fc(
-                        site=site,
-                        name=str(s["name"]),
-                        L=float(s["L"]),
-                        W=float(s["W"]),
-                        H=float(s["H"]),
-                        x_fc=x_fc,
-                        z_fc=z_fc,
-                        fc_L=fc_L,
-                        fc_W=fc_W,
-                        fc_H=fc_H,
-                        stack_v=stack_v,
-                        comp_c=comp_c,
-                        side_sign=float(s["sign"]),
-                    )
-                placed_seats[str(s["name"])] = p
-                blockers.append(p)
-
+            p_fwd = _pack_top_forward_x(
+                name=fwd_name,
+                L=L_fwd,
+                W=W_fwd,
+                H=H_fwd,
+                y=0.0,
+                z=shelf_top + 0.5 * H_fwd,
+                x_fwd=x_shelf_fwd,
+            )
+            p_aft = _pack_top_forward_x(
+                name=aft_name,
+                L=L_aft,
+                W=W_aft,
+                H=H_aft,
+                y=0.0,
+                z=shelf_top + 0.5 * H_aft,
+                x_fwd=x_shelf_fwd + L_fwd + axial_c,
+            )
+            placed_seats = {fwd_name: p_fwd, aft_name: p_aft}
             p_cb = placed_seats["fuel_cell_control_box"]
             p_bat = placed_seats["buffer_battery"]
             _require_cb_battery_x_tandem(
@@ -1688,26 +1583,38 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                 axial=axial_c,
                 prefer_battery_forward=prefer_battery_forward,
             )
-            h2_occupants = [
-                p
-                for p in (p_cb, p_bat)
-                if (p[0] == "fuel_cell_control_box" and cb_site == "h2_top")
-                or (p[0] == "buffer_battery" and bat_site == "h2_top")
-            ]
-            pdbs = _place_pdbs_on_cylinder(
+            cb_site = _top_site_from_overlap(
+                x=p_cb[1],
+                L=p_cb[3],
+                x_fc_fwd=x_fc_fwd,
+                x_fc_aft=x_fc_aft,
+                x_cyl_fwd=x_cyl_fwd,
+                x_cyl_aft=x_cyl_aft,
+            )
+            bat_site = _top_site_from_overlap(
+                x=p_bat[1],
+                L=p_bat[3],
+                x_fc_fwd=x_fc_fwd,
+                x_fc_aft=x_fc_aft,
+                x_cyl_fwd=x_cyl_fwd,
+                x_cyl_aft=x_cyl_aft,
+            )
+
+            h2_occupants = [p_cb, p_bat]
+            pdbs = _place_pdbs_on_top_shelf(
                 pdb_L=pdb_L,
                 pdb_W=pdb_W,
                 pdb_H=pdb_H,
-                x_cyl=x_cyl,
-                x_cyl_fwd=x_cyl_fwd,
-                x_cyl_aft=x_cyl_aft,
-                cyl_top=cyl_top,
+                bay_fwd=x_shelf_fwd,
+                bay_aft=x_shelf_aft,
+                shelf_top=max(fc_top, cyl_top),
                 pdb_around=pdb_around,
                 comp_c=comp_c,
                 axial=axial_c,
                 occupants=h2_occupants,
                 wall_m=wall,
                 cross_section=cross_section,
+                x_prefer=x_cyl,
             )
             if pdb_count < 2:
                 pdbs = pdbs[:1]
@@ -1723,17 +1630,11 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                 "autopilot": "nose",
                 "fuel_cell_system": "fc",
                 "hydrogen_cylinder": "h2",
+                "fuel_cell_control_box": "top",
+                "buffer_battery": "top",
             }
-            if cb_site.startswith("fc"):
-                z_groups["fuel_cell_control_box"] = "fc"
-            else:
-                z_groups["fuel_cell_control_box"] = "h2"
-            if bat_site.startswith("fc"):
-                z_groups["buffer_battery"] = "fc"
-            else:
-                z_groups["buffer_battery"] = "h2"
             for p in pdbs:
-                z_groups[p[0]] = "h2"
+                z_groups[p[0]] = "top"
 
             placed, z_lifts, od_need = _optimize_pack_z(
                 placed,
@@ -1763,7 +1664,8 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                 prefer_battery_forward=prefer_battery_forward,
             )
 
-            # Cube forward connector bay at cube height (after Z lift).            z_cube_now = by_p["autopilot"][6]
+            # Cube forward connector bay at cube height (after Z lift).
+            z_cube_now = by_p["autopilot"][6]
             bay = (connector_start, cube_fwd)
             for n, x, y, lx, wy, hz, z in placed:
                 if n == "autopilot":
@@ -1804,14 +1706,14 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
                     "z_lifts_m": dict(z_lifts),
                 }
         except ValueError as e:
-            errors.append(f"{plan['cb']}+{plan['bat']}: {e}")
+            errors.append(f"{plan['fwd']}+{plan['aft']}: {e}")
             continue
 
     if best is None:
         detail = "; ".join(errors[:4])
         raise ValueError(
-            "Packaging layout: no control-box/battery seat combination fits the current fuselage. "
-            f"Increase fuselage diameter or revise envelopes. Tried: {detail}"
+            "Packaging layout: no control-box/battery top tandem fits the current fuselage. "
+            f"Increase fuselage diameter/length or revise envelopes. Tried: {detail}"
         )
 
     p_cb = best["p_cb"]
@@ -1929,7 +1831,7 @@ def _packaging_layout_core(cfg: MutableMapping[str, Any]) -> Dict[str, Any]:
             dims=(pdb_L, pdb_W, pdb_H),
             status=str(pdb.get("status", "supplier_confirmed")),
             source=str(pdb.get("source", "Holybro PDB 300A datasheet (user packaging_layout)")),
-            note="Holybro PDB 300A on H₂ cylinder top (not stacked on CB/battery).",
+            note="Holybro PDB 300A on energy-bay top shelf (not stacked on CB/battery).",
             mass_kg=float(pdb_mass) if pdb_mass is not None else None,
             components=comps_list,
         )

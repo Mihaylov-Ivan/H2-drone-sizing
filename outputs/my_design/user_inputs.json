@@ -150,7 +150,7 @@
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "auto",
     "cb_battery_order": "battery_forward",
-    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (which of CB/battery sits more forward in X). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB/battery + dual PDBs min-OD searched; top seats packed forward under that axial clearance.",
+    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (X order of CB/battery on the shared top shelf). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB+battery sit on top in X tandem (first flush with forward energy host front; second axial behind); dual PDBs min-OD searched.",
     "clearances_m": {
       "fuselage_bottom_m": 0.016,
       "fuselage_wall_m": 0.01,
