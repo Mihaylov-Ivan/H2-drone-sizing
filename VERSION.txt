@@ -1,2 +1,2 @@
-H2AIR Integrated Model v4.0
-User inputs + measured mass model + polar airfoils + CAD export + hardware selection
+H2AIR Integrated Model v4.1
+IE-SOAR cross-fuselage cooling + CAD cooling architecture

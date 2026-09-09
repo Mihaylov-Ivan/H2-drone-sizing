@@ -11,14 +11,16 @@
     "manufacturing_mass_model",
     "cad_export",
     "optimizer",
-    "packaging_layout"
+    "packaging_layout",
+    "fuel_cell_cooling"
   ],
   "auto_calculated_examples": [
     "fuselage total length from section lengths",
     "main wing span in AUTO mode and wing area/MAC",
     "airfoil CL/CD/CM interpolation from a supplied polar when available",
     "AUTO motor/prop/battery database selection when enabled",
-    "clean CAD parameter export (geometry/clearance/hardware only)",
+    "clean CAD parameter export (geometry/clearance/hardware/cooling only)",
+    "fuel-cell waste heat, required airflow, duct pressure loss and cooling-airflow margin",
     "horizontal-tail span/area in AUTO mode",
     "vertical-tail height/area in AUTO mode",
     "component masses in LINEAR mode from kg/m x length",

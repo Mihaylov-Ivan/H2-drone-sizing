@@ -16,6 +16,7 @@ from math import sqrt
 
 from .airfoils import resolve_airfoil_entry
 from .hardware_selection import select_hardware, apply_hardware_selection
+from .fuel_cell_cooling import cooling_opening_cda_from_user_inputs
 
 G = 9.80665
 RHO0 = 1.225
@@ -377,6 +378,30 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         selection = select_hardware(u, root=root)
         apply_hardware_selection(cfg, selection)
 
+    # -------- IE-SOAR fuel-cell cooling integration --------
+    # The integration assumption is that the built-in fans suck ambient air
+    # through the fuel-cell stack and discharge through the fan-side fuselage
+    # opening.  The detailed cooling calculation runs after packaging/coupling,
+    # but the opening drag allowance is available here so optimization sees it.
+    cooling = deepcopy(u.get("fuel_cell_cooling", {}))
+    if cooling:
+        if str(cooling.get("fan_flow_direction", "suction_through_stack_to_fan_side")) != "suction_through_stack_to_fan_side":
+            raise ValueError("fuel_cell_cooling.fan_flow_direction must be 'suction_through_stack_to_fan_side' for the current H2AIR architecture")
+        fan_side = str(cooling.get("fan_side", "right")).lower()
+        inlet_side = str(cooling.get("inlet_side", "left")).lower()
+        exhaust_side = str(cooling.get("exhaust_side", fan_side)).lower()
+        if fan_side not in {"left", "right"} or inlet_side not in {"left", "right"} or exhaust_side not in {"left", "right"}:
+            raise ValueError("fuel_cell_cooling fan/inlet/exhaust sides must be 'left' or 'right'")
+        if inlet_side == exhaust_side:
+            raise ValueError("fuel_cell_cooling inlet_side and exhaust_side must be opposite for the cross-fuselage architecture")
+        cooling["fan_side"] = fan_side
+        cooling["inlet_side"] = inlet_side
+        cooling["exhaust_side"] = exhaust_side
+        cfg["fuel_cell_cooling"] = cooling
+        cooling_cda = cooling_opening_cda_from_user_inputs(cooling)
+        cfg["aero_propulsion"]["aircraft"]["cooling_openings_CdA_m2"] = cooling_cda
+        d["fuel_cell_cooling_openings_CdA_m2"] = cooling_cda
+
     # -------- Manufacturing / measured linear-mass model --------
     cfg["optimizer_settings"] = deepcopy(u.get("optimizer", {}))
     cfg["manufacturing_mass_model"] = deepcopy(u["manufacturing_mass_model"])
@@ -403,8 +428,8 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         },
     }
     cfg["model"].update({
-        "version": "H2AIR-integrated-v4.0",
-        "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export and discrete hardware selection.",
+        "version": "H2AIR-integrated-v4.1",
+        "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export, discrete hardware selection and IE-SOAR cross-fuselage cooling integration.",
     })
     return cfg
 
@@ -495,14 +520,15 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "user_editable_groups": [
             "mission", "fuselage", "lifting_surfaces", "propulsion",
             "component_positions", "hardware", "hardware_selection", "manufacturing_mass_model", "cad_export", "optimizer",
-            "packaging_layout",
+            "packaging_layout", "fuel_cell_cooling",
         ],
         "auto_calculated_examples": [
             "fuselage total length from section lengths",
             "main wing span in AUTO mode and wing area/MAC",
             "airfoil CL/CD/CM interpolation from a supplied polar when available",
             "AUTO motor/prop/battery database selection when enabled",
-            "clean CAD parameter export (geometry/clearance/hardware only)",
+            "clean CAD parameter export (geometry/clearance/hardware/cooling only)",
+            "fuel-cell waste heat, required airflow, duct pressure loss and cooling-airflow margin",
             "horizontal-tail span/area in AUTO mode",
             "vertical-tail height/area in AUTO mode",
             "component masses in LINEAR mode from kg/m x length",

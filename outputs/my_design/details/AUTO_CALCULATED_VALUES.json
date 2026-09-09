@@ -37,12 +37,16 @@
   ],
   "neutral_point_x_m": 0.4253206802603421,
   "static_margin": 0.08564935438852586,
-  "cruise_bus_power_W": 382.3961501653547,
-  "mission_energy_Wh": 791.8123150830836,
-  "h2_used_kg": 0.04637585018925674,
-  "final_battery_soc": 0.9171246624248695,
+  "cruise_bus_power_W": 391.29415016535467,
+  "mission_energy_Wh": 809.2797811497502,
+  "h2_used_kg": 0.04742551975378659,
+  "final_battery_soc": 0.9171197028971599,
   "wing_spar_od_mm": 22.75000000000001,
   "boom_od_mm": 21.250000000000007,
   "front_motor_15kg_N": 55.965209779933346,
-  "rear_motor_15kg_N": 62.79710272006666
+  "rear_motor_15kg_N": 62.79710272006666,
+  "fuel_cell_cooling_required_airflow_cfm": 100.97075994936881,
+  "fuel_cell_cooling_estimated_airflow_cfm": 118.1962687388564,
+  "fuel_cell_cooling_min_fuselage_width_m": 0.1424,
+  "fuel_cell_cooling_openings_CdA_m2": 0.0013347
 }

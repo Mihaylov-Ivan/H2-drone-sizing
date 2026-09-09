@@ -1,11 +1,11 @@
 {
   "model": {
     "name": "H2AIR Integrated Model",
-    "version": "H2AIR-integrated-v4.0",
-    "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export and discrete hardware selection.",
+    "version": "H2AIR-integrated-v4.1",
+    "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export, discrete hardware selection and IE-SOAR cross-fuselage cooling integration.",
     "fidelity": "conceptual / screening; not flight-release evidence"
   },
-  "config_hash": "6d19a4598db10b9c23101d4bd9fce328945f1815cc64a45e0129bff0722d05db",
+  "config_hash": "ad0e0b78b1b0a7cce71d59a40460b7047aaab959750ae3ed4694cd170470fcdf",
   "summary": {
     "design_status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
     "reference_mass_kg": 13.682569859440001,
@@ -14,13 +14,13 @@
     "mass_margin_to_15kg_kg": 0.6922495676737501,
     "current_static_margin": 0.08564935438852586,
     "post_structure_static_margin_if_np_fixed": 0.08564935438852586,
-    "cruise_drag_N": 12.506261405952769,
-    "cruise_bus_power_W": 382.3961501653547,
+    "cruise_drag_N": 12.826589405952769,
+    "cruise_bus_power_W": 391.29415016535467,
     "forward_transition_duration_s": 19.439999999999674,
     "reverse_transition_duration_s": 18.479999999999695,
-    "mission_energy_Wh": 791.8123150830836,
-    "h2_used_kg": 0.04637585018925674,
-    "final_battery_soc": 0.9171246624248695,
+    "mission_energy_Wh": 809.2797811497502,
+    "h2_used_kg": 0.04742551975378659,
+    "final_battery_soc": 0.9171197028971599,
     "wing_spar_od_mm": 22.75000000000001,
     "wing_spar_id_mm": 17.062500000000007,
     "boom_od_mm": 21.250000000000007,
@@ -28,6 +28,11 @@
     "motor_mount_limit_thrust_N": 79.553113864,
     "post_structure_15kg_zero_pitch_front_motor_N": 55.965209779933346,
     "post_structure_15kg_zero_pitch_rear_motor_N": 62.79710272006666,
+    "fuel_cell_cooling_required_airflow_cfm": 100.97075994936881,
+    "fuel_cell_cooling_estimated_airflow_cfm": 118.1962687388564,
+    "fuel_cell_cooling_airflow_margin": 1.1705989813102844,
+    "fuel_cell_cooling_geometry_pass": false,
+    "fuel_cell_cooling_drag_N": 0.3270015,
     "structural_closure_iterations": 2
   },
   "mass_properties": {
@@ -1901,7 +1906,7 @@
             0.0,
             -0.030509307324885472
           ],
-          "mass_end_kg": 0.015524149810743258,
+          "mass_end_kg": 0.014474480246213409,
           "shape": "point",
           "dimensions_m": {},
           "package_zone": null,
@@ -2761,7 +2766,7 @@
       "mass_groups_end_kg": {
         "airframe": 0.467,
         "avionics": 0.6434000000000001,
-        "energy": 5.034524149810744,
+        "energy": 5.0334744802462135,
         "fuselage_structure": 1.0972647320000002,
         "payload": 1.2,
         "propulsion": 1.327,
@@ -2803,33 +2808,33 @@
       },
       "end_of_mission": {
         "scenario": "end",
-        "total_mass_kg": 14.261374582136993,
+        "total_mass_kg": 14.260324912572463,
         "cg_m": [
-          0.4019125830410145,
+          0.4018985175378106,
           0.0,
-          0.04478282450833263
+          0.04478836658817433
         ],
-        "Ixx_kgm2": 4.299560697474413,
-        "Iyy_kgm2": 0.8469210836306443,
-        "Izz_kgm2": 5.021807226544339,
+        "Ixx_kgm2": 4.299554746559248,
+        "Iyy_kgm2": 0.8468768018389266,
+        "Izz_kgm2": 5.021768895667787,
         "Ixy_kgm2": 0.0,
-        "Ixz_kgm2": 0.020803890141886824,
+        "Ixz_kgm2": 0.020818993247348164,
         "Iyz_kgm2": 0.0,
         "inertia_tensor_kgm2": [
           [
-            4.299560697474413,
+            4.299554746559248,
             -0.0,
-            -0.020803890141886824
+            -0.020818993247348164
           ],
           [
             -0.0,
-            0.8469210836306443,
+            0.8468768018389266,
             -0.0
           ],
           [
-            -0.020803890141886824,
+            -0.020818993247348164,
             -0.0,
-            5.021807226544339
+            5.021768895667787
           ]
         ],
         "positive_definite_screen": true
@@ -3179,14 +3184,14 @@
           0.044538779391468
         ],
         "end_cg_m": [
-          0.4019125830410145,
+          0.4018985175378106,
           0.0,
-          0.04478282450833263
+          0.04478836658817433
         ],
         "mission_cg_shift_mm": [
-          -0.619373497172504,
+          -0.6334390003764345,
           0.0,
-          0.24404511686463431
+          0.24958719670633428
         ],
         "mass_margin_to_15kg_kg": 0.6922495676737501,
         "Ixx_kgm2": 4.299822745627537,
@@ -3232,17 +3237,19 @@
       "lift_prop_diameter_in": 22.0,
       "lift_prop_state": "folded",
       "dynamic_pressure_Pa": 240.0,
-      "non_lift_prop_parasite_drag_N": 8.552841855646687,
+      "non_lift_prop_parasite_drag_N": 8.873169855646687,
+      "cooling_drag_N": 0.320328,
       "lift_prop_drag_N": 1.3189754265600002,
       "induced_drag_N": 2.6344441237460825,
-      "total_drag_N": 12.506261405952769,
-      "lift_to_drag": 11.21926819076295,
-      "propulsive_power_W": 250.12522811905538,
-      "cruise_propulsion_electrical_W": 347.3961501653547,
+      "total_drag_N": 12.826589405952769,
+      "lift_to_drag": 10.939081024302094,
+      "propulsive_power_W": 256.53178811905536,
+      "cruise_propulsion_electrical_W": 356.29415016535467,
       "auxiliary_power_W": 35.0,
-      "total_cruise_bus_power_W": 382.3961501653547,
+      "total_cruise_bus_power_W": 391.29415016535467,
       "lift_prop_CdA_total_m2": 0.0054957309440000005,
-      "non_lift_prop_parasite_CdA_m2": 0.035636841065194526,
+      "non_lift_prop_parasite_CdA_m2": 0.03697154106519453,
+      "cooling_openings_CdA_m2": 0.0013347,
       "induced_drag_factor_k": 0.028244120640119105,
       "wing_area_m2": 0.879451488,
       "wing_span_m": 3.3742,
@@ -3370,13 +3377,13 @@
       "Vertical climb": 6.626715026021171,
       "Forward transition": 8.864431210748114,
       "Wing-borne climb": 5.0,
-      "Cruise": 750.6733846973821,
+      "Cruise": 768.1408507640487,
       "Reverse transition": 4.883055192229974,
       "Vertical descent": 5.197693575258147,
       "Landing hover": 4.950184357388712
     },
-    "total_profile_energy_Wh": 791.8123150830836,
-    "cruise_bus_power_W": 382.3961501653547
+    "total_profile_energy_Wh": 809.2797811497502,
+    "cruise_bus_power_W": 391.29415016535467
   },
   "hybrid_power": {
     "feasible": true,
@@ -3386,21 +3393,21 @@
       "model_version": "H2AIR-phase2-hybrid-power-1.0",
       "duration_s": 7200.0,
       "duration_min": 120.0,
-      "bus_energy_demand_Wh": 791.8123150833443,
+      "bus_energy_demand_Wh": 809.2797811498291,
       "peak_bus_power_W": 2385.6174093676213,
       "peak_fc_bus_power_W": 800.0,
       "peak_bus_current_A": 48.725551424906826,
       "peak_battery_power_W": 1652.066368659936,
       "peak_battery_current_A": 33.44490513997194,
-      "minimum_battery_voltage_V": 48.558559137261085,
-      "minimum_battery_soc": 0.9171246624248695,
-      "final_battery_soc": 0.9171246624248695,
+      "minimum_battery_voltage_V": 48.55848380305556,
+      "minimum_battery_soc": 0.9171197028971599,
+      "final_battery_soc": 0.9171197028971599,
       "maximum_fuel_cell_temperature_C": 25.0,
-      "battery_net_energy_out_Wh": 20.13015522942766,
-      "h2_used_kg": 0.04637585018925674,
-      "h2_remaining_physical_kg": 0.015524149810743258,
-      "fc_net_energy_used_Wh": 771.6821598539121,
-      "fc_operational_energy_remaining_Wh": 103.81784014608786,
+      "battery_net_energy_out_Wh": 20.131391062760997,
+      "h2_used_kg": 0.04742551975378659,
+      "h2_remaining_physical_kg": 0.014474480246213409,
+      "fc_net_energy_used_Wh": 789.1483900870627,
+      "fc_operational_energy_remaining_Wh": 86.3516099129373,
       "h2_reference_effective_net_efficiency_LHV": 0.4992421697743281,
       "battery_nominal_voltage_V": 44.400000000000006,
       "battery_nominal_energy_Wh": 244.20000000000005,
@@ -3462,7 +3469,7 @@
       {
         "name": "battery_minimum_loaded_voltage",
         "status": "PASS",
-        "value": 48.558559137261085,
+        "value": 48.55848380305556,
         "limit": 39.599999999999994,
         "units": "V",
         "message": "Uses preliminary OCV/internal-resistance model until pack sag testing is available."
@@ -3470,7 +3477,7 @@
       {
         "name": "landing_soc_reserve",
         "status": "PASS",
-        "value": 0.9171246624248695,
+        "value": 0.9171197028971599,
         "limit": 0.3,
         "units": "fraction",
         "message": "Protected battery reserve for reverse transition / landing / go-around contingency."
@@ -3478,7 +3485,7 @@
       {
         "name": "hydrogen_operational_reserve",
         "status": "PASS",
-        "value": 771.6821598539121,
+        "value": 789.1483900870627,
         "limit": 875.5,
         "units": "Wh",
         "message": "15% application mission-energy reserve is protected from normal mission use."
@@ -6649,6 +6656,103 @@
       "CLmax_source": "polar_file"
     }
   },
+  "fuel_cell_cooling": {
+    "enabled": true,
+    "architecture": "cross_fuselage",
+    "fan_flow_direction": "suction_through_stack_to_fan_side",
+    "fan_side": "right",
+    "inlet_side": "left",
+    "exhaust_side": "right",
+    "fuel_cell_net_power_W": 800.0,
+    "efficiency_screen": 0.5,
+    "waste_heat_nominal_W": 800.0,
+    "waste_heat_design_W": 880.0000000000001,
+    "allowable_air_temperature_rise_C": 15.0,
+    "required_air_mass_flow_kg_s": 0.05837479270315092,
+    "required_air_volume_flow_m3_s": 0.047652892002572174,
+    "required_airflow_cfm": 100.97075994936881,
+    "assumed_module_zero_external_pressure_airflow_cfm": 150.0,
+    "assumed_external_shutoff_pressure_Pa": 90.0,
+    "inlet_free_area_m2": 0.012240000000000001,
+    "exhaust_free_area_m2": 0.01404,
+    "minimum_flow_area_m2": 0.012240000000000001,
+    "recommended_minimum_free_area_m2": 0.009530578400514435,
+    "inlet_velocity_at_required_flow_mps": 3.893210130929099,
+    "exhaust_velocity_at_required_flow_mps": 3.39408062696383,
+    "total_external_loss_coefficient_K": 1.5,
+    "estimated_external_pressure_drop_at_required_flow_Pa": 13.925571957278994,
+    "estimated_operating_airflow_m3_s": 0.055782426834699986,
+    "estimated_operating_airflow_cfm": 118.1962687388564,
+    "airflow_margin_ratio": 1.1705989813102844,
+    "airflow_screen_pass": true,
+    "fuselage_width_m": 0.135,
+    "fuselage_wall_keepout_m": 0.01,
+    "fuel_cell_width_m": 0.1084,
+    "inlet_side_plenum_gap_m": 0.0033000000000000043,
+    "exhaust_side_plenum_gap_m": 0.0033000000000000043,
+    "required_inlet_side_plenum_gap_m": 0.004,
+    "required_exhaust_side_plenum_gap_m": 0.01,
+    "minimum_fuselage_width_for_plenums_m": 0.1424,
+    "plenum_geometry_pass": false,
+    "inlet_panel_fits_fc_face": true,
+    "exhaust_panel_fits_fc_face": true,
+    "side_opening_geometry_pass": true,
+    "overall_geometry_pass": false,
+    "cooling_openings_CdA_m2": 0.0013347,
+    "cooling_drag_at_cruise_N": 0.3270015,
+    "estimated_cruise_ram_pressure_Pa": 245.0,
+    "credited_cruise_ram_pressure_Pa": 0.0,
+    "inlet_geometry": {
+      "slot_count": 12,
+      "slot_length_x_m": 0.17,
+      "slot_width_z_m": 0.006,
+      "slot_gap_z_m": 0.003,
+      "panel_length_x_m": 0.17,
+      "panel_height_z_m": 0.10500000000000001,
+      "gross_area_m2": 0.01785,
+      "free_area_m2": 0.012240000000000001,
+      "open_fraction": 0.6857142857142857,
+      "type": "naca_style_flush_side_inlet",
+      "side": "left",
+      "center_x_m": 0.25525000000000003,
+      "center_z_m": -0.028109307324885473,
+      "recess_depth_y_m": 0.008,
+      "ramp_length_x_m": 0.17,
+      "ramp_angle_deg": 2.6942842898561006,
+      "sidewall_angle_deg": 7.0,
+      "lip_radius_m": 0.002,
+      "cruise_pressure_recovery_fraction_screen": 0.15
+    },
+    "exhaust_geometry": {
+      "slot_count": 12,
+      "slot_length_x_m": 0.18,
+      "slot_width_z_m": 0.0065,
+      "slot_gap_z_m": 0.003,
+      "panel_length_x_m": 0.18,
+      "panel_height_z_m": 0.111,
+      "gross_area_m2": 0.01998,
+      "free_area_m2": 0.01404,
+      "open_fraction": 0.7027027027027026,
+      "type": "flush_fan_exhaust_grille",
+      "side": "right",
+      "center_x_m": 0.25525000000000003,
+      "center_z_m": -0.028109307324885473,
+      "fan_shroud_depth_y_m": 0.01,
+      "louvre_angle_deg": 15.0,
+      "lip_radius_m": 0.002
+    },
+    "fan_geometry": {
+      "count": 2,
+      "diameter_m": 0.08,
+      "center_spacing_m": 0.086,
+      "total_span_x_m": 0.16599999999999998,
+      "assumed_module_airflow_no_external_duct_cfm": 150.0,
+      "assumed_external_shutoff_pressure_Pa": 90.0,
+      "fan_data_status": "engineering_assumption"
+    },
+    "evidence_status": "engineering_assumption",
+    "warning": "Supplier fan airflow/static-pressure data are not available in the supplied IE-SOAR documents; airflow PASS/FAIL therefore uses explicit engineering-assumption fan capacity and must be replaced by supplier or bench data."
+  },
   "gates": [
     {
       "name": "mass_ceiling",
@@ -6659,6 +6763,21 @@
       "name": "packaging",
       "status": "FAIL",
       "note": "1 packaging collision/containment failures remain."
+    },
+    {
+      "name": "fuel_cell_cooling_airflow_screen",
+      "status": "PASS",
+      "note": "Estimated fan/duct operating flow 118.2 CFM vs 101.0 CFM required by the configured thermal screen."
+    },
+    {
+      "name": "fuel_cell_cooling_geometry",
+      "status": "FAIL",
+      "note": "Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps 3.3/3.3 mm vs 4.0/10.0 mm required."
+    },
+    {
+      "name": "fuel_cell_cooling_fan_curve",
+      "status": "NOT_EVALUATED",
+      "note": "IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data."
     },
     {
       "name": "lift_prop_clearance",
@@ -6673,7 +6792,7 @@
     {
       "name": "cruise_power",
       "status": "PASS",
-      "note": "382.4 W vs configured gate."
+      "note": "391.3 W vs configured gate."
     },
     {
       "name": "mission_ems",

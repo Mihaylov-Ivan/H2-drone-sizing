@@ -18,6 +18,7 @@ from .control_gates import evaluate_case as evaluate_control_case
 from .structures import build_structural_result
 from .report import write_markdown_report
 from .cad_export import write_cad_exports
+from .fuel_cell_cooling import analyze_fuel_cell_cooling
 
 G=9.80665
 
@@ -177,6 +178,14 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     comps,mass_final,structure,closure_history=_structural_closure(cfg,base_comps)
     aero_cfg,trans_cfg,six_cfg,struct_cfg=_sync_design(cfg,mass_final)
 
+    # Fuel-cell cooling architecture is evaluated on the resolved package before
+    # aero/mission so its side openings contribute to cruise drag.  Hover/ground
+    # cooling never credits ram air.
+    cooling=analyze_fuel_cell_cooling(cfg,cruise_speed_mps=float(d["cruise_speed_mps"]))
+    aero_cfg["aircraft"]["cooling_openings_CdA_m2"]=cooling.cooling_openings_CdA_m2
+    if isinstance(cfg,dict):
+        cfg.setdefault("_runtime",{})["fuel_cell_cooling"]=cooling.to_dict()
+
     # 2. Aero/propulsion on the structurally closed aircraft.
     D=float(d["lift_propeller_diameter_in"]); state=str(d["cruise_lift_propeller_state"]); V=float(d["cruise_speed_mps"])
     layout=lift_layout(aero_cfg,D); rows_x=[layout.proposed_front_x_m,layout.proposed_rear_x_m]
@@ -220,6 +229,9 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     def gate(name,status,note):gates.append({"name":name,"status":status,"note":note})
     gate("mass_ceiling","PASS" if mass_final.takeoff.total_mass_kg<=float(d["mtow_ceiling_kg"]) else "FAIL",f"Structurally closed mass {mass_final.takeoff.total_mass_kg:.3f} kg vs {float(d['mtow_ceiling_kg']):.1f} kg ceiling.")
     gate("packaging","PASS" if mass_final.summary["packaging_fail_count"]==0 else "FAIL",f"{mass_final.summary['packaging_fail_count']} packaging collision/containment failures remain.")
+    gate("fuel_cell_cooling_airflow_screen","PASS" if cooling.airflow_screen_pass else "FAIL",f"Estimated fan/duct operating flow {cooling.estimated_operating_airflow_cfm:.1f} CFM vs {cooling.required_airflow_cfm:.1f} CFM required by the configured thermal screen.")
+    gate("fuel_cell_cooling_geometry","PASS" if cooling.overall_geometry_pass else "FAIL",f"Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps {1000*cooling.inlet_side_plenum_gap_m:.1f}/{1000*cooling.exhaust_side_plenum_gap_m:.1f} mm vs {1000*cooling.required_inlet_side_plenum_gap_m:.1f}/{1000*cooling.required_exhaust_side_plenum_gap_m:.1f} mm required.")
+    gate("fuel_cell_cooling_fan_curve","NOT_EVALUATED","IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.")
     gate("lift_prop_clearance","PASS" if layout.proposed_layout_pass else "FAIL","Collision-free lift-row geometry screen.")
     gate("15kg_stall_margin","PASS" if float(d["wing_area_m2"])+1e-9>=float(wing_ceiling["minimum_wing_area_m2"]) else "FAIL",f"Wing area {float(d['wing_area_m2']):.3f} m² vs minimum {float(wing_ceiling['minimum_wing_area_m2']):.3f} m² screen.")
     gate("cruise_power","PASS" if drag.total_cruise_bus_power_W<=float(cfg["power_system"]["requirements"]["representative_cruise_power_gate_W"]) else "FAIL",f"{drag.total_cruise_bus_power_W:.1f} W vs configured gate.")
@@ -240,9 +252,9 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("certified_hydrogen_cylinder_mass","PASS" if cylinder_known else "NOT_EVALUATED",
          "Certified cylinder mass is present." if cylinder_known else "Selected certified 3.0 L / 300 bar cylinder mass remains open and is not released.")
     hard=[g for g in gates if g["status"]=="FAIL"]
-    status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","current_longitudinal_stability","15kg_zero_pitch_motor_thrust","15kg_stall_margin"} for g in hard) else "SCREENING_FAIL")
+    status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","fuel_cell_cooling_geometry","current_longitudinal_stability","15kg_zero_pitch_motor_thrust","15kg_stall_margin"} for g in hard) else "SCREENING_FAIL")
 
-    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
+    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
 
     # Top-level: summary + configs. Supporting artifacts live under details/.
     details = out / "details"
@@ -286,10 +298,15 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
             "boom_od_mm": structure["summary"]["recommended_boom_od_mm"],
             "front_motor_15kg_N": front_each,
             "rear_motor_15kg_N": rear_each,
+            "fuel_cell_cooling_required_airflow_cfm": cooling.required_airflow_cfm,
+            "fuel_cell_cooling_estimated_airflow_cfm": cooling.estimated_operating_airflow_cfm,
+            "fuel_cell_cooling_min_fuselage_width_m": cooling.minimum_fuselage_width_for_plenums_m,
+            "fuel_cell_cooling_openings_CdA_m2": cooling.cooling_openings_CdA_m2,
         }
         (details / "AUTO_CALCULATED_VALUES.json").write_text(json.dumps(auto_values, indent=2) + "\n", encoding="utf-8")
     if cfg.get("hardware_selection_result") is not None:
         (details / "HARDWARE_SELECTION.json").write_text(json.dumps(cfg["hardware_selection_result"], indent=2, default=str) + "\n", encoding="utf-8")
+    (details / "FUEL_CELL_COOLING.json").write_text(json.dumps(cooling.to_dict(), indent=2, default=str) + "\n", encoding="utf-8")
     write_cad_exports(details, cfg, structure)
     if write_histories:
         _csv(details / "transition_forward.csv", [x.to_dict() for x in mission["forward_transition"].samples])

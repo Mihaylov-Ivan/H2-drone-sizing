@@ -292,6 +292,21 @@ def write_markdown_report(
         f"- 15 kg zero-pitch motor need: front/rear **{_f(s['post_structure_15kg_zero_pitch_front_motor_N'], 1)} / "
         f"{_f(s['post_structure_15kg_zero_pitch_rear_motor_N'], 1)} N**",
         "",
+        "### Fuel-cell cooling integration",
+        f"- Architecture: **{_get(r, 'fuel_cell_cooling', 'architecture', default='—')}**, "
+        f"fan direction **{_get(r, 'fuel_cell_cooling', 'fan_flow_direction', default='—')}**",
+        f"- Inlet / exhaust sides: **{_get(r, 'fuel_cell_cooling', 'inlet_side', default='—')} / "
+        f"{_get(r, 'fuel_cell_cooling', 'exhaust_side', default='—')}**",
+        f"- Thermal screen: **{_f(_get(r, 'fuel_cell_cooling', 'waste_heat_design_W'), 0)} W** design waste heat, "
+        f"required airflow **{_f(_get(r, 'fuel_cell_cooling', 'required_airflow_cfm'), 1)} CFM**",
+        f"- Fan/duct screening flow: **{_f(_get(r, 'fuel_cell_cooling', 'estimated_operating_airflow_cfm'), 1)} CFM** "
+        f"(margin **{_f(_get(r, 'fuel_cell_cooling', 'airflow_margin_ratio'), 2)}x**) — engineering assumption until fan data are confirmed",
+        f"- Inlet/exhaust free area: **{_f(1e4*float(_get(r, 'fuel_cell_cooling', 'inlet_free_area_m2', default=0) or 0), 1)} / "
+        f"{_f(1e4*float(_get(r, 'fuel_cell_cooling', 'exhaust_free_area_m2', default=0) or 0), 1)} cm²**",
+        f"- Inlet/exhaust inner side gap: **{_f(1000*float(_get(r, 'fuel_cell_cooling', 'inlet_side_plenum_gap_m', default=0) or 0), 1)} / "
+        f"{_f(1000*float(_get(r, 'fuel_cell_cooling', 'exhaust_side_plenum_gap_m', default=0) or 0), 1)} mm**; minimum fuselage width for configured gaps **{_f(1000*float(_get(r, 'fuel_cell_cooling', 'minimum_fuselage_width_for_plenums_m', default=0) or 0), 1)} mm**",
+        f"- Cooling-opening cruise drag allowance: **{_f(_get(r, 'fuel_cell_cooling', 'cooling_drag_at_cruise_N'), 3)} N**",
+        "",
         "## Performance / mission",
         "",
         f"- Cruise drag / bus power: **{_f(s['cruise_drag_N'], 2)} N / {_f(s['cruise_bus_power_W'], 1)} W** "

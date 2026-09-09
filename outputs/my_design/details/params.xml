@@ -1046,6 +1046,328 @@
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
+      <name>fc_cooling_architecture</name>
+      <typeCode>String</typeCode>
+      <value>cross_fuselage</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_flow_direction</name>
+      <typeCode>String</typeCode>
+      <value>suction_through_stack_to_fan_side</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_side</name>
+      <typeCode>String</typeCode>
+      <value>left</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_side</name>
+      <typeCode>String</typeCode>
+      <value>right</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_center_x</name>
+      <typeCode>mm</typeCode>
+      <value>255.250 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_center_y</name>
+      <typeCode>mm</typeCode>
+      <value>-67.500 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_center_z</name>
+      <typeCode>mm</typeCode>
+      <value>-28.109 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_panel_length</name>
+      <typeCode>mm</typeCode>
+      <value>170.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_panel_height</name>
+      <typeCode>mm</typeCode>
+      <value>105.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_slot_count</name>
+      <typeCode>unitless</typeCode>
+      <value>12</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_slot_length</name>
+      <typeCode>mm</typeCode>
+      <value>170.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_slot_width</name>
+      <typeCode>mm</typeCode>
+      <value>6.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_slot_gap</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_recess_depth</name>
+      <typeCode>mm</typeCode>
+      <value>8.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_ramp_length</name>
+      <typeCode>mm</typeCode>
+      <value>170.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_ramp_angle</name>
+      <typeCode>deg</typeCode>
+      <value>2.694 deg</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_sidewall_angle</name>
+      <typeCode>deg</typeCode>
+      <value>7.000 deg</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_lip_radius</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_center_x</name>
+      <typeCode>mm</typeCode>
+      <value>255.250 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_center_y</name>
+      <typeCode>mm</typeCode>
+      <value>67.500 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_center_z</name>
+      <typeCode>mm</typeCode>
+      <value>-28.109 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_panel_length</name>
+      <typeCode>mm</typeCode>
+      <value>180.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_panel_height</name>
+      <typeCode>mm</typeCode>
+      <value>111.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_slot_count</name>
+      <typeCode>unitless</typeCode>
+      <value>12</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_slot_length</name>
+      <typeCode>mm</typeCode>
+      <value>180.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_slot_width</name>
+      <typeCode>mm</typeCode>
+      <value>6.500 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_slot_gap</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_shroud_depth</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_louvre_angle</name>
+      <typeCode>deg</typeCode>
+      <value>15.000 deg</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_lip_radius</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_count</name>
+      <typeCode>unitless</typeCode>
+      <value>2</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_diameter</name>
+      <typeCode>mm</typeCode>
+      <value>80.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_center_spacing</name>
+      <typeCode>mm</typeCode>
+      <value>86.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_1_center_x</name>
+      <typeCode>mm</typeCode>
+      <value>212.250 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_2_center_x</name>
+      <typeCode>mm</typeCode>
+      <value>298.250 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_center_y</name>
+      <typeCode>mm</typeCode>
+      <value>67.500 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_fan_center_z</name>
+      <typeCode>mm</typeCode>
+      <value>-28.109 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_plenum_gap_actual</name>
+      <typeCode>mm</typeCode>
+      <value>3.300 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_plenum_gap_actual</name>
+      <typeCode>mm</typeCode>
+      <value>3.300 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_inlet_plenum_gap_min</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_plenum_gap_min</name>
+      <typeCode>mm</typeCode>
+      <value>10.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_min_fuselage_width</name>
+      <typeCode>mm</typeCode>
+      <value>142.400 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_section_joint_edge_distance</name>
+      <typeCode>mm</typeCode>
+      <value>12.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_grille_corner_radius</name>
+      <typeCode>mm</typeCode>
+      <value>4.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_min_web_between_slots</name>
+      <typeCode>mm</typeCode>
+      <value>3.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>fc_cooling_exhaust_grille_fastener</name>
+      <typeCode>String</typeCode>
+      <value>M3</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
       <name>general_print_tolerance</name>
       <typeCode>mm</typeCode>
       <value>0.300 mm</value>

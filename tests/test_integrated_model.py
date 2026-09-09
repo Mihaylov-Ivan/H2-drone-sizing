@@ -4,7 +4,7 @@ from h2air.pipeline import run_model
 
 def test_config_loads(model_config):
     assert model_config['design']['mtow_ceiling_kg']==15.0
-    assert model_config['model']['version']=='H2AIR-integrated-v4.0'
+    assert model_config['model']['version']=='H2AIR-integrated-v4.1'
     assert model_config['design']['surface_geometry_mode']=='root_taper_span'
 
 def test_v4_default_run_closes(integrated_result):

@@ -1,40 +1,27 @@
-# H2AIR Integrated Model v2.0 — Release Notes
+# H2AIR Integrated Model v4.1 — Release Notes
 
-This release completes the multidisciplinary development through the optimization/uncertainty stage and keeps runtime architecture organized by physics rather than development phase.
+This package is the user's latest H2AIR model with the IE-SOAR cooling integration added without replacing the existing layout, airfoil, CAD, hardware-selection, mission, 6-DOF or structural workflows.
 
-Key release capabilities:
+## v4.1 additions
 
-- one `run_model.py` entry point;
-- controlled baseline, nominal-optimum and robust-screening configs;
-- 3-D component ledger, packaging, CG and inertia;
-- structural fixed-point mass/CG closure;
-- calibrated screening aerodynamics and lift/cruise propulsion models;
-- dynamic H2 / fuel-cell / battery EMS;
-- time-domain forward/reverse transition and mission model;
-- nonlinear rigid-body 6-DOF/control screening;
-- structural load cases, strength/stiffness sizing and feedback;
-- multidisciplinary candidate search;
-- deterministic robust-margin selector;
-- uncertainty propagation, sensitivity and flight-envelope exports;
-- calibration measurement template;
-- source/provenance and model-limit documentation.
+- Dedicated `h2air/fuel_cell_cooling.py` screening model.
+- Assumed IE-SOAR fan direction: built-in fans suck air through the fuel-cell stack and discharge on the fan side.
+- Cross-fuselage architecture: left NACA-style flush inlet, stack, right fan-side exhaust by default.
+- Hover/ground cooling is sized with no ram-air credit.
+- Waste-heat and required-airflow estimate from net FC power, efficiency screen, air properties and allowable air temperature rise.
+- External duct/grille pressure-loss model and fan/system-curve operating-point estimate.
+- Explicit fan-curve provenance: supplier fan data remain `NOT_EVALUATED`; current capacity is an engineering assumption.
+- Inlet/exhaust slot geometry, NACA-style ramp geometry, plenum gaps and fan geometry are user-editable.
+- Cooling-opening drag allowance feeds the cruise/mission model.
+- Cooling airflow and cooling-geometry gates added to the integrated aircraft gate set.
+- 42+ cooling drawing parameters exported to Inventor XML/XLSX/JSON.
+- Viewer can display the cooling inlet and exhaust slot pattern.
+- `details/FUEL_CELL_COOLING.json` written for every user-input run.
 
-Frozen recommended screening case:
+## Current default cooling screen
 
-- MTOW 13.620 kg after structural closure;
-- +8.55% MAC static margin;
-- 362.4 W cruise bus power at 20 m/s;
-- 755.3 Wh 120-minute mission energy;
-- 49.3 g H2 consumption;
-- 89.7% final battery SOC;
-- 62.9 / 55.9 N front/rear 15 kg zero-pitch motor requirement;
-- full integrated status `SCREENING_PASS`.
+The configured 800 W / 50% efficiency / 1.10 heat margin / 15 C air-rise case requires about 101 CFM. The assumed module/external fan curve and current grille areas predict about 118 CFM, so the *assumption-based airflow* screen passes.
 
-Using the same 32-sample uncertainty set (seed 79), the nominal optimum passes 68.75% of screening samples and the robust case passes 93.75%. These are engineering-screen probabilities, not certified reliability probabilities.
+The current 135 mm fuselage width provides only about 3.3 mm inner side gap around the fuel-cell module; the configured 4 mm inlet-side and 10 mm fan-side gaps require about 142.4 mm fuselage width. Therefore the cooling geometry screen correctly fails until the installation width/shroud is revised.
 
-Validation at release freeze:
-
-- pytest: 9/9 PASS
-- integrated self-tests: 9/9 PASS
-
-The package remains pre-design-freeze. Selected battery/cylinder data, exact IE-SOAR interfaces, propeller maps, nonlinear aero/control evidence, detailed composite/mount FEA and test correlation remain required.
+See `docs/FUEL_CELL_COOLING.md`.

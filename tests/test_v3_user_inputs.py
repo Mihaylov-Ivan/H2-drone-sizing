@@ -15,7 +15,7 @@ def _write(tmp_path, obj):
 
 def test_v3_user_file_resolves_auto_geometry():
     c=load_model_config(ROOT/'config'/'user_inputs.json')
-    assert c['model']['version']=='H2AIR-integrated-v4.0'
+    assert c['model']['version']=='H2AIR-integrated-v4.1'
     assert c['design']['surface_geometry_mode']=='root_taper_span'
     assert c['design']['main_wing_naca_code']=='NACA4412'
     assert 3.15 <= c['design']['wing_span_m'] <= 3.60
@@ -58,13 +58,18 @@ def test_hardcoded_primary_spar_mass_survives_structural_closure(tmp_path):
 
 
 def test_fixed_fuselage_does_not_autogrow_to_fit(tmp_path):
+    import pytest
     u=json.loads((ROOT/'config'/'user_inputs.json').read_text())
+    # Explicitly exercise HARD-CODED fuselage mode.  When the requested body
+    # is physically too small, resolution must fail rather than silently grow
+    # the fuselage.
+    u['fuselage']['diameter_mode']='hardcoded'
+    u['fuselage']['midbody_length_mode']='hardcoded'
     for sec in u['fuselage']['sections']:
         sec['diameter_m']=0.12
-    c=load_model_config(_write(tmp_path,u))
-    m=_mass_result(c,_components_with_power(c))
-    assert m.summary['packaging_fail_count'] > 0
-    assert abs(c['design']['fuselage_max_diameter_m']-0.12)<1e-12
+    with pytest.raises(ValueError, match='Packaging layout'):
+        load_model_config(_write(tmp_path,u))
+    assert all(abs(sec['diameter_m']-0.12)<1e-12 for sec in u['fuselage']['sections'])
 
 
 def test_user_inputs_from_design_values_locks_spans(tmp_path):

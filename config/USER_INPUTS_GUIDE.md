@@ -48,3 +48,19 @@ The complete resolved/internal configuration is written after each run as `resol
 ## Airfoil note
 
 The NACA code is now a controlled user input. For the main wing, `CLmax_override` takes precedence when supplied. If it is `null`, the model uses the screening value in `airfoil_database.json`. Those database values are conceptual assumptions and should ultimately be replaced by XFOIL/CFD/wind-tunnel/flight-test polars at the actual Reynolds number.
+
+## Fuel-cell cooling inputs (v4.1)
+
+Edit `fuel_cell_cooling` to control the IE-SOAR cooling installation.
+
+The default architecture assumes the fuel-cell fans suck air through the stack, with a left-side NACA-style inlet and right-side fan exhaust. The most useful user-editable drawing parameters are:
+
+- `inlet.slot_count`, `slot_length_x_m`, `slot_width_z_m`, `slot_gap_z_m`;
+- `inlet.recess_depth_y_m`, `ramp_length_x_m`, `sidewall_angle_deg`, `lip_radius_m`;
+- corresponding exhaust slot geometry;
+- `exhaust.fan_shroud_depth_y_m` and `louvre_angle_deg`;
+- fan diameter / spacing;
+- minimum inlet-side and exhaust-side plenum gaps;
+- CAD edge distance, grille corner radius and minimum web between slots.
+
+The fan-flow and external pressure values are **screening assumptions** until supplier or bench data are available. Do not treat the airflow PASS as supplier validation.

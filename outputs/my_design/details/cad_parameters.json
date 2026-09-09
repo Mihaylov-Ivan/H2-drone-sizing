@@ -1,6 +1,6 @@
 {
   "schema": "H2AIR-CAD-parameters-v1",
-  "model_version": "H2AIR-integrated-v4.0",
+  "model_version": "H2AIR-integrated-v4.1",
   "parameters": [
     {
       "name": "fuselage_nose_length",
@@ -882,6 +882,282 @@
       "name": "pdb2_height",
       "value": 23.5,
       "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_architecture",
+      "value": "cross_fuselage",
+      "unit": "String",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_flow_direction",
+      "value": "suction_through_stack_to_fan_side",
+      "unit": "String",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_side",
+      "value": "left",
+      "unit": "String",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_side",
+      "value": "right",
+      "unit": "String",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_center_x",
+      "value": 255.25000000000003,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_center_y",
+      "value": -67.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_center_z",
+      "value": -28.109307324885474,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_panel_length",
+      "value": 170.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_panel_height",
+      "value": 105.00000000000001,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_slot_count",
+      "value": 12,
+      "unit": "unitless",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_slot_length",
+      "value": 170.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_slot_width",
+      "value": 6.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_slot_gap",
+      "value": 3.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_recess_depth",
+      "value": 8.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_ramp_length",
+      "value": 170.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_ramp_angle",
+      "value": 2.6942842898561006,
+      "unit": "deg",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_sidewall_angle",
+      "value": 7.0,
+      "unit": "deg",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_lip_radius",
+      "value": 2.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_center_x",
+      "value": 255.25000000000003,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_center_y",
+      "value": 67.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_center_z",
+      "value": -28.109307324885474,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_panel_length",
+      "value": 180.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_panel_height",
+      "value": 111.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_slot_count",
+      "value": 12,
+      "unit": "unitless",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_slot_length",
+      "value": 180.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_slot_width",
+      "value": 6.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_slot_gap",
+      "value": 3.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_shroud_depth",
+      "value": 10.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_louvre_angle",
+      "value": 15.0,
+      "unit": "deg",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_lip_radius",
+      "value": 2.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_count",
+      "value": 2,
+      "unit": "unitless",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_diameter",
+      "value": 80.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_center_spacing",
+      "value": 86.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_1_center_x",
+      "value": 212.25000000000006,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_2_center_x",
+      "value": 298.25,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_center_y",
+      "value": 67.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_fan_center_z",
+      "value": -28.109307324885474,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_plenum_gap_actual",
+      "value": 3.3000000000000043,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_plenum_gap_actual",
+      "value": 3.3000000000000043,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_inlet_plenum_gap_min",
+      "value": 4.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_plenum_gap_min",
+      "value": 10.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_min_fuselage_width",
+      "value": 142.4,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_section_joint_edge_distance",
+      "value": 12.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_grille_corner_radius",
+      "value": 4.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_min_web_between_slots",
+      "value": 3.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fc_cooling_exhaust_grille_fastener",
+      "value": "M3",
+      "unit": "String",
       "comment": "H2AIR CAD export"
     },
     {

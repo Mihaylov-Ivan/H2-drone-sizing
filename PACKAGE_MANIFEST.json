@@ -1,228 +1,240 @@
 {
-  "package": "H2AIR Integrated Model v4.0",
-  "release_date": "2026-09-04",
+  "package": "H2AIR Integrated Model v4.1",
+  "release_date": "2026-09-09",
   "fidelity": "conceptual / multidisciplinary screening",
-  "file_count": 137,
+  "file_count": 306,
   "files": {
+    "C:\\Users\\User\\OneDrive\\Work\\Hydrogenera\\R&D\\H2 Drone\\CAD Model/params.xlsx": {
+      "size_bytes": 10602,
+      "sha256": "9e7ba485e2200961403c943d8cf5daf4ae0b7b427b29bda1ef219113b4d116f6"
+    },
+    "C:\\Users\\User\\OneDrive\\Work\\Hydrogenera\\R&D\\H2 Drone\\CAD Model/params.xml": {
+      "size_bytes": 46067,
+      "sha256": "dc1edb0d1889733223066fdd42c5114819962f0732722fa31febb56453295d64"
+    },
     "README.md": {
-      "size_bytes": 4142,
-      "sha256": "77b8b6eb080281cc83b4f9dc93d6299ea1ca0fe09528b940c5f33350fe90b063"
+      "size_bytes": 2417,
+      "sha256": "cccdb8e8f16583c9cb694ed8d348c1f138154acc39faf23a7a61e32ab9ed5549"
     },
     "RELEASE_NOTES.md": {
-      "size_bytes": 2636,
-      "sha256": "c343b794890fd082c29c3a72b43efa2b66bfe74d3647b6dfeee065a208495e64"
+      "size_bytes": 2016,
+      "sha256": "ede8edf1b98ed41a4ecda42eb25355f38af8a915e0d4ffee963490c91c23eae0"
     },
     "VERSION.txt": {
-      "size_bytes": 113,
-      "sha256": "498c7c58cd6b204f8063a73e62739a61ff855ee2688d8f747292d536f318ef83"
+      "size_bytes": 86,
+      "sha256": "8ab5b90c926d02409e4008a9da3ead4a39fe595ab50c8b2271075a186014b535"
     },
     "config/USER_INPUTS_GUIDE.md": {
-      "size_bytes": 2177,
-      "sha256": "1bb7aa0997e652b0db732c34701bdcd68eb72519361d35204d99d176828c5c23"
+      "size_bytes": 6276,
+      "sha256": "a4837d16c5ad7ede292c7348c5f80171d419b7afb58376c2755095c9a6dd6140"
     },
     "config/airfoil_database.json": {
-      "size_bytes": 968,
-      "sha256": "aa434f8b477f70a9f44426c719fb9ce4c42c11e46fd1f9a4c86890a5e5cb219f"
+      "size_bytes": 993,
+      "sha256": "204fc04b84317964c211c1d1fc16ed2d4c219529c41c9108482bf77855704761"
     },
     "config/baseline.json": {
-      "size_bytes": 46828,
-      "sha256": "2dc1b0dd7976e1769d9f95f223743958f331d86674175238a3fe13c3ce132573"
+      "size_bytes": 48449,
+      "sha256": "34c22b505bda9f588af62c0012c31b172d876ad69f6aa26ffd08418c09b11cce"
     },
     "config/calibration_measurements_template.csv": {
       "size_bytes": 79,
       "sha256": "fa18e51fdb3559aa20c1680993d65941eb34a157711a32799af0268347fc87cc"
     },
     "config/design_space.json": {
-      "size_bytes": 527,
-      "sha256": "03a527024393654a2790696195311a950d26bbb5f0d3bdbac15c6f58257d17fb"
+      "size_bytes": 573,
+      "sha256": "13cfebadde90a296b1dcf753054691951483ccdb8a68cac5dcacf0de98035b66"
     },
     "config/internal_template.json": {
-      "size_bytes": 48615,
-      "sha256": "cb3bc2ef83b767331f1a22ad4c74d0bf06de7aa97143c61a5b6dc650f5d6a18d"
+      "size_bytes": 50252,
+      "sha256": "0175329c52072a1981cafd6d2828cd1882099a23e0bb19751b08b11e8a5a4ace"
     },
     "config/optimized_screening_case.json": {
-      "size_bytes": 48774,
-      "sha256": "8795da83add9eac56fd3488e4024ea2cca5637fa0560f5921e9aee605475ed1e"
+      "size_bytes": 50363,
+      "sha256": "7d1d2314453051f738eb4331788cc04815b45eaa913af7583a7533ed3053d4e8"
     },
     "config/optimized_screening_case_v3_internal.json": {
-      "size_bytes": 66569,
-      "sha256": "ed79c463c587f4e530dcca34e5a1e3db507a0bfcb9ced477adb51170a4ed775c"
+      "size_bytes": 68701,
+      "sha256": "35d7ffcbe3d5a6be3c6ed1abd865de17b6d86e94f6d1a0a4b358700a8aa08d9d"
     },
     "config/provenance.json": {
-      "size_bytes": 3167,
-      "sha256": "f417a71335708f8d48b251d000e81471b16ef01e19b3678ac251199e7201fa18"
+      "size_bytes": 3189,
+      "sha256": "b5678f6388ba3ea110b518cf579b9b34f7eccd881e9a56afe2cd6c0d97b19bfd"
     },
     "config/robust_screening_case.json": {
-      "size_bytes": 48615,
-      "sha256": "cb3bc2ef83b767331f1a22ad4c74d0bf06de7aa97143c61a5b6dc650f5d6a18d"
+      "size_bytes": 50204,
+      "sha256": "3a59581f73d87eba0fd051ae29bafbb18b7c895159c61beb1c5de3a5e5ee3fc4"
     },
     "config/robust_screening_case_v3_internal.json": {
-      "size_bytes": 66242,
-      "sha256": "3272a21455ac4eb4162cdafe80c38b4d4583795641ba55c23f61840d8443fa47"
+      "size_bytes": 68374,
+      "sha256": "1a4669e9fea4dab687902f23902825821d2c1a2a586c3b471d9d373e446f6d5d"
     },
     "config/uncertainty_register.json": {
-      "size_bytes": 1078,
-      "sha256": "0f9a3ffa9085c7ac5ff139a478104562865a359ca443b4e12f78849586ed3b97"
+      "size_bytes": 1129,
+      "sha256": "1363bdd718d7c67a8e11d11d51be44ee77981285e2a4dd0e50b9ad5d8c3f31e2"
     },
     "config/user_inputs.json": {
-      "size_bytes": 10391,
-      "sha256": "8334692f55908245a4cc306f8e3bc41a1614568de23d59b80cd0eacfb415a952"
+      "size_bytes": 17683,
+      "sha256": "db915481be5a4494c09bb1047abd7f7e3594018c55fb0e333f1eb27cead7d4ec"
     },
     "data/airfoils/NACA0012_Re200000_XFOIL.csv": {
       "size_bytes": 5436,
       "sha256": "9c76c2a3e2c48cc3132a370bbd09e56ae810ad5f10c8bdaf1d95fe4296bc63da"
     },
     "data/airfoils/NACA0012_Re200000_XFOIL.meta.json": {
-      "size_bytes": 309,
-      "sha256": "fb00d2e28b03e1fc1b93917b0d0fa8ac07c52a1d5f11971010c4bcb30f545cac"
+      "size_bytes": 321,
+      "sha256": "d3c047e2c63761e750f06226683b9d2d9a98a19e44bf7595597a8a399caf5793"
     },
     "data/hardware/hardware_database.json": {
-      "size_bytes": 27817,
-      "sha256": "f2b52978d8b737789222811cefa824ff0c87128415e2fd110c6aab317e53d385"
+      "size_bytes": 28734,
+      "sha256": "04b2e6b6faae8c8dc90cfa06d61591fde2e0291d95b0f21122926ef0f0ce06aa"
     },
     "docs/DESIGN_STUDY.md": {
-      "size_bytes": 3204,
-      "sha256": "43dfcb119b424ee001a4a7c161e926a02d8974fcea505a43d83b40bdbfde5dc2"
+      "size_bytes": 3266,
+      "sha256": "9ccae5bbd4c6e79e69f7753ea3468d2f4846a242e5e210ccf1c1a47ce4f48b29"
+    },
+    "docs/FUEL_CELL_COOLING.md": {
+      "size_bytes": 3755,
+      "sha256": "0a0ca379a892dde4a2e5c98487b21580bb83fdac2226fc44dee1c68cbb90cc1d"
     },
     "docs/INTEGRATED_V2_RESULTS.md": {
-      "size_bytes": 2463,
-      "sha256": "90492647f87b6e466e5ba173bd7ccea74fe0c9393d738f79b0b0f2392eaaa1a0"
+      "size_bytes": 2536,
+      "sha256": "2fae8dc213895140f42c54a5e9b095d4eb89f9d847efe71cd602ce81da54062d"
     },
     "docs/INTEGRATION_NOTES.md": {
-      "size_bytes": 663,
-      "sha256": "e3cc5fd289d0beecb85d487f65947766cbb86d6abf91799e2f549e1aa2a5307f"
+      "size_bytes": 670,
+      "sha256": "836d4fae627ee779b28f82ed818b77ca87835c42c9c58d6223cb4537c6204e11"
     },
     "docs/MIGRATION_GUIDE.md": {
-      "size_bytes": 664,
-      "sha256": "525c2d786a80f73f5508397226f7ef7b3ae3a48e6bcca1ae06cf3ddf47653d06"
+      "size_bytes": 681,
+      "sha256": "8593dbfcd2f5e28a57b2b29ba0e2b15cda781a4f0bbd04ae9b869200ada5e141"
     },
     "docs/MODEL_LIMITATIONS.md": {
-      "size_bytes": 1311,
-      "sha256": "6e30742a87016de4ce9a94180412d5bc8a78bef7c5d72f0c89fda26264747694"
+      "size_bytes": 2117,
+      "sha256": "772b3e5806d078a78d29577a8a23bd159b22409053bf2f366c2f576aab4deff8"
     },
     "docs/V4_FRESH_OPTIMIZATION.md": {
-      "size_bytes": 1648,
-      "sha256": "6b92c5d22676fce29495dae8f32c1c69deb49d7a792e5f5598fb0d19d132d42d"
+      "size_bytes": 1695,
+      "sha256": "37b6f8bf7e2164453c57386e37da3b57a1473d2b4cca77cc9f811dabd414e96e"
     },
     "docs/development_history/assumption_registers/development_phase2_assumption_register.json": {
-      "size_bytes": 3216,
-      "sha256": "1c50be490e04aecaac73a037a9568d93c20a13552b3eeeb23227faca7bd596b7"
+      "size_bytes": 3303,
+      "sha256": "7a1f040daceafafa62ca102ee9d233a97a3ab0bd1dbee497d759c740fe2a097f"
     },
     "docs/development_history/assumption_registers/development_phase4_assumption_register.json": {
-      "size_bytes": 1726,
-      "sha256": "c173128ad03661d4b2f95ff548360c0a7355a802b29291e1bcbffb397ec01c24"
+      "size_bytes": 1757,
+      "sha256": "5c4c548996ed9d997755250d1e6ed11be7aa979bb9c54d8746db0ad99a1cfd9f"
     },
     "docs/development_history/assumption_registers/development_phase5_assumption_register.json": {
-      "size_bytes": 1393,
-      "sha256": "c0f37543230ea1a101da56653fcaefcc092fafdb612b3a68228f23e96e0dd433"
+      "size_bytes": 1406,
+      "sha256": "5322bd4134de1b3dbb47032262a8f156164c8a5b5ea833fae0ff96b226d070a1"
     },
     "docs/development_history/assumption_registers/development_phase6_assumption_register.json": {
-      "size_bytes": 2058,
-      "sha256": "315f637185a88a6dc9862aaa400eaf8debec2b6d81cb146bdd3cae4b258dce22"
+      "size_bytes": 2074,
+      "sha256": "5ea16742e1e769fa529b7daa48bed9d56d70614bb63358fae3d6e9efa28bbb6d"
     },
     "docs/development_history/assumption_registers/development_phase7_assumption_register.json": {
-      "size_bytes": 1661,
-      "sha256": "85c3688d3fb5a8b26b58cf952d58e04183a3fb38591997e2b2983f79d44c7dc6"
+      "size_bytes": 1675,
+      "sha256": "cbae1e0deacdcbb438080697625841ff3c41be968c9e17d2faa6ba148eb83273"
     },
     "docs/development_history/changelog_phase1.md": {
-      "size_bytes": 1374,
-      "sha256": "a37e7952bb6d683664579706f7264142295e63cebce9a242b8f04250f1c249e4"
+      "size_bytes": 1405,
+      "sha256": "ccb616d33d8ee08a04af2136918b4f30d4cc3ee72c49d4dd6db0b923e1219dce"
     },
     "docs/development_history/changelog_phase2.md": {
-      "size_bytes": 887,
-      "sha256": "ee7e6f784985d85585317a70ad97f28ce70cd2732763d777c4bc01fea5dec72c"
+      "size_bytes": 915,
+      "sha256": "a72d8b7d73a300d49975d69f2c1c36067a3670439cf51da93332e05c1e549b73"
     },
     "docs/development_history/changelog_phase3.md": {
-      "size_bytes": 1057,
-      "sha256": "056f38a689673432ab5fc9817056997530e2f34d187fbb319eed4c95c6d1dc05"
+      "size_bytes": 1085,
+      "sha256": "99a0e09a1decbf085db621d0554382e5d506fcda9c29fb736adbeeeb6d1247c8"
     },
     "docs/development_history/changelog_phase4.md": {
-      "size_bytes": 714,
-      "sha256": "d0a53a53d9e43860bb6f8cef2d990ebb01c70226b56fe4245b6cb9bb7256d4f7"
+      "size_bytes": 731,
+      "sha256": "6053596175dcfa53c7f0ee7e8c7bfd52b02d5fe0507b4610d1ae75b76c455fe2"
     },
     "docs/development_history/changelog_phase5.md": {
-      "size_bytes": 941,
-      "sha256": "d8910678f61d35269b617b555b3cd58ffbe7c00792d07869fa37e70598e90738"
+      "size_bytes": 964,
+      "sha256": "118559894fb104ae98444e5ca7d97cf3b257e5f29c4da20ccfdb8c7a48d1ffa0"
     },
     "docs/development_history/changelog_phase6.md": {
-      "size_bytes": 706,
-      "sha256": "6866081b6b68fb9a95663ffd9bad0e11182d89897ba4f73ea40e6f264af7b938"
+      "size_bytes": 711,
+      "sha256": "f187601618d4356e622305469cd96e48e85fa5a7339db9092a76bb5291712b8e"
     },
     "docs/development_history/changelog_phase7.md": {
-      "size_bytes": 875,
-      "sha256": "2ed3603a0c9363cb80bd4c52076aabbbc43650e8ac0d3bfae21bd1cbe50f108c"
+      "size_bytes": 890,
+      "sha256": "7599b5202209432e2e7021eda566c8940898778cd0aa5e064b138208b23409d1"
     },
     "docs/development_history/changelog_phase8.md": {
-      "size_bytes": 819,
-      "sha256": "a304ad661c0f134b2f4479fdcfa7f4c52abacd8fdf38a31330cdfed2a48e6437"
+      "size_bytes": 830,
+      "sha256": "77a69b0718ad0c69bce901abc9ee69cb2025bac16d3d506836f66e056b484018"
     },
     "docs/development_history/code_archive/aero_optimizer_legacy.py.txt": {
-      "size_bytes": 9290,
-      "sha256": "e0480797c6bd50d9bcd0eb1f5c03bc6999e4508a028cceaee5f340ddf8fd3cea"
+      "size_bytes": 9456,
+      "sha256": "e3f9df3a6e8276d1a01458bd7bd319c07fb72aea297dd19864767d157392966e"
     },
     "docs/development_history/code_archive/closure_legacy.py.txt": {
-      "size_bytes": 3397,
-      "sha256": "a7be7d1ce215cf5289d31f60443efa93ee226f0086bff0b96e997a17916ae86a"
+      "size_bytes": 3485,
+      "sha256": "1a92fc4af082f7a0b3e0682601fe886eaf78c317c7dfa55fe426a3e6a048afa2"
     },
     "docs/development_history/code_archive/governance_legacy.py.txt": {
-      "size_bytes": 24661,
-      "sha256": "b7b43328e86b1b602e71cefc5d815ea1194510897b5e2d6ed7a37ed851cc2ba2"
+      "size_bytes": 25224,
+      "sha256": "b25f647f6d7a7dd745615f621e1c8e36d08c895d9b430dd9c85e85642a8fa299"
     },
     "docs/development_history/phase1_audit.md": {
-      "size_bytes": 6412,
-      "sha256": "40bd0c5d020bb1bbd20ae7301af4c95e39e2bf7b12d1f06212d9638b84280030"
+      "size_bytes": 6499,
+      "sha256": "d793e3fedeb158fcc3985a55be13160850bb2b45535c35b1c8211962fc55c688"
     },
     "docs/development_history/phase2_audit.md": {
-      "size_bytes": 2913,
-      "sha256": "e3b3a59e49f055d83bfacb08bdde6624bbd9b333e93be54099cfc171a3432307"
+      "size_bytes": 2955,
+      "sha256": "4905f8612aa45e4be75f784ea0870f9de5e874910723779c93f5a2f957ef926c"
     },
     "docs/development_history/phase2_results.md": {
-      "size_bytes": 3281,
-      "sha256": "a71a90320409d07e4a45c727be95440907cdb2d556ce0b8a45270662eee515b2"
+      "size_bytes": 3336,
+      "sha256": "0deeefd6062c164558651fd374101d29e9b33a409d3f4e7d942d85c5bd355b5b"
     },
     "docs/development_history/phase3_audit.md": {
-      "size_bytes": 2956,
-      "sha256": "c573aa0f1fa07c25f11f6aa533ceb81af44c0ed2cf8d3afbdce9ce5e9521f7bc"
+      "size_bytes": 3003,
+      "sha256": "97171e33ffe2aa829707ed113ecefea7d4a1581b6b2035d89a099f6596ecb7c2"
     },
     "docs/development_history/phase3_results.md": {
-      "size_bytes": 4129,
-      "sha256": "ebac862446746f1f118c58dc5780403f761341de7521c42fab31a4f53f88c1b6"
+      "size_bytes": 4218,
+      "sha256": "eb0cb320185b970dc55df2f1ac4db75d4f2b15f581aa60656d54f45159016736"
     },
     "docs/development_history/phase4_audit.md": {
-      "size_bytes": 2276,
-      "sha256": "360c40afb88c2fca4ca6948c148dc4d9be13718c36c14f9841d6075a8c0b0aa8"
+      "size_bytes": 2303,
+      "sha256": "289bdd679a81ff71fda7ef39965d5c4f845ac83cf63625ee6958d7299aa4ceae"
     },
     "docs/development_history/phase4_results.md": {
-      "size_bytes": 6647,
-      "sha256": "493e94c76a1edc1ca46a2e9504c45b1293efbde20ec04ef0a4ca6bc905f00e3e"
+      "size_bytes": 6758,
+      "sha256": "1589bfd8ed0cddbd48e2b03d337cd3e8823ad8fb199a997561645b15dc32919f"
     },
     "docs/development_history/phase5_audit.md": {
-      "size_bytes": 2091,
-      "sha256": "7e7f01fc566171ba68bb86efe70c3e004edc621fe6f01e89abb431477916b48a"
+      "size_bytes": 2137,
+      "sha256": "f0dad93611bc70a046e6e877ad5730d7483fb73e34296cf9bc27c54acb5ce551"
     },
     "docs/development_history/phase5_results.md": {
-      "size_bytes": 6887,
-      "sha256": "96c2799af6136e1d42a71f5e3d4d4ded682348d65fbf08393bb663533894828f"
+      "size_bytes": 7026,
+      "sha256": "cc4c08c7dd597eca89973c84f6ee38e6524c9d26e5b2321749f11b1254975bce"
     },
     "docs/development_history/phase6_audit.md": {
-      "size_bytes": 4001,
-      "sha256": "9e75b49053c273f55bc912efd4853f83a33c8d279a6cbfd3d62d54e4c76fb797"
+      "size_bytes": 4038,
+      "sha256": "b649357dfce0bffa5c2b4bc59307284e0b26d32ad1e95085c0f82dfdd2258142"
     },
     "docs/development_history/phase6_results.md": {
-      "size_bytes": 2820,
-      "sha256": "9c93826c0ab2c7ae4c96485c2f0d9e9dc77ccaaf2cac2fa619c0627f95e7ca82"
+      "size_bytes": 2859,
+      "sha256": "3c5457ac64bffaddb5169477cdb6b46f78505b2247be2ed362e4a5f8741e6899"
     },
     "docs/development_history/phase7_audit.md": {
-      "size_bytes": 3090,
-      "sha256": "006b81b52f931d031b58eab8494f525e9c701d307a7a50d9dd7df25c669b4e03"
+      "size_bytes": 3127,
+      "sha256": "39637aae422a5f610b3e989e855932fd4f57637b01f2d9cd2d8acf5b86667902"
     },
     "docs/development_history/phase7_results.md": {
-      "size_bytes": 5116,
-      "sha256": "3f602a3043b0b11122972db4220e2b73d3622c420374d92d82ff8cb94d46829b"
+      "size_bytes": 5216,
+      "sha256": "56a0abff5fd1a4980f4708a96b06e22eff4a18da391c3472bd15dab00a40a682"
     },
     "docs/development_history/phase8_results.md": {
-      "size_bytes": 953,
-      "sha256": "5d20980fe6069389d2c0765b7f58e9b7b96dd57fdd28548567898d8c9c37c6a2"
+      "size_bytes": 971,
+      "sha256": "bab06e04452961822e7852ae7b62fb7ce73e6d2608c7528821add708c144ffdd"
     },
     "docs/development_history/user_airfoil_naca0012_Re200000.py": {
       "size_bytes": 16528,
@@ -241,316 +253,980 @@
       "sha256": "75fda728461e91e7be42d455324ae7ab907a2b0f0096625da586a95347456f05"
     },
     "h2air/__init__.py": {
-      "size_bytes": 86,
-      "sha256": "b4575b3d2586dcd3ee143cdbe1a2d03efdde15ef54ff9799e495e2ddca3c9c51"
+      "size_bytes": 88,
+      "sha256": "87cd3a1b058d6c31ae2dff810bff4e42c070124bb7d6198babaa9fd127d93a1b"
     },
     "h2air/aero_propulsion.py": {
-      "size_bytes": 22334,
-      "sha256": "23ba34a278b7922d0903c67529f505867b604b03732fd8f22d809996596d53b1"
+      "size_bytes": 22839,
+      "sha256": "721256fe776f80b37698fa3b090f6f469194a9c0d53cf62c75795368a6532ecd"
     },
     "h2air/airfoils.py": {
-      "size_bytes": 4905,
-      "sha256": "5147813d92e355456c625aa31945d2b3473ad6206b6fd76ba17c9303f30d1777"
+      "size_bytes": 5027,
+      "sha256": "bc755db97b9caafe167317e35be4b577b6ee2b2174acd47376c6d912adcbd240"
     },
     "h2air/cad_export.py": {
-      "size_bytes": 10968,
-      "sha256": "d1d602ce32aaf5e192867e8dc051e694990b194d4bd1a9dd48ae903e964563fc"
+      "size_bytes": 20853,
+      "sha256": "9dffd21b6fccddad398ab2714d85170d9aad3f84d2f4e1f949b6e204e6060e01"
     },
     "h2air/calibration.py": {
-      "size_bytes": 1952,
-      "sha256": "bce825ecc44a32d5fbdee9092c817e87165109a52c10cf4371c15f01f4a4300c"
+      "size_bytes": 1988,
+      "sha256": "11232da37b3459721f59df73155291908229ad52f518f88bae26254028c1e5ec"
     },
     "h2air/config.py": {
-      "size_bytes": 2547,
-      "sha256": "b54c82e3d0d92e4ff3f05cedc9e191941e2e7c43f9134cefd717e9ad1a6bd13a"
+      "size_bytes": 2849,
+      "sha256": "09c97547323625af8d7bf739ab7a581070e62ee5d44b976ed852b1cf338565ac"
     },
     "h2air/control_gates.py": {
-      "size_bytes": 3279,
-      "sha256": "1d89c0eaf05cb763316692facf08157cbe367bce045856ac7deb44c1d63befa1"
+      "size_bytes": 3306,
+      "sha256": "bddcfd5c7eae52c9d089072ddaba68f2d27a4f638039aa3671ae83e45c5fbdd3"
     },
     "h2air/design_coupling.py": {
-      "size_bytes": 13400,
-      "sha256": "3301461c461207c5869658c374856a0026c32973617b4906ba22aae9b4c96493"
+      "size_bytes": 24176,
+      "sha256": "a682817090ddaa4b9a8bbe96e036055821e76879a134cc34898fe891a45b04a0"
     },
     "h2air/flight_envelope.py": {
-      "size_bytes": 2082,
-      "sha256": "d69000c006c7dc3c067c5de68989f40b836c47bb2c55f0b22b4e623255b7252c"
+      "size_bytes": 2106,
+      "sha256": "9187dca5f119b1bc308f5daffe23b0133418d76d3036cbedfd4b980c84c2e7e0"
+    },
+    "h2air/fuel_cell_cooling.py": {
+      "size_bytes": 14779,
+      "sha256": "05134125f821bafea69dfe59c6bfb2187f53681d8d282c7a9e8459ec29f83999"
     },
     "h2air/hardware_selection.py": {
-      "size_bytes": 8924,
-      "sha256": "ea0578a4559800acc3b3344a54dfaec7507c930263d65b5bfbdcb0e8ee49d318"
+      "size_bytes": 9071,
+      "sha256": "efdb42250ff73b706ac78053be6ea748fadd6bf64462ef6d00da49bd30124111"
     },
     "h2air/hybrid_power.py": {
-      "size_bytes": 46056,
-      "sha256": "9b5c7d82cfe992818d5d2f751237a0a0672b0526902ed31cd94d3feacc354d3e"
+      "size_bytes": 48445,
+      "sha256": "ac72caf2dc12644c4885122ea027d09168bc094f097fc4ba52b8e843b13343b4"
     },
     "h2air/manufacturing_mass.py": {
-      "size_bytes": 12044,
-      "sha256": "b0742884ad789fe4259fc757fdd3e111b7aeea7ee8aa9d799a803dfe46fa69d1"
+      "size_bytes": 13119,
+      "sha256": "56222a6c8844def3b6ceaa1f90c63a9af7e6342bb0c970c8d943f8a17160823e"
     },
     "h2air/mass_properties.py": {
-      "size_bytes": 31677,
-      "sha256": "c7ecf85bb555ee9ce639338f6ce2019765c7c25bffa212775e144f29319fd26b"
+      "size_bytes": 39691,
+      "sha256": "c6158ebafd94f8da765be7f0e9ae6a6d8e62e57d28bc440896743acd35cdc208"
     },
     "h2air/mission.py": {
-      "size_bytes": 8850,
-      "sha256": "6508036f9431ce01a29c4138482fb220ea434f190fd47224d1464340545fb897"
+      "size_bytes": 9047,
+      "sha256": "37f67b1511b25db26189e627d7f15221fe7f4ed815503ac6811d65914cb08003"
     },
     "h2air/optimization.py": {
-      "size_bytes": 19243,
-      "sha256": "bc16b161d64cc332273f7aed10b1e00b88b71267cba357160ef2aae007c31a70"
+      "size_bytes": 20839,
+      "sha256": "d86e1629fb0287ddd99b7f9d3da05236cdf4ece2fecda9372026124927bbc665"
+    },
+    "h2air/packaging_layout.py": {
+      "size_bytes": 75019,
+      "sha256": "2a0ce721bef7a9d6f62d6ce3366e895c1ca75cd8a5a612dc79cd0eccb6850778"
     },
     "h2air/pipeline.py": {
-      "size_bytes": 26355,
-      "sha256": "7fa05312a56b381391dd3dfbfd0e90e3f8bbaeaedb93c99a65bbe6e4db9fdd67"
+      "size_bytes": 30670,
+      "sha256": "2727eab3ec623974046a10cdb093eaafab89de16f60acdfbab3c342aa7b2a50c"
     },
     "h2air/report.py": {
-      "size_bytes": 1956,
-      "sha256": "b1dae8077f33b2e1ea1be15ed2be43500a7e823d6e2261e2f25a25291e330475"
+      "size_bytes": 18298,
+      "sha256": "8089b06f6b9d4ba0b4da3593f70e08276b8309603e6a3a772aa983cfcd9db1fb"
     },
     "h2air/sensitivity.py": {
-      "size_bytes": 1915,
-      "sha256": "941cfb28216b40352a68a79ce32d7dd5e539efe74f9b6bb042982e0e01c7c094"
+      "size_bytes": 1946,
+      "sha256": "e09cf3e88b45ce2e0c24ec5ed1dc2f112faa28d9fc59e542f8a47bd0eea42aea"
     },
     "h2air/sixdof.py": {
-      "size_bytes": 23363,
-      "sha256": "46fe9826dde4b77803ce036f87c20cdb1fc0e5d69a8c7a721abb1691447efcec"
+      "size_bytes": 23736,
+      "sha256": "5aa0d0316c119329f934e8b5c6a992775be3d639d7a1995362f84bbed6721200"
     },
     "h2air/structures.py": {
-      "size_bytes": 30199,
-      "sha256": "7990f7b208d6c3dd860288a4729976601960d4176723e0a638d8ddeea6f996df"
+      "size_bytes": 30664,
+      "sha256": "30e232a19e6598cff224e55385e14acec625dad48c5027367c122c6be8c5f3c4"
     },
     "h2air/transition.py": {
-      "size_bytes": 28823,
-      "sha256": "1396b8dfa9169779949bb55ebf1dfe43aee8ae4d58c048357ae5fd3410797e7e"
+      "size_bytes": 29516,
+      "sha256": "e315a40d10d4966c68567d7f1e3ee1920345a4cd31a4aa80bab0834baeb6c662"
     },
     "h2air/uncertainty.py": {
-      "size_bytes": 5785,
-      "sha256": "c09d8f3b2868e8e1d1c3ad2f2868b9894c858997dc4a568a449ee5c1fbc4a73a"
+      "size_bytes": 6661,
+      "sha256": "44ccc4208d07af232f8036158876adf3c517aa33718c9a160aeff18da9f35105"
     },
     "h2air/user_inputs.py": {
-      "size_bytes": 16342,
-      "sha256": "4fc5c495fe91cb070ecbabd06c8be75881029ae6d280316df9cb80f16bdcb4d3"
+      "size_bytes": 27829,
+      "sha256": "e4144b21ed1e43b329d93adc9f2514bc882523d2375dd5fa6a5aa30f5af80049"
     },
-    "outputs/fresh_screening_verification/rank1/AUTO_CALCULATED_VALUES.json": {
-      "size_bytes": 1377,
-      "sha256": "77642fdc662da6daf36e52bc4e4a2f3625d0bfa642589269ef52609289eb086d"
+    "outputs/README.md": {
+      "size_bytes": 1101,
+      "sha256": "146fd8920b13b1719d6af36f799edf63c9b44887609f2ca087441acb37adb8d1"
     },
-    "outputs/fresh_screening_verification/rank1/HARDWARE_SELECTION.json": {
-      "size_bytes": 2606,
-      "sha256": "fa1e958593be8507d7587bee69572b489c3fe887730457927bcc30262268285e"
+    "outputs/design_sweep/DESIGN_STUDY_SUMMARY.json": {
+      "size_bytes": 9677,
+      "sha256": "44fad68f947aebb3e9b43eae958d9f10c82a10ded5982555e2c5a97dca9df176"
     },
-    "outputs/fresh_screening_verification/rank1/INPUT_CLASSIFICATION.json": {
-      "size_bytes": 1181,
-      "sha256": "55b0c30b1ba82462c006fc23b5432cef9ad32439f45b57fba8458aa17a9818e6"
+    "outputs/design_sweep/details/SELECTED_CONFIG.json": {
+      "size_bytes": 150976,
+      "sha256": "fca9134c16f6c017a6ffa0bee1a53d8a1283b5badd2cb2cff0a2e2e2658fbdb4"
     },
-    "outputs/fresh_screening_verification/rank1/SUMMARY.md": {
-      "size_bytes": 2872,
-      "sha256": "469bf835fc7b8cd4c24aed5826a2ef460c1cf1beaed483acae1402528f15589b"
+    "outputs/design_sweep/details/calibration_measurements_template.csv": {
+      "size_bytes": 79,
+      "sha256": "fa18e51fdb3559aa20c1680993d65941eb34a157711a32799af0268347fc87cc"
     },
-    "outputs/fresh_screening_verification/rank1/cad_parameters.json": {
-      "size_bytes": 16192,
-      "sha256": "e520e2c7765a70d88c661dfab1f4fc50f52d332bcea603fd5124b8e650ada570"
+    "outputs/design_sweep/details/flight_envelope/flight_envelope.csv": {
+      "size_bytes": 2574,
+      "sha256": "6dd4513516a316110054af6d5a1df451c669cdd06fb31493bf39d23b868a55db"
     },
-    "outputs/fresh_screening_verification/rank1/cad_parameters.xml": {
-      "size_bytes": 26265,
-      "sha256": "9a1ce41c41f5f23bca3e7cdca85765f5517a6519fd84507aef007e728c9cde8b"
+    "outputs/design_sweep/details/flight_envelope/flight_envelope.json": {
+      "size_bytes": 6740,
+      "sha256": "b6310899ea9f72e7407da5bc5e649642e8425fb69ba72f6c527b1f17406b9e95"
     },
-    "outputs/fresh_screening_verification/rank1/closure_history.csv": {
-      "size_bytes": 308,
-      "sha256": "901f217cc6ed91a63de54180d4130e6924f056b09113db591796c74e2b07b2c7"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/SUMMARY.md": {
+      "size_bytes": 6344,
+      "sha256": "ace5cf6ff9627cd0eb2f39461595f4cb72c4382abe2af877f093451362818f7a"
     },
-    "outputs/fresh_screening_verification/rank1/component_ledger.csv": {
-      "size_bytes": 7785,
-      "sha256": "6fe7a1bef36140489161043f7995e39f4323eae92dc0a097b6980570562fc0e7"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1408,
+      "sha256": "825aaf5abc67dfdf6ffa51ed6a79289494938739bb4abc05ccc824b1d53f0718"
     },
-    "outputs/fresh_screening_verification/rank1/manufacturing_mass_ledger.csv": {
-      "size_bytes": 1268,
-      "sha256": "aaf87d2dd2a0ec89f48daf36be8e49b3cd94bcff348dc5aa3f503c5f0b367104"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
     },
-    "outputs/fresh_screening_verification/rank1/mission_profile.csv": {
-      "size_bytes": 26938,
-      "sha256": "46ff1fee4e631f691611585af172b6a16b4d5440e9c3b46ce09d8a92d18fc58b"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1238,
+      "sha256": "b68989275b51db6a4114542df1606489ec5734c24285802e6899b1d3ce16ba43"
     },
-    "outputs/fresh_screening_verification/rank1/model_results.json": {
-      "size_bytes": 203007,
-      "sha256": "4c85592968374faafe6ad5162b16451d41e2dff63dc755b8f522a2721b3c730f"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/cad_parameters.json": {
+      "size_bytes": 23322,
+      "sha256": "7191f90ce80c2b01391d1494ddc1a89101ed60c7a8ca577e4e5b0f8415475566"
     },
-    "outputs/fresh_screening_verification/rank1/resolved_configuration.json": {
-      "size_bytes": 120289,
-      "sha256": "283dd021369aec132b7c9614077c8c16c09086ae8c56171241c8e1b709bb0741"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/cad_parameters.xml": {
+      "size_bytes": 37040,
+      "sha256": "3771b65adaef5f529bd152ecf5c565edc1a5feb41fc32a0ebb47f1de56d6c184"
     },
-    "outputs/fresh_screening_verification/rank1/run_manifest.json": {
-      "size_bytes": 533,
-      "sha256": "4253a679968a331f85637dd4d053e50fecdab050f5844c173e71f5e33b95d035"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/closure_history.csv": {
+      "size_bytes": 304,
+      "sha256": "fa8c88673e2ae9f3f0e1295ff74685cb4bb5439d3443609eae277b7001cd4498"
     },
-    "outputs/fresh_screening_verification/rank1/structure_load_cases.csv": {
-      "size_bytes": 1885,
-      "sha256": "ce4cfa478e29f4ba76d199a2758149b75a07a8183eb28381dcdeaae2b7d19332"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/component_ledger.csv": {
+      "size_bytes": 8876,
+      "sha256": "87ac19fb4fb90f199d62066c03f3324491106220f5f471ae9c66bf34c6522689"
     },
-    "outputs/fresh_screening_verification/rank2/AUTO_CALCULATED_VALUES.json": {
-      "size_bytes": 1376,
-      "sha256": "ed878a3a869b6078da7da3f51464264de589b0448fdd7b5278b239e5390360a6"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1139,
+      "sha256": "bf1e167cf0ee17f05aa35071ae95dd301fc46d488b432a407441d6860db5fe96"
     },
-    "outputs/fresh_screening_verification/rank2/HARDWARE_SELECTION.json": {
-      "size_bytes": 2606,
-      "sha256": "fa1e958593be8507d7587bee69572b489c3fe887730457927bcc30262268285e"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/mission_profile.csv": {
+      "size_bytes": 26967,
+      "sha256": "4cbfb829dacaf71951f967b63e5df79871dbaec241f4136454137e962d1ec493"
     },
-    "outputs/fresh_screening_verification/rank2/INPUT_CLASSIFICATION.json": {
-      "size_bytes": 1181,
-      "sha256": "55b0c30b1ba82462c006fc23b5432cef9ad32439f45b57fba8458aa17a9818e6"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/model_results.json": {
+      "size_bytes": 216994,
+      "sha256": "82cb69c6ea7305538e9135d1fe425f38e69c0653509c9518f971521a6f344f2c"
     },
-    "outputs/fresh_screening_verification/rank2/SUMMARY.md": {
-      "size_bytes": 2874,
-      "sha256": "80a89517e809346429a036d15fc18d45a6554707c7d858f26efef6c3a1aaa7c7"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/params.xlsx": {
+      "size_bytes": 9285,
+      "sha256": "eb256445d231b0e39a5302d33ce279ee465926920766607ae6786ba8919ce86f"
     },
-    "outputs/fresh_screening_verification/rank2/cad_parameters.json": {
-      "size_bytes": 16061,
-      "sha256": "54e07d22f6206f230e5d4711d73fd949a0f838a8d8c7e54e0a64326a798dc248"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/params.xml": {
+      "size_bytes": 37040,
+      "sha256": "3771b65adaef5f529bd152ecf5c565edc1a5feb41fc32a0ebb47f1de56d6c184"
     },
-    "outputs/fresh_screening_verification/rank2/cad_parameters.xml": {
-      "size_bytes": 26265,
-      "sha256": "d020d7663834c9ffa7a9d7e85609709abcafd77883def3a3af513b0d43d86b38"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/run_manifest.json": {
+      "size_bytes": 1345,
+      "sha256": "8e4636c474a33171c4e2d3a7674c12642ea113eaa371212dcf7a4a6cf40f6b2b"
     },
-    "outputs/fresh_screening_verification/rank2/closure_history.csv": {
-      "size_bytes": 307,
-      "sha256": "992036153587fff14c5cb441ac1917f9d2634ed62921d93bc3e453829744d114"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/details/structure_load_cases.csv": {
+      "size_bytes": 1870,
+      "sha256": "e8128846065dc1f5d66119f8896806704e8f80e951219bf7bcc6349d2044717e"
     },
-    "outputs/fresh_screening_verification/rank2/component_ledger.csv": {
-      "size_bytes": 7466,
-      "sha256": "7f255eeda96c5b5a0d23333dde310bcf16d48fd00837b1c0d2d84ea4daef58d7"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/resolved_configuration.json": {
+      "size_bytes": 147212,
+      "sha256": "5dbe0052336a1d5e90f85f1c0823e8f06ed6a5d8ba8d3d34fab9ffbf714ef83e"
     },
-    "outputs/fresh_screening_verification/rank2/manufacturing_mass_ledger.csv": {
-      "size_bytes": 1201,
-      "sha256": "7a40c03ae309d5f588232764f5fa84caebdadb3c3da9829e2561172cb207e36a"
+    "outputs/design_sweep/details/nominal_candidate_1_verified/user_inputs.json": {
+      "size_bytes": 15101,
+      "sha256": "2f1b08f2afe78e8f3a183476a8d836f43105d540d574458af64f9d000c70ee67"
     },
-    "outputs/fresh_screening_verification/rank2/mission_profile.csv": {
-      "size_bytes": 25688,
-      "sha256": "08a37684317931364ed8f20d7d1eeec4c98aaf1e441e6b7ec83f9b124becdeb8"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/SUMMARY.md": {
+      "size_bytes": 5282,
+      "sha256": "fb9d82418b601a4dd006394fc7e74b899f11c5790e71c3b99d4db85292492089"
     },
-    "outputs/fresh_screening_verification/rank2/model_results.json": {
-      "size_bytes": 202192,
-      "sha256": "9cd588d8e7f024eb733acefd272790bd877bd1dad88a6ce25d47d4877acdc95e"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1395,
+      "sha256": "608b66c34117f2ecf2c5eda381d14ea1a48689ef62b8549a59c7faf8d3db7ea2"
     },
-    "outputs/fresh_screening_verification/rank2/resolved_configuration.json": {
-      "size_bytes": 119509,
-      "sha256": "d19dadb25055f11266cc57081547f9af019be7fd071313b03d9160f9f2fc6573"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
     },
-    "outputs/fresh_screening_verification/rank2/run_manifest.json": {
-      "size_bytes": 533,
-      "sha256": "61af75b643d4d06bb14812cf63f0eaefb9501dd275773279e2054efb5bfcee5e"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1213,
+      "sha256": "1d307d8ced86269cce6c6981caa3d7120ec5a84091a4d8995cd6de3d0fa04c75"
     },
-    "outputs/fresh_screening_verification/rank2/structure_load_cases.csv": {
-      "size_bytes": 1885,
-      "sha256": "1c57a86271921db8150252f3d92e134b6be73ce657a004c7c58a4fe86f413aad"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/cad_parameters.json": {
+      "size_bytes": 16892,
+      "sha256": "2e74327969331ddfff3c86c3526437fc0dc90d146bbcbe23e5ff75b23b2683a4"
     },
-    "outputs/latest/AUTO_CALCULATED_VALUES.json": {
-      "size_bytes": 1376,
-      "sha256": "ed878a3a869b6078da7da3f51464264de589b0448fdd7b5278b239e5390360a6"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/cad_parameters.xml": {
+      "size_bytes": 27123,
+      "sha256": "79d130cbd055700e8447ddf92c107b2d50e764b0137491f8d3754ff7271ddef2"
     },
-    "outputs/latest/HARDWARE_SELECTION.json": {
-      "size_bytes": 2606,
-      "sha256": "fa1e958593be8507d7587bee69572b489c3fe887730457927bcc30262268285e"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/closure_history.csv": {
+      "size_bytes": 299,
+      "sha256": "37495a2aec0d680fe6145c3c54f1e15d05a98830fc4d58c7d7aefe023de591a8"
     },
-    "outputs/latest/INPUT_CLASSIFICATION.json": {
-      "size_bytes": 1181,
-      "sha256": "55b0c30b1ba82462c006fc23b5432cef9ad32439f45b57fba8458aa17a9818e6"
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/component_ledger.csv": {
+      "size_bytes": 7522,
+      "sha256": "0ad0c0811e63555851936724b68dd155de05b0f230871bc2bda9e30a9651312f"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1087,
+      "sha256": "8419a49b78c106cd682f2f58d40fadc8074bc61d57061ad1e5e15778f621a19a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/mission_profile.csv": {
+      "size_bytes": 26362,
+      "sha256": "45e1f7a43171f23ac6e8ef89eeefd29396c1d65ce6cc787de8c48c46b6ddd82a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/model_results.json": {
+      "size_bytes": 208439,
+      "sha256": "68e50fa47bd36e8344782fdce553c63fc9429efa5f549f77bf89295b066530ff"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/params.xlsx": {
+      "size_bytes": 8134,
+      "sha256": "fb70c18fecae2d39e5666dcf88e70514d2e41377a13e86ffb8535ef370f08a15"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/params.xml": {
+      "size_bytes": 27123,
+      "sha256": "79d130cbd055700e8447ddf92c107b2d50e764b0137491f8d3754ff7271ddef2"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/run_manifest.json": {
+      "size_bytes": 1345,
+      "sha256": "6bba4ebb087aa398bbb707de4bb9a9783e1b99371cf36f19705354cf70e65f16"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/details/structure_load_cases.csv": {
+      "size_bytes": 1863,
+      "sha256": "b7e323274f8939ad36d10dbcf92df84fd6899f79599ec309629e0755960c3fb4"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/resolved_configuration.json": {
+      "size_bytes": 124884,
+      "sha256": "c1a92ee4efe143a5922fa71e6e26c62eff2673664624c27d1b1f84d76f34340a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_2_verified/user_inputs.json": {
+      "size_bytes": 11210,
+      "sha256": "5452be87d5393dbe8b0f9f2125c1fb3fe67fd20c7c4f43594313bd70fc244ba0"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/SUMMARY.md": {
+      "size_bytes": 5282,
+      "sha256": "3022d6d287ffdb28e2e14d5bfd8eb7cab371031c75054c24427605c7e3e6c57a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1396,
+      "sha256": "84e58c032623a30b98118dbe5df59c7ca77da31da0c7dc34c686bd1c803443a8"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1213,
+      "sha256": "1d307d8ced86269cce6c6981caa3d7120ec5a84091a4d8995cd6de3d0fa04c75"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/cad_parameters.json": {
+      "size_bytes": 16888,
+      "sha256": "f0ba45d52559a3376dfcd3e49beeae472831d3129680703b74d1fc4c0bd00936"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/cad_parameters.xml": {
+      "size_bytes": 27123,
+      "sha256": "7d1aa655f3fe14cad19bb4207a298e7038ae64811b70f5ee98a34bd3d6d7617b"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/closure_history.csv": {
+      "size_bytes": 303,
+      "sha256": "890bf864e3a66c192ad8d1e487445eb46ede0884a17c29470761f2405aca049b"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/component_ledger.csv": {
+      "size_bytes": 7523,
+      "sha256": "aab52cbe2c6ed412b824fc71d935bdcdeb6ce7c4319003b9c26e1d83be9e3b81"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1087,
+      "sha256": "8419a49b78c106cd682f2f58d40fadc8074bc61d57061ad1e5e15778f621a19a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/mission_profile.csv": {
+      "size_bytes": 26380,
+      "sha256": "ff4f16029ef504cdaf425ff3f51d3af5dad2a108bc7972678c0ac1470617a041"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/model_results.json": {
+      "size_bytes": 208428,
+      "sha256": "8c08284e8997c17a27197354a2544e00f45cef2da4d7fc5cfebbbba0eeceb016"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/params.xlsx": {
+      "size_bytes": 8129,
+      "sha256": "e3210330f3e3506732fb8341493cbc2642a84612f77de8bcc504168f19597bb5"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/params.xml": {
+      "size_bytes": 27123,
+      "sha256": "7d1aa655f3fe14cad19bb4207a298e7038ae64811b70f5ee98a34bd3d6d7617b"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/run_manifest.json": {
+      "size_bytes": 1345,
+      "sha256": "e1f612ddb5d9174c02f7a4065e65855948491b9f2e12d6d3590d81b6fca8d9aa"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/details/structure_load_cases.csv": {
+      "size_bytes": 1871,
+      "sha256": "1d6584c743784341527bc832e4e7ebe74e4514888b980e924d21d4b14895a87a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/resolved_configuration.json": {
+      "size_bytes": 124879,
+      "sha256": "bdc32c433bd2851cbdb1f028c9709422109e2ad8b5767c4f46e74fd0174450ce"
+    },
+    "outputs/design_sweep/details/nominal_candidate_3_verified/user_inputs.json": {
+      "size_bytes": 11210,
+      "sha256": "5452be87d5393dbe8b0f9f2125c1fb3fe67fd20c7c4f43594313bd70fc244ba0"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/SUMMARY.md": {
+      "size_bytes": 5282,
+      "sha256": "e9529fd4d1669340dc2a00e0962772739f8db8eabf7075de33dd3abb165b0b72"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1393,
+      "sha256": "5a901465bedc034acb30e5ac7a872bc62259d92ebf823a893a4c6be4d882ea46"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1213,
+      "sha256": "1d307d8ced86269cce6c6981caa3d7120ec5a84091a4d8995cd6de3d0fa04c75"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/cad_parameters.json": {
+      "size_bytes": 16888,
+      "sha256": "d6a77c3cf40fad68cace4311887503ce11c6e5e8c1e16acd7863aab0eb02d869"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/cad_parameters.xml": {
+      "size_bytes": 27122,
+      "sha256": "47bc6a1929e38a91c7f6d59bf8e4943ab36d8d9d0cd63c522bf499cda506b9f8"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/closure_history.csv": {
+      "size_bytes": 295,
+      "sha256": "9f4aa35939a03cc523726294532892050338b25067b32e31e6bf132e17f8b1ff"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/component_ledger.csv": {
+      "size_bytes": 7519,
+      "sha256": "9ad3c013c68e8959bddcb460037800f9596018197d2e193fa53fd6f52fe80b98"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1087,
+      "sha256": "8419a49b78c106cd682f2f58d40fadc8074bc61d57061ad1e5e15778f621a19a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/mission_profile.csv": {
+      "size_bytes": 26362,
+      "sha256": "45e1f7a43171f23ac6e8ef89eeefd29396c1d65ce6cc787de8c48c46b6ddd82a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/model_results.json": {
+      "size_bytes": 208425,
+      "sha256": "640f6c1fd2a24199f2dfdfbac9eb8358ff8ae4c1f905caf4f7c4c6ec6dac7f44"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/params.xlsx": {
+      "size_bytes": 8139,
+      "sha256": "17cb1f655242de7eef0f6d120c189ee763e2306f1aa4e8d42196125f2be27bcf"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/params.xml": {
+      "size_bytes": 27122,
+      "sha256": "47bc6a1929e38a91c7f6d59bf8e4943ab36d8d9d0cd63c522bf499cda506b9f8"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/run_manifest.json": {
+      "size_bytes": 1345,
+      "sha256": "f2cac3a846c76a7da9143a548a93c730ade318da6e745c15c4207eaa2f988e7f"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/details/structure_load_cases.csv": {
+      "size_bytes": 1873,
+      "sha256": "50a80cb328efb3791802deb6e71e518eae9d1c7ec72082771e1e31cd93426320"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/resolved_configuration.json": {
+      "size_bytes": 124871,
+      "sha256": "8223c0ed6dfa729066815ce45482a9c831e5c7caf38257ca91c609ba02df52f7"
+    },
+    "outputs/design_sweep/details/nominal_candidate_4_verified/user_inputs.json": {
+      "size_bytes": 11210,
+      "sha256": "5452be87d5393dbe8b0f9f2125c1fb3fe67fd20c7c4f43594313bd70fc244ba0"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/SUMMARY.md": {
+      "size_bytes": 5282,
+      "sha256": "aeccb9742532cc06af0db2bfeeb7d7e6ab4bf13971bc80927831e43480e76697"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1393,
+      "sha256": "e37cc3f2ef65b95f1dec23c69264ca1fa4c319ccfa629ceaab010b1401c66e9c"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1213,
+      "sha256": "1d307d8ced86269cce6c6981caa3d7120ec5a84091a4d8995cd6de3d0fa04c75"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/cad_parameters.json": {
+      "size_bytes": 16892,
+      "sha256": "0e8ec127097ebb57e748f58de8dff4ccf14fba63827d5ece77f8c35fe2d975bd"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/cad_parameters.xml": {
+      "size_bytes": 27123,
+      "sha256": "fa7c852b38ccfa00aab289e2c67e491eba6de47ec908591c5851133cfdd6520e"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/closure_history.csv": {
+      "size_bytes": 300,
+      "sha256": "3275f7f918def9910d04e59df550231d761e39f9898d35b3647a5eb3311f2943"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/component_ledger.csv": {
+      "size_bytes": 7523,
+      "sha256": "a6d9f22721af738fc088e7cba13abff02cad900914580dfa62d49ea71fdb543c"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1087,
+      "sha256": "8419a49b78c106cd682f2f58d40fadc8074bc61d57061ad1e5e15778f621a19a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/mission_profile.csv": {
+      "size_bytes": 26362,
+      "sha256": "45e1f7a43171f23ac6e8ef89eeefd29396c1d65ce6cc787de8c48c46b6ddd82a"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/model_results.json": {
+      "size_bytes": 208405,
+      "sha256": "970b929767acea76673f217c7c0918f155c67334c021efdf3cfa58369f89f850"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/params.xlsx": {
+      "size_bytes": 8135,
+      "sha256": "1b998ad7efbf1abd25c707a37d1fed83b25b9f341dad88144d168a8be86d3c4d"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/params.xml": {
+      "size_bytes": 27123,
+      "sha256": "fa7c852b38ccfa00aab289e2c67e491eba6de47ec908591c5851133cfdd6520e"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/run_manifest.json": {
+      "size_bytes": 1345,
+      "sha256": "0b59335d9b75a68d101a733211afad083b3d8ab57a1168a28a6ada032d599abb"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/details/structure_load_cases.csv": {
+      "size_bytes": 1862,
+      "sha256": "c8a85a7f5ff8788bfa4af1c6fb7554538e258a2b62db13c64fdb9fc7cc31e0bc"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/resolved_configuration.json": {
+      "size_bytes": 124884,
+      "sha256": "19f87793aaba4ebbbdd6b7fede0385a4b81507e48737a8ce9f476a5a67bcb460"
+    },
+    "outputs/design_sweep/details/nominal_candidate_5_verified/user_inputs.json": {
+      "size_bytes": 11210,
+      "sha256": "5452be87d5393dbe8b0f9f2125c1fb3fe67fd20c7c4f43594313bd70fc244ba0"
+    },
+    "outputs/design_sweep/details/nominal_candidate_verification.json": {
+      "size_bytes": 1519,
+      "sha256": "48e5a02229c1b87a5303a90a537457354bc56a5d5d3182dc685570c74df87795"
+    },
+    "outputs/design_sweep/details/nominal_optimized_config.json": {
+      "size_bytes": 147099,
+      "sha256": "7927fe156daae502e41acfa8f7c5736d61750909707e6458c85a9aee15266ddc"
+    },
+    "outputs/design_sweep/details/nominal_verified/SUMMARY.md": {
+      "size_bytes": 6344,
+      "sha256": "ace5cf6ff9627cd0eb2f39461595f4cb72c4382abe2af877f093451362818f7a"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1408,
+      "sha256": "825aaf5abc67dfdf6ffa51ed6a79289494938739bb4abc05ccc824b1d53f0718"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1238,
+      "sha256": "b68989275b51db6a4114542df1606489ec5734c24285802e6899b1d3ce16ba43"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/cad_parameters.json": {
+      "size_bytes": 23322,
+      "sha256": "7191f90ce80c2b01391d1494ddc1a89101ed60c7a8ca577e4e5b0f8415475566"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/cad_parameters.xml": {
+      "size_bytes": 37040,
+      "sha256": "3771b65adaef5f529bd152ecf5c565edc1a5feb41fc32a0ebb47f1de56d6c184"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/closure_history.csv": {
+      "size_bytes": 304,
+      "sha256": "fa8c88673e2ae9f3f0e1295ff74685cb4bb5439d3443609eae277b7001cd4498"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/component_ledger.csv": {
+      "size_bytes": 8876,
+      "sha256": "87ac19fb4fb90f199d62066c03f3324491106220f5f471ae9c66bf34c6522689"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/hybrid_power_history.csv": {
+      "size_bytes": 4300361,
+      "sha256": "67a4e7a951034206a0a5bfee68c283fda7e7a5442ce456595a9368d6df3915f2"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1139,
+      "sha256": "bf1e167cf0ee17f05aa35071ae95dd301fc46d488b432a407441d6860db5fe96"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/mission_profile.csv": {
+      "size_bytes": 26967,
+      "sha256": "4cbfb829dacaf71951f967b63e5df79871dbaec241f4136454137e962d1ec493"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/model_results.json": {
+      "size_bytes": 216994,
+      "sha256": "82cb69c6ea7305538e9135d1fe425f38e69c0653509c9518f971521a6f344f2c"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/params.xlsx": {
+      "size_bytes": 9286,
+      "sha256": "cf8ffea53811487ffd6405dcb7eaa5206fe3635726b500857b9df55d84ddb6a3"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/params.xml": {
+      "size_bytes": 37040,
+      "sha256": "3771b65adaef5f529bd152ecf5c565edc1a5feb41fc32a0ebb47f1de56d6c184"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/run_manifest.json": {
+      "size_bytes": 2129,
+      "sha256": "039b6db6e6bb2f4ac474eee660204b69ff9fa9b61f2eb34164dbc1febf02ec4c"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/sixdof_forward_current_layout.csv": {
+      "size_bytes": 1911364,
+      "sha256": "7fb50f4d28e80d434f4963497d9d0d32a839b25d027b532b42eb2188348ea6a0"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/sixdof_forward_stability_screen.csv": {
+      "size_bytes": 1911579,
+      "sha256": "425da6924d2965fccc8f6390662c561ced1a455aa37e93dc8bf8a765d61c1ac9"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/sixdof_gust_current_layout.csv": {
+      "size_bytes": 741588,
+      "sha256": "c5df0175e2daaab7837b1427a4da77d1dc6dfb411d1166732f0a78b197026d21"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/sixdof_gust_stability_screen.csv": {
+      "size_bytes": 739237,
+      "sha256": "3c1a3d18ee9ea472b620fa23f86780a30b97acd2698a39fc29fee088a88e2254"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/sixdof_reverse_current_layout.csv": {
+      "size_bytes": 1675827,
+      "sha256": "35e1cc5b77fc5910cc14840e5197bbf83b9cb3a03d7b9970f43cca94ff3abae3"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/sixdof_reverse_stability_screen.csv": {
+      "size_bytes": 1676205,
+      "sha256": "a1fd9269c7756bf2b4378228597b6a31a4e861dbf43529e61bd20b10624fbece"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/structure_load_cases.csv": {
+      "size_bytes": 1870,
+      "sha256": "e8128846065dc1f5d66119f8896806704e8f80e951219bf7bcc6349d2044717e"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/transition_forward.csv": {
+      "size_bytes": 438513,
+      "sha256": "b1ec8121e143dc5a19f79a71f73319d0c29cbd9bab2d9dee786868850ca1fdb6"
+    },
+    "outputs/design_sweep/details/nominal_verified/details/transition_reverse.csv": {
+      "size_bytes": 366728,
+      "sha256": "4a1a26d9beb6ff3b9cf950e95a9855e27038a76cb1e9d3fbc0c1e0ea7d6d045e"
+    },
+    "outputs/design_sweep/details/nominal_verified/resolved_configuration.json": {
+      "size_bytes": 147212,
+      "sha256": "5dbe0052336a1d5e90f85f1c0823e8f06ed6a5d8ba8d3d34fab9ffbf714ef83e"
+    },
+    "outputs/design_sweep/details/nominal_verified/user_inputs.json": {
+      "size_bytes": 15101,
+      "sha256": "2f1b08f2afe78e8f3a183476a8d836f43105d540d574458af64f9d000c70ee67"
+    },
+    "outputs/design_sweep/details/optimization/optimization_candidates.csv": {
+      "size_bytes": 41377,
+      "sha256": "85a04c15322a50c0f61ae014b0cab190e4ccddc4ea170e00cf1c08e71a04a07b"
+    },
+    "outputs/design_sweep/details/optimization/optimization_results.json": {
+      "size_bytes": 135701,
+      "sha256": "f9110041f1f35a4578c6a02a3b06bec2e9be3ac2c8fbf203b7ea828f27b1f8b6"
+    },
+    "outputs/design_sweep/details/recommended_robust_config.json": {
+      "size_bytes": 147103,
+      "sha256": "b271af6fad619f8386258f16ffe9dc0e4609ea6ab44e7ca589513234dd2028cc"
+    },
+    "outputs/design_sweep/details/recommended_verified/SUMMARY.md": {
+      "size_bytes": 6344,
+      "sha256": "dbb801f49b6a0a21a05102a13cb849150a09a950986e2c3318d78dfc563444d9"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1407,
+      "sha256": "a617280c848fceac4fd64190403b766beb2405ad8e4fb619800ae01ecaf04c92"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1238,
+      "sha256": "b68989275b51db6a4114542df1606489ec5734c24285802e6899b1d3ce16ba43"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/cad_parameters.json": {
+      "size_bytes": 23314,
+      "sha256": "9d5ab0e2aa1b8c5c20f9ab1612973121e0f2365deddbb1d1439d4e458a8e37bb"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/cad_parameters.xml": {
+      "size_bytes": 37040,
+      "sha256": "406ef77a74c4c74b786759930e62fcbbd2ddd26dc2d8397996506e0fef83e5d5"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/closure_history.csv": {
+      "size_bytes": 302,
+      "sha256": "2435127d57b5e3873948ba0a2b1b072f9802a28eda82907be2ce5044820d944d"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/component_ledger.csv": {
+      "size_bytes": 8841,
+      "sha256": "77cb4f89ac8e170ce9f4b79a7893a34ee80ebb2a28b853b5a6596b49caca161f"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/hybrid_power_history.csv": {
+      "size_bytes": 4300361,
+      "sha256": "67a4e7a951034206a0a5bfee68c283fda7e7a5442ce456595a9368d6df3915f2"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1139,
+      "sha256": "bf1e167cf0ee17f05aa35071ae95dd301fc46d488b432a407441d6860db5fe96"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/mission_profile.csv": {
+      "size_bytes": 26967,
+      "sha256": "4cbfb829dacaf71951f967b63e5df79871dbaec241f4136454137e962d1ec493"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/model_results.json": {
+      "size_bytes": 216934,
+      "sha256": "10002efb0144a891d18ee1044dafeec2f2f0b6f89a3e345eff641f4325d16c6e"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/params.xlsx": {
+      "size_bytes": 9273,
+      "sha256": "2028fed9ba1058354e46d7194425a862f7c09159794c1bd1d7fbab062b592131"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/params.xml": {
+      "size_bytes": 37040,
+      "sha256": "406ef77a74c4c74b786759930e62fcbbd2ddd26dc2d8397996506e0fef83e5d5"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/run_manifest.json": {
+      "size_bytes": 2129,
+      "sha256": "5ec75cb41534454825417cf4f6f342827267c80a6c8c94a1f489de02864071db"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/sixdof_forward_current_layout.csv": {
+      "size_bytes": 1905316,
+      "sha256": "ca8ab8def0e4175a3aafc79f252e0a497291d8651f04ca00eab6887589f1adc8"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/sixdof_forward_stability_screen.csv": {
+      "size_bytes": 1902515,
+      "sha256": "ab88fbd71222f367692f6180c6a4f7d0bbf4d2d46d71c9a6307d4dea220c1af0"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/sixdof_gust_current_layout.csv": {
+      "size_bytes": 739706,
+      "sha256": "f565b9d9c37eecea43eaecfbb0492068d710024536160869463f2643fd5bae52"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/sixdof_gust_stability_screen.csv": {
+      "size_bytes": 740126,
+      "sha256": "a75a7df187106462bab230f7461a9e3e704f1861514fd3a43045a95604eb3b98"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/sixdof_reverse_current_layout.csv": {
+      "size_bytes": 1666997,
+      "sha256": "f78ccdb23e7080fb3f2da8297a14ad65df41a46086495caa5add629d2582f800"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/sixdof_reverse_stability_screen.csv": {
+      "size_bytes": 1667722,
+      "sha256": "4b2814784338122d87c81b43727d2541fd26d78ede5078b445c02a7dea508cfc"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/structure_load_cases.csv": {
+      "size_bytes": 1868,
+      "sha256": "07876a0cb89198901f1e769ce4faeef67fedbf22e45a7a439582545872fd87c7"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/transition_forward.csv": {
+      "size_bytes": 438513,
+      "sha256": "b1ec8121e143dc5a19f79a71f73319d0c29cbd9bab2d9dee786868850ca1fdb6"
+    },
+    "outputs/design_sweep/details/recommended_verified/details/transition_reverse.csv": {
+      "size_bytes": 366728,
+      "sha256": "4a1a26d9beb6ff3b9cf950e95a9855e27038a76cb1e9d3fbc0c1e0ea7d6d045e"
+    },
+    "outputs/design_sweep/details/recommended_verified/resolved_configuration.json": {
+      "size_bytes": 147216,
+      "sha256": "5beb775af6933e3719d606f467aff764eb26986a721dc79125d00e7efea0f7d3"
+    },
+    "outputs/design_sweep/details/recommended_verified/user_inputs.json": {
+      "size_bytes": 15101,
+      "sha256": "2f1b08f2afe78e8f3a183476a8d836f43105d540d574458af64f9d000c70ee67"
+    },
+    "outputs/design_sweep/details/robust_derivation.json": {
+      "size_bytes": 8627,
+      "sha256": "b5c3f363f6613e54a5dd53698d952ce9022f2cf4e73011c502efbe8b0f9ed19f"
+    },
+    "outputs/design_sweep/details/sensitivity/sensitivity.csv": {
+      "size_bytes": 1093,
+      "sha256": "022fe850bd871e04624d30dcc11e88a97a732fde1399d058af5822fe83c17582"
+    },
+    "outputs/design_sweep/details/sensitivity/sensitivity_results.json": {
+      "size_bytes": 4404,
+      "sha256": "6f199ce1bda8079489da08f9f856bd7718bcbcf15c226fc0569510d11fc7d0c8"
+    },
+    "outputs/design_sweep/details/uncertainty_nominal/uncertainty_results.json": {
+      "size_bytes": 57350,
+      "sha256": "0856e977b3bebe779b4038723d297ffd9e905040c8fea63afa9f2ccf46dba19e"
+    },
+    "outputs/design_sweep/details/uncertainty_nominal/uncertainty_samples.csv": {
+      "size_bytes": 19528,
+      "sha256": "94b58911487026a0ca76e44c812c8a637113b2c3fa44348a4f047b332d47e8f7"
+    },
+    "outputs/design_sweep/details/uncertainty_recommended/uncertainty_results.json": {
+      "size_bytes": 57291,
+      "sha256": "ad367bbf5970fd82c9652e965f67e53f808ca6afb896321445028b27053acebc"
+    },
+    "outputs/design_sweep/details/uncertainty_recommended/uncertainty_samples.csv": {
+      "size_bytes": 19502,
+      "sha256": "35517d02649d3e47cc39e5370b1fc2cd0e31d843b047fff48513ce3f7b54d1fc"
+    },
+    "outputs/design_sweep/resolved_configuration.json": {
+      "size_bytes": 147099,
+      "sha256": "7927fe156daae502e41acfa8f7c5736d61750909707e6458c85a9aee15266ddc"
+    },
+    "outputs/design_sweep/user_inputs.json": {
+      "size_bytes": 15100,
+      "sha256": "698010cfe7ca7c9885cca2cf40dcb3e41c1884e6411f661b18d8a164e8b65db6"
     },
     "outputs/latest/SUMMARY.md": {
-      "size_bytes": 2874,
-      "sha256": "80a89517e809346429a036d15fc18d45a6554707c7d858f26efef6c3a1aaa7c7"
+      "size_bytes": 7367,
+      "sha256": "ce17139cc92932aa6964331578fc0759ee1437901f16d8b3c8515d3112a9972b"
     },
-    "outputs/latest/cad_parameters.json": {
-      "size_bytes": 16061,
-      "sha256": "54e07d22f6206f230e5d4711d73fd949a0f838a8d8c7e54e0a64326a798dc248"
+    "outputs/latest/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1588,
+      "sha256": "4eb18c08ea876ed24902960f3ca89eb8ab0488842f3b2d7e691b6b2fdfe938b4"
     },
-    "outputs/latest/cad_parameters.xml": {
-      "size_bytes": 26265,
-      "sha256": "d020d7663834c9ffa7a9d7e85609709abcafd77883def3a3af513b0d43d86b38"
+    "outputs/latest/details/FUEL_CELL_COOLING.json": {
+      "size_bytes": 3743,
+      "sha256": "f4866344c95d5da05a1f96c310d7c2ee793c6d800b57aa4694373ace58fb0c6c"
     },
-    "outputs/latest/closure_history.csv": {
-      "size_bytes": 307,
-      "sha256": "992036153587fff14c5cb441ac1917f9d2634ed62921d93bc3e453829744d114"
+    "outputs/latest/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2606,
+      "sha256": "fa1e958593be8507d7587bee69572b489c3fe887730457927bcc30262268285e"
     },
-    "outputs/latest/component_ledger.csv": {
-      "size_bytes": 7466,
-      "sha256": "7f255eeda96c5b5a0d23333dde310bcf16d48fd00837b1c0d2d84ea4daef58d7"
+    "outputs/latest/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1331,
+      "sha256": "e6527b5d545214e0333eb12c767c01c81c6ab4b2184214903c217298f1afd463"
     },
-    "outputs/latest/manufacturing_mass_ledger.csv": {
-      "size_bytes": 1201,
-      "sha256": "7a40c03ae309d5f588232764f5fa84caebdadb3c3da9829e2561172cb207e36a"
+    "outputs/latest/details/cad_parameters.json": {
+      "size_bytes": 28787,
+      "sha256": "db07ef1c0a48433378df18a1a8b8fd34633544ca0fae39fdf77cbf5277a26695"
     },
-    "outputs/latest/mission_profile.csv": {
-      "size_bytes": 25688,
-      "sha256": "08a37684317931364ed8f20d7d1eeec4c98aaf1e441e6b7ec83f9b124becdeb8"
+    "outputs/latest/details/cad_parameters.xml": {
+      "size_bytes": 46067,
+      "sha256": "dc1edb0d1889733223066fdd42c5114819962f0732722fa31febb56453295d64"
     },
-    "outputs/latest/model_results.json": {
-      "size_bytes": 202192,
-      "sha256": "257ab56ed2ce2dd7da95f70fd98341bb054e8ba116cd4d803d952446482b1c72"
+    "outputs/latest/details/closure_history.csv": {
+      "size_bytes": 298,
+      "sha256": "d12756ce13d3412d03a7a3af85f4894ca9b61bac2ca6361b5eadc6f446015cdf"
+    },
+    "outputs/latest/details/component_ledger.csv": {
+      "size_bytes": 8825,
+      "sha256": "6b5dd3f4953f55a68ba47572780f0dccef2a3b8beba00056ce3e9f7ee81b6756"
+    },
+    "outputs/latest/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1139,
+      "sha256": "bf1e167cf0ee17f05aa35071ae95dd301fc46d488b432a407441d6860db5fe96"
+    },
+    "outputs/latest/details/mission_profile.csv": {
+      "size_bytes": 26968,
+      "sha256": "8be6fb4c73f8b9e08c37adc4bf56f3aa06bb43a813b03ee52c912f6b1bfc1ff8"
+    },
+    "outputs/latest/details/model_results.json": {
+      "size_bytes": 215217,
+      "sha256": "ea904551891962ffa0c0468978ace768f5bd6fd02f48e9a75a75f0e1792b68e2"
+    },
+    "outputs/latest/details/params.xlsx": {
+      "size_bytes": 10602,
+      "sha256": "19a4fdfe97476caa759724528faef9d98d0fa26668e611c9cd46acafcdb914e3"
+    },
+    "outputs/latest/details/params.xml": {
+      "size_bytes": 46067,
+      "sha256": "dc1edb0d1889733223066fdd42c5114819962f0732722fa31febb56453295d64"
+    },
+    "outputs/latest/details/run_manifest.json": {
+      "size_bytes": 1309,
+      "sha256": "a599a0e25a81874323fa659f0f2091d419686e412aa2bb3763a7c497a51b266d"
+    },
+    "outputs/latest/details/structure_load_cases.csv": {
+      "size_bytes": 1868,
+      "sha256": "b3fbbcd21d9bddbb20c49829e47ce13c1779521a57363d667bd3d4d089c67b9c"
     },
     "outputs/latest/resolved_configuration.json": {
-      "size_bytes": 119396,
-      "sha256": "0c90f6458d534c526937e10f78d58cce750596e6297f1c2a11ac649277c7cea9"
+      "size_bytes": 149007,
+      "sha256": "994f705028aaf0ac805b09f064177d1db8aeadae28e6a36f3195e5868988a1ea"
     },
-    "outputs/latest/run_manifest.json": {
-      "size_bytes": 533,
-      "sha256": "4a95f62854d8559f431d9bf8f3cbead37e61bf44f058a925165cd9b5cf566959"
+    "outputs/latest/user_inputs.json": {
+      "size_bytes": 18037,
+      "sha256": "bf9bad5ef9e442daeec54bc2e3694308a3838a5fdc504fc6ffab072b8e2240f9"
     },
-    "outputs/latest/structure_load_cases.csv": {
-      "size_bytes": 1885,
-      "sha256": "1c57a86271921db8150252f3d92e134b6be73ce657a004c7c58a4fe86f413aad"
+    "outputs/my_design/SUMMARY.md": {
+      "size_bytes": 6343,
+      "sha256": "16984cb9b10ba57beff7a34681d9ad2ef083683e8280aeeb572f3ffd42c9d9a8"
     },
-    "outputs/optimization/optimization_candidates.csv": {
-      "size_bytes": 26640,
-      "sha256": "8c658b5bd0f13479af14d155100218fae6aff62311ff66a6495ed3476f774ce8"
+    "outputs/my_design/details/AUTO_CALCULATED_VALUES.json": {
+      "size_bytes": 1405,
+      "sha256": "a492f6d19a0d3cfa92a30444fd1b20255e16cb60370505cd823a49df8fb8074b"
     },
-    "outputs/optimization/optimization_results.json": {
-      "size_bytes": 81652,
-      "sha256": "d53ff6fba941f5bed9bd6a511123a97a538078ebb506da5feab606f7fb6209f7"
+    "outputs/my_design/details/HARDWARE_SELECTION.json": {
+      "size_bytes": 2676,
+      "sha256": "0a68e46e66291e4218f9963bebde410bdcf45cb14fc130089655864404afc13d"
     },
-    "outputs/v4_designstudy/design_study/optimization/optimization_candidates.csv": {
-      "size_bytes": 21963,
-      "sha256": "16d2c11110831bd26ff7b80ea539a8fcc7babd57e762bbf327b5022dfaf84a9d"
+    "outputs/my_design/details/INPUT_CLASSIFICATION.json": {
+      "size_bytes": 1238,
+      "sha256": "b68989275b51db6a4114542df1606489ec5734c24285802e6899b1d3ce16ba43"
     },
-    "outputs/v4_designstudy/design_study/optimization/optimization_results.json": {
-      "size_bytes": 66860,
-      "sha256": "8f94c4b631e8b70f9e81f70c549e9d11529e9a831e7784ce9af8949528725eb9"
+    "outputs/my_design/details/cad_parameters.json": {
+      "size_bytes": 23305,
+      "sha256": "84e25740de2a883bdc54775fbc127e91e69d48bb1d1f19f398f5e752b4c55bef"
+    },
+    "outputs/my_design/details/cad_parameters.xml": {
+      "size_bytes": 37040,
+      "sha256": "f8f8a9894268ca1cb98eccb6af1d9c77d5bb7aad30929dda5ed4c34b8560cf0e"
+    },
+    "outputs/my_design/details/closure_history.csv": {
+      "size_bytes": 298,
+      "sha256": "d12756ce13d3412d03a7a3af85f4894ca9b61bac2ca6361b5eadc6f446015cdf"
+    },
+    "outputs/my_design/details/component_ledger.csv": {
+      "size_bytes": 8825,
+      "sha256": "20f56a0e738b96064dbf08455a67b54e85e6b258e09dfe8f17047d8383fe8b00"
+    },
+    "outputs/my_design/details/hybrid_power_history.csv": {
+      "size_bytes": 4300361,
+      "sha256": "67a4e7a951034206a0a5bfee68c283fda7e7a5442ce456595a9368d6df3915f2"
+    },
+    "outputs/my_design/details/manufacturing_mass_ledger.csv": {
+      "size_bytes": 1139,
+      "sha256": "bf1e167cf0ee17f05aa35071ae95dd301fc46d488b432a407441d6860db5fe96"
+    },
+    "outputs/my_design/details/mission_profile.csv": {
+      "size_bytes": 26967,
+      "sha256": "4cbfb829dacaf71951f967b63e5df79871dbaec241f4136454137e962d1ec493"
+    },
+    "outputs/my_design/details/model_results.json": {
+      "size_bytes": 216883,
+      "sha256": "cda683ca1e19c089ec27ebd3344d4efa4ddcef7fbdeba0fd71783b27f93dfbba"
+    },
+    "outputs/my_design/details/params.xlsx": {
+      "size_bytes": 9265,
+      "sha256": "6bf087b54f1992c4b88f16c333dca4f00c5664aee0a84efd46027d8b3196073c"
+    },
+    "outputs/my_design/details/params.xml": {
+      "size_bytes": 37040,
+      "sha256": "f8f8a9894268ca1cb98eccb6af1d9c77d5bb7aad30929dda5ed4c34b8560cf0e"
+    },
+    "outputs/my_design/details/run_manifest.json": {
+      "size_bytes": 2129,
+      "sha256": "21522d68e5603087d801d7bf9a9fb59fc728c6ea3e59ba115be8029536d1e1bd"
+    },
+    "outputs/my_design/details/sixdof_forward_current_layout.csv": {
+      "size_bytes": 1895241,
+      "sha256": "bd0a4bd69c28fa27f7f27ad48e971abdd78aaa4ae0704991f3352e83236a2b37"
+    },
+    "outputs/my_design/details/sixdof_forward_stability_screen.csv": {
+      "size_bytes": 1908836,
+      "sha256": "7f48848b1bf836d0d89fac2dbbcd6552344a08e22d176d5bcb5c8cf3fbbe97a6"
+    },
+    "outputs/my_design/details/sixdof_gust_current_layout.csv": {
+      "size_bytes": 739812,
+      "sha256": "a519b6156e013f332497be0bfd8b45fe52a38f33f2493d20a0b6e78194e3860f"
+    },
+    "outputs/my_design/details/sixdof_gust_stability_screen.csv": {
+      "size_bytes": 739684,
+      "sha256": "5c49fbcc5d0ecdd3e323ac8dca42cd86a5199a27d773c25acef5a252961eaf5f"
+    },
+    "outputs/my_design/details/sixdof_reverse_current_layout.csv": {
+      "size_bytes": 1668385,
+      "sha256": "88682699bcccf6518795062f8e6fadfdf26f5b7dd98a95bb46beb47d32c09a51"
+    },
+    "outputs/my_design/details/sixdof_reverse_stability_screen.csv": {
+      "size_bytes": 1664936,
+      "sha256": "6c82da2746c12ee9852c00f46647aef0b9b91df400090604f275f793f7980276"
+    },
+    "outputs/my_design/details/structure_load_cases.csv": {
+      "size_bytes": 1868,
+      "sha256": "f1c98d1952c88835888852e56d01f24194a8f3b5af9a490e2855859a1cefb085"
+    },
+    "outputs/my_design/details/transition_forward.csv": {
+      "size_bytes": 438513,
+      "sha256": "b1ec8121e143dc5a19f79a71f73319d0c29cbd9bab2d9dee786868850ca1fdb6"
+    },
+    "outputs/my_design/details/transition_reverse.csv": {
+      "size_bytes": 366728,
+      "sha256": "4a1a26d9beb6ff3b9cf950e95a9855e27038a76cb1e9d3fbc0c1e0ea7d6d045e"
+    },
+    "outputs/my_design/resolved_configuration.json": {
+      "size_bytes": 146873,
+      "sha256": "4195187a01c6303aafb653f848ffd1920a6db6c3c4886ca2f19c684fb9f494a1"
+    },
+    "outputs/my_design/user_inputs.json": {
+      "size_bytes": 15102,
+      "sha256": "e7bed9e08ff0fa4e113397061e4d6a0c5ca79b6dce33fc4108b6c2741b50148a"
     },
     "requirements.txt": {
-      "size_bytes": 24,
-      "sha256": "6bd31e587c06276bf231cec25395b5d4a0b1e38c4d2b00813b2dd96aad14f17a"
+      "size_bytes": 26,
+      "sha256": "89da961f008ae34af11748f69863cbb33a4569d304c97c71f29382eb62b0ec39"
     },
     "run_model.py": {
-      "size_bytes": 9235,
-      "sha256": "6e29de9ccaed38f3cc6451765650b6c8b1e84414dafe11239bb83795a864d4d0"
+      "size_bytes": 10869,
+      "sha256": "cac35be473c8a46b5a606f8b95b588a11b40e612afd1ee68e8de0aacb03f029c"
     },
     "run_selftests.py": {
-      "size_bytes": 3103,
-      "sha256": "01eb4bdea022e8bfc780d71617804864591fc03c284f1505efe4b8996f098301"
+      "size_bytes": 3295,
+      "sha256": "22dc2e2f790f176dcfd898243e17b0aab616533687f2522c55f9aad5344a53ad"
     },
     "tests/conftest.py": {
-      "size_bytes": 763,
-      "sha256": "44c8078e0e1c926ce41df3566863f96101aa6096def559dc153707352a164234"
+      "size_bytes": 783,
+      "sha256": "6a43171dcb9ed3ef86e9862c04e39d29e812378b2cd3189beed2248710b4e900"
     },
     "tests/test_design_study.py": {
-      "size_bytes": 1746,
-      "sha256": "a85a6d711462eac475f33ece4744b9d7224e191d1d10493b3f44630a0de7833a"
+      "size_bytes": 2111,
+      "sha256": "882719419b11e69cf1f32c1049f3997420abd6c5c4d933bb07807e72770d5e25"
+    },
+    "tests/test_fuel_cell_cooling.py": {
+      "size_bytes": 1944,
+      "sha256": "d70dd4ffef874f9fe31c9945ffe0e3afc1f339cceb014c4a2d770f82166e03e3"
     },
     "tests/test_integrated_model.py": {
-      "size_bytes": 1220,
-      "sha256": "beb7e5c7f91d09623bcfbb3fab1577c6c44e51adcac99490682f8191f166cebf"
+      "size_bytes": 1288,
+      "sha256": "7427047846e18c5b93d6f4f60628af22e03ca63bbc7bfd1d7f66ecd3dc9d9535"
+    },
+    "tests/test_layout_boom_mount.py": {
+      "size_bytes": 1785,
+      "sha256": "2ec562309500e458e6f5fe197b53f7e5cfa05ff526cdf4ceeaef04b18d977899"
+    },
+    "tests/test_packaging_layout_rules.py": {
+      "size_bytes": 9143,
+      "sha256": "efc9a03dcd4d9854ed6390889875b47455e8765772458c8691ba69363a3cdb69"
+    },
+    "tests/test_packaging_wall_clearance.py": {
+      "size_bytes": 2025,
+      "sha256": "8b70f362c5fe93de7f4bfad5f2d572f5a715f73c3ded1f33ef44045c26594034"
     },
     "tests/test_v3_user_inputs.py": {
-      "size_bytes": 3392,
-      "sha256": "12e2a31b05e2bcd236c3f7cf6ccdf571eba5474ee559b32272a7581790f81eaa"
+      "size_bytes": 5075,
+      "sha256": "fff755cb8f643f713b2098a2212490fd96c2a8f9a6883b1fdc16badca1e28b34"
     },
     "tests/test_v4_airfoil_hardware_cad.py": {
-      "size_bytes": 2234,
-      "sha256": "750b64b8815865c987fd3735bb58eaa76223673c5d3dd99d97e5d9cce778f609"
+      "size_bytes": 2463,
+      "sha256": "a1fef481ec9153de01c1c824ed103f221ccfe513a5ad7e2322f6813234e760e7"
+    },
+    "todos.txt": {
+      "size_bytes": 285,
+      "sha256": "64a0e8344d9432a7e632617f79d6f40497a87485a80c5b3522af2dcc0b329514"
     },
     "tools/build_package_manifest.py": {
       "size_bytes": 1186,
-      "sha256": "36581010252dfbfa6c2c2b86b5c4c7e3eee4df726430e021bf88b12e8ffbad94"
+      "sha256": "ba30795afc1982482cc02e0f099d8d64ff2949dc2723a77b2b584c8b672eedb6"
+    },
+    "viewer/app.js": {
+      "size_bytes": 30428,
+      "sha256": "5d818ab1fa2696fb45068d36e4c936d7fe672694bb216717f669a4b93a6ab642"
+    },
+    "viewer/index.html": {
+      "size_bytes": 2720,
+      "sha256": "1b45b238deeed284bc2a22967020d01a184a9116787484bdd409baba2b46c730"
+    },
+    "viewer/serve.py": {
+      "size_bytes": 3429,
+      "sha256": "159b5a477a2c3c94f90bedd9ac2e1b644fe1dbf81371c385e15853c3dc100520"
+    },
+    "viewer/styles.css": {
+      "size_bytes": 2280,
+      "sha256": "429f8025cc81c25e163eff93d80812a25096a4447298f69084f22efcf8ab10b7"
     }
   }
 }

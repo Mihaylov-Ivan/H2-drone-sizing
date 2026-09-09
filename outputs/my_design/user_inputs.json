@@ -416,5 +416,85 @@
       "horizontal_tail": 0.15,
       "vertical_tail": 0.12
     }
+  },
+  "fuel_cell_cooling": {
+    "enabled": true,
+    "architecture": "cross_fuselage",
+    "fan_flow_direction": "suction_through_stack_to_fan_side",
+    "fan_side": "right",
+    "inlet_side": "left",
+    "exhaust_side": "right",
+    "design_basis": "hover_and_ground_fan_only_no_ram_credit",
+    "target_max_opening_air_velocity_mps": 5.0,
+    "thermal_screen": {
+      "fuel_cell_net_power_W": 800.0,
+      "fuel_cell_efficiency_screen": 0.5,
+      "waste_heat_margin_factor": 1.1,
+      "allowable_air_temperature_rise_C": 15.0,
+      "air_density_kg_m3": 1.225,
+      "air_specific_heat_J_kgK": 1005.0,
+      "status": "engineering_assumption",
+      "source": "IE-SOAR is supplier-confirmed air-cooled; 50% efficiency is a screening assumption within the 46-52% family brochure range, not an 800W efficiency map."
+    },
+    "fans": {
+      "count": 2,
+      "diameter_m": 0.08,
+      "center_spacing_m": 0.086,
+      "assumed_module_airflow_no_external_duct_cfm": 150.0,
+      "assumed_external_shutoff_pressure_Pa": 90.0,
+      "status": "engineering_assumption",
+      "source": "Preliminary two-fan integration assumption from module imagery. Replace with Intelligent Energy fan/system airflow and allowed external pressure-drop data or bench test."
+    },
+    "plenum": {
+      "minimum_inlet_side_gap_m": 0.004,
+      "minimum_fan_side_shroud_gap_m": 0.01,
+      "note": "Required clear air gap between the fuel-cell envelope and inner fuselage skin/shroud. The model reports the minimum fuselage width needed but does not silently widen a hardcoded fuselage."
+    },
+    "inlet": {
+      "type": "naca_style_flush_side_inlet",
+      "geometry_mode": "hardcoded",
+      "slot_count": 12,
+      "slot_length_x_m": 0.17,
+      "slot_width_z_m": 0.006,
+      "slot_gap_z_m": 0.003,
+      "recess_depth_y_m": 0.008,
+      "ramp_length_x_m": 0.17,
+      "sidewall_angle_deg": 7.0,
+      "lip_radius_m": 0.002,
+      "center_x_offset_from_fc_m": 0.0,
+      "center_z_offset_from_fc_m": 0.0,
+      "external_drag_coefficient_screen": 0.03,
+      "cruise_pressure_recovery_fraction_screen": 0.15,
+      "note": "NACA-style shallow side inlet used as a fan-suction opening in hover. The cooling gate does not credit ram-air recovery."
+    },
+    "exhaust": {
+      "type": "flush_fan_exhaust_grille",
+      "geometry_mode": "hardcoded",
+      "slot_count": 12,
+      "slot_length_x_m": 0.18,
+      "slot_width_z_m": 0.0065,
+      "slot_gap_z_m": 0.003,
+      "fan_shroud_depth_y_m": 0.01,
+      "louvre_angle_deg": 15.0,
+      "lip_radius_m": 0.002,
+      "center_x_offset_from_fc_m": 0.0,
+      "center_z_offset_from_fc_m": 0.0,
+      "external_drag_coefficient_screen": 0.04,
+      "note": "Fan-side direct exhaust. Louvre angle is a CAD starting value intended to discourage hot-air recirculation."
+    },
+    "external_pressure_loss_coefficients": {
+      "inlet_entrance": 0.4,
+      "naca_ramp_and_turn": 0.35,
+      "inlet_grille": 0.25,
+      "outlet_plenum": 0.15,
+      "exhaust_grille_louvres": 0.35
+    },
+    "cad": {
+      "minimum_edge_distance_from_fuselage_section_joint_m": 0.012,
+      "grille_corner_radius_m": 0.004,
+      "minimum_web_between_slots_m": 0.003,
+      "removable_exhaust_grille_fastener": "M3",
+      "note": "Drawing-only cooling details exported with the calculated inlet/exhaust positions and flow areas."
+    }
   }
 }

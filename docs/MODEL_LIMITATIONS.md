@@ -16,3 +16,9 @@ The following items remain open or assumption-limited:
 - uncertainty distributions: current defaults are engineering assumptions and must be replaced with evidence-backed distributions.
 
 `SCREENING_PASS` therefore means that no currently evaluated hard model gate fails. It does **not** mean flight release, airworthiness approval or hardware qualification.
+
+## Fuel-cell cooling integration
+
+The v4.1 cooling model is a first-order thermal/duct screen. Intelligent Energy documentation supplied to the project confirms that the product is air-cooled and requires sufficient airflow, but does not provide the 800 W module fan flow/static-pressure curve or a permitted airframe duct pressure drop. The current fan capacity therefore remains an engineering assumption. The model does not credit ram air in hover/ground cooling and explicitly reports the supplier fan-curve evidence as `NOT_EVALUATED`.
+
+The NACA-style side inlet is represented by slot/free area, a shallow ramp and lumped pressure-loss coefficients. This is not CFD. Final inlet/outlet/shroud geometry should be correlated by bench flow/temperature testing and, if necessary, CFD.

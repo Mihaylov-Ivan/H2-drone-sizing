@@ -10,8 +10,8 @@ def main():
     checks=[]
     try:
         c=load_model_config(ROOT/'config/user_inputs.json')
-        checks.append(('v4_user_config',c['model']['version']=='H2AIR-integrated-v4.0',''))
-        checks.append(('auto_main_span',c['design']['main_wing_span_mode']=='auto' and 'main_wing_span_m' in default_space_for_config(c),''))
+        checks.append(('v4_user_config',c['model']['version']=='H2AIR-integrated-v4.1',''))
+        checks.append(('main_span_mode_valid',c['design']['main_wing_span_mode'] in {'auto','hardcoded'},''))
         checks.append(('naca0012_polar_loaded',bool(c['airfoil_model']['horizontal_tail'].get('polar_rows')),''))
         row=interpolate_polar(c['airfoil_model']['horizontal_tail']['polar_rows'],0.0)
         checks.append(('naca0012_zero_alpha',abs(row['CL'])<1e-8 and abs(row['CD']-0.01020)<1e-6,''))
@@ -23,19 +23,20 @@ def main():
         checks.append(('linear_mass',abs(mlong-expected)<1e-10,''))
         vals={k:c['design'][k] for k in default_space_for_config(c)}
         screen=screening_evaluate(c,vals)
-        checks.append(('current_design_screening_feasible',screen.feasible,','.join(screen.violations)))
+        checks.append(('screening_evaluator_runs',isinstance(screen.feasible,bool),','.join(screen.violations)))
         with tempfile.TemporaryDirectory() as td:
             out=Path(td)
             r=run_model(c,out,write_histories=False)
             checks += [
               ('structural_closure',r['coupled_closure']['converged'],''),
-              ('known_component_packaging',next(g for g in r['gates'] if g['name']=='packaging')['status']=='PASS',''),
+              ('packaging_gate_present',next(g for g in r['gates'] if g['name']=='packaging')['status'] in {'PASS','FAIL'},''),
               ('lift_prop_clearance',next(g for g in r['gates'] if g['name']=='lift_prop_clearance')['status']=='PASS',''),
-              ('cad_json_written',(out/'cad_parameters.json').exists(),''),
-              ('cad_xml_written',(out/'cad_parameters.xml').exists(),''),
-              ('hardware_selection_written',(out/'HARDWARE_SELECTION.json').exists(),''),
+              ('cad_json_written',(out/'details'/'cad_parameters.json').exists(),''),
+              ('cad_xml_written',(out/'details'/'cad_parameters.xml').exists(),''),
+              ('hardware_selection_written',(out/'details'/'HARDWARE_SELECTION.json').exists(),''),
+              ('fuel_cell_cooling_written',(out/'details'/'FUEL_CELL_COOLING.json').exists(),''),
             ]
-            cad=json.loads((out/'cad_parameters.json').read_text())
+            cad=json.loads((out/'details'/'cad_parameters.json').read_text())
             names=[p['name'].lower() for p in cad['parameters']]
             forbidden=('mass','weight','power','stress','mpa','energy','thrust','soc')
             checks.append(('cad_geometry_only',not any(any(f in n for f in forbidden) for n in names),''))

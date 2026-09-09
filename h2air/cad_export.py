@@ -155,6 +155,69 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
             _param(f'{prefix}_height', _mm(float(H))),
         ]
 
+    # IE-SOAR cross-fuselage cooling geometry.  Performance quantities are
+    # intentionally not exported; only drawing-driving geometry and layout.
+    cool=(cfg.get('_runtime',{}) or {}).get('fuel_cell_cooling') or {}
+    cool_user=(u.get('fuel_cell_cooling') or {})
+    if cool and cool.get('enabled'):
+        ci=cool.get('inlet_geometry',{}); co=cool.get('exhaust_geometry',{}); cf=cool.get('fan_geometry',{})
+        fuse_w=float(cool.get('fuselage_width_m',d.get('fuselage_width_m',0.0)))
+        side_sign={'left':-1.0,'right':1.0}
+        inlet_y=side_sign.get(str(cool.get('inlet_side','left')).lower(),-1.0)*0.5*fuse_w
+        exhaust_y=side_sign.get(str(cool.get('exhaust_side','right')).lower(),1.0)*0.5*fuse_w
+        out += [
+            _param('fc_cooling_architecture',str(cool.get('architecture','cross_fuselage')),'String'),
+            _param('fc_cooling_fan_flow_direction',str(cool.get('fan_flow_direction','suction_through_stack_to_fan_side')),'String'),
+            _param('fc_cooling_inlet_side',str(cool.get('inlet_side','left')),'String'),
+            _param('fc_cooling_exhaust_side',str(cool.get('exhaust_side','right')),'String'),
+            _param('fc_cooling_inlet_center_x',_mm(float(ci.get('center_x_m',0.0)))),
+            _param('fc_cooling_inlet_center_y',_mm(inlet_y)),
+            _param('fc_cooling_inlet_center_z',_mm(float(ci.get('center_z_m',0.0)))),
+            _param('fc_cooling_inlet_panel_length',_mm(float(ci.get('panel_length_x_m',0.0)))),
+            _param('fc_cooling_inlet_panel_height',_mm(float(ci.get('panel_height_z_m',0.0)))),
+            _param('fc_cooling_inlet_slot_count',int(ci.get('slot_count',0)),'unitless'),
+            _param('fc_cooling_inlet_slot_length',_mm(float(ci.get('slot_length_x_m',0.0)))),
+            _param('fc_cooling_inlet_slot_width',_mm(float(ci.get('slot_width_z_m',0.0)))),
+            _param('fc_cooling_inlet_slot_gap',_mm(float(ci.get('slot_gap_z_m',0.0)))),
+            _param('fc_cooling_inlet_recess_depth',_mm(float(ci.get('recess_depth_y_m',0.0)))),
+            _param('fc_cooling_inlet_ramp_length',_mm(float(ci.get('ramp_length_x_m',0.0)))),
+            _param('fc_cooling_inlet_ramp_angle',float(ci.get('ramp_angle_deg',0.0)),'deg'),
+            _param('fc_cooling_inlet_sidewall_angle',float(ci.get('sidewall_angle_deg',0.0)),'deg'),
+            _param('fc_cooling_inlet_lip_radius',_mm(float(ci.get('lip_radius_m',0.0)))),
+            _param('fc_cooling_exhaust_center_x',_mm(float(co.get('center_x_m',0.0)))),
+            _param('fc_cooling_exhaust_center_y',_mm(exhaust_y)),
+            _param('fc_cooling_exhaust_center_z',_mm(float(co.get('center_z_m',0.0)))),
+            _param('fc_cooling_exhaust_panel_length',_mm(float(co.get('panel_length_x_m',0.0)))),
+            _param('fc_cooling_exhaust_panel_height',_mm(float(co.get('panel_height_z_m',0.0)))),
+            _param('fc_cooling_exhaust_slot_count',int(co.get('slot_count',0)),'unitless'),
+            _param('fc_cooling_exhaust_slot_length',_mm(float(co.get('slot_length_x_m',0.0)))),
+            _param('fc_cooling_exhaust_slot_width',_mm(float(co.get('slot_width_z_m',0.0)))),
+            _param('fc_cooling_exhaust_slot_gap',_mm(float(co.get('slot_gap_z_m',0.0)))),
+            _param('fc_cooling_exhaust_shroud_depth',_mm(float(co.get('fan_shroud_depth_y_m',0.0)))),
+            _param('fc_cooling_exhaust_louvre_angle',float(co.get('louvre_angle_deg',0.0)),'deg'),
+            _param('fc_cooling_exhaust_lip_radius',_mm(float(co.get('lip_radius_m',0.0)))),
+            _param('fc_cooling_fan_count',int(cf.get('count',0)),'unitless'),
+            _param('fc_cooling_fan_diameter',_mm(float(cf.get('diameter_m',0.0)))),
+            _param('fc_cooling_fan_center_spacing',_mm(float(cf.get('center_spacing_m',0.0)))),
+            _param('fc_cooling_fan_1_center_x',_mm(float(co.get('center_x_m',0.0))-0.5*float(cf.get('center_spacing_m',0.0)))),
+            _param('fc_cooling_fan_2_center_x',_mm(float(co.get('center_x_m',0.0))+0.5*float(cf.get('center_spacing_m',0.0)))),
+            _param('fc_cooling_fan_center_y',_mm(exhaust_y)),
+            _param('fc_cooling_fan_center_z',_mm(float(co.get('center_z_m',0.0)))),
+            _param('fc_cooling_inlet_plenum_gap_actual',_mm(float(cool.get('inlet_side_plenum_gap_m',0.0)))),
+            _param('fc_cooling_exhaust_plenum_gap_actual',_mm(float(cool.get('exhaust_side_plenum_gap_m',0.0)))),
+            _param('fc_cooling_inlet_plenum_gap_min',_mm(float(cool.get('required_inlet_side_plenum_gap_m',0.0)))),
+            _param('fc_cooling_exhaust_plenum_gap_min',_mm(float(cool.get('required_exhaust_side_plenum_gap_m',0.0)))),
+            _param('fc_cooling_min_fuselage_width',_mm(float(cool.get('minimum_fuselage_width_for_plenums_m',0.0)))),
+        ]
+        ccad=cool_user.get('cad',{})
+        if ccad:
+            out += [
+                _param('fc_cooling_section_joint_edge_distance',_mm(float(ccad.get('minimum_edge_distance_from_fuselage_section_joint_m',0.012)))),
+                _param('fc_cooling_grille_corner_radius',_mm(float(ccad.get('grille_corner_radius_m',0.004)))),
+                _param('fc_cooling_min_web_between_slots',_mm(float(ccad.get('minimum_web_between_slots_m',0.003)))),
+                _param('fc_cooling_exhaust_grille_fastener',str(ccad.get('removable_exhaust_grille_fastener','M3')),'String'),
+            ]
+
     # Drawing/assembly parameters deliberately controlled by the user.
     tol=cad.get('tolerances_mm',{})
     for k,v in tol.items(): out.append(_param(k,float(v),'mm','User CAD tolerance/clearance'))

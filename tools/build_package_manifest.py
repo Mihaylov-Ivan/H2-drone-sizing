@@ -23,8 +23,8 @@ def main()->int:
             continue
         files[str(rel)]={'size_bytes':p.stat().st_size,'sha256':sha256_file(p)}
     payload={
-        'package':'H2AIR Integrated Model v4.0',
-        'release_date':'2026-09-04',
+        'package':'H2AIR Integrated Model v4.1',
+        'release_date':'2026-09-09',
         'fidelity':'conceptual / multidisciplinary screening',
         'file_count':len(files),
         'files':files,

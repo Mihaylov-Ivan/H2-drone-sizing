@@ -16,6 +16,8 @@ const COLORS = {
   payload: 0xc27a6a,
   cube: 0xb07cc6,
   pdb: 0x6e7f91,
+  coolingInlet: 0x32c5ff,
+  coolingExhaust: 0xff7043,
 };
 
 /** @type {Record<string, number|string>} */
@@ -670,6 +672,37 @@ function propulsionMeshes() {
   return g;
 }
 
+function coolingMeshes() {
+  const g = new THREE.Group();
+  g.name = 'cooling';
+  if (P.fc_cooling_inlet_panel_length == null) return g;
+
+  const halfW = 0.5 * mm('fuselage_width', mm('fuselage_max_diameter', 180));
+  const eps = 0.0015;
+  const makeSlots = (prefix, color, sideDefault) => {
+    const n = Math.max(1, Math.round(num(`${prefix}_slot_count`, 1)));
+    const L = mm(`${prefix}_slot_length`);
+    const w = mm(`${prefix}_slot_width`);
+    const gap = mm(`${prefix}_slot_gap`);
+    const cx = mm(`${prefix}_center_x`);
+    const cz = mm(`${prefix}_center_z`);
+    const side = str(prefix.includes('inlet') ? 'fc_cooling_inlet_side' : 'fc_cooling_exhaust_side', sideDefault);
+    const y = side.toLowerCase() === 'left' ? -halfW - eps : halfW + eps;
+    const totalH = n * w + Math.max(0, n - 1) * gap;
+    const mat = makeMaterial(color, { emissive: color, emissiveIntensity: 0.15, roughness: 0.45 });
+    for (let i = 0; i < n; i++) {
+      const z = cz - 0.5 * totalH + 0.5 * w + i * (w + gap);
+      const slot = new THREE.Mesh(new THREE.BoxGeometry(L, 0.002, w), mat);
+      slot.position.set(cx, y, z);
+      g.add(slot);
+    }
+  };
+
+  makeSlots('fc_cooling_inlet', COLORS.coolingInlet, 'left');
+  makeSlots('fc_cooling_exhaust', COLORS.coolingExhaust, 'right');
+  return g;
+}
+
 function buildAircraft() {
   if (aircraft) scene.remove(aircraft);
   aircraft = new THREE.Group();
@@ -729,8 +762,9 @@ function buildAircraft() {
   groups.vt = vtGroup;
   groups.props = propulsionMeshes();
   groups.internals = internalPackMeshes();
+  groups.cooling = coolingMeshes();
 
-  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props', 'internals']) {
+  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props', 'internals', 'cooling']) {
     aircraft.add(groups[key]);
   }
   scene.add(aircraft);
@@ -758,6 +792,11 @@ function updateDims() {
     ['Lift prop ⌀', fmt(mm('lift_prop_diameter'))],
     ['Pusher prop ⌀', fmt(mm('pusher_prop_diameter'))],
   ];
+  if (P.fc_cooling_inlet_panel_length != null) {
+    rows.push(['FC cooling inlet', `${fmt(mm('fc_cooling_inlet_panel_length'))} × ${fmt(mm('fc_cooling_inlet_panel_height'))} (${str('fc_cooling_inlet_side', 'left')})`]);
+    rows.push(['FC cooling exhaust', `${fmt(mm('fc_cooling_exhaust_panel_length'))} × ${fmt(mm('fc_cooling_exhaust_panel_height'))} (${str('fc_cooling_exhaust_side', 'right')})`]);
+    rows.push(['FC fan ⌀ / spacing', `${fmt(mm('fc_cooling_fan_diameter'))} / ${fmt(mm('fc_cooling_fan_center_spacing'))}`]);
+  }
   if (P.payload_length != null) {
     rows.push(['Payload L×W×H', `${fmt(mm('payload_length'))} × ${fmt(mm('payload_width', 80))} × ${fmt(mm('payload_height', 80))}`]);
   }
@@ -794,6 +833,7 @@ function applyVisibility() {
     vt: 'toggle-vt',
     props: 'toggle-props',
     internals: 'toggle-internals',
+    cooling: 'toggle-cooling',
   };
   for (const [g, id] of Object.entries(map)) {
     if (groups[g]) groups[g].visible = document.getElementById(id).checked;
@@ -886,6 +926,7 @@ for (const id of [
   'toggle-vt',
   'toggle-props',
   'toggle-internals',
+  'toggle-cooling',
   'toggle-grid',
   'toggle-axes',
 ]) {
