@@ -112,7 +112,7 @@
     },
     {
       "name": "fuselage_width",
-      "value": 135.0,
+      "value": 149.00000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -466,19 +466,19 @@
     },
     {
       "name": "boom_left_y",
-      "value": -366.9,
+      "value": -373.90000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "boom_right_y",
-      "value": 366.9,
+      "value": 373.90000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "boom_spacing",
-      "value": 733.8,
+      "value": 747.8000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -514,7 +514,7 @@
     },
     {
       "name": "lift_motor_y_abs",
-      "value": 366.9,
+      "value": 373.90000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -652,7 +652,7 @@
     },
     {
       "name": "battery_z",
-      "value": 60.29069267511453,
+      "value": 67.29069267511453,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -724,7 +724,7 @@
     },
     {
       "name": "fuel_cell_control_box_z",
-      "value": 57.36569267511453,
+      "value": 64.36569267511453,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -790,7 +790,7 @@
     },
     {
       "name": "cube_orange_z",
-      "value": 30.49069267511453,
+      "value": 37.49069267511453,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -916,7 +916,7 @@
     },
     {
       "name": "fc_cooling_inlet_center_y",
-      "value": -67.5,
+      "value": -74.50000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -1000,7 +1000,7 @@
     },
     {
       "name": "fc_cooling_exhaust_center_y",
-      "value": 67.5,
+      "value": 74.50000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -1096,7 +1096,7 @@
     },
     {
       "name": "fc_cooling_fan_center_y",
-      "value": 67.5,
+      "value": 74.50000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -1108,13 +1108,13 @@
     },
     {
       "name": "fc_cooling_inlet_plenum_gap_actual",
-      "value": 3.3000000000000043,
+      "value": 10.300000000000017,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fc_cooling_exhaust_plenum_gap_actual",
-      "value": 3.3000000000000043,
+      "value": 10.300000000000017,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },

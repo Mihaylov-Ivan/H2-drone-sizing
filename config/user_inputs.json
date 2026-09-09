@@ -14,11 +14,11 @@
     "overall_reference_length_m": 1.25,
     "diameter_mode": "auto",
     "minimum_diameter_m": 0.18,
-    "diameter_margin_m": 0.0,
+    "diameter_margin_m": 0.007,
     "cross_section": "rectangular_filleted",
     "fillet_radius_m": 0.02,
     "midbody_length_mode": "auto",
-    "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H).",
+    "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. diameter_margin_m adds per-side pad so cooling plenums clear the IE-SOAR cross-fuselage gap screen with a centred fuel cell. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H).",
     "sections": [
       {
         "name": "nose",
@@ -148,7 +148,7 @@
       "fuselage_wall_m": 0.01,
       "aft_tail_beyond_motor_m": 0.02,
       "component_m": 0.003,
-      "bottom_to_top_m": 0.003,
+      "bottom_to_top_m": 0.01,
       "pdb_all_around_m": 0.02,
       "cube_front_connector_m": 0.05,
       "nose_bay_raise_m": 0.02,

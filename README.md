@@ -45,7 +45,7 @@ The cooling export includes inlet/exhaust side, panel/slot geometry, NACA-style 
 python viewer/serve.py outputs/my_design
 ```
 
-The viewer now includes a toggle for the fuel-cell cooling inlet/exhaust slot patterns.
+The viewer draws the cross-fuselage cooling architecture on the fuselage sides: NACA-style inlet ramp and slots, exhaust louvre grille, fan discs/shroud and plenum-gap volumes, all driven by the `fc_cooling_*` CAD parameters.
 
 ## Design study
 

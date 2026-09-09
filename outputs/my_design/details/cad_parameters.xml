@@ -145,7 +145,7 @@
     <ParamWithValue>
       <name>fuselage_width</name>
       <typeCode>mm</typeCode>
-      <value>135.000 mm</value>
+      <value>149.000 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -558,21 +558,21 @@
     <ParamWithValue>
       <name>boom_left_y</name>
       <typeCode>mm</typeCode>
-      <value>-366.900 mm</value>
+      <value>-373.900 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>boom_right_y</name>
       <typeCode>mm</typeCode>
-      <value>366.900 mm</value>
+      <value>373.900 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>boom_spacing</name>
       <typeCode>mm</typeCode>
-      <value>733.800 mm</value>
+      <value>747.800 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -614,7 +614,7 @@
     <ParamWithValue>
       <name>lift_motor_y_abs</name>
       <typeCode>mm</typeCode>
-      <value>366.900 mm</value>
+      <value>373.900 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -775,7 +775,7 @@
     <ParamWithValue>
       <name>battery_z</name>
       <typeCode>mm</typeCode>
-      <value>60.291 mm</value>
+      <value>67.291 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -859,7 +859,7 @@
     <ParamWithValue>
       <name>fuel_cell_control_box_z</name>
       <typeCode>mm</typeCode>
-      <value>57.366 mm</value>
+      <value>64.366 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -936,7 +936,7 @@
     <ParamWithValue>
       <name>cube_orange_z</name>
       <typeCode>mm</typeCode>
-      <value>30.491 mm</value>
+      <value>37.491 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -1083,7 +1083,7 @@
     <ParamWithValue>
       <name>fc_cooling_inlet_center_y</name>
       <typeCode>mm</typeCode>
-      <value>-67.500 mm</value>
+      <value>-74.500 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -1181,7 +1181,7 @@
     <ParamWithValue>
       <name>fc_cooling_exhaust_center_y</name>
       <typeCode>mm</typeCode>
-      <value>67.500 mm</value>
+      <value>74.500 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -1293,7 +1293,7 @@
     <ParamWithValue>
       <name>fc_cooling_fan_center_y</name>
       <typeCode>mm</typeCode>
-      <value>67.500 mm</value>
+      <value>74.500 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -1307,14 +1307,14 @@
     <ParamWithValue>
       <name>fc_cooling_inlet_plenum_gap_actual</name>
       <typeCode>mm</typeCode>
-      <value>3.300 mm</value>
+      <value>10.300 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>fc_cooling_exhaust_plenum_gap_actual</name>
       <typeCode>mm</typeCode>
-      <value>3.300 mm</value>
+      <value>10.300 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>

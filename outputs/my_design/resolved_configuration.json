@@ -30,7 +30,7 @@
     "horizontal_tail_ac_x_m": 1.048942,
     "lift_row_center_x_m": 0.385884,
     "battery_x_m": 0.22150000000000003,
-    "battery_z_m": 0.06029069267511453,
+    "battery_z_m": 0.06729069267511453,
     "fuel_cell_x_m": 0.25525000000000003,
     "fuel_cell_z_m": -0.028109307324885473,
     "hydrogen_cylinder_x_m": 0.5930000000000001,
@@ -39,11 +39,11 @@
     "fuselage_diameter_mode": "auto",
     "fuselage_midbody_length_mode": "auto",
     "fuselage_minimum_diameter_m": 0.18,
-    "fuselage_diameter_margin_m": 0.0,
+    "fuselage_diameter_margin_m": 0.007,
     "fuselage_cross_section": "rectangular_filleted",
     "fuselage_fillet_radius_m": 0.02,
     "fuselage_length_m": 0.8594000000000002,
-    "fuselage_width_m": 0.135,
+    "fuselage_width_m": 0.14900000000000002,
     "fuselage_height_m": 0.22801861464977094,
     "fuselage_max_diameter_m": 0.22801861464977094,
     "main_wing_root_chord_m": 0.3258,
@@ -107,10 +107,10 @@
       "tail": 0.22801861464977094
     },
     "fuselage_section_widths_m": {
-      "nose": 0.135,
-      "center_a": 0.135,
-      "center_b": 0.135,
-      "tail": 0.135
+      "nose": 0.14900000000000002,
+      "center_a": 0.14900000000000002,
+      "center_b": 0.14900000000000002,
+      "tail": 0.14900000000000002
     },
     "fuselage_section_heights_m": {
       "nose": 0.22801861464977094,
@@ -120,12 +120,12 @@
     },
     "fuel_cell_control_box_x_m": 0.4141,
     "fuel_cell_control_box_y_m": 0.0,
-    "fuel_cell_control_box_z_m": 0.05736569267511453,
+    "fuel_cell_control_box_z_m": 0.06436569267511454,
     "fuel_cell_stack_mass_kg": 1.0932,
     "fuel_cell_control_box_mass_kg": 0.3568,
     "battery_y_m": 0.0,
     "cube_orange_x_m": 0.08275,
-    "cube_orange_z_m": 0.03049069267511453,
+    "cube_orange_z_m": 0.03749069267511453,
     "payload_x_m": 0.10350000000000001,
     "payload_z_m": -0.02800930732488547,
     "nose_section_end_x_m": 0.14,
@@ -286,7 +286,7 @@
           ],
           "dimensions_m": [
             0.8594000000000002,
-            0.135,
+            0.14900000000000002,
             0.22801861464977094
           ]
         },
@@ -300,8 +300,8 @@
         "horizontal_tail_span_m": 0.8688,
         "vertical_fin_height_m": 0.3,
         "boom_center_y_m": [
-          -0.3669,
-          0.3669
+          -0.3739,
+          0.3739
         ],
         "boom_outer_diameter_m": 0.035,
         "boom_x_start_m": 0.09648400000000001,
@@ -309,22 +309,22 @@
         "lift_prop_centers_m": [
           [
             0.09648400000000001,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           [
             0.09648400000000001,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ],
           [
             0.675284,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           [
             0.675284,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ]
         ],
@@ -377,7 +377,7 @@
             ],
             "dimensions_m": [
               0.8594000000000002,
-              0.135,
+              0.14900000000000002,
               0.22801861464977094
             ],
             "wall_clearance_m": 0.01,
@@ -432,7 +432,7 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.09648400000000001,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -444,7 +444,7 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.09648400000000001,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -456,7 +456,7 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.675284,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -468,7 +468,7 @@
           "mass_takeoff_kg": 0.05175,
           "position_m": [
             0.675284,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -674,7 +674,7 @@
           "position_m": [
             0.22150000000000003,
             0.0,
-            0.06029069267511453
+            0.06729069267511453
           ],
           "shape": "box",
           "dimensions_m": {
@@ -767,7 +767,7 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.09648400000000001,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
@@ -785,7 +785,7 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.09648400000000001,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
@@ -803,7 +803,7 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.675284,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
@@ -821,7 +821,7 @@
           "mass_takeoff_kg": 0.284,
           "position_m": [
             0.675284,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
@@ -857,7 +857,7 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.09648400000000001,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -869,7 +869,7 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.09648400000000001,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -881,7 +881,7 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.675284,
-            -0.3669,
+            -0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -893,7 +893,7 @@
           "mass_takeoff_kg": 0.0366,
           "position_m": [
             0.675284,
-            0.3669,
+            0.3739,
             0.12788930732488546
           ],
           "status": "calculated",
@@ -919,7 +919,7 @@
           "position_m": [
             0.08275,
             0.0,
-            0.03049069267511453
+            0.03749069267511453
           ],
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
@@ -1052,7 +1052,7 @@
           "position_m": [
             0.4141,
             0.0,
-            0.05736569267511453
+            0.06436569267511454
           ],
           "shape": "box",
           "dimensions_m": {
@@ -1177,10 +1177,10 @@
       "common_midpoint_x_m": 0.385884,
       "minimum_front_x_m": 0.0,
       "maximum_rear_x_m": 0.8594000000000002,
-      "y_abs_m": 0.3669,
+      "y_abs_m": 0.3739,
       "z_m": 0.12788930732488546,
       "required_disk_edge_clearance_m": 0.02,
-      "central_pod_width_m": 0.135,
+      "central_pod_width_m": 0.14900000000000002,
       "required_disk_to_pod_clearance_m": 0.02
     },
     "pusher_screen": {
@@ -1447,22 +1447,22 @@
       "lift_motor_stations_m": [
         [
           0.09648400000000001,
-          -0.3669,
+          -0.3739,
           0.12788930732488546
         ],
         [
           0.09648400000000001,
-          0.3669,
+          0.3739,
           0.12788930732488546
         ],
         [
           0.675284,
-          -0.3669,
+          -0.3739,
           0.12788930732488546
         ],
         [
           0.675284,
-          0.3669,
+          0.3739,
           0.12788930732488546
         ]
       ],
@@ -1613,7 +1613,7 @@
         0.09648400000000001,
         0.675284
       ],
-      "motor_y_m": 0.3669,
+      "motor_y_m": 0.3739,
       "phase4_equal_share_design_thrust_N": 59.38,
       "phase6_reference_hover_thrusts_N": [
         32.89,
@@ -1737,8 +1737,8 @@
       ],
       "high_wing_boom_through_wing": true,
       "boom_mounted_lift_motors": true,
-      "boom_y_abs_m": 0.3669,
-      "boom_y_input_m": 0.3669,
+      "boom_y_abs_m": 0.3739,
+      "boom_y_input_m": 0.3739,
       "boom_z_m": 0.09686430732488546,
       "boom_widened_for_pod_clearance": false,
       "main_wing_z_m": 0.09686430732488546,
@@ -1781,7 +1781,7 @@
       "energy_bay_order": "fuel_cell_forward",
       "fuselage_length_m": 0.8594000000000002,
       "fuselage_od_m": 0.22801861464977094,
-      "fuselage_width_m": 0.135,
+      "fuselage_width_m": 0.14900000000000002,
       "fuselage_height_m": 0.22801861464977094,
       "fuselage_cross_section": "rectangular_filleted",
       "fuselage_fillet_radius_m": 0.02,
@@ -1802,7 +1802,7 @@
       },
       "cylinder_top_gap_m": 0.06751861464977094,
       "cylinder_top_gap_required_m": 0.0635,
-      "bottom_to_top_clearance_m": 0.003,
+      "bottom_to_top_clearance_m": 0.01,
       "nose_section_end_x_m": 0.14,
       "fuel_cell_module_mass_kg": 1.45,
       "fuel_cell_stack_mass_kg": 1.0932,
@@ -1810,7 +1810,7 @@
       "control_box_site": "h2_top",
       "battery_site": "fc_top",
       "cb_battery_order": "battery_forward",
-      "layout_od_need_m": 0.02646251297771908,
+      "layout_od_need_m": 0.027753487022280924,
       "cube_front_connector_bay_m": [
         0.01,
         0.035500000000000004
@@ -1836,9 +1836,9 @@
           "length": 0.0945,
           "width": 0.0443,
           "height": 0.031,
-          "z": 0.03049069267511453,
-          "radial_m": 0.05104670716840444,
-          "half_extent_m": 0.04599069267511453
+          "z": 0.03749069267511453,
+          "radial_m": 0.057433753230904536,
+          "half_extent_m": 0.05299069267511453
         },
         {
           "name": "fuel_cell_system",
@@ -1869,9 +1869,9 @@
           "length": 0.2022,
           "width": 0.107,
           "height": 0.04515,
-          "z": 0.05736569267511453,
-          "radial_m": 0.09619129038211885,
-          "half_extent_m": 0.07994069267511453
+          "z": 0.06436569267511454,
+          "radial_m": 0.10208297626357057,
+          "half_extent_m": 0.08694069267511453
         },
         {
           "name": "buffer_battery",
@@ -1880,9 +1880,9 @@
           "length": 0.163,
           "width": 0.092,
           "height": 0.051,
-          "z": 0.06029069267511453,
-          "radial_m": 0.0973449687948789,
-          "half_extent_m": 0.08579069267511452
+          "z": 0.06729069267511453,
+          "radial_m": 0.10356694765767481,
+          "half_extent_m": 0.09279069267511453
         },
         {
           "name": "power_module",
@@ -1921,17 +1921,17 @@
         "fuel_cell_control_box": [
           0.4141,
           0.0,
-          0.05736569267511453
+          0.06436569267511454
         ],
         "buffer_battery": [
           0.22150000000000003,
           0.0,
-          0.06029069267511453
+          0.06729069267511453
         ],
         "autopilot_cube_orange": [
           0.08275,
           0.0,
-          0.03049069267511453
+          0.03749069267511453
         ],
         "payload": [
           0.10350000000000001,
@@ -1958,26 +1958,26 @@
       },
       "fuselage_section_od_needs_m": {
         "nose": 0.18,
-        "center_a": 0.19601861464977094,
-        "center_b": 0.19601861464977094,
-        "tail": 0.19601861464977094
+        "center_a": 0.21958138535022906,
+        "center_b": 0.21001861464977095,
+        "tail": 0.21001861464977095
       },
       "fuselage_section_wh_needs_m": {
         "nose": {
-          "width_m": 0.1,
+          "width_m": 0.114,
           "height_m": 0.18
         },
         "center_a": {
-          "width_m": 0.1284,
-          "height_m": 0.19601861464977094
+          "width_m": 0.1424,
+          "height_m": 0.21958138535022906
         },
         "center_b": {
-          "width_m": 0.135,
-          "height_m": 0.19601861464977094
+          "width_m": 0.14900000000000002,
+          "height_m": 0.21001861464977095
         },
         "tail": {
-          "width_m": 0.135,
-          "height_m": 0.19601861464977094
+          "width_m": 0.14900000000000002,
+          "height_m": 0.21001861464977095
         }
       },
       "fuselage_midbody": {
@@ -4086,7 +4086,7 @@
       "fuselage_wall_m": 0.01,
       "aft_tail_beyond_motor_m": 0.02,
       "component_m": 0.003,
-      "bottom_to_top_m": 0.003,
+      "bottom_to_top_m": 0.01,
       "pdb_all_around_m": 0.02,
       "cube_front_connector_m": 0.05,
       "nose_bay_raise_m": 0.02,
@@ -4442,7 +4442,7 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       },
       {
@@ -4456,7 +4456,7 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       },
       {
@@ -4470,7 +4470,7 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       },
       {
@@ -4484,7 +4484,7 @@
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       }
     ]
@@ -4505,11 +4505,11 @@
       "overall_reference_length_m": 1.25,
       "diameter_mode": "auto",
       "minimum_diameter_m": 0.18,
-      "diameter_margin_m": 0.0,
+      "diameter_margin_m": 0.007,
       "cross_section": "rectangular_filleted",
       "fillet_radius_m": 0.02,
       "midbody_length_mode": "auto",
-      "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H).",
+      "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. diameter_margin_m adds per-side pad so cooling plenums clear the IE-SOAR cross-fuselage gap screen with a centred fuel cell. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H).",
       "sections": [
         {
           "name": "nose",
@@ -4522,7 +4522,7 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         },
         {
@@ -4536,7 +4536,7 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         },
         {
@@ -4550,7 +4550,7 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         },
         {
@@ -4564,7 +4564,7 @@
             "status": "engineering_assumption",
             "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         }
       ]
@@ -4647,7 +4647,7 @@
         "fuselage_wall_m": 0.01,
         "aft_tail_beyond_motor_m": 0.02,
         "component_m": 0.003,
-        "bottom_to_top_m": 0.003,
+        "bottom_to_top_m": 0.01,
         "pdb_all_around_m": 0.02,
         "cube_front_connector_m": 0.05,
         "nose_bay_raise_m": 0.02,

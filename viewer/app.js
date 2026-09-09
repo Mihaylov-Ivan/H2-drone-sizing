@@ -226,14 +226,19 @@ function fuselageMesh() {
   }
 
   function sectionPoint(halfW, halfH, fillet, theta, morph) {
-    // Circle uses the max half-size so tips stay round and contain the rect.
-    const rc = Math.max(halfW, halfH);
-    const cy = rc * Math.cos(theta);
-    const cz = rc * Math.sin(theta);
-    if (morph <= 1e-6) return [cy, cz];
+    // Rectangular modes morph from an inscribed ellipse (not a max-radius circle)
+    // so nose/tail never bulge past the local half-width / half-height. The ellipse
+    // is tangent to the midbody flats at the side and top/bottom stations.
+    if (!useRect) {
+      const rc = Math.max(halfW, halfH);
+      return [rc * Math.cos(theta), rc * Math.sin(theta)];
+    }
+    const ey = halfW * Math.cos(theta);
+    const ez = halfH * Math.sin(theta);
+    if (morph <= 1e-6) return [ey, ez];
     const [sy, sz] = roundedRectPoint(halfW, halfH, fillet, theta);
     const m = Math.min(Math.max(morph, 0), 1);
-    return [cy + (sy - cy) * m, cz + (sz - cz) * m];
+    return [ey + (sy - ey) * m, ez + (sz - ez) * m];
   }
 
   const axial = 72;
@@ -672,34 +677,243 @@ function propulsionMeshes() {
   return g;
 }
 
+/** +1 = right / starboard skin, −1 = left / port skin. */
+function coolingSideSign(sideName, fallback = 'left') {
+  return String(sideName || fallback).toLowerCase() === 'right' ? 1 : -1;
+}
+
+/** NACA-style side-inlet ramp face: flush at −x, full recess depth at +x. */
+function nacaRampGeometry(length, height, recess, outSign) {
+  const hx = 0.5 * length;
+  const hz = 0.5 * height;
+  const dy = -outSign * recess; // inward (toward fuselage centreline)
+  const positions = new Float32Array([
+    // ramp face
+    -hx, 0, -hz, hx, dy, -hz, hx, dy, hz, -hx, 0, hz,
+    // −z wall
+    -hx, 0, -hz, hx, 0, -hz, hx, dy, -hz,
+    // +z wall
+    -hx, 0, hz, hx, dy, hz, hx, 0, hz,
+    // aft face
+    hx, 0, -hz, hx, 0, hz, hx, dy, hz, hx, dy, -hz,
+  ]);
+  const indices = [
+    0, 1, 2, 0, 2, 3,
+    4, 5, 6,
+    7, 8, 9,
+    10, 11, 12, 10, 12, 13,
+  ];
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setIndex(indices);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+/**
+ * Cross-fuselage IE-SOAR cooling: NACA-style flush inlet + fan-side exhaust grille.
+ * Driven entirely by fc_cooling_* CAD parameters (drawing geometry only).
+ */
 function coolingMeshes() {
   const g = new THREE.Group();
   g.name = 'cooling';
   if (P.fc_cooling_inlet_panel_length == null) return g;
 
   const halfW = 0.5 * mm('fuselage_width', mm('fuselage_max_diameter', 180));
-  const eps = 0.0015;
-  const makeSlots = (prefix, color, sideDefault) => {
-    const n = Math.max(1, Math.round(num(`${prefix}_slot_count`, 1)));
-    const L = mm(`${prefix}_slot_length`);
-    const w = mm(`${prefix}_slot_width`);
-    const gap = mm(`${prefix}_slot_gap`);
-    const cx = mm(`${prefix}_center_x`);
-    const cz = mm(`${prefix}_center_z`);
-    const side = str(prefix.includes('inlet') ? 'fc_cooling_inlet_side' : 'fc_cooling_exhaust_side', sideDefault);
-    const y = side.toLowerCase() === 'left' ? -halfW - eps : halfW + eps;
+  const skinEps = 0.0012;
+  const inletMat = makeMaterial(COLORS.coolingInlet, {
+    emissive: COLORS.coolingInlet,
+    emissiveIntensity: 0.12,
+    roughness: 0.4,
+    metalness: 0.12,
+  });
+  const exhaustMat = makeMaterial(COLORS.coolingExhaust, {
+    emissive: COLORS.coolingExhaust,
+    emissiveIntensity: 0.12,
+    roughness: 0.42,
+    metalness: 0.1,
+  });
+  const voidMat = makeMaterial(0x0a1218, { roughness: 0.95, metalness: 0.0 });
+  const fanMat = makeMaterial(0x2a3340, { metalness: 0.35, roughness: 0.35 });
+  const fanDiskMat = makeMaterial(COLORS.coolingExhaust, {
+    transparent: true,
+    opacity: 0.35,
+    emissive: COLORS.coolingExhaust,
+    emissiveIntensity: 0.2,
+    side: THREE.DoubleSide,
+  });
+  fanDiskMat.userData.baseOpacity = 0.35;
+  const plenumMat = makeMaterial(0x7ec8ff, {
+    transparent: true,
+    opacity: 0.18,
+    depthWrite: false,
+    roughness: 1,
+  });
+  plenumMat.userData.baseOpacity = 0.18;
+
+  function panelPlate(cx, cy, cz, length, height, colorMat, outSign) {
+    const t = 0.0035; // frame web thickness
+    const y = cy + outSign * skinEps;
+    // Open frame so grille slots remain readable.
+    const webs = [
+      [length, 0.002, t], // bottom
+      [length, 0.002, t], // top
+      [t, 0.002, height], // forward
+      [t, 0.002, height], // aft
+    ];
+    const zs = [-0.5 * height + 0.5 * t, 0.5 * height - 0.5 * t, 0, 0];
+    const xs = [0, 0, -0.5 * length + 0.5 * t, 0.5 * length - 0.5 * t];
+    for (let i = 0; i < 4; i++) {
+      const [dx, dy, dz] = webs[i];
+      const web = new THREE.Mesh(new THREE.BoxGeometry(dx, dy, dz), colorMat);
+      web.position.set(cx + xs[i], y, cz + zs[i]);
+      g.add(web);
+    }
+    const edge = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(length, 0.0022, height)),
+      new THREE.LineBasicMaterial({ color: colorMat.color, transparent: true, opacity: 0.9 }),
+    );
+    edge.position.set(cx, y, cz);
+    g.add(edge);
+  }
+
+  function stackedSlots(cx, ySkin, cz, n, L, w, gap, mat, depthY, outSign, louvreDeg = 0) {
     const totalH = n * w + Math.max(0, n - 1) * gap;
-    const mat = makeMaterial(color, { emissive: color, emissiveIntensity: 0.15, roughness: 0.45 });
+    const louvreRad = (louvreDeg * Math.PI) / 180;
+    const d = Math.max(depthY, 0.002);
     for (let i = 0; i < n; i++) {
       const z = cz - 0.5 * totalH + 0.5 * w + i * (w + gap);
-      const slot = new THREE.Mesh(new THREE.BoxGeometry(L, 0.002, w), mat);
-      slot.position.set(cx, y, z);
+      const slot = new THREE.Mesh(new THREE.BoxGeometry(L, d, w * 0.92), mat);
+      // Sit proud of the skin so openings remain visible with an opaque fuselage.
+      slot.position.set(cx, ySkin + outSign * (0.5 * d + skinEps), z);
+      if (louvreRad) slot.rotation.x = outSign * louvreRad;
       g.add(slot);
     }
-  };
+  }
 
-  makeSlots('fc_cooling_inlet', COLORS.coolingInlet, 'left');
-  makeSlots('fc_cooling_exhaust', COLORS.coolingExhaust, 'right');
+  function addPlenum(outSign, panelL, panelH, cx, cz, gapKey) {
+    const gap = mm(gapKey, 0);
+    if (!(gap > 1e-4) || P.fuel_cell_width == null) return;
+    const fcW = mm('fuel_cell_width');
+    const fcL = mm('fuel_cell_length', panelL * 1000);
+    const fcH = mm('fuel_cell_height', panelH * 1000);
+    const fcY = mm('fuel_cell_y', 0);
+    const fcX = mm('fuel_cell_x', cx * 1000);
+    const fcZ = mm('fuel_cell_z', cz * 1000);
+    const faceY = fcY + outSign * 0.5 * fcW;
+    const plenum = new THREE.Mesh(
+      new THREE.BoxGeometry(Math.min(fcL, panelL), gap, Math.min(fcH, panelH)),
+      plenumMat,
+    );
+    plenum.position.set(fcX, faceY + outSign * 0.5 * gap, fcZ);
+    g.add(plenum);
+  }
+
+  // --- Inlet (NACA-style flush side opening) ---
+  {
+    const side = str('fc_cooling_inlet_side', 'left');
+    const outSign = coolingSideSign(side, 'left');
+    const cx = mm('fc_cooling_inlet_center_x');
+    const cy = mm('fc_cooling_inlet_center_y', outSign * halfW * 1000);
+    const cz = mm('fc_cooling_inlet_center_z');
+    const panelL = mm('fc_cooling_inlet_panel_length');
+    const panelH = mm('fc_cooling_inlet_panel_height');
+    const recess = Math.max(mm('fc_cooling_inlet_recess_depth', 8), 0.002);
+    const rampL = Math.max(mm('fc_cooling_inlet_ramp_length', panelL * 1000), 0.01);
+    const sidewallDeg = num('fc_cooling_inlet_sidewall_angle', 7);
+    const n = Math.max(1, Math.round(num('fc_cooling_inlet_slot_count', 1)));
+    const slotL = mm('fc_cooling_inlet_slot_length', panelL * 1000);
+    const slotW = mm('fc_cooling_inlet_slot_width', 6);
+    const slotGap = mm('fc_cooling_inlet_slot_gap', 3);
+
+    panelPlate(cx, cy, cz, panelL, panelH, inletMat, outSign);
+
+    const cavity = new THREE.Mesh(
+      new THREE.BoxGeometry(panelL * 0.98, recess, panelH * 0.96),
+      voidMat,
+    );
+    cavity.position.set(cx, cy - outSign * (0.5 * recess + skinEps * 0.5), cz);
+    g.add(cavity);
+
+    const ramp = new THREE.Mesh(nacaRampGeometry(rampL, panelH * 0.94, recess, outSign), inletMat);
+    ramp.position.set(cx, cy - outSign * skinEps, cz);
+    g.add(ramp);
+
+    const wallAng = (sidewallDeg * Math.PI) / 180;
+    for (const sz of [-1, 1]) {
+      const wall = new THREE.Mesh(
+        new THREE.BoxGeometry(rampL * 0.9, recess * 0.95, 0.0015),
+        inletMat,
+      );
+      wall.position.set(cx, cy - outSign * 0.45 * recess, cz + sz * (0.5 * panelH - 0.002));
+      wall.rotation.x = sz * wallAng;
+      g.add(wall);
+    }
+
+    stackedSlots(cx, cy, cz, n, slotL, slotW, slotGap, inletMat, 0.0025, outSign, 0);
+    addPlenum(outSign, panelL, panelH, cx, cz, 'fc_cooling_inlet_plenum_gap_actual');
+  }
+
+  // --- Exhaust (flush fan-side grille + shrouded fans) ---
+  {
+    const side = str('fc_cooling_exhaust_side', 'right');
+    const outSign = coolingSideSign(side, 'right');
+    const cx = mm('fc_cooling_exhaust_center_x');
+    const cy = mm('fc_cooling_exhaust_center_y', outSign * halfW * 1000);
+    const cz = mm('fc_cooling_exhaust_center_z');
+    const panelL = mm('fc_cooling_exhaust_panel_length');
+    const panelH = mm('fc_cooling_exhaust_panel_height');
+    const shroud = Math.max(mm('fc_cooling_exhaust_shroud_depth', 10), 0.002);
+    const louvreDeg = num('fc_cooling_exhaust_louvre_angle', 15);
+    const n = Math.max(1, Math.round(num('fc_cooling_exhaust_slot_count', 1)));
+    const slotL = mm('fc_cooling_exhaust_slot_length', panelL * 1000);
+    const slotW = mm('fc_cooling_exhaust_slot_width', 6.5);
+    const slotGap = mm('fc_cooling_exhaust_slot_gap', 3);
+    const fanCount = Math.max(1, Math.round(num('fc_cooling_fan_count', 2)));
+    const fanD = mm('fc_cooling_fan_diameter', 80);
+    const fanZ = mm('fc_cooling_fan_center_z', cz * 1000);
+    const fanY = mm('fc_cooling_fan_center_y', cy * 1000);
+
+    panelPlate(cx, cy, cz, panelL, panelH, exhaustMat, outSign);
+
+    const duct = new THREE.Mesh(
+      new THREE.BoxGeometry(panelL * 0.96, shroud, panelH * 0.94),
+      voidMat,
+    );
+    duct.position.set(cx, cy - outSign * (0.5 * shroud + skinEps * 0.5), cz);
+    g.add(duct);
+
+    stackedSlots(cx, cy, cz, n, slotL, slotW, slotGap, exhaustMat, 0.003, outSign, louvreDeg);
+
+    for (let i = 0; i < fanCount; i++) {
+      const key = `fc_cooling_fan_${i + 1}_center_x`;
+      const spacing = mm('fc_cooling_fan_center_spacing', 86);
+      const fx = P[key] != null ? mm(key) : cx + (i - (fanCount - 1) / 2) * spacing;
+      // Fans face the side wall (axis along ±Y): cylinder default is Y; disk/torus need XZ plane.
+      const hub = new THREE.Mesh(
+        new THREE.CylinderGeometry(fanD * 0.12, fanD * 0.12, shroud * 0.85, 16),
+        fanMat,
+      );
+      hub.position.set(fx, fanY - outSign * 0.45 * shroud, fanZ);
+      g.add(hub);
+
+      const rim = new THREE.Mesh(
+        new THREE.TorusGeometry(fanD * 0.48, fanD * 0.035, 8, 28),
+        fanMat,
+      );
+      rim.rotation.x = Math.PI / 2;
+      rim.position.set(fx, fanY - outSign * 0.15 * shroud, fanZ);
+      g.add(rim);
+
+      const disk = new THREE.Mesh(new THREE.CircleGeometry(fanD * 0.46, 28), fanDiskMat);
+      disk.rotation.x = Math.PI / 2;
+      disk.position.set(fx, fanY - outSign * 0.05 * shroud, fanZ);
+      g.add(disk);
+    }
+
+    addPlenum(outSign, panelL, panelH, cx, cz, 'fc_cooling_exhaust_plenum_gap_actual');
+  }
+
   return g;
 }
 
@@ -793,9 +1007,23 @@ function updateDims() {
     ['Pusher prop ⌀', fmt(mm('pusher_prop_diameter'))],
   ];
   if (P.fc_cooling_inlet_panel_length != null) {
-    rows.push(['FC cooling inlet', `${fmt(mm('fc_cooling_inlet_panel_length'))} × ${fmt(mm('fc_cooling_inlet_panel_height'))} (${str('fc_cooling_inlet_side', 'left')})`]);
-    rows.push(['FC cooling exhaust', `${fmt(mm('fc_cooling_exhaust_panel_length'))} × ${fmt(mm('fc_cooling_exhaust_panel_height'))} (${str('fc_cooling_exhaust_side', 'right')})`]);
-    rows.push(['FC fan ⌀ / spacing', `${fmt(mm('fc_cooling_fan_diameter'))} / ${fmt(mm('fc_cooling_fan_center_spacing'))}`]);
+    rows.push(['FC cooling arch.', str('fc_cooling_architecture', 'cross_fuselage')]);
+    rows.push([
+      'FC cooling inlet',
+      `${fmt(mm('fc_cooling_inlet_panel_length'))} × ${fmt(mm('fc_cooling_inlet_panel_height'))} · ${str('fc_cooling_inlet_side', 'left')} · ${Math.round(num('fc_cooling_inlet_slot_count', 0))} slots · recess ${fmt(mm('fc_cooling_inlet_recess_depth'))}`,
+    ]);
+    rows.push([
+      'FC cooling exhaust',
+      `${fmt(mm('fc_cooling_exhaust_panel_length'))} × ${fmt(mm('fc_cooling_exhaust_panel_height'))} · ${str('fc_cooling_exhaust_side', 'right')} · louvre ${num('fc_cooling_exhaust_louvre_angle', 0).toFixed(0)}° · shroud ${fmt(mm('fc_cooling_exhaust_shroud_depth'))}`,
+    ]);
+    rows.push([
+      'FC fans',
+      `${Math.round(num('fc_cooling_fan_count', 2))} × ⌀ ${fmt(mm('fc_cooling_fan_diameter'))} @ ${fmt(mm('fc_cooling_fan_center_spacing'))} spacing`,
+    ]);
+    rows.push([
+      'FC plenum gaps (act/min)',
+      `in ${fmt(mm('fc_cooling_inlet_plenum_gap_actual'))}/${fmt(mm('fc_cooling_inlet_plenum_gap_min'))} · ex ${fmt(mm('fc_cooling_exhaust_plenum_gap_actual'))}/${fmt(mm('fc_cooling_exhaust_plenum_gap_min'))}`,
+    ]);
   }
   if (P.payload_length != null) {
     rows.push(['Payload L×W×H', `${fmt(mm('payload_length'))} × ${fmt(mm('payload_width', 80))} × ${fmt(mm('payload_height', 80))}`]);
