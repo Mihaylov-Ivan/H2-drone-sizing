@@ -10,7 +10,7 @@
     },
     {
       "name": "fuselage_nose_diameter",
-      "value": 180.0,
+      "value": 228.01861464977094,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -28,13 +28,13 @@
     },
     {
       "name": "fuselage_center_a_length",
-      "value": 250.0,
+      "value": 235.50000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_center_a_diameter",
-      "value": 180.0,
+      "value": 228.01861464977094,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -46,31 +46,31 @@
     },
     {
       "name": "fuselage_center_a_end_x",
-      "value": 390.0,
+      "value": 375.50000000000006,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_center_b_length",
-      "value": 250.0,
+      "value": 343.9000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_center_b_diameter",
-      "value": 180.0,
+      "value": 228.01861464977094,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_center_b_start_x",
-      "value": 390.0,
+      "value": 375.50000000000006,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_center_b_end_x",
-      "value": 640.0,
+      "value": 719.4000000000002,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -82,31 +82,55 @@
     },
     {
       "name": "fuselage_tail_diameter",
-      "value": 180.0,
+      "value": 228.01861464977094,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_tail_start_x",
-      "value": 640.0,
+      "value": 719.4000000000002,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_tail_end_x",
-      "value": 780.0,
+      "value": 859.4000000000002,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_total_length",
-      "value": 780.0,
+      "value": 859.4000000000002,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuselage_max_diameter",
-      "value": 180.0,
+      "value": 228.01861464977094,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_width",
+      "value": 135.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_height",
+      "value": 228.01861464977094,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_cross_section",
+      "value": "rectangular_filleted",
+      "unit": "String",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_fillet_radius",
+      "value": 20.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -142,13 +166,25 @@
     },
     {
       "name": "wing_le_x",
-      "value": 323.4825,
+      "value": 338.4825,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "wing_ac_x",
-      "value": 390.0,
+      "value": 404.99999999999994,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "wing_z",
+      "value": 96.86430732488546,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "wing_thickness",
+      "value": 28.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -219,6 +255,42 @@
       "comment": "H2AIR CAD export"
     },
     {
+      "name": "fuselage_longeron_OD",
+      "value": 6.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_longeron_boss_OD",
+      "value": 12.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_longeron_top_z",
+      "value": 110.75930732488547,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_longeron_bottom_z",
+      "value": -110.75930732488547,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuselage_top_z",
+      "value": 114.00930732488547,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "wing_drop_from_flush",
+      "value": 3.145000000000009,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
       "name": "horizontal_tail_span",
       "value": 868.8000000000001,
       "unit": "mm",
@@ -250,13 +322,25 @@
     },
     {
       "name": "horizontal_tail_le_x",
-      "value": 1002.1359005005828,
+      "value": 962.6143656121251,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_ac_x",
-      "value": 1048.9417828535238,
+      "value": 1009.4202479650662,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "horizontal_tail_z",
+      "value": 96.86430732488546,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "horizontal_tail_thickness",
+      "value": 22.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -316,13 +400,19 @@
     },
     {
       "name": "vertical_tail_le_x",
-      "value": 991.3755147805939,
+      "value": 969.7833333333333,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_ac_x",
-      "value": 1021.5921814472606,
+      "value": 1000.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "vertical_tail_thickness",
+      "value": 12.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -358,13 +448,13 @@
     },
     {
       "name": "boom_length",
-      "value": 760.0,
+      "value": 1003.5160000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "boom_start_x",
-      "value": 340.0,
+      "value": 96.48400000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -376,19 +466,25 @@
     },
     {
       "name": "boom_left_y",
-      "value": -350.0,
+      "value": -366.9,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "boom_right_y",
-      "value": 350.0,
+      "value": 366.9,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "boom_spacing",
-      "value": 700.0,
+      "value": 733.8,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "boom_z",
+      "value": 96.86430732488546,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -406,25 +502,25 @@
     },
     {
       "name": "lift_motor_front_x",
-      "value": 96.48448753971806,
+      "value": 120.63782657490974,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "lift_motor_rear_x",
-      "value": 675.284487539718,
+      "value": 699.4378265749098,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "lift_motor_y_abs",
-      "value": 480.0,
+      "value": 366.9,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "lift_motor_z",
-      "value": 100.0,
+      "value": 127.88930732488546,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -460,7 +556,7 @@
     },
     {
       "name": "pusher_motor_x",
-      "value": 940.0,
+      "value": 896.3500000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -472,7 +568,7 @@
     },
     {
       "name": "pusher_motor_z",
-      "value": 20.0,
+      "value": 0.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -507,8 +603,44 @@
       "comment": "H2AIR CAD export"
     },
     {
+      "name": "payload_x",
+      "value": 103.50000000000001,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "payload_y",
+      "value": 0.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "payload_z",
+      "value": -28.00930732488547,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "payload_length",
+      "value": 53.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "payload_width",
+      "value": 80.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "payload_height",
+      "value": 80.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
       "name": "battery_x",
-      "value": 330.2874994984061,
+      "value": 221.50000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -520,7 +652,7 @@
     },
     {
       "name": "battery_z",
-      "value": 63.1,
+      "value": 60.29069267511453,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -544,7 +676,7 @@
     },
     {
       "name": "fuel_cell_x",
-      "value": 152.84963758135405,
+      "value": 255.25000000000003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -556,31 +688,67 @@
     },
     {
       "name": "fuel_cell_z",
-      "value": -25.465,
+      "value": -28.109307324885474,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuel_cell_length",
-      "value": 260.0,
+      "value": 230.5,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuel_cell_width",
-      "value": 160.0,
+      "value": 108.39999999999999,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "fuel_cell_height",
-      "value": 120.0,
+      "value": 119.8,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuel_cell_control_box_x",
+      "value": 414.1,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuel_cell_control_box_y",
+      "value": 0.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuel_cell_control_box_z",
+      "value": 57.36569267511453,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuel_cell_control_box_length",
+      "value": 202.2,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuel_cell_control_box_width",
+      "value": 107.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "fuel_cell_control_box_height",
+      "value": 45.150000000000006,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "hydrogen_cylinder_x",
-      "value": 526.501761579615,
+      "value": 593.0000000000001,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -592,19 +760,127 @@
     },
     {
       "name": "hydrogen_cylinder_z",
-      "value": -28.28,
+      "value": -30.509307324885473,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "hydrogen_cylinder_length",
-      "value": 450.0,
+      "value": 425.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "hydrogen_cylinder_diameter",
-      "value": 120.0,
+      "value": 115.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "cube_orange_x",
+      "value": 82.75,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "cube_orange_y",
+      "value": 0.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "cube_orange_z",
+      "value": 30.49069267511453,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "cube_orange_length",
+      "value": 94.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "cube_orange_width",
+      "value": 44.3,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "cube_orange_height",
+      "value": 31.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb_x",
+      "value": 565.2,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb_y",
+      "value": 0.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb_z",
+      "value": 63.54069267511453,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb_length",
+      "value": 80.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb_width",
+      "value": 60.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb_height",
+      "value": 23.5,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb2_x",
+      "value": 655.2000000000002,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb2_y",
+      "value": 0.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb2_z",
+      "value": 63.54069267511453,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb2_length",
+      "value": 80.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb2_width",
+      "value": 60.0,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "pdb2_height",
+      "value": 23.5,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },

@@ -1,9 +1,9 @@
 name,length_m,count,mass_mode,specific_mass_kg_per_m,mass_kg,hardcoded
 fuselage_nose_shell,0.14,1,linear,1.0973,0.153622,False
-fuselage_center_a_shell,0.25,1,linear,1.0973,0.274325,False
-fuselage_center_b_shell,0.25,1,linear,1.0973,0.274325,False
+fuselage_center_a_shell,0.23550000000000001,1,linear,1.0973,0.25841415,False
+fuselage_center_b_shell,0.3439000000000001,1,linear,1.0973,0.3773614700000001,False
 fuselage_tail_shell,0.14,1,linear,1.0973,0.153622,False
-fuselage_longerons,0.78,2,linear,0.08974,0.13999440000000002,False
+fuselage_longerons,0.8594000000000002,2,linear,0.08974,0.15424511200000002,False
 main_wing_shell,3.3742,1,linear,0.937,3.1616254,False
 main_wing_primary_spar,3.3742,1,structural_linear,0.08784,0.296389728,False
 main_wing_secondary_spar,3.3742,1,linear,0.05007,0.16894619400000002,False
@@ -13,4 +13,4 @@ horizontal_tail_secondary_spar,0.8688,1,linear,0.00834,0.007245792,False
 vertical_tail_shells,0.3,2,linear,0.0565,0.0339,False
 vertical_tail_primary_spars,0.3,2,structural_linear,0.00984,0.0059039999999999995,False
 vertical_tail_secondary_spars,0.3,2,linear,0.00591,0.003546,False
-boom_tubes,0.76,2,structural_linear,0.01592,0.024198400000000002,False
+boom_tubes,1.003516,2,structural_linear,0.01592,0.03195194944,False

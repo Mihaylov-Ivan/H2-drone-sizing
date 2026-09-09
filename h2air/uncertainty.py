@@ -54,7 +54,22 @@ def _perturb(base: Mapping[str,Any], factors: Mapping[str,float]) -> Dict[str,An
     baseline_cyl=float(h["cylinder_mass_kg"] if h.get("cylinder_mass_kg") is not None else 1.62)
     h["cylinder_mass_kg"]=baseline_cyl*float(factors["cylinder_mass_factor"])
     fc=c["power_system"]["fuel_cell"]
-    fc["module_mass_kg"]=float(fc["module_mass_kg"])*float(factors["fuel_cell_mass_factor"])
+    fc_factor=float(factors["fuel_cell_mass_factor"])
+    fc["module_mass_kg"]=float(fc["module_mass_kg"])*fc_factor
+    # Keep packaging / split masses consistent with the scaled module mass so
+    # packaging_layout's stack+control_box == module_mass check still holds.
+    for key in ("stack_mass_kg", "control_box_mass_kg"):
+        if fc.get(key) is not None:
+            fc[key]=float(fc[key])*fc_factor
+    d=c.get("design") or {}
+    for key in ("fuel_cell_stack_mass_kg", "fuel_cell_control_box_mass_kg"):
+        if d.get(key) is not None:
+            d[key]=float(d[key])*fc_factor
+    hw=((c.get("packaging_layout") or {}).get("hardware") or {})
+    for key in ("fuel_cell_stack", "fuel_cell_control_box"):
+        part=hw.get(key) or {}
+        if part.get("mass_kg") is not None:
+            part["mass_kg"]=float(part["mass_kg"])*fc_factor
     h["reference_net_energy_Wh"]=float(h["reference_net_energy_Wh"])*float(factors["h2_net_energy_factor"])
     return c
 

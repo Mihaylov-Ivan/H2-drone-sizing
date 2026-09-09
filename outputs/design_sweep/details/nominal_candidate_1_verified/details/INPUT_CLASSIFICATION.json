@@ -10,7 +10,8 @@
     "hardware_selection",
     "manufacturing_mass_model",
     "cad_export",
-    "optimizer"
+    "optimizer",
+    "packaging_layout"
   ],
   "auto_calculated_examples": [
     "fuselage total length from section lengths",

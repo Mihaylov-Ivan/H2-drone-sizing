@@ -1,10 +1,10 @@
 name,category,mass_kg,load_factor,wing_root_bending_Nm,wing_torsion_Nm,boom_root_bending_Nm,boom_axial_N,max_motor_thrust_N,max_motor_mount_bending_Nm,tail_force_N,note
-reference_trimmed_hover,VTOL,14.14485119648625,1.0,33.29126519664524,24.389493562340093,0.0,0.0,35.73848762898708,1.786924381449354,0.0,6-DOF/control unequal rotor allocation at reference mass.
-15kg_zero_pitch_design_VTOL,VTOL,15.0,1.0,57.00591,41.56576342180074,20.51819785085333,0.0,61.196382813334694,3.0598191406667348,0.0,Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry.
+reference_trimmed_hover,VTOL,14.30775043232625,1.0,25.740071437572237,24.621054494195782,0.0,0.0,35.12035274071764,1.7560176370358822,0.0,6-DOF/control unequal rotor allocation at reference mass.
+15kg_zero_pitch_design_VTOL,VTOL,15.0,1.0,43.57389245625,41.56649223853093,21.31792650966226,0.0,59.45323333935291,2.972661666967646,0.0,Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry.
 15kg_3g_wingborne_manoeuvre,wingborne,15.0,3.0,189.13240648012925,25.7,0.0,0.0,0.0,0.0,246.513855,Symmetric wing-borne structural manoeuvre screen.
 dive_tail_download,tail/boom,15.0,1.0,0.0,0.0,93.6752649,0.0,0.0,0.0,246.513855,Horizontal-tail absolute CL design screen at configured dive speed.
 dive_crosswind_fin_load,tail/boom,15.0,1.0,0.0,0.0,93.6752649,0.0,0.0,0.0,184.24000000000004,Twin-fin side-force structural screen at configured dive speed.
-combined_boom_tail_plus_rear_rotor,tail/boom,15.0,1.0,0.0,0.0,114.19346275085333,30.0,61.196382813334694,0.0,0.0,"Conservative envelope combining boom tail load with rear lift-rotor bending; simultaneous occurrence is a sizing envelope, not a trajectory claim."
+combined_boom_tail_plus_rear_rotor,tail/boom,15.0,1.0,0.0,0.0,114.99319140966226,30.0,59.309079160647094,0.0,0.0,"Conservative envelope combining boom tail load with rear lift-rotor bending; simultaneous occurrence is a sizing envelope, not a trajectory claim."
 pusher_axial_design,propulsion,15.0,1.0,0.0,0.0,0.0,30.0,0.0,0.0,0.0,Pusher design thrust divided across two booms.
 single_motor_mount_limit,local,15.0,1.0,0.0,0.0,0.0,0.0,79.553113864,3.9776556932,0.0,"Local motor-mount load requirement. Geometry/material absent, so stress remains NOT_EVALUATED."
 one_motor_out_remaining_motor_peak,degraded,15.0,1.0,0.0,0.0,0.0,0.0,79.553113864,3.9776556932,0.0,Structural local envelope for a surviving motor during motor-out recovery; flight controllability remains a 6-DOF/control/8 problem.
