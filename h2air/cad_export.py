@@ -65,6 +65,9 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     out += [_param('wing_primary_spar_OD',_mm(wsec['od_m'])),_param('wing_primary_spar_ID',_mm(wsec['id_m']))]
     if mw:
         s2=mw['secondary_spar']; out += [_param('wing_primary_spar_chord_fraction',float(mw['primary_spar'].get('chord_fraction',0.25)),'unitless'),_param('wing_secondary_spar_chord_fraction',float(s2.get('chord_fraction',0.65)),'unitless'),_param('wing_secondary_spar_OD',_mm(s2.get('tube_od_m',0.0)))]
+        ps=mw.get('primary_spar',{})
+        layout_od=float(gm.get('wing_primary_spar_layout_od_m', ps.get('reference_tube_od_m', ps.get('tube_od_m', wsec['od_m']))))
+        out.append(_param('wing_primary_spar_layout_OD',_mm(layout_od)))
     longr=mm.get('fuselage_longerons',{})
     if longr:
         out += [

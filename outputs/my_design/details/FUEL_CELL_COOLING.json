@@ -57,7 +57,7 @@
     "type": "naca_style_flush_side_inlet",
     "side": "left",
     "center_x_m": 0.25525000000000003,
-    "center_z_m": -0.028109307324885473,
+    "center_z_m": -0.03128864788823831,
     "recess_depth_y_m": 0.008,
     "ramp_length_x_m": 0.17,
     "ramp_angle_deg": 2.6942842898561006,
@@ -78,7 +78,7 @@
     "type": "flush_fan_exhaust_grille",
     "side": "right",
     "center_x_m": 0.25525000000000003,
-    "center_z_m": -0.028109307324885473,
+    "center_z_m": -0.03128864788823831,
     "fan_shroud_depth_y_m": 0.01,
     "louvre_angle_deg": 15.0,
     "lip_radius_m": 0.002

@@ -271,13 +271,17 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
     E=float(matcfg['E_Pa']); nu=float(matcfg['poisson']); Gm=E/(2*(1+nu))
     mat=Material(matcfg['name'],E,Gm,float(matcfg['density_kg_m3']),float(matcfg['bending_allow_MPa'])*1e6,float(matcfg['shear_allow_MPa'])*1e6,matcfg.get('status','engineering_assumption'))
 
-    wing_current=TubeSection(float(s['current_wing_spar_od_m']),float(s['current_wing_spar_id_m']))
+    _wing_od=s.get('reference_wing_spar_od_m', s.get('current_wing_spar_od_m'))
+    _wing_id=s.get('reference_wing_spar_id_m', s.get('current_wing_spar_id_m'))
+    if _wing_od is None or _wing_id is None:
+        raise KeyError('structure requires reference_wing_spar_od_m/id_m (or legacy current_wing_spar_*)')
+    wing_reference=TubeSection(float(_wing_od), float(_wing_id))
     boom_strength=TubeSection(float(s['legacy_strength_only_boom_od_m']),float(s['legacy_strength_only_boom_id_m']))
     boom_reference=TubeSection(float(s['reference_boom_od_m']),float(s['reference_boom_id_m']))
 
     wing_case=max(cases,key=lambda c:c.wing_root_bending_Nm)
     boom_case=max(cases,key=lambda c:c.boom_root_bending_Nm)
-    wing_current_chk=check_tube_member(member='wing_primary_spar_current',case=wing_case.name,section=wing_current,material=mat,length_m=float(s['design_wing_semispan_m']),bending_Nm=wing_case.wing_root_bending_Nm,deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']))
+    wing_reference_chk=check_tube_member(member='wing_primary_spar_reference',case=wing_case.name,section=wing_reference,material=mat,length_m=float(s['design_wing_semispan_m']),bending_Nm=wing_case.wing_root_bending_Nm,deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']))
     wing_rec,wing_rec_chk=size_tube_for_bending_and_stiffness(moment_Nm=wing_case.wing_root_bending_Nm,length_m=float(s['design_wing_semispan_m']),material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']),min_od_m=0.010,max_od_m=0.040,step_m=0.00025)
     boom_strength_chk=check_tube_member(member='boom_legacy_strength_only',case=boom_case.name,section=boom_strength,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
     boom_reference_chk=check_tube_member(member='boom_reference_geometry',case=boom_case.name,section=boom_reference,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
@@ -327,7 +331,9 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
         'material': asdict(mat),
         'governing_cases': {'wing_bending':wing_case.name,'wing_torsion':wing_torsion_case.name,'boom':boom_case.name,'motor_mount':local.name},
         'wing': {
-            'current': {'section':asdict(wing_current),'check':wing_current_chk.to_dict()},
+            # 'current' kept as alias of 'reference' for older report consumers.
+            'reference': {'section':asdict(wing_reference),'check':wing_reference_chk.to_dict()},
+            'current': {'section':asdict(wing_reference),'check':wing_reference_chk.to_dict()},
             'recommended_screen': {'section':asdict(wing_rec),'check':wing_rec_chk.to_dict()},
             'governing_root_bending_Nm':wing_case.wing_root_bending_Nm,
             'governing_torsion_Nm':wing_torsion_case.wing_torsion_Nm,
@@ -368,7 +374,11 @@ def structural_mass_feedback(cfg: Mapping[str, Any], structural: Mapping[str, An
     """
     a=cfg['aircraft']; s=cfg['structure']; mat=structural['material']
     m0=float(a['reference_mass_kg']); x0=float(a['cg_station_x_m'])
-    cur=TubeSection(float(s['current_wing_spar_od_m']),float(s['current_wing_spar_id_m']))
+    _ref_od=s.get('reference_wing_spar_od_m', s.get('current_wing_spar_od_m'))
+    _ref_id=s.get('reference_wing_spar_id_m', s.get('current_wing_spar_id_m'))
+    if _ref_od is None or _ref_id is None:
+        raise KeyError('structure requires reference_wing_spar_od_m/id_m (or legacy current_wing_spar_*)')
+    cur=TubeSection(float(_ref_od), float(_ref_id))
     rec=TubeSection(**structural['wing']['recommended_screen']['section'])
     old_spar_mass=float(s['current_total_wing_spar_mass_kg'])
     rec_spar_mass=old_spar_mass*rec.area_m2/cur.area_m2
@@ -394,7 +404,8 @@ def structural_mass_feedback(cfg: Mapping[str, Any], structural: Mapping[str, An
     x1=(m0*x0+delta_wing*xwing+delta_boom*xboom+(delta_h+delta_v)*xtail)/m1
     return {
         'reference_mass_kg':m0,'reference_cg_x_m':x0,
-        'current_wing_spar_mass_kg':old_spar_mass,'recommended_screen_wing_spar_mass_kg':rec_spar_mass,'wing_spar_mass_delta_kg':delta_wing,
+        'reference_wing_spar_mass_kg':old_spar_mass,'current_wing_spar_mass_kg':old_spar_mass,
+        'recommended_screen_wing_spar_mass_kg':rec_spar_mass,'wing_spar_mass_delta_kg':delta_wing,
         'legacy_reported_boom_tube_mass_kg':old_boom_tube_mass,'geometry_reconciled_candidate_boom_tube_mass_kg':rec_boom_tube_mass,'boom_tube_mass_delta_kg':delta_boom,
         'current_horizontal_tail_spar_mass_kg':old_h,'recommended_horizontal_tail_spar_mass_kg':new_h,'horizontal_tail_spar_mass_delta_kg':delta_h,
         'current_vertical_tail_spar_mass_kg':old_v,'recommended_vertical_tail_spar_mass_kg':new_v,'vertical_tail_spar_mass_delta_kg':delta_v,
@@ -408,10 +419,10 @@ def evaluate_gates(cfg: Mapping[str, Any], structural: Mapping[str, Any], feedba
     gates=[]
     def add(name,status,value,limit,note=''):
         gates.append({'name':name,'status':status,'value':value,'limit':limit,'note':note})
-    wc=structural['wing']['current']['check']; wr=structural['wing']['recommended_screen']['check']
+    wc=structural['wing'].get('reference', structural['wing']['current'])['check']; wr=structural['wing']['recommended_screen']['check']
     bl=structural['booms']['legacy_strength_only']['check']; br=structural['booms']['recommended_screen']['check']; bref=structural['booms']['reference_35x31_geometry']['check']
-    add('current_wing_spar_strength','PASS' if wc['strength_pass'] else 'FAIL',wc['stress_utilization'],'<=1.0')
-    add('current_wing_spar_stiffness','PASS' if wc['stiffness_pass'] else 'FAIL',max(wc['deflection_utilization'],wc['slope_utilization']),'<=1.0','Current strength-sized spar is retained as an audit reference, not accepted when stiffness fails.')
+    add('reference_wing_spar_strength','PASS' if wc['strength_pass'] else 'FAIL',wc['stress_utilization'],'<=1.0','Mass-calibration / audit reference section — not the recommended design spar.')
+    add('reference_wing_spar_stiffness','PASS' if wc['stiffness_pass'] else 'FAIL',max(wc['deflection_utilization'],wc['slope_utilization']),'<=1.0','Reference spar is an audit/mass-scaling section, not accepted when stiffness fails.')
     add('recommended_wing_spar_screen','PASS' if wr['overall_pass'] else 'FAIL',max(wr['stress_utilization'],wr['deflection_utilization'],wr['slope_utilization']),'<=1.0')
     add('legacy_strength_only_boom_stiffness','PASS' if bl['stiffness_pass'] else 'FAIL',max(bl['deflection_utilization'],bl['slope_utilization']),'<=1.0')
     add('reference_35x31_boom_screen','PASS' if bref['overall_pass'] else 'FAIL',max(bref['stress_utilization'],bref['deflection_utilization'],bref['slope_utilization']),'<=1.0','Geometry passes the screen, but its mass conflicts with the old reported boom-tube mass and needs supplier/CAD reconciliation.')

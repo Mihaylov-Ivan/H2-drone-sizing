@@ -13,6 +13,19 @@ from typing import Any, Dict, Mapping, Sequence, Tuple
 from .mass_properties import Component, Shape
 
 
+def _tube_od_m(rule: Mapping[str, Any], default: float = 0.0) -> float:
+    """OD used for ledger geometry / mass-reference section.
+
+    Prefer ``reference_tube_od_m`` (kg/m calibration section for structural_linear
+    members). Legacy ``tube_od_m`` is still accepted.
+    """
+    if rule.get("reference_tube_od_m") is not None:
+        return float(rule["reference_tube_od_m"])
+    if rule.get("tube_od_m") is not None:
+        return float(rule["tube_od_m"])
+    return float(default)
+
+
 def _mass(rule: Mapping[str, Any], length_m: float, count: int = 1) -> float:
     mode = str(rule.get("mass_mode", "linear")).lower()
     if mode == "hardcoded":
@@ -121,7 +134,7 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
     for label in ("primary_spar","secondary_spar"):
         rule=mw[label]; frac=float(rule.get("chord_fraction",0.25 if label=="primary_spar" else 0.65)); x=le+frac*mac
         m=_mass(rule,b)
-        _add_tube(out,name=f"main_wing_{label}",group="wing_structure",mass=m,pos=[x,0,float(mw.get("z_m",0.10))],length=b,diameter=float(rule.get("tube_od_m",0.02)),axis="y",rule=rule)
+        _add_tube(out,name=f"main_wing_{label}",group="wing_structure",mass=m,pos=[x,0,float(mw.get("z_m",0.10))],length=b,diameter=_tube_od_m(rule,0.02),axis="y",rule=rule)
         ledger.append({"name":f"main_wing_{label}","length_m":b,"count":1,"mass_mode":rule.get("mass_mode"),"specific_mass_kg_per_m":rule.get("specific_mass_kg_per_m"),"mass_kg":m,"hardcoded":rule.get("mass_mode")=="hardcoded"})
 
     # Horizontal tail shell and two spars.
@@ -131,7 +144,7 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
     hle=xh-0.25*hmac
     for label in ("primary_spar","secondary_spar"):
         rule=ht[label]; frac=float(rule.get("chord_fraction",0.25 if label=="primary_spar" else 0.65)); m=_mass(rule,bh)
-        _add_tube(out,name=f"horizontal_tail_{label}",group="tail_structure",mass=m,pos=[hle+frac*hmac,0,zh],length=bh,diameter=float(rule.get("tube_od_m",0.009)),axis="y",rule=rule)
+        _add_tube(out,name=f"horizontal_tail_{label}",group="tail_structure",mass=m,pos=[hle+frac*hmac,0,zh],length=bh,diameter=_tube_od_m(rule,0.009),axis="y",rule=rule)
         ledger.append({"name":f"horizontal_tail_{label}","length_m":bh,"count":1,"mass_mode":rule.get("mass_mode"),"specific_mass_kg_per_m":rule.get("specific_mass_kg_per_m"),"mass_kg":m,"hardcoded":rule.get("mass_mode")=="hardcoded"})
 
     # Two vertical fins, each with two CFRP spars (roots on the boom waterline).
@@ -144,13 +157,13 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
     for label in ("primary_spar","secondary_spar"):
         rule=vt[label]; mt=_mass(rule,hv,nfin)
         for side,y in (("left",-yabs),("right",yabs)):
-            _add_tube(out,name=f"vertical_tail_{side}_{label}",group="tail_structure",mass=mt/nfin,pos=[xv,y,boom_z+hv/2],length=hv,diameter=float(rule.get("tube_od_m",0.009)),axis="z",rule=rule)
+            _add_tube(out,name=f"vertical_tail_{side}_{label}",group="tail_structure",mass=mt/nfin,pos=[xv,y,boom_z+hv/2],length=hv,diameter=_tube_od_m(rule,0.009),axis="z",rule=rule)
         ledger.append({"name":f"vertical_tail_{label}s","length_m":hv,"count":nfin,"mass_mode":rule.get("mass_mode"),"specific_mass_kg_per_m":rule.get("specific_mass_kg_per_m"),"mass_kg":mt,"hardcoded":rule.get("mass_mode")=="hardcoded"})
 
     # Twin booms (through the wing structural station).
     br=mm["boom_tubes"]; Lb=float(gm["boom_x_end_m"])-float(gm["boom_x_start_m"]); mb=_mass(br,Lb,2); xmid=(float(gm["boom_x_start_m"])+float(gm["boom_x_end_m"]))/2
     for side,y in (("left",-yabs),("right",yabs)):
-        _add_tube(out,name=f"boom_tube_{side}",group="tail_structure",mass=mb/2,pos=[xmid,y,boom_z],length=Lb,diameter=float(br.get("tube_od_m",gm.get("boom_outer_diameter_m",0.035))),axis="x",rule=br)
+        _add_tube(out,name=f"boom_tube_{side}",group="tail_structure",mass=mb/2,pos=[xmid,y,boom_z],length=Lb,diameter=_tube_od_m(br,float(gm.get("boom_outer_diameter_m",0.035))),axis="x",rule=br)
     ledger.append({"name":"boom_tubes","length_m":Lb,"count":2,"mass_mode":br.get("mass_mode"),"specific_mass_kg_per_m":br.get("specific_mass_kg_per_m"),"mass_kg":mb,"hardcoded":br.get("mass_mode")=="hardcoded"})
 
     return out, ledger
@@ -168,9 +181,14 @@ def apply_structural_mass_updates(cfg: Mapping[str, Any], components: Sequence[C
         if str(rule.get("mass_mode","linear")).lower()!="structural_linear": return
         by[name].mass_takeoff_kg *= area_new/max(area_ref,1e-12); by[name].mass_end_kg=by[name].mass_takeoff_kg
 
-    # Primary wing spar scales with the current structure solver. Secondary spar stays measured-linear unless hardcoded.
+    # Primary wing spar scales vs the reference section that kg/m was calibrated to.
+    # Prefer structures.reference_wing_spar_*; legacy current_wing_spar_* still accepted.
     st=cfg["structures"]["structure"]
-    cur_od=float(st["current_wing_spar_od_m"]); cur_id=float(st["current_wing_spar_id_m"])
+    _cur_od=st.get("reference_wing_spar_od_m", st.get("current_wing_spar_od_m"))
+    _cur_id=st.get("reference_wing_spar_id_m", st.get("current_wing_spar_id_m"))
+    if _cur_od is None or _cur_id is None:
+        raise KeyError("structures.structure requires reference_wing_spar_od_m/id_m (or legacy current_wing_spar_*)")
+    cur_od=float(_cur_od); cur_id=float(_cur_id)
     aref=3.141592653589793/4*(cur_od**2-cur_id**2)
     rec=structure["structural_checks"]["wing"]["recommended_screen"]["section"]
     anew=3.141592653589793/4*(float(rec["od_m"])**2-float(rec["id_m"])**2)

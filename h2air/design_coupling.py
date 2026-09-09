@@ -79,6 +79,118 @@ def calibrated_neutral_point(
     )
 
 
+def apply_high_wing_spar_stack(
+    cfg: MutableMapping[str, Any],
+    *,
+    spar_od_m: float | None = None,
+) -> float:
+    """Place wing/boom/HT under the top longeron sleeve for a given primary-spar OD.
+
+    The primary spar sits just below the full-length printed longeron sleeve
+    (``boss_od_m``) with ``spar_stack_gap_m``.  Returns the spar OD used.
+    """
+    d = cfg["design"]
+    geom = cfg["geometry_mass"]["geometry_model"]["geometry"]
+    lay = cfg["aero_propulsion"]["lift_layout"]
+    mm_model = cfg.setdefault("manufacturing_mass_model", {})
+    mw = mm_model.setdefault("main_wing", {})
+    ht_mm = mm_model.setdefault("horizontal_tail", {})
+    longr = mm_model.setdefault("fuselage_longerons", {})
+
+    pod_h = float(d.get("fuselage_height_m", d.get("fuselage_max_diameter_m", 0.18)))
+    fuse_top = 0.5 * pod_h
+    wing_th = float(mw.get("thickness_m", 0.028))
+    boom_od = float(geom.get("boom_outer_diameter_m", 0.035))
+
+    long_od = float(longr.get("tube_od_m", 0.0065))
+    long_r = 0.5 * long_od
+    boss_od = float(longr.get("boss_od_m", max(2.0 * long_od + 0.004, long_od + 0.006)))
+    boss_r = 0.5 * boss_od
+    stack_gap = float(longr.get("spar_stack_gap_m", 0.001))
+    r_axis = max(fuse_top - long_r, 0.5 * fuse_top)
+    z_longeron_top = r_axis
+    z_longeron_bot = -r_axis
+    boss_bottom = z_longeron_top - boss_r
+
+    if spar_od_m is None:
+        # Pre-structures seating uses the mass-calibration reference OD only.
+        # After structures, callers pass the recommended screen OD explicitly.
+        ps = mw.get("primary_spar") or {}
+        spar_od = float(ps.get("reference_tube_od_m", ps.get("tube_od_m", 0.013)))
+        st = cfg.get("structures", {}).get("structure", {})
+        ref = st.get("reference_wing_spar_od_m", st.get("current_wing_spar_od_m"))
+        if ref is not None:
+            spar_od = max(spar_od, float(ref))
+    else:
+        spar_od = max(float(spar_od_m), 1e-6)
+    spar_r = 0.5 * spar_od
+
+    wing_z_flush = fuse_top - 0.5 * wing_th
+    wing_z = min(wing_z_flush, boss_bottom - stack_gap - spar_r)
+    wing_upper = wing_z + 0.5 * wing_th
+    wing_lower = wing_z - 0.5 * wing_th
+
+    mw["z_m"] = wing_z
+    d["main_wing_z_m"] = wing_z
+    ht_mm["z_m"] = wing_z
+    d["horizontal_tail_z_m"] = wing_z
+
+    longr["layout"] = "top_bottom"
+    longr["boss_od_m"] = boss_od
+    longr["spar_stack_gap_m"] = stack_gap
+    longr["stations_yz_m"] = [[0.0, z_longeron_top], [0.0, z_longeron_bot]]
+
+    geom["fuselage_top_z_m"] = fuse_top
+    geom["fuselage_longeron_top_z_m"] = z_longeron_top
+    geom["fuselage_longeron_bottom_z_m"] = z_longeron_bot
+    geom["fuselage_longeron_z_m"] = z_longeron_top
+    geom["fuselage_longeron_y_abs_m"] = 0.0
+    geom["fuselage_longeron_boss_od_m"] = boss_od
+    geom["wing_primary_spar_layout_od_m"] = spar_od
+    geom["wing_upper_z_m"] = wing_upper
+    geom["wing_lower_z_m"] = wing_lower
+    geom["wing_z_flush_m"] = wing_z_flush
+    geom["wing_drop_from_flush_m"] = max(0.0, wing_z_flush - wing_z)
+    geom["boom_z_m"] = wing_z
+
+    # Keep lift motors / prop disk clear of the (possibly lowered) wing.
+    clear_wing = float(lay.get("required_disk_edge_clearance_m", lay.get("required_disk_to_pod_clearance_m", 0.02)))
+    hw = cfg.get("hardware_selection_result") or {}
+    lift_hw = hw.get("selected_lift_combo") or {}
+    motor_len = float(lift_hw.get("motor_length_m") or 0.0)
+    if motor_len <= 0.0:
+        motor_len = 0.03
+    z_disk = wing_upper + clear_wing
+    z_on_boom = wing_z + 0.5 * boom_od + 0.5 * motor_len
+    z_motor = max(z_disk - 0.5 * motor_len, z_on_boom)
+    lay["z_m"] = z_motor
+    geom["lift_prop_disk_z_m"] = z_motor + 0.5 * motor_len
+    geom["lift_prop_wing_clearance_m"] = float(geom["lift_prop_disk_z_m"]) - wing_upper
+
+    # Refresh already-placed lift-motor stations if present.
+    centers = geom.get("lift_prop_centers_m")
+    if isinstance(centers, list) and centers:
+        new_centers = []
+        for p in centers:
+            if isinstance(p, (list, tuple)) and len(p) >= 3:
+                new_centers.append([float(p[0]), float(p[1]), z_motor])
+            else:
+                new_centers.append(p)
+        geom["lift_prop_centers_m"] = new_centers
+        by = _by_name(cfg)
+        for idx, p in enumerate(new_centers, start=1):
+            if not (isinstance(p, list) and len(p) >= 3):
+                continue
+            for prefix in ("lift_motor_mount_", "lift_propulsion_", "lift_ESC_"):
+                name = f"{prefix}{idx}"
+                if name in by:
+                    by[name]["position_m"] = list(p)
+        if "sixdof_control" in cfg and "aircraft" in cfg["sixdof_control"]:
+            cfg["sixdof_control"]["aircraft"]["lift_motor_stations_m"] = new_centers
+
+    return spar_od
+
+
 def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     """Return a deep-copied config with aircraft-level design variables propagated.
 
@@ -255,65 +367,21 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     boom_od = float(geom.get("boom_outer_diameter_m", 0.035))
     wing_th = float(mw.get("thickness_m", 0.028))
 
-    # ------------------------------------------------------------------
-    # High-wing Z from fuselage crown + top longeron/boss over wing spars.
-    # Longerons: one on the fuselage top, one on the bottom (centreline).
-    # Wing stack-up uses the TOP longeron only.
-    # ------------------------------------------------------------------
-    long_od = float(longr.get("tube_od_m", 0.0065))
-    long_r = 0.5 * long_od
-    boss_od = float(longr.get("boss_od_m", max(2.0 * long_od + 0.004, long_od + 0.006)))
-    boss_r = 0.5 * boss_od
-    stack_gap = float(longr.get("spar_stack_gap_m", 0.001))
-    # Axes just inside the skin at top and bottom dead centre.
-    r_axis = max(fuse_top - long_r, 0.5 * fuse_top)
-    z_longeron_top = r_axis
-    z_longeron_bot = -r_axis
-    boss_bottom = z_longeron_top - boss_r
-
-    spar_od = float((mw.get("primary_spar") or {}).get("tube_od_m", 0.013))
-    st = cfg.get("structures", {}).get("structure", {})
-    if st.get("current_wing_spar_od_m"):
-        spar_od = max(spar_od, float(st["current_wing_spar_od_m"]))
-    spar_r = 0.5 * spar_od
-
-    wing_z_flush = fuse_top - 0.5 * wing_th  # tops coplanar
-    wing_z = boss_bottom - stack_gap - spar_r  # spar just under TOP longeron boss
-    wing_z = min(wing_z_flush, wing_z)
-
-    mw["z_m"] = wing_z
-    d["main_wing_z_m"] = wing_z
-    wing_upper = wing_z + 0.5 * wing_th
-    wing_lower = wing_z - 0.5 * wing_th
-
-    longr["layout"] = "top_bottom"
-    longr["boss_od_m"] = boss_od
-    longr["spar_stack_gap_m"] = stack_gap
-    longr["stations_yz_m"] = [[0.0, z_longeron_top], [0.0, z_longeron_bot]]
-
-    geom["fuselage_top_z_m"] = fuse_top
-    geom["fuselage_longeron_top_z_m"] = z_longeron_top
-    geom["fuselage_longeron_bottom_z_m"] = z_longeron_bot
-    geom["fuselage_longeron_z_m"] = z_longeron_top  # wing junction uses top
-    geom["fuselage_longeron_y_abs_m"] = 0.0
-    geom["fuselage_longeron_boss_od_m"] = boss_od
-    geom["wing_upper_z_m"] = wing_upper
-    geom["wing_lower_z_m"] = wing_lower
-    geom["wing_z_flush_m"] = wing_z_flush
-    geom["wing_drop_from_flush_m"] = max(0.0, wing_z_flush - wing_z)
-
-    boom_z = wing_z  # tubes pass through the wing structural station
-    geom["boom_z_m"] = boom_z
-
-    # HT shares the main-wing waterline (high tail on the boom).
-    ht_mm["z_m"] = wing_z
-    d["horizontal_tail_z_m"] = wing_z
+    apply_high_wing_spar_stack(cfg)
 
     hw = cfg.get("hardware_selection_result") or {}
     lift_hw = hw.get("selected_lift_combo") or {}
     motor_len = float(lift_hw.get("motor_length_m") or 0.0)
     if motor_len <= 0.0:
         motor_len = 0.03
+
+    wing_z = float(mw["z_m"])
+    wing_upper = float(geom["wing_upper_z_m"])
+    boom_z = float(geom["boom_z_m"])
+    wing_z_flush = float(geom["wing_z_flush_m"])
+    z_longeron_top = float(geom["fuselage_longeron_top_z_m"])
+    z_longeron_bot = float(geom["fuselage_longeron_bottom_z_m"])
+    boss_od = float(geom["fuselage_longeron_boss_od_m"])
 
     # Prop disk above wing upper surface + clearance; motor stack on the boom.
     z_disk = wing_upper + clear_wing
@@ -413,6 +481,7 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "main_wing_z_m": wing_z,
         "main_wing_z_flush_m": wing_z_flush,
         "main_wing_drop_from_flush_m": float(geom["wing_drop_from_flush_m"]),
+        "wing_primary_spar_layout_od_m": float(geom.get("wing_primary_spar_layout_od_m", 0.0)),
         "fuselage_top_z_m": fuse_top,
         "fuselage_longeron_layout": "top_bottom",
         "fuselage_longeron_top_z_m": z_longeron_top,

@@ -1401,8 +1401,8 @@
     "structure": {
       "wing_primary_spar_x_m": 0.387,
       "design_wing_semispan_m": 1.6425,
-      "current_wing_spar_od_m": 0.01329,
-      "current_wing_spar_id_m": 0.00997,
+      "reference_wing_spar_od_m": 0.01329,
+      "reference_wing_spar_id_m": 0.00997,
       "wing_spar_id_over_od": 0.75,
       "wing_tip_deflection_limit_fraction": 0.03,
       "wing_root_slope_limit_deg": 3.0,

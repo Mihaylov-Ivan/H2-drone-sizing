@@ -5,7 +5,7 @@ from typing import Any, Dict, Mapping, Sequence
 import csv, hashlib, json, platform
 import numpy as np
 
-from .design_coupling import resolve_design_couplings
+from .design_coupling import apply_high_wing_spar_stack, resolve_design_couplings
 from .config import hybrid_config_from_mapping
 from .hybrid_power import HybridPowerSystem, reference_sources
 from .mass_properties import component_from_mapping, build_mass_geometry_result
@@ -221,6 +221,11 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     struct_cfg["aircraft"].update({"reference_mass_kg":mass_final.takeoff.total_mass_kg,"cg_station_x_m":mass_final.takeoff.cg_m[0],"design_mass_ceiling_kg":float(d["mtow_ceiling_kg"]),"reference_wing_span_m":float(d["wing_span_m"]),"design_wing_span_m":design_span,"horizontal_tail_area_m2":float(d.get("horizontal_tail_area_m2",struct_cfg["aircraft"].get("horizontal_tail_area_m2",0.1276)))})
     struct_cfg["rotor_system"].update({"row_x_m":rows_x,"motor_y_m":y,"phase4_equal_share_design_thrust_N":lift_ceiling.design_thrust_per_motor_N,"candidate_motor_max_thrust_N":float(d["lift_motor_structural_limit_thrust_per_motor_N"])})
     hover_thrusts,_=current_model.rotor_allocate(current_model.m*G,np.zeros(3));struct_cfg["rotor_system"]["phase6_reference_hover_thrusts_N"]=hover_thrusts.tolist();structure=build_structural_result(struct_cfg)
+
+    # Re-seat the wing under the recommended primary spar so CAD/viewer do not
+    # draw the structural spar through the top longeron sleeve.
+    rec_spar_od=float(structure["structural_checks"]["wing"]["recommended_screen"]["section"]["od_m"])
+    apply_high_wing_spar_stack(cfg,spar_od_m=rec_spar_od)
 
     total_design=4*float(lift_ceiling.design_thrust_per_motor_N);front_each,rear_each=_zero_pitch_pair(total_design,rows_x[0],rows_x[1],mass_final.takeoff.cg_m[0])
     post_static_margin=(float(d["neutral_point_station_x_m"])-mass_final.takeoff.cg_m[0])/float(d["wing_mac_m"])

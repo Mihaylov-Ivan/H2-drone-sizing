@@ -29,7 +29,8 @@ def test_high_wing_top_bottom_longeron_stackup():
     assert wing_z <= flush + 1e-9
     assert wing_z + 0.5 * wing_th <= fuse_top + 1e-6
 
-    spar_od = float(mm["main_wing"]["primary_spar"]["tube_od_m"])
+    ps = mm["main_wing"]["primary_spar"]
+    spar_od = float(ps["reference_tube_od_m"] if "reference_tube_od_m" in ps else ps["tube_od_m"])
     boss_r = 0.5 * float(mm["fuselage_longerons"]["boss_od_m"])
     boss_bottom = z_top - boss_r
     spar_top = wing_z + 0.5 * spar_od

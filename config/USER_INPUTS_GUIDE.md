@@ -7,8 +7,9 @@ Normal users should edit **`config/user_inputs.json` only**.
 - `span_mode: "auto"` — the lifting-surface span is derived automatically for a normal run and is available to the design-study optimizer.
 - `span_mode: "hardcoded"` — `hardcoded_span_m` is used exactly and the optimizer does not vary that span.
 - `mass_mode: "linear"` — mass = `specific_mass_kg_per_m × geometric length × count`.
-- `mass_mode: "structural_linear"` — same measured kg/m basis, but the primary structural member mass is scaled if the structure solver selects a different tube section.
+- `mass_mode: "structural_linear"` — same measured kg/m basis, but the primary structural member mass is scaled if the structure solver selects a different tube section. Enter the calibration OD as `reference_tube_od_m` (not the recommended design OD). Legacy `tube_od_m` on these members is still accepted and renamed on load.
 - `mass_mode: "hardcoded"` — `hardcoded_mass_kg` is fixed and structural/geometry sizing does not change that member's mass.
+- Primary wing/HT/VT spars and boom tubes: `reference_tube_od_m` is the mass-scaling / audit reference section only. CAD and layout use the structures **recommended** OD. Secondary spars and fuselage longerons keep `tube_od_m` as real geometry.
 
 ## User-defined versus calculated
 

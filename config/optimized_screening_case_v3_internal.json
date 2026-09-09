@@ -1440,8 +1440,8 @@
     "structure": {
       "wing_primary_spar_x_m": 0.387,
       "design_wing_semispan_m": 1.686486961566274,
-      "current_wing_spar_od_m": 0.01329,
-      "current_wing_spar_id_m": 0.00997,
+      "reference_wing_spar_od_m": 0.01329,
+      "reference_wing_spar_id_m": 0.00997,
       "wing_spar_id_over_od": 0.75,
       "wing_tip_deflection_limit_fraction": 0.03,
       "wing_root_slope_limit_deg": 3.0,
@@ -1613,7 +1613,7 @@
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.08784,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.01329,
+        "reference_tube_od_m": 0.01329,
         "chord_fraction": 0.25,
         "status": "engineering_assumption",
         "source": "Reference kg/m at current spar section; auto structural sizing scales this value by section area"
@@ -1643,7 +1643,7 @@
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.01668,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.00433,
+        "reference_tube_od_m": 0.00433,
         "chord_fraction": 0.25,
         "status": "engineering_assumption",
         "source": "Reference kg/m; structural sizing scales by tube area"
@@ -1672,7 +1672,7 @@
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.00984,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.00433,
+        "reference_tube_od_m": 0.00433,
         "status": "engineering_assumption",
         "source": "Reference kg/m; structural sizing scales by tube area"
       },
@@ -1689,7 +1689,7 @@
       "mass_mode": "structural_linear",
       "specific_mass_kg_per_m": 0.01592,
       "hardcoded_mass_kg": null,
-      "tube_od_m": 0.035,
+      "reference_tube_od_m": 0.035,
       "status": "engineering_assumption",
       "source": "Legacy kg/m reference; structural sizing scales by tube area; replace with supplier tube kg/m"
     },
@@ -1921,7 +1921,7 @@
           "mass_mode": "structural_linear",
           "specific_mass_kg_per_m": 0.08784,
           "hardcoded_mass_kg": null,
-          "tube_od_m": 0.01329,
+          "reference_tube_od_m": 0.01329,
           "chord_fraction": 0.25,
           "status": "engineering_assumption",
           "source": "Reference kg/m at current spar section; auto structural sizing scales this value by section area"
@@ -1951,7 +1951,7 @@
           "mass_mode": "structural_linear",
           "specific_mass_kg_per_m": 0.01668,
           "hardcoded_mass_kg": null,
-          "tube_od_m": 0.00433,
+          "reference_tube_od_m": 0.00433,
           "chord_fraction": 0.25,
           "status": "engineering_assumption",
           "source": "Reference kg/m; structural sizing scales by tube area"
@@ -1980,7 +1980,7 @@
           "mass_mode": "structural_linear",
           "specific_mass_kg_per_m": 0.00984,
           "hardcoded_mass_kg": null,
-          "tube_od_m": 0.00433,
+          "reference_tube_od_m": 0.00433,
           "status": "engineering_assumption",
           "source": "Reference kg/m; structural sizing scales by tube area"
         },
@@ -1997,7 +1997,7 @@
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.01592,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.035,
+        "reference_tube_od_m": 0.035,
         "status": "engineering_assumption",
         "source": "Legacy kg/m reference; structural sizing scales by tube area; replace with supplier tube kg/m"
       }

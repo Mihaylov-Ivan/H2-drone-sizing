@@ -21,6 +21,34 @@ from .fuel_cell_cooling import cooling_opening_cda_from_user_inputs
 G = 9.80665
 RHO0 = 1.225
 
+# structural_linear members calibrate kg/m at a reference tube OD (not the
+# recommended/layout design size). Prefer reference_tube_od_m; migrate legacy
+# tube_od_m on load so both naming styles work.
+_STRUCTURAL_LINEAR_TUBE_RULES = (
+    ("main_wing", "primary_spar"),
+    ("horizontal_tail", "primary_spar"),
+    ("vertical_tail", "primary_spar"),
+)
+
+
+def _normalize_manufacturing_mass_model(mm_in: Mapping[str, Any]) -> Dict[str, Any]:
+    mm = deepcopy(mm_in)
+    for group, member in _STRUCTURAL_LINEAR_TUBE_RULES:
+        rule = (mm.get(group) or {}).get(member)
+        if not isinstance(rule, dict):
+            continue
+        if rule.get("reference_tube_od_m") is None and rule.get("tube_od_m") is not None:
+            rule["reference_tube_od_m"] = rule.pop("tube_od_m")
+        elif rule.get("reference_tube_od_m") is not None and "tube_od_m" in rule:
+            rule.pop("tube_od_m", None)
+    boom = mm.get("boom_tubes")
+    if isinstance(boom, dict):
+        if boom.get("reference_tube_od_m") is None and boom.get("tube_od_m") is not None:
+            boom["reference_tube_od_m"] = boom.pop("tube_od_m")
+        elif boom.get("reference_tube_od_m") is not None and "tube_od_m" in boom:
+            boom.pop("tube_od_m", None)
+    return mm
+
 
 def trapezoid_area(span_m: float, root_chord_m: float, taper_ratio: float) -> float:
     return float(span_m * root_chord_m * (1.0 + taper_ratio) / 2.0)
@@ -404,7 +432,7 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
 
     # -------- Manufacturing / measured linear-mass model --------
     cfg["optimizer_settings"] = deepcopy(u.get("optimizer", {}))
-    cfg["manufacturing_mass_model"] = deepcopy(u["manufacturing_mass_model"])
+    cfg["manufacturing_mass_model"] = _normalize_manufacturing_mass_model(u["manufacturing_mass_model"])
     cfg["manufacturing_mass_model"]["fuselage_total_length_m"] = total_len
     cfg["manufacturing_mass_model"]["fuselage_sections"] = deepcopy(sections)
 

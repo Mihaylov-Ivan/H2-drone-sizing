@@ -18,6 +18,8 @@ const COLORS = {
   pdb: 0x6e7f91,
   coolingInlet: 0x32c5ff,
   coolingExhaust: 0xff7043,
+  spar: 0xd4b483,
+  longeron: 0xc4ccd6,
 };
 
 /** @type {Record<string, number|string>} */
@@ -917,6 +919,88 @@ function coolingMeshes() {
   return g;
 }
 
+/**
+ * Wing primary/secondary spars (spanwise tubes at chord fractions) and
+ * top/bottom fuselage longeron CFRP tubes (printed sleeve keepout is modelled, not drawn).
+ */
+function structureMeshes() {
+  const g = new THREE.Group();
+  g.name = 'structure';
+
+  const sparMat = makeMaterial(COLORS.spar, { metalness: 0.22, roughness: 0.38 });
+  const longMat = makeMaterial(COLORS.longeron, { metalness: 0.18, roughness: 0.42 });
+
+  function addPolylineTube(pts, radius, material) {
+    for (let i = 0; i < pts.length - 1; i++) {
+      const mesh = tubeBetween(pts[i], pts[i + 1], radius, material);
+      if (mesh) g.add(mesh);
+    }
+  }
+
+  // --- Main-wing spars ---
+  if (P.wing_primary_spar_OD != null || P.wing_secondary_spar_OD != null) {
+    const le = mm('wing_le_x');
+    const span = mm('wing_span');
+    const rootChord = mm('wing_root_chord');
+    const tipChord = mm('wing_tip_chord');
+    const zWing = mm('wing_z', mm('lift_motor_z', 100));
+    const sweep = (num('wing_sweep') * Math.PI) / 180;
+    const dihedral = (num('wing_dihedral') * Math.PI) / 180;
+    const half = Math.max(span / 2, 1e-6);
+    const stations = 28;
+
+    function sparStations(chordFrac, yAbsMax) {
+      const pts = [];
+      const ySpan = 2 * yAbsMax;
+      for (let i = 0; i <= stations; i++) {
+        const y = -yAbsMax + (i / stations) * ySpan;
+        const chord = rootChord + (tipChord - rootChord) * (Math.abs(y) / half);
+        const leX = le + Math.abs(y) * Math.tan(sweep);
+        const z0 = zWing + Math.abs(y) * Math.tan(dihedral);
+        pts.push([leX + chordFrac * chord, y, z0]);
+      }
+      return pts;
+    }
+
+    const primaryOd = mm('wing_primary_spar_OD', 13);
+    const primaryFrac = num('wing_primary_spar_chord_fraction', 0.25);
+    // Stop short of the geometric tip so the tube end-cap stays inside the tip rib
+    // (full-span stations made the thick recommended spar poke outboard).
+    if (primaryOd > 0) {
+      const yMax = Math.max(half - Math.max(primaryOd / 2, 0.012), 0.5 * half);
+      addPolylineTube(sparStations(primaryFrac, yMax), primaryOd / 2, sparMat);
+    }
+
+    const secondaryOd = mm('wing_secondary_spar_OD', 0);
+    const secondaryFrac = num('wing_secondary_spar_chord_fraction', 0.65);
+    if (secondaryOd > 0) {
+      const yMax = Math.max(half - Math.max(secondaryOd / 2, 0.012), 0.5 * half);
+      addPolylineTube(sparStations(secondaryFrac, yMax), secondaryOd / 2, sparMat);
+    }
+  }
+
+  // --- Fuselage longerons (CFRP tubes only; printed sleeve is not drawn) ---
+  if (P.fuselage_longeron_OD != null) {
+    const fuseL = mm('fuselage_total_length', 780);
+    const tubeOd = mm('fuselage_longeron_OD', 6.5);
+    const zTop = mm('fuselage_longeron_top_z', 100);
+    const zBot = mm('fuselage_longeron_bottom_z', -100);
+    const tubeR = Math.max(tubeOd / 2, 0.001);
+
+    for (const z of [zTop, zBot]) {
+      const tube = new THREE.Mesh(
+        new THREE.CylinderGeometry(tubeR, tubeR, fuseL, 16),
+        longMat,
+      );
+      tube.rotation.z = Math.PI / 2;
+      tube.position.set(0.5 * fuseL, 0, z);
+      g.add(tube);
+    }
+  }
+
+  return g;
+}
+
 function buildAircraft() {
   if (aircraft) scene.remove(aircraft);
   aircraft = new THREE.Group();
@@ -977,8 +1061,9 @@ function buildAircraft() {
   groups.props = propulsionMeshes();
   groups.internals = internalPackMeshes();
   groups.cooling = coolingMeshes();
+  groups.structure = structureMeshes();
 
-  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props', 'internals', 'cooling']) {
+  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props', 'internals', 'cooling', 'structure']) {
     aircraft.add(groups[key]);
   }
   scene.add(aircraft);
@@ -1006,6 +1091,21 @@ function updateDims() {
     ['Lift prop ⌀', fmt(mm('lift_prop_diameter'))],
     ['Pusher prop ⌀', fmt(mm('pusher_prop_diameter'))],
   ];
+  if (P.wing_primary_spar_OD != null) {
+    rows.push([
+      'Wing spars ⌀',
+      `pri ${fmt(mm('wing_primary_spar_OD'))} @ ${(100 * num('wing_primary_spar_chord_fraction', 0.25)).toFixed(0)}%c` +
+        (P.wing_secondary_spar_OD != null
+          ? ` · sec ${fmt(mm('wing_secondary_spar_OD'))} @ ${(100 * num('wing_secondary_spar_chord_fraction', 0.65)).toFixed(0)}%c`
+          : ''),
+    ]);
+  }
+  if (P.fuselage_longeron_OD != null) {
+    rows.push([
+      'Fuselage longerons',
+      `tube ⌀ ${fmt(mm('fuselage_longeron_OD'))} · z ${fmt(mm('fuselage_longeron_top_z'))}/${fmt(mm('fuselage_longeron_bottom_z'))}`,
+    ]);
+  }
   if (P.fc_cooling_inlet_panel_length != null) {
     rows.push(['FC cooling arch.', str('fc_cooling_architecture', 'cross_fuselage')]);
     rows.push([
@@ -1062,6 +1162,7 @@ function applyVisibility() {
     props: 'toggle-props',
     internals: 'toggle-internals',
     cooling: 'toggle-cooling',
+    structure: 'toggle-structure',
   };
   for (const [g, id] of Object.entries(map)) {
     if (groups[g]) groups[g].visible = document.getElementById(id).checked;
@@ -1155,6 +1256,7 @@ for (const id of [
   'toggle-props',
   'toggle-internals',
   'toggle-cooling',
+  'toggle-structure',
   'toggle-grid',
   'toggle-axes',
 ]) {

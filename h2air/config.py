@@ -44,6 +44,9 @@ def load_model_config(path: str|Path) -> Dict[str,Any]:
         cfg=load_user_input_config(path)
     else:
         cfg=raw
+        if "manufacturing_mass_model" in cfg:
+            from .user_inputs import _normalize_manufacturing_mass_model
+            cfg["manufacturing_mass_model"] = _normalize_manufacturing_mass_model(cfg["manufacturing_mass_model"])
     required={"model","design","power_system","geometry_mass","aero_propulsion","transition_mission","sixdof_control","structures"}
     missing=sorted(required-set(cfg))
     if missing: raise ValueError("Integrated config missing: "+", ".join(missing))
