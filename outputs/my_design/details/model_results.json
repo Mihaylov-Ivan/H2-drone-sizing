@@ -5,7 +5,7 @@
     "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export and discrete hardware selection.",
     "fidelity": "conceptual / screening; not flight-release evidence"
   },
-  "config_hash": "cad7e5ba68d67ce831bcf8f56e6c0e8eb22d7c6ac49b2a9d65033c23bc5b2fc0",
+  "config_hash": "6d19a4598db10b9c23101d4bd9fce328945f1815cc64a45e0129bff0722d05db",
   "summary": {
     "design_status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
     "reference_mass_kg": 13.682569859440001,

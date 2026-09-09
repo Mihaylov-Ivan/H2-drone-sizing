@@ -4088,7 +4088,7 @@
       "pdb_all_around_m": 0.02,
       "cube_front_connector_m": 0.05,
       "nose_bay_raise_m": 0.02,
-      "cylinder_to_top_inner_m": 0.03,
+      "cylinder_to_top_inner_m": 0.005,
       "component_axial_m": 0.01,
       "longeron_boss_clearance_m": 0.01
     },
@@ -4212,8 +4212,8 @@
     "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search. When packaging energy_bay_order_mode is auto, energy_bay_order_code (0=FC forward, 1=H2 forward) is swept.",
     "design_space": {
       "wing_ac_x_m": [
-        0.36,
-        0.42
+        0.3,
+        0.46
       ],
       "horizontal_tail_ac_x_m": [
         1.0,
@@ -4224,7 +4224,7 @@
         1.1
       ],
       "lift_row_center_x_m": [
-        0.38,
+        0.3,
         0.46
       ]
     }
@@ -4569,7 +4569,7 @@
         "pdb_all_around_m": 0.02,
         "cube_front_connector_m": 0.05,
         "nose_bay_raise_m": 0.02,
-        "cylinder_to_top_inner_m": 0.03,
+        "cylinder_to_top_inner_m": 0.005,
         "component_axial_m": 0.01,
         "longeron_boss_clearance_m": 0.01
       },
@@ -4759,8 +4759,8 @@
       "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search. When packaging energy_bay_order_mode is auto, energy_bay_order_code (0=FC forward, 1=H2 forward) is swept.",
       "design_space": {
         "wing_ac_x_m": [
-          0.36,
-          0.42
+          0.3,
+          0.46
         ],
         "horizontal_tail_ac_x_m": [
           1.0,
@@ -4771,7 +4771,7 @@
           1.1
         ],
         "lift_row_center_x_m": [
-          0.38,
+          0.3,
           0.46
         ]
       }
