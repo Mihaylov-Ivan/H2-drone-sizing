@@ -182,11 +182,31 @@ def _run_design_study(root: Path, args, base_cfg):
         json.dumps(resolved, indent=2, default=str) + "\n", encoding="utf-8"
     )
 
+    selected_out = details / ("recommended_verified" if choose_robust else "nominal_verified")
     print(f"Selected design: {selected_name}")
     print(f"Nominal/robust uncertainty pass: {nominal_prob:.1%} / {robust_prob:.1%}")
     print(f"Design-study outputs: {study}")
     print(f"Copy-ready user inputs: {study / 'user_inputs.json'}")
-    return selected_verified
+    return selected_verified, selected_cfg, selected_out
+
+
+def _maybe_generate_concept_images(args, cfg, result, out_dir: Path) -> None:
+    if not args.concept_images:
+        return
+    from h2air.concept_images import generate_concept_images
+
+    print(f"Generating OpenAI concept images under {out_dir / 'details' / 'concept_images'} ...")
+    manifest = generate_concept_images(
+        cfg,
+        result,
+        out_dir,
+        api_key=args.openai_api_key,
+        model=args.concept_image_model,
+    )
+    print(
+        f"Concept images: {manifest['ok_count']} ok, {manifest['error_count']} failed "
+        f"(model={manifest['model']})"
+    )
 
 
 def main():
@@ -206,12 +226,30 @@ def main():
         "--reuse-reference-search", action="store_true",
         help="Reuse the frozen deterministic reference optimization result shipped with the package",
     )
+    ap.add_argument(
+        "--concept-images",
+        action="store_true",
+        help="After the run, generate OpenAI concept renders from closed aircraft specs "
+        "(requires OPENAI_API_KEY and: pip install -r requirements-concept-images.txt)",
+    )
+    ap.add_argument(
+        "--openai-api-key",
+        default=None,
+        help="OpenAI API key for --concept-images (default: OPENAI_API_KEY env)",
+    )
+    ap.add_argument(
+        "--concept-image-model",
+        default="gpt-image-1",
+        help="OpenAI image model for --concept-images (default: gpt-image-1)",
+    )
     args = ap.parse_args()
     cfg = load_model_config(args.config)
     if args.design_study:
-        result = _run_design_study(root, args, cfg)
+        result, concept_cfg, concept_out = _run_design_study(root, args, cfg)
+        _maybe_generate_concept_images(args, concept_cfg, result, Path(concept_out))
     else:
         result = run_model(cfg, args.output, write_histories=not args.no_histories)
+        _maybe_generate_concept_images(args, cfg, result, Path(args.output))
     s = result["summary"]
     print("H2AIR Integrated Model")
     print("----------------------")

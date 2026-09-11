@@ -47,6 +47,18 @@ python viewer/serve.py outputs/my_design
 
 The viewer draws the cross-fuselage cooling architecture on the fuselage sides: NACA-style inlet ramp and slots, exhaust louvre grille, fan discs/shroud and plenum-gap volumes, all driven by the `fc_cooling_*` CAD parameters.
 
+## Concept images (optional)
+
+After a sizing run, you can ask OpenAI to generate concept renders from the closed aircraft specs (isometric, top/side/perspective, fuselage cutaway, cooling airflow):
+
+```bash
+pip install -r requirements-concept-images.txt
+set OPENAI_API_KEY=sk-...
+python run_model.py --config config/user_inputs.json --output outputs/my_design --no-histories --concept-images
+```
+
+Images and prompts land under `outputs/my_design/details/concept_images/`. With `--design-study --concept-images`, images are generated once for the selected verified design folder only. Override the key or model with `--openai-api-key` / `--concept-image-model` (default `gpt-image-1`). Core sizing does not require the `openai` package.
+
 ## Design study
 
 ```bash
