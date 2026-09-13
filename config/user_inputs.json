@@ -82,10 +82,7 @@
       "dihedral_deg": 0.0,
       "aerodynamic_center_x_m": 0.386844,
       "span_mode": "hardcoded",
-      "span_bounds_m": [
-        3.15,
-        3.6
-      ],
+      "span_bounds_m": [3.15, 3.6],
       "hardcoded_span_m": 3.3742,
       "minimum_transition_speed_over_stall": 1.3,
       "auto_area_margin_factor": 1.1,
@@ -100,10 +97,7 @@
       "sweep_deg": 0.0,
       "aerodynamic_center_x_m": 1.048942,
       "span_mode": "hardcoded",
-      "span_bounds_m": [
-        0.8,
-        1.3
-      ],
+      "span_bounds_m": [0.8, 1.3],
       "hardcoded_span_m": 0.8688,
       "target_tail_volume_coefficient": 0.44,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
@@ -115,17 +109,14 @@
       "naca_code": "NACA0012",
       "aerodynamic_center_x_m": 1.021592,
       "span_mode": "hardcoded",
-      "span_bounds_m": [
-        0.3,
-        0.6
-      ],
+      "span_bounds_m": [0.3, 0.6],
       "hardcoded_span_m": 0.3,
       "target_vertical_tail_volume_coefficient": 0.0255,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
     }
   },
   "propulsion": {
-    "cruise_lift_propeller_state": "folded"
+    "cruise_lift_propeller_state": "stopped_random"
   },
   "component_positions": {
     "lift_row_center_x_m": 0.385884,
@@ -163,10 +154,7 @@
         "length_m": 0.08,
         "width_m": 0.06,
         "height_m": 0.0235,
-        "mount_pattern_m": [
-          0.05,
-          0.05
-        ],
+        "mount_pattern_m": [0.05, 0.05],
         "mass_kg": null,
         "status": "supplier_confirmed",
         "source": "Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
@@ -341,22 +329,10 @@
     "target_static_margin": 0.12,
     "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search. When packaging energy_bay_order_mode is auto, energy_bay_order_code (0=FC forward, 1=H2 forward) is swept.",
     "design_space": {
-      "wing_ac_x_m": [
-        0.3,
-        0.46
-      ],
-      "horizontal_tail_ac_x_m": [
-        1.0,
-        1.1
-      ],
-      "vertical_tail_ac_x_m": [
-        1.0,
-        1.1
-      ],
-      "lift_row_center_x_m": [
-        0.3,
-        0.46
-      ]
+      "wing_ac_x_m": [0.3, 0.46],
+      "horizontal_tail_ac_x_m": [1.0, 1.1],
+      "vertical_tail_ac_x_m": [1.0, 1.1],
+      "lift_row_center_x_m": [0.3, 0.46]
     }
   },
   "hardware_selection": {

@@ -29,7 +29,7 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - Boom longitudinal extent: **x = 0.096 to 1.100 m**
 - Lift-row midpoint: **x = 0.3859 m**; front/rear rotor rows at **0.096 / 0.675 m**
 - Rotor lateral station: **|y| = 0.374 m** (boom-mounted through wing); motor z = **0.120 m**; prop diameter **22.0 in**; edge clearance **20 mm**
-- Cruise lift-prop state: **folded**
+- Cruise lift-prop state: **stopped_random**
 - Cruise pusher: fuselage-aft mount at **x = 0.896 m**
 - Empennage waterline: HT z = **0.089 m** (aligned with main wing z = **0.089 m**)
 - Wing/fuselage junction: fuse top z = **0.111 m**; wing drop from flush = **7.9 mm**; longerons **top/bottom** (wing uses top boss only)
@@ -81,10 +81,10 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 
 ## Performance / mission
 
-- Cruise drag / bus power: **12.83 N / 391.3 W** (lift props **folded**)
+- Cruise drag / bus power: **24.70 N / 721.0 W** (lift props **stopped_random**)
 - Forward / reverse transition: **19.44 s / 18.48 s**
-- Mission energy (120 min): **809.3 Wh**
-- H2 used / final battery SOC: **47.4 g / 91.7%**
+- Mission energy (120 min): **1456.6 Wh**
+- H2 used / final battery SOC: **52.6 g / 20.0%**
 
 ## Structures (recommended screen)
 
@@ -101,8 +101,8 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - **NOT_EVALUATED** — fuel_cell_cooling_fan_curve: IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
 - **PASS** — 15kg_stall_margin: Wing area 0.879 m² vs minimum 0.874 m² screen.
-- **PASS** — cruise_power: 391.3 W vs configured gate.
-- **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
+- **FAIL** — cruise_power: 721.0 W vs configured gate.
+- **FAIL** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
 - **PASS** — current_longitudinal_stability: Closed-aircraft static margin 8.56% MAC.
 - **FAIL** — current_layout_6dof: Actual closed geometry/control 6-DOF gate set.

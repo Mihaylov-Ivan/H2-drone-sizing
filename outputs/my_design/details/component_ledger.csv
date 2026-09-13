@@ -13,7 +13,7 @@ buffer_battery,energy,1.634,1.634,0.22150000000000003,0.0,0.0641113521117617,sup
 fuel_cell_system,energy,1.0932,1.0932,0.25525000000000003,0.0,-0.03128864788823831,supplier_confirmed,FCPM stack mass (share of module_mass_kg)
 hydrogen_cylinder,energy,1.62,1.62,0.5930000000000001,0.0,-0.03368864788823831,supplier_confirmed,Integrated power-system config
 hydrogen_regulator,energy,0.315,0.315,0.24525000000000002,0.0,-0.03128864788823831,supplier_confirmed,Integrated power-system config
-stored_hydrogen,energy,0.0619,0.014474480246213409,0.5930000000000001,0.0,-0.03368864788823831,preliminary_target,Integrated power-system config
+stored_hydrogen,energy,0.0619,0.009284999999984223,0.5930000000000001,0.0,-0.03368864788823831,preliminary_target,Integrated power-system config
 lift_propulsion_1,propulsion,0.284,0.284,0.09648400000000001,-0.3739,0.1245686478882383,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
 lift_propulsion_2,propulsion,0.284,0.284,0.09648400000000001,0.3739,0.1245686478882383,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
 lift_propulsion_3,propulsion,0.284,0.284,0.675284,-0.3739,0.1245686478882383,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S

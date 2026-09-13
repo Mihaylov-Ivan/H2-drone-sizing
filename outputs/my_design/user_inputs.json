@@ -133,7 +133,7 @@
     }
   },
   "propulsion": {
-    "cruise_lift_propeller_state": "folded"
+    "cruise_lift_propeller_state": "stopped_random"
   },
   "component_positions": {
     "lift_row_center_x_m": 0.385884,

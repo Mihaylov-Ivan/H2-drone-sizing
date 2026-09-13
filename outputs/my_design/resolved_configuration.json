@@ -16,7 +16,7 @@
     "wing_mac_m": 0.2660699999999999,
     "wing_CLmax": 1.185,
     "lift_propeller_diameter_in": 22.0,
-    "cruise_lift_propeller_state": "folded",
+    "cruise_lift_propeller_state": "stopped_random",
     "lift_motor_available_thrust_per_motor_N": 71.02956594999999,
     "lift_motor_structural_limit_thrust_per_motor_N": 79.553113864,
     "pusher_propeller_diameter_in": 15.0,
@@ -4626,7 +4626,7 @@
       }
     },
     "propulsion": {
-      "cruise_lift_propeller_state": "folded"
+      "cruise_lift_propeller_state": "stopped_random"
     },
     "component_positions": {
       "lift_row_center_x_m": 0.385884,
