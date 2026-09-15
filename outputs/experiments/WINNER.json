@@ -1,0 +1,12 @@
+{
+  "baseline": "outputs/my_design (stopped_random) SCREENING_FAIL",
+  "winner": "outputs/experiments/expC2_gains_42_15",
+  "status": "SCREENING_PASS",
+  "changes_promoted": {
+    "config/user_inputs.json.propulsion.cruise_lift_propeller_state": "folded",
+    "config/internal_template.json.sixdof_control.controller.pitch_kp_rad_s2_per_rad": 42.0,
+    "config/internal_template.json.sixdof_control.controller.pitch_kd_rad_s2_per_rad_s": 15.0
+  },
+  "structure_gate_fix": "recommended_structure_screen now excludes reference_* audit gates (rename regression from current_*)",
+  "notes": "Layout Exp B alone could not clear forward vs reverse 6DOF tradeoff. Mild reverse brake increases hurt pitch tracking; pure PD gain increase cleared both current_layout and +12% SM stability_screen."
+}

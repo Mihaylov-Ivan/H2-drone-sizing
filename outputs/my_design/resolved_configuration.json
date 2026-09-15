@@ -16,7 +16,7 @@
     "wing_mac_m": 0.2660699999999999,
     "wing_CLmax": 1.185,
     "lift_propeller_diameter_in": 22.0,
-    "cruise_lift_propeller_state": "stopped_random",
+    "cruise_lift_propeller_state": "stopped_aligned",
     "lift_motor_available_thrust_per_motor_N": 71.02956594999999,
     "lift_motor_structural_limit_thrust_per_motor_N": 79.553113864,
     "pusher_propeller_diameter_in": 15.0,
@@ -259,7 +259,7 @@
       "safe_landing_h2_operational_energy_fraction": 0.05,
       "allow_battery_charge_from_fc": true,
       "enforce_landing_reserve_at_end": true,
-      "allow_planned_battery_endurance_extension": false
+      "allow_planned_battery_endurance_extension": true
     },
     "requirements": {
       "application_peak_screening_W": 5000.0,
@@ -1541,8 +1541,8 @@
     "controller": {
       "roll_kp_rad_s2_per_rad": 7.0,
       "roll_kd_rad_s2_per_rad_s": 4.0,
-      "pitch_kp_rad_s2_per_rad": 16.0,
-      "pitch_kd_rad_s2_per_rad_s": 7.0,
+      "pitch_kp_rad_s2_per_rad": 42.0,
+      "pitch_kd_rad_s2_per_rad_s": 15.0,
       "yaw_kp_rad_s2_per_rad": 5.0,
       "yaw_kd_rad_s2_per_rad_s": 3.2,
       "altitude_kp_mps2_per_m": 0.65,
@@ -4626,7 +4626,7 @@
       }
     },
     "propulsion": {
-      "cruise_lift_propeller_state": "stopped_random"
+      "cruise_lift_propeller_state": "stopped_aligned"
     },
     "component_positions": {
       "lift_row_center_x_m": 0.385884,
@@ -4993,7 +4993,7 @@
   },
   "derived_geometry_v3": {
     "fuselage_total_length_m": 0.8594000000000002,
-    "fuselage_max_diameter_m": 0.245,
+    "fuselage_max_diameter_m": 0.22137729577647663,
     "main_wing_span_m": 3.3742,
     "main_wing_area_m2": 0.879451488,
     "main_wing_mac_m": 0.2660699999999999,

@@ -1,0 +1,270 @@
+[
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 2.917,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 4.419,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 2.289,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [],
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.819,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 5.425,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 3.203,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "stability_screen_fails": [
+      "reverse_hover_capture_speed",
+      "reverse_pitch_tracking"
+    ],
+    "name": "expC2_gains_34_13",
+    "ov": {
+      "pitch_kp": 34.0,
+      "pitch_kd": 13.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 2.748,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 4.283,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 2.229,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [],
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.743,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 5.269,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 3.096,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "stability_screen_fails": [
+      "reverse_hover_capture_speed",
+      "reverse_pitch_tracking"
+    ],
+    "name": "expC2_gains_36_13",
+    "ov": {
+      "pitch_kp": 36.0,
+      "pitch_kd": 13.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 2.734,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 4.311,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 2.218,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [],
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.743,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 5.298,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 3.088,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "stability_screen_fails": [
+      "reverse_hover_capture_speed",
+      "reverse_pitch_tracking"
+    ],
+    "name": "expC2_gains_36_14",
+    "ov": {
+      "pitch_kp": 36.0,
+      "pitch_kd": 14.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 2.595,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 4.183,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 2.17,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [],
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.671,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 5.151,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 2.991,
+    "sta_reverse_hover_capture_speed_ok": true,
+    "stability_screen_fails": [
+      "reverse_pitch_tracking"
+    ],
+    "name": "expC2_gains_38_14",
+    "ov": {
+      "pitch_kp": 38.0,
+      "pitch_kd": 14.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": false,
+    "cur_forward_pitch_tracking": 3.105,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 5.596,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 1.899,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [
+      "reverse_pitch_tracking"
+    ],
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.945,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 6.64,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 2.826,
+    "sta_reverse_hover_capture_speed_ok": true,
+    "stability_screen_fails": [
+      "reverse_pitch_tracking"
+    ],
+    "name": "expC2_gains_32_12_brake_12",
+    "ov": {
+      "pitch_kp": 32.0,
+      "pitch_kd": 12.0,
+      "pitch_brake": 12.0,
+      "rev_rate": 18.0,
+      "rev_tc": 0.4
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 2.748,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 4.853,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 2.019,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [],
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.743,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 5.848,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 2.865,
+    "sta_reverse_hover_capture_speed_ok": true,
+    "stability_screen_fails": [
+      "reverse_pitch_tracking"
+    ],
+    "name": "expC2_gains_36_13_brake_11",
+    "ov": {
+      "pitch_kp": 36.0,
+      "pitch_kd": 13.0,
+      "pitch_brake": 11.0,
+      "rev_rate": 17.0,
+      "rev_tc": 0.4
+    }
+  },
+  {
+    "status": "SCREENING_PASS",
+    "SM": 0.0856,
+    "fails": [],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 2.323,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 3.979,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 2.093,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [],
+    "stability_screen_pass": true,
+    "sta_forward_pitch_tracking": 2.538,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 4.91,
+    "sta_reverse_pitch_tracking_ok": true,
+    "sta_reverse_hover_capture_speed": 2.817,
+    "sta_reverse_hover_capture_speed_ok": true,
+    "stability_screen_fails": [],
+    "name": "expC2_gains_42_15",
+    "ov": {
+      "pitch_kp": 42.0,
+      "pitch_kd": 15.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0723,
+    "fails": [
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 2.82,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 3.832,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 1.973,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "current_layout_fails": [],
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.743,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 5.269,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 3.096,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "stability_screen_fails": [
+      "reverse_hover_capture_speed",
+      "reverse_pitch_tracking"
+    ],
+    "name": "expC2_gains_36_13_lr042",
+    "ov": {
+      "pitch_kp": 36.0,
+      "pitch_kd": 13.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45,
+      "lift_row": 0.42
+    }
+  }
+]

@@ -1,6 +1,6 @@
 # H2AIR Integrated Model — Run Summary
 
-**Model status:** SCREENING_FAIL
+**Model status:** SCREENING_PASS
 
 ## Aircraft at a glance
 
@@ -29,7 +29,7 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - Boom longitudinal extent: **x = 0.096 to 1.100 m**
 - Lift-row midpoint: **x = 0.3859 m**; front/rear rotor rows at **0.096 / 0.675 m**
 - Rotor lateral station: **|y| = 0.374 m** (boom-mounted through wing); motor z = **0.120 m**; prop diameter **22.0 in**; edge clearance **20 mm**
-- Cruise lift-prop state: **stopped_random**
+- Cruise lift-prop state: **stopped_aligned**
 - Cruise pusher: fuselage-aft mount at **x = 0.896 m**
 - Empennage waterline: HT z = **0.089 m** (aligned with main wing z = **0.089 m**)
 - Wing/fuselage junction: fuse top z = **0.111 m**; wing drop from flush = **7.9 mm**; longerons **top/bottom** (wing uses top boss only)
@@ -81,10 +81,10 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 
 ## Performance / mission
 
-- Cruise drag / bus power: **24.70 N / 721.0 W** (lift props **stopped_random**)
+- Cruise drag / bus power: **15.46 N / 464.6 W** (lift props **stopped_aligned**)
 - Forward / reverse transition: **19.44 s / 18.48 s**
-- Mission energy (120 min): **1456.6 Wh**
-- H2 used / final battery SOC: **52.6 g / 20.0%**
+- Mission energy (120 min): **953.1 Wh**
+- H2 used / final battery SOC: **52.6 g / 68.1%**
 
 ## Structures (recommended screen)
 
@@ -101,15 +101,15 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - **NOT_EVALUATED** — fuel_cell_cooling_fan_curve: IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
 - **PASS** — 15kg_stall_margin: Wing area 0.879 m² vs minimum 0.874 m² screen.
-- **FAIL** — cruise_power: 721.0 W vs configured gate.
-- **FAIL** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
+- **PASS** — cruise_power: 464.6 W vs configured gate.
+- **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
 - **PASS** — current_longitudinal_stability: Closed-aircraft static margin 8.56% MAC.
-- **FAIL** — current_layout_6dof: Actual closed geometry/control 6-DOF gate set.
-- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 9.8 deg.
-- **FAIL** — stability_screen_6dof: Explicit +12% SM reference screen.
+- **PASS** — current_layout_6dof: Actual closed geometry/control 6-DOF gate set.
+- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 8.3 deg.
+- **PASS** — stability_screen_6dof: Explicit +12% SM reference screen.
 - **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 56.0/62.8 N vs 71.0 N available screen.
-- **FAIL** — recommended_structure_screen: Recommended structural member screens. The legacy partial-feedback mass gate is excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.
+- **PASS** — recommended_structure_screen: Recommended structural member screens. Audit reference/current/legacy sections and the legacy partial-feedback mass gate are excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.
 - **NOT_EVALUATED** — motor_mount: Controlled mount CAD, fasteners and material allowables are still required.
 - **PASS** — selected_battery_database_record: Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation.
 - **PASS** — certified_hydrogen_cylinder_mass: Certified cylinder mass is present.

@@ -23,50 +23,58 @@
       {
         "name": "nose",
         "length_m": 0.14,
-        "diameter_m": 0.245,
+        "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.14900000000000002,
+        "height_m": 0.22137729577647663
       },
       {
         "name": "center_a",
-        "length_m": 0.35,
-        "diameter_m": 0.245,
+        "length_m": 0.23550000000000001,
+        "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.14900000000000002,
+        "height_m": 0.22137729577647663
       },
       {
         "name": "center_b",
-        "length_m": 0.3,
-        "diameter_m": 0.245,
+        "length_m": 0.3439000000000001,
+        "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.14900000000000002,
+        "height_m": 0.22137729577647663
       },
       {
         "name": "tail",
         "length_m": 0.14,
-        "diameter_m": 0.245,
+        "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
           "specific_mass_kg_per_m": 1.0973,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
           "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
-        }
+        },
+        "width_m": 0.14900000000000002,
+        "height_m": 0.22137729577647663
       }
     ]
   },
@@ -116,7 +124,7 @@
     }
   },
   "propulsion": {
-    "cruise_lift_propeller_state": "stopped_random"
+    "cruise_lift_propeller_state": "stopped_aligned"
   },
   "component_positions": {
     "lift_row_center_x_m": 0.385884,
@@ -246,7 +254,7 @@
         "reference_tube_od_m": 0.01329,
         "chord_fraction": 0.25,
         "status": "engineering_assumption",
-        "source": "kg/m calibrated at reference_tube_od_m (mass-scaling section only — not the recommended design spar OD); structural sizing scales mass by section area"
+        "source": "kg/m calibrated at reference_tube_od_m (mass-scaling section only \u2014 not the recommended design spar OD); structural sizing scales mass by section area"
       },
       "secondary_spar": {
         "mass_mode": "linear",

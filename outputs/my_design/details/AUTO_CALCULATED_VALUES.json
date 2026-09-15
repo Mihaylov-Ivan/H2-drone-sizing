@@ -1,7 +1,7 @@
 {
   "geometry": {
     "fuselage_total_length_m": 0.8594000000000002,
-    "fuselage_max_diameter_m": 0.245,
+    "fuselage_max_diameter_m": 0.22137729577647663,
     "main_wing_span_m": 3.3742,
     "main_wing_area_m2": 0.879451488,
     "main_wing_mac_m": 0.2660699999999999,
@@ -37,10 +37,10 @@
   ],
   "neutral_point_x_m": 0.4253206802603421,
   "static_margin": 0.08564935438852586,
-  "cruise_bus_power_W": 721.0380068053548,
-  "mission_energy_Wh": 1456.5926184784757,
-  "h2_used_kg": 0.052615000000015774,
-  "final_battery_soc": 0.2,
+  "cruise_bus_power_W": 464.57056275202143,
+  "mission_energy_Wh": 953.1270783339116,
+  "h2_used_kg": 0.05261499999997114,
+  "final_battery_soc": 0.6805099153433808,
   "wing_spar_od_mm": 22.75000000000001,
   "boom_od_mm": 21.250000000000007,
   "front_motor_15kg_N": 55.965209779933346,

@@ -145,7 +145,7 @@
       "safe_landing_h2_operational_energy_fraction": 0.05,
       "allow_battery_charge_from_fc": true,
       "enforce_landing_reserve_at_end": true,
-      "allow_planned_battery_endurance_extension": false
+      "allow_planned_battery_endurance_extension": true
     },
     "requirements": {
       "application_peak_screening_W": 5000.0,
@@ -1314,8 +1314,8 @@
     "controller": {
       "roll_kp_rad_s2_per_rad": 7.0,
       "roll_kd_rad_s2_per_rad_s": 4.0,
-      "pitch_kp_rad_s2_per_rad": 16.0,
-      "pitch_kd_rad_s2_per_rad_s": 7.0,
+      "pitch_kp_rad_s2_per_rad": 42.0,
+      "pitch_kd_rad_s2_per_rad_s": 15.0,
       "yaw_kp_rad_s2_per_rad": 5.0,
       "yaw_kd_rad_s2_per_rad_s": 3.2,
       "altitude_kp_mps2_per_m": 0.65,

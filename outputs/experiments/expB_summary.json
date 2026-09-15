@@ -1,0 +1,178 @@
+[
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.09897157455589815,
+    "cruise_W": 391.2850847947649,
+    "mass": 14.306864187152916,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "cur_forward_pitch_tracking": 6.739,
+    "cur_forward_pitch_tracking_ok": false,
+    "cur_reverse_pitch_tracking": 6.571,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 4.129,
+    "cur_reverse_hover_capture_speed_ok": false,
+    "sta_forward_pitch_tracking": 6.633,
+    "sta_forward_pitch_tracking_ok": false,
+    "sta_reverse_pitch_tracking": 7.209,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 5.102,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expB_cand5_layout",
+    "ov": {
+      "wing_ac": 0.4005,
+      "ht_ac": 1.0414,
+      "vt_ac": 1.0221,
+      "lift_row": 0.4336
+    }
+  },
+  {
+    "status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
+    "SM": 0.10367362035122514,
+    "cruise_W": 391.30286801126124,
+    "mass": 14.308602651152917,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof",
+      "15kg_zero_pitch_motor_thrust"
+    ],
+    "cur_forward_pitch_tracking": 6.687,
+    "cur_forward_pitch_tracking_ok": false,
+    "cur_reverse_pitch_tracking": 6.72,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 4.342,
+    "cur_reverse_hover_capture_speed_ok": false,
+    "sta_forward_pitch_tracking": 6.604,
+    "sta_forward_pitch_tracking_ok": false,
+    "sta_reverse_pitch_tracking": 7.201,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 5.09,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expB_liftrow_0.34",
+    "ov": {
+      "wing_ac": 0.386844,
+      "ht_ac": 1.048942,
+      "vt_ac": 1.021592,
+      "lift_row": 0.34
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.07225308961870776,
+    "cruise_W": 391.2876685467534,
+    "mass": 14.30711678448625,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "cur_forward_pitch_tracking": 6.895,
+    "cur_forward_pitch_tracking_ok": false,
+    "cur_reverse_pitch_tracking": 5.488,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 2.822,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "sta_forward_pitch_tracking": 6.65,
+    "sta_forward_pitch_tracking_ok": false,
+    "sta_reverse_pitch_tracking": 7.214,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 5.109,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expB_liftrow_0.42",
+    "ov": {
+      "wing_ac": 0.386844,
+      "ht_ac": 1.048942,
+      "vt_ac": 1.021592,
+      "lift_row": 0.42
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.16090040097356573,
+    "cruise_W": 391.2914682648998,
+    "mass": 14.307488251152916,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "cur_forward_pitch_tracking": 6.353,
+    "cur_forward_pitch_tracking_ok": false,
+    "cur_reverse_pitch_tracking": 8.087,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 6.741,
+    "cur_reverse_hover_capture_speed_ok": false,
+    "sta_forward_pitch_tracking": 6.557,
+    "sta_forward_pitch_tracking_ok": false,
+    "sta_reverse_pitch_tracking": 7.184,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 5.079,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expB_wingac_0.42_lr_0.40",
+    "ov": {
+      "wing_ac": 0.42,
+      "ht_ac": 1.048942,
+      "vt_ac": 1.021592,
+      "lift_row": 0.4
+    }
+  },
+  {
+    "status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
+    "SM": 0.03059374785774348,
+    "cruise_W": 391.2990679971536,
+    "mass": 14.30823118448625,
+    "fails": [
+      "current_longitudinal_stability",
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "cur_forward_pitch_tracking": 7.16,
+    "cur_forward_pitch_tracking_ok": false,
+    "cur_reverse_pitch_tracking": 2.884,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 1.374,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "sta_forward_pitch_tracking": 6.672,
+    "sta_forward_pitch_tracking_ok": false,
+    "sta_reverse_pitch_tracking": 7.216,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 5.124,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expB_wingac_0.36_lr_0.36",
+    "ov": {
+      "wing_ac": 0.36,
+      "ht_ac": 1.05,
+      "vt_ac": 1.02,
+      "lift_row": 0.36
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0862987329042126,
+    "cruise_W": 391.2914682648998,
+    "mass": 14.307488251152916,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "cur_forward_pitch_tracking": 6.703,
+    "cur_forward_pitch_tracking_ok": false,
+    "cur_reverse_pitch_tracking": 6.073,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 3.493,
+    "cur_reverse_hover_capture_speed_ok": false,
+    "sta_forward_pitch_tracking": 6.53,
+    "sta_forward_pitch_tracking_ok": false,
+    "sta_reverse_pitch_tracking": 7.177,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 5.068,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expB_ht_aft_lr_0.40",
+    "ov": {
+      "wing_ac": 0.386844,
+      "ht_ac": 1.09,
+      "vt_ac": 1.05,
+      "lift_row": 0.4
+    }
+  }
+]

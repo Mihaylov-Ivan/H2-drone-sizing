@@ -25,6 +25,24 @@ G=9.80665
 def _sha(obj: Any)->str:
     return hashlib.sha256(json.dumps(obj,sort_keys=True,separators=(",",":"),default=str).encode()).hexdigest()
 
+def recommended_structure_screen_pass(structure_gates: Sequence[Mapping[str, Any]]) -> bool:
+    """True when recommended design-member screens pass.
+
+    Audit reference/current/legacy sections and the legacy partial-feedback mass
+    gate are excluded; closed MTOW is checked separately via mass_ceiling.
+    """
+    for g in structure_gates:
+        n = str(g["name"])
+        if g["status"] == "NOT_EVALUATED":
+            continue
+        if n == "mass_ceiling_after_partial_structural_feedback":
+            continue
+        if "current_" in n or "legacy_" in n or n.startswith("reference_"):
+            continue
+        if g["status"] == "FAIL":
+            return False
+    return True
+
 def _sync_design(cfg: Mapping[str,Any], mass_result=None):
     d=cfg["design"]
     a=deepcopy(cfg["aero_propulsion"]); t=deepcopy(cfg["transition_mission"]); s6=deepcopy(cfg["sixdof_control"]); st=deepcopy(cfg["structures"])
@@ -247,7 +265,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("sixdof_linear_aero_validity",control_cases["current_layout"]["linear_aero_validity"]["status"],control_cases["current_layout"]["linear_aero_validity"]["note"]+f" Maximum |alpha| above 10 m/s = {control_cases["current_layout"]["linear_aero_validity"]["maximum_abs_alpha_above_10mps_deg"]:.1f} deg.")
     gate("stability_screen_6dof","PASS" if control_cases["stability_screen"]["gate_evaluation"]["pass"] else "FAIL",f"Explicit +{100*float(d['stability_screen_static_margin']):.0f}% SM reference screen.")
     gate("15kg_zero_pitch_motor_thrust","PASS" if max(front_each,rear_each)<=float(d["lift_motor_available_thrust_per_motor_N"]) else "FAIL",f"Front/rear requirement {front_each:.1f}/{rear_each:.1f} N vs {float(d['lift_motor_available_thrust_per_motor_N']):.1f} N available screen.")
-    gate("recommended_structure_screen","PASS" if all(g["status"]!="FAIL" for g in structure["gates"] if "current_" not in g["name"] and "legacy_" not in g["name"] and g["name"]!="mass_ceiling_after_partial_structural_feedback" and g["status"]!="NOT_EVALUATED") else "FAIL","Recommended structural member screens. The legacy partial-feedback mass gate is excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.")
+    gate("recommended_structure_screen","PASS" if recommended_structure_screen_pass(structure["gates"]) else "FAIL","Recommended structural member screens. Audit reference/current/legacy sections and the legacy partial-feedback mass gate are excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.")
     gate("motor_mount","NOT_EVALUATED","Controlled mount CAD, fasteners and material allowables are still required.")
     selected_battery=cfg.get("hardware_selection_result",{}).get("selected_battery",{})
     battery_known = selected_battery.get("mass_kg") is not None and all(selected_battery.get(k) is not None for k in ("length_m","width_m","height_m"))

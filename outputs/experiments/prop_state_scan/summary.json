@@ -1,0 +1,38 @@
+[
+  {
+    "state": "folded",
+    "status": "SCREENING_PASS",
+    "cruise_W": 391.3,
+    "energy_Wh": 809.3,
+    "fails": []
+  },
+  {
+    "state": "stopped_aligned",
+    "status": "SCREENING_FAIL",
+    "cruise_W": 464.6,
+    "energy_Wh": 953.1,
+    "fails": [
+      "mission_ems"
+    ]
+  },
+  {
+    "state": "stopped_random",
+    "status": "SCREENING_FAIL",
+    "cruise_W": 721.0,
+    "energy_Wh": 1456.6,
+    "fails": [
+      "cruise_power",
+      "mission_ems"
+    ]
+  },
+  {
+    "state": "windmilling",
+    "status": "SCREENING_FAIL",
+    "cruise_W": 1087.4,
+    "energy_Wh": 2175.8,
+    "fails": [
+      "cruise_power",
+      "mission_ems"
+    ]
+  }
+]

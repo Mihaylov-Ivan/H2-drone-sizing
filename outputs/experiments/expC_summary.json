@@ -1,0 +1,184 @@
+[
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": false,
+    "cur_forward_pitch_tracking": 4.324,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 5.183,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 2.769,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 4.098,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 6.275,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 3.991,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expC_gains_24_10",
+    "ov": {
+      "pitch_kp": 24.0,
+      "pitch_kd": 10.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": true,
+    "cur_forward_pitch_tracking": 3.105,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 4.537,
+    "cur_reverse_pitch_tracking_ok": true,
+    "cur_reverse_hover_capture_speed": 2.368,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.945,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 5.56,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 3.33,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expC_gains_32_12",
+    "ov": {
+      "pitch_kp": 32.0,
+      "pitch_kd": 12.0,
+      "pitch_brake": 10.0,
+      "rev_rate": 15.0,
+      "rev_tc": 0.45
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": false,
+    "cur_forward_pitch_tracking": 6.823,
+    "cur_forward_pitch_tracking_ok": false,
+    "cur_reverse_pitch_tracking": 11.221,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 2.594,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 6.649,
+    "sta_forward_pitch_tracking_ok": false,
+    "sta_reverse_pitch_tracking": 12.451,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 4.206,
+    "sta_reverse_hover_capture_speed_ok": false,
+    "name": "expC_brake_18",
+    "ov": {
+      "pitch_kp": 16.0,
+      "pitch_kd": 7.0,
+      "pitch_brake": 18.0,
+      "rev_rate": 20.0,
+      "rev_tc": 0.3
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": false,
+    "cur_forward_pitch_tracking": 3.602,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 8.508,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 1.348,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 3.409,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 9.61,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 2.427,
+    "sta_reverse_hover_capture_speed_ok": true,
+    "name": "expC_gains_28_11_brake_16",
+    "ov": {
+      "pitch_kp": 28.0,
+      "pitch_kd": 11.0,
+      "pitch_brake": 16.0,
+      "rev_rate": 22.0,
+      "rev_tc": 0.3
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": false,
+    "cur_forward_pitch_tracking": 2.463,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 9.762,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 1.348,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.603,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 10.938,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 2.048,
+    "sta_reverse_hover_capture_speed_ok": true,
+    "name": "expC_gains_40_14_brake_20",
+    "ov": {
+      "pitch_kp": 40.0,
+      "pitch_kd": 14.0,
+      "pitch_brake": 20.0,
+      "rev_rate": 25.0,
+      "rev_tc": 0.25
+    }
+  },
+  {
+    "status": "SCREENING_FAIL",
+    "SM": 0.0856,
+    "fails": [
+      "current_layout_6dof",
+      "stability_screen_6dof"
+    ],
+    "current_layout_pass": false,
+    "cur_forward_pitch_tracking": 2.71,
+    "cur_forward_pitch_tracking_ok": true,
+    "cur_reverse_pitch_tracking": 6.94,
+    "cur_reverse_pitch_tracking_ok": false,
+    "cur_reverse_hover_capture_speed": 1.118,
+    "cur_reverse_hover_capture_speed_ok": true,
+    "stability_screen_pass": false,
+    "sta_forward_pitch_tracking": 2.743,
+    "sta_forward_pitch_tracking_ok": true,
+    "sta_reverse_pitch_tracking": 7.943,
+    "sta_reverse_pitch_tracking_ok": false,
+    "sta_reverse_hover_capture_speed": 1.736,
+    "sta_reverse_hover_capture_speed_ok": true,
+    "name": "expC_gains_36_14_brake_14_fwd",
+    "ov": {
+      "pitch_kp": 36.0,
+      "pitch_kd": 14.0,
+      "pitch_brake": 14.0,
+      "rev_rate": 22.0,
+      "rev_tc": 0.28,
+      "fwd_rate": 25.0,
+      "fwd_tc": 0.25,
+      "fwd_main": 5.0
+    }
+  }
+]
