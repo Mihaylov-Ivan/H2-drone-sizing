@@ -1439,10 +1439,21 @@
       "pod_reference_bending_stress_MPa": 1.0,
       "pod_reference_shear_stress_MPa": 0.53,
       "pod_printed_bending_allow_MPa": 14.5,
-      "pod_printed_shear_allow_MPa": 4.62
+      "pod_printed_shear_allow_MPa": 4.62,
+      "landing_leg_enabled": false,
+      "landing_leg_length_m": 0.25,
+      "landing_leg_count": 3,
+      "landing_leg_side_load_fraction": 0.25,
+      "landing_leg_deflection_limit_fraction": 0.05,
+      "landing_leg_slope_limit_deg": 3.0,
+      "landing_leg_id_over_od": 0.75,
+      "landing_leg_min_od_m": 0.008,
+      "landing_leg_max_od_m": 0.03,
+      "landing_leg_step_m": 0.00025
     },
     "load_cases": {
       "maneuver_load_factor": 3.0,
+      "landing_load_factor": 3.0,
       "rho_kg_m3": 1.225,
       "dive_speed_mps": 50.0,
       "horizontal_tail_design_CL_abs": 1.0,

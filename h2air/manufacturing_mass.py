@@ -11,6 +11,12 @@ from copy import deepcopy
 from typing import Any, Dict, Mapping, Sequence, Tuple
 
 from .mass_properties import Component, Shape
+from .landing_legs import (
+    apply_landing_leg_layout,
+    resolve_landing_leg_layout,
+    sleeve_mass_kg,
+    sleeve_od_m,
+)
 
 
 def _tube_od_m(rule: Mapping[str, Any], default: float = 0.0) -> float:
@@ -168,6 +174,52 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
         _add_tube(out,name=f"boom_tube_{side}",group="tail_structure",mass=mb/2,pos=[xmid,y,boom_z],length=Lb,diameter=_tube_od_m(br,float(gm.get("boom_outer_diameter_m",0.035))),axis="x",rule=br)
     ledger.append({"name":"boom_tubes","length_m":Lb,"count":2,"mass_mode":br.get("mass_mode"),"specific_mass_kg_per_m":br.get("specific_mass_kg_per_m"),"mass_kg":mb,"hardcoded":br.get("mass_mode")=="hardcoded"})
 
+    # Landing legs: CFRP tubes inside 2 mm printed sleeves (nose + two wing).
+    apply_landing_leg_layout(cfg)
+    layout = resolve_landing_leg_layout(cfg)
+    if layout:
+        legs_cfg = mm["landing_legs"]
+        tube_rule = legs_cfg.get("tube") or {}
+        sleeve_wall = float(layout["sleeve_wall_m"])
+        dens = float(layout["printed_density_kg_m3"])
+        tube_od = _tube_od_m(tube_rule, float(layout["tube_od_m"]))
+        sleeve_od = sleeve_od_m(tube_od, sleeve_wall)
+        sleeve_rule = {
+            "mass_mode": "linear",
+            "status": legs_cfg.get("status", "engineering_assumption"),
+            "source": legs_cfg.get("source", "Printed landing-leg sleeve around CFRP tube"),
+            "specific_mass_kg_per_m": dens * (3.141592653589793 / 4.0) * (sleeve_od**2 - tube_od**2),
+        }
+        mt_total = 0.0
+        ms_total = 0.0
+        for leg in layout["legs"]:
+            L = float(leg["length_m"])
+            mt = _mass(tube_rule, L)
+            ms = sleeve_mass_kg(
+                tube_od_m=tube_od, sleeve_wall_m=sleeve_wall, length_m=L, density_kg_m3=dens, count=1,
+            )
+            mt_total += mt
+            ms_total += ms
+            pos = [float(leg["x_m"]), float(leg["y_m"]), float(leg["cg_z_m"])]
+            _add_tube(
+                out, name=f"landing_leg_{leg['name']}_tube", group="landing_gear", mass=mt,
+                pos=pos, length=L, diameter=tube_od, axis="z", rule=tube_rule,
+            )
+            _add_tube(
+                out, name=f"landing_leg_{leg['name']}_sleeve", group="landing_gear", mass=ms,
+                pos=pos, length=L, diameter=sleeve_od, axis="z", rule=sleeve_rule,
+            )
+        ledger.append({
+            "name": "landing_leg_tubes", "length_m": float(layout["sizing_length_m"]), "count": 3,
+            "mass_mode": tube_rule.get("mass_mode"), "specific_mass_kg_per_m": tube_rule.get("specific_mass_kg_per_m"),
+            "mass_kg": mt_total, "hardcoded": tube_rule.get("mass_mode") == "hardcoded",
+        })
+        ledger.append({
+            "name": "landing_leg_sleeves", "length_m": float(layout["sizing_length_m"]), "count": 3,
+            "mass_mode": "printed_annulus", "specific_mass_kg_per_m": sleeve_rule["specific_mass_kg_per_m"],
+            "mass_kg": ms_total, "hardcoded": False,
+        })
+
     return out, ledger
 
 
@@ -213,4 +265,49 @@ def apply_structural_mass_updates(cfg: Mapping[str, Any], components: Sequence[C
     bare=3.141592653589793/4*(float(brec["od_m"])**2-float(brec["id_m"])**2)
     for n in ("boom_tube_left","boom_tube_right"):
         scaled(n,mm["boom_tubes"],bare,bref)
+
+    # Landing-leg tubes: scale vs the kg/m calibration OD; sleeves follow design OD.
+    legs_cfg = mm.get("landing_legs") or {}
+    land = structure.get("structural_checks", {}).get("landing_legs") or {}
+    if legs_cfg.get("enabled") and land.get("enabled"):
+        tube_rule = legs_cfg.get("tube") or {}
+        ref_od = float(tube_rule.get("reference_tube_od_m") or tube_rule.get("tube_od_m") or 0.012)
+        # Reference wall uses the same id/od ratio as the design screen when ID unknown.
+        id_ratio = float(tube_rule.get("id_over_od", 0.75))
+        ref_id = float(tube_rule.get("reference_tube_id_m") or (ref_od * id_ratio))
+        lref = 3.141592653589793 / 4.0 * (ref_od**2 - ref_id**2)
+        lsec = land["recommended_screen"]["section"]
+        lod = float(lsec["od_m"]); lid = float(lsec["id_m"])
+        lare = 3.141592653589793 / 4.0 * (lod**2 - lid**2)
+        tube_rule["design_tube_od_m"] = lod
+        tube_rule["design_tube_id_m"] = lid
+        for name in ("landing_leg_nose_tube", "landing_leg_wing_left_tube", "landing_leg_wing_right_tube"):
+            scaled(name, tube_rule, lare, lref)
+        # Refresh sleeve diameters/masses for the sized tube (2 mm wall annulus).
+        layout = resolve_landing_leg_layout(cfg)
+        if layout:
+            wall = float(layout["sleeve_wall_m"])
+            dens = float(layout["printed_density_kg_m3"])
+            sod = sleeve_od_m(lod, wall)
+            by_layout = {leg["name"]: leg for leg in layout["legs"]}
+            for name, leg_key in (
+                ("landing_leg_nose_sleeve", "nose"),
+                ("landing_leg_wing_left_sleeve", "wing_left"),
+                ("landing_leg_wing_right_sleeve", "wing_right"),
+            ):
+                if name not in by:
+                    continue
+                leg = by_layout[leg_key]
+                by[name].mass_takeoff_kg = sleeve_mass_kg(
+                    tube_od_m=lod, sleeve_wall_m=wall, length_m=float(leg["length_m"]),
+                    density_kg_m3=dens, count=1,
+                )
+                by[name].mass_end_kg = by[name].mass_takeoff_kg
+                by[name].dimensions_m = {"length": float(leg["length_m"]), "diameter": float(sod)}
+            # Keep resolved layout OD in sync for CAD/viewer.
+            layout["tube_od_m"] = lod
+            layout["tube_id_m"] = lid
+            layout["sleeve_od_m"] = sod
+            legs_cfg["resolved"] = layout
+            cfg["geometry_mass"]["geometry_model"]["geometry"]["landing_legs"] = layout
     return out

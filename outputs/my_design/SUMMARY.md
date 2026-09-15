@@ -4,7 +4,7 @@
 
 ## Aircraft at a glance
 
-A **14.404 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **20.0 m/s** for **120 min** with **1.2 kg** payload.
+A **14.461 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **20.0 m/s** for **120 min** with **1.2 kg** payload.
 
 ## Configuration / look
 
@@ -47,15 +47,16 @@ A **14.404 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 
 ## Mass & balance
 
-- Closed MTOW: **14.404 kg** (pre-structure **13.683 kg**; margin to ceiling **0.596 kg**)
-- CG: **(0.4023, 0.0000, 0.0424) m**
-- Neutral point / static margin: **x_NP = 0.4253 m**, **8.65% MAC**
+- Closed MTOW: **14.461 kg** (pre-structure **13.774 kg**; margin to ceiling **0.539 kg**)
+- CG: **(0.4021, 0.0000, 0.0420) m**
+- Neutral point / static margin: **x_NP = 0.4253 m**, **8.72% MAC**
 
 ### Mass breakdown (takeoff)
 - payload: **1.200 kg**
 - wing structure: **4.298 kg**
 - fuselage structure: **1.097 kg**
 - tail structure: **0.291 kg**
+- landing gear: **0.057 kg**
 - energy: **5.081 kg**
 - propulsion: **1.327 kg**
 - avionics: **0.643 kg**
@@ -68,7 +69,7 @@ A **14.404 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - Battery: **SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh** (1.634 kg, **244.2 Wh**, 5.5 Ah)
 - Fuel cell: **800 W** net, module **1.45 kg** (stack 1.093 kg + control 0.357 kg)
 - Hydrogen store: **3.0 L** / **300 bar**, nominal H2 **62 g**, cylinder **1.62 kg**
-- 15 kg zero-pitch motor need: front/rear **56.0 / 62.8 N**
+- 15 kg zero-pitch motor need: front/rear **56.1 / 62.7 N**
 
 ### Fuel-cell cooling integration
 - Architecture: **cross_fuselage**, fan direction **suction_through_stack_to_fan_side**
@@ -81,34 +82,35 @@ A **14.404 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 
 ## Performance / mission
 
-- Cruise drag / bus power: **15.50 N / 465.6 W** (lift props **stopped_aligned**)
-- Forward / reverse transition: **19.78 s / 18.46 s**
-- Mission energy (120 min): **955.5 Wh**
-- H2 used / final battery SOC: **52.6 g / 67.1%**
+- Cruise drag / bus power: **15.52 N / 466.2 W** (lift props **stopped_aligned**)
+- Forward / reverse transition: **20.00 s / 18.48 s**
+- Mission energy (120 min): **956.9 Wh**
+- H2 used / final battery SOC: **52.6 g / 66.5%**
 
 ## Structures (recommended screen)
 
 - Wing spar: **24.00 / 18.00 mm OD/ID**
 - Boom tube: **22.00 / 18.00 mm OD/ID**
+- Landing legs (3g): **8.00 / 6.00 mm OD/ID** (CFRP tube + 2 mm printed sleeve; nose + 2 wing)
 - Motor-mount limit thrust: **79.6 N/motor**
 
 ## Integrated gates
 
-- **PASS** — mass_ceiling: Structurally closed mass 14.404 kg vs 15.0 kg ceiling.
+- **PASS** — mass_ceiling: Structurally closed mass 14.461 kg vs 15.0 kg ceiling.
 - **PASS** — packaging: 0 packaging collision/containment failures remain.
 - **PASS** — fuel_cell_cooling_airflow_screen: Estimated fan/duct operating flow 118.2 CFM vs 101.0 CFM required by the configured thermal screen.
 - **PASS** — fuel_cell_cooling_geometry: Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps 10.3/10.3 mm vs 4.0/10.0 mm required.
 - **NOT_EVALUATED** — fuel_cell_cooling_fan_curve: IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
 - **PASS** — 15kg_stall_margin: Wing area 0.879 m² vs minimum 0.874 m² screen.
-- **PASS** — cruise_power: 465.6 W vs configured gate.
+- **PASS** — cruise_power: 466.2 W vs configured gate.
 - **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
-- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 8.65% MAC.
+- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 8.72% MAC.
 - **PASS** — current_layout_6dof: Actual closed geometry/control 6-DOF gate set.
-- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 8.2 deg.
+- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 8.1 deg.
 - **PASS** — stability_screen_6dof: Explicit +12% SM reference screen.
-- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 56.0/62.8 N vs 71.0 N available screen.
+- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 56.1/62.7 N vs 71.0 N available screen.
 - **PASS** — recommended_structure_screen: Recommended structural member screens. Audit reference/current/legacy sections and the legacy partial-feedback mass gate are excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.
 - **NOT_EVALUATED** — motor_mount: Controlled mount CAD, fasteners and material allowables are still required.
 - **PASS** — selected_battery_database_record: Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation.

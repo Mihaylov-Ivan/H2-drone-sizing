@@ -107,6 +107,35 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     bs=structure['structural_checks']['booms']['recommended_screen']['section']; bx0=float(gm['boom_x_start_m']); bx1=float(gm['boom_x_end_m']); ys=gm['boom_center_y_m']
     out += [_param('boom_length',_mm(bx1-bx0)),_param('boom_start_x',_mm(bx0)),_param('boom_end_x',_mm(bx1)),_param('boom_left_y',_mm(ys[0])),_param('boom_right_y',_mm(ys[1])),_param('boom_spacing',_mm(abs(float(ys[1])-float(ys[0])))),_param('boom_z',_mm(float(gm.get('boom_z_m',0.0)))),_param('boom_OD',_mm(bs['od_m'])),_param('boom_ID',_mm(bs['id_m']))]
 
+    # Landing legs (nose + wing left/right): geometry only.
+    land = (structure.get('structural_checks') or {}).get('landing_legs') or {}
+    layout = gm.get('landing_legs') or (mm.get('landing_legs') or {}).get('resolved') or {}
+    if land.get('enabled') and layout.get('enabled'):
+        sec = land['recommended_screen']['section']
+        tube_od = float(sec['od_m']); tube_id = float(sec['id_m'])
+        wall = float(layout.get('sleeve_wall_m', (mm.get('landing_legs') or {}).get('sleeve_wall_m', 0.002)))
+        sleeve_od = tube_od + 2.0 * wall
+        out += [
+            _param('landing_legs_enabled', 1, 'unitless'),
+            _param('landing_ground_z', _mm(float(layout['ground_z_m']))),
+            _param('landing_leg_tube_OD', _mm(tube_od)),
+            _param('landing_leg_tube_ID', _mm(tube_id)),
+            _param('landing_leg_sleeve_OD', _mm(sleeve_od)),
+            _param('landing_leg_sleeve_wall', _mm(wall)),
+            _param('landing_leg_sizing_length', _mm(float(layout.get('sizing_length_m', land.get('length_m', 0.0))))),
+        ]
+        for leg in layout.get('legs', []):
+            prefix = f"landing_leg_{leg['name']}"
+            out += [
+                _param(f'{prefix}_x', _mm(float(leg['x_m']))),
+                _param(f'{prefix}_y', _mm(float(leg['y_m']))),
+                _param(f'{prefix}_mount_z', _mm(float(leg['mount_z_m']))),
+                _param(f'{prefix}_foot_z', _mm(float(leg['foot_z_m']))),
+                _param(f'{prefix}_length', _mm(float(leg['length_m']))),
+            ]
+    else:
+        out.append(_param('landing_legs_enabled', 0, 'unitless'))
+
     # Lift rows and selected hardware.
     centers=gm['lift_prop_centers_m']; front=float(centers[0][0]); rear=float(centers[2][0]); yabs=abs(float(centers[0][1])); z=float(centers[0][2])
     lift=hw.get('selected_lift_combo',{}); push=hw.get('selected_pusher_combo',{}); bat=hw.get('selected_battery',{})

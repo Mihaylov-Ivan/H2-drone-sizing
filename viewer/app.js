@@ -20,6 +20,9 @@ const COLORS = {
   coolingExhaust: 0xff7043,
   spar: 0xd4b483,
   longeron: 0xc4ccd6,
+  landingSleeve: 0xb7c4b0,
+  landingTube: 0xd4b483,
+  landingFoot: 0x6e7f91,
 };
 
 /** @type {Record<string, number|string>} */
@@ -1001,6 +1004,58 @@ function structureMeshes() {
   return g;
 }
 
+/**
+ * Tripod landing gear: CFRP tubes inside 2 mm printed sleeves.
+ * One nose leg under the fuselage + two wing legs at the boom / primary-spar station.
+ */
+function landingGearMeshes() {
+  const g = new THREE.Group();
+  g.name = 'landing';
+  if (num('landing_legs_enabled', 0) < 0.5) return g;
+
+  const tubeOd = mm('landing_leg_tube_OD', 12);
+  const sleeveOd = mm('landing_leg_sleeve_OD', tubeOd + 4);
+  const tubeR = Math.max(tubeOd / 2, 0.001);
+  const sleeveR = Math.max(sleeveOd / 2, tubeR + 0.001);
+  const sleeveMat = makeMaterial(COLORS.landingSleeve, { metalness: 0.08, roughness: 0.72, transparent: true, opacity: 0.88 });
+  const tubeMat = makeMaterial(COLORS.landingTube, { metalness: 0.22, roughness: 0.38 });
+  const footMat = makeMaterial(COLORS.landingFoot, { metalness: 0.15, roughness: 0.55 });
+
+  for (const name of ['nose', 'wing_left', 'wing_right']) {
+    const x = mm(`landing_leg_${name}_x`);
+    const y = mm(`landing_leg_${name}_y`);
+    const mountZ = mm(`landing_leg_${name}_mount_z`);
+    const footZ = mm(`landing_leg_${name}_foot_z`);
+    const length = Math.max(mm(`landing_leg_${name}_length`, Math.abs(mountZ - footZ)), 0.02);
+    const zMid = 0.5 * (mountZ + footZ);
+
+    const sleeve = new THREE.Mesh(
+      new THREE.CylinderGeometry(sleeveR, sleeveR, length, 18),
+      sleeveMat,
+    );
+    sleeve.rotation.x = Math.PI / 2;
+    sleeve.position.set(x, y, zMid);
+    g.add(sleeve);
+
+    const tube = new THREE.Mesh(
+      new THREE.CylinderGeometry(tubeR, tubeR, Math.max(length - 0.004, 0.015), 14),
+      tubeMat,
+    );
+    tube.rotation.x = Math.PI / 2;
+    tube.position.set(x, y, zMid);
+    g.add(tube);
+
+    const foot = new THREE.Mesh(
+      new THREE.CylinderGeometry(sleeveR * 1.55, sleeveR * 1.55, Math.max(sleeveOd * 0.35, 0.006), 16),
+      footMat,
+    );
+    foot.rotation.x = Math.PI / 2;
+    foot.position.set(x, y, footZ + Math.max(sleeveOd * 0.18, 0.003));
+    g.add(foot);
+  }
+  return g;
+}
+
 function buildAircraft() {
   if (aircraft) scene.remove(aircraft);
   aircraft = new THREE.Group();
@@ -1062,8 +1117,9 @@ function buildAircraft() {
   groups.internals = internalPackMeshes();
   groups.cooling = coolingMeshes();
   groups.structure = structureMeshes();
+  groups.landing = landingGearMeshes();
 
-  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props', 'internals', 'cooling', 'structure']) {
+  for (const key of ['fuselage', 'wing', 'booms', 'mounts', 'ht', 'vt', 'props', 'internals', 'cooling', 'structure', 'landing']) {
     aircraft.add(groups[key]);
   }
   scene.add(aircraft);
@@ -1104,6 +1160,12 @@ function updateDims() {
     rows.push([
       'Fuselage longerons',
       `tube ⌀ ${fmt(mm('fuselage_longeron_OD'))} · z ${fmt(mm('fuselage_longeron_top_z'))}/${fmt(mm('fuselage_longeron_bottom_z'))}`,
+    ]);
+  }
+  if (num('landing_legs_enabled', 0) >= 0.5) {
+    rows.push([
+      'Landing legs',
+      `tube ⌀ ${fmt(mm('landing_leg_tube_OD'))} · sleeve ⌀ ${fmt(mm('landing_leg_sleeve_OD'))} (2 mm wall) · ground z ${fmt(mm('landing_ground_z'))}`,
     ]);
   }
   if (P.fc_cooling_inlet_panel_length != null) {
@@ -1163,6 +1225,7 @@ function applyVisibility() {
     internals: 'toggle-internals',
     cooling: 'toggle-cooling',
     structure: 'toggle-structure',
+    landing: 'toggle-landing',
   };
   for (const [g, id] of Object.entries(map)) {
     if (groups[g]) groups[g].visible = document.getElementById(id).checked;
@@ -1257,6 +1320,7 @@ for (const id of [
   'toggle-internals',
   'toggle-cooling',
   'toggle-structure',
+  'toggle-landing',
   'toggle-grid',
   'toggle-axes',
 ]) {

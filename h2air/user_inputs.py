@@ -47,6 +47,14 @@ def _normalize_manufacturing_mass_model(mm_in: Mapping[str, Any]) -> Dict[str, A
             boom["reference_tube_od_m"] = boom.pop("tube_od_m")
         elif boom.get("reference_tube_od_m") is not None and "tube_od_m" in boom:
             boom.pop("tube_od_m", None)
+    legs = mm.get("landing_legs")
+    if isinstance(legs, dict):
+        tube = legs.get("tube")
+        if isinstance(tube, dict):
+            if tube.get("reference_tube_od_m") is None and tube.get("tube_od_m") is not None:
+                tube["reference_tube_od_m"] = tube.pop("tube_od_m")
+            elif tube.get("reference_tube_od_m") is not None and "tube_od_m" in tube:
+                tube.pop("tube_od_m", None)
     return mm
 
 
@@ -138,6 +146,17 @@ def apply_carbon_fiber_tubes(cfg: Dict[str, Any], tubes: Mapping[str, Any]) -> N
         if boss <= long_spec["od_mm"]:
             raise ValueError("fuselage_longerons boss_od_mm must exceed tube od_mm")
         mm["fuselage_longerons"]["boss_od_m"] = boss * 1e-3
+
+    # Optional COTS landing-leg tube lock (independent of wing/boom hardcodes).
+    if tubes.get("landing_legs") is not None:
+        land_od, land_id = _tube_mm_pair(tubes["landing_legs"], require_id=True)
+        assert land_id is not None
+        st["hardcoded_landing_leg_od_m"] = land_od
+        st["hardcoded_landing_leg_id_m"] = land_id
+        if "landing_legs" in mm and isinstance(mm["landing_legs"], dict):
+            tube = mm["landing_legs"].setdefault("tube", {})
+            tube["design_tube_od_m"] = land_od
+            tube["design_tube_id_m"] = land_id
 
 
 def trapezoid_area(span_m: float, root_chord_m: float, taper_ratio: float) -> float:
@@ -658,7 +677,8 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
             "VTOL thrust/power requirements",
             "mission energy, hydrogen use and battery SOC",
             "structural sizing feedback and converged MTOW",
+            "landing-leg CFRP tubes sized for 3g landing with 2 mm printed sleeves",
             "COTS carbon-tube OD/ID when carbon_fiber_tubes.section_mode=hardcoded",
         ],
-        "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity. carbon_fiber_tubes.section_mode='hardcoded' locks recommended structural tube OD/ID to even-mm COTS sizes.",
+        "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity. carbon_fiber_tubes.section_mode='hardcoded' locks recommended structural tube OD/ID to even-mm COTS sizes. Optional carbon_fiber_tubes.landing_legs locks landing-leg tubes; otherwise they are auto-sized from the 3g landing screen and rounded to even-mm COTS.",
     }

@@ -250,7 +250,7 @@ def write_markdown_report(
 
     # Prefer a readable order for mass groups
     order = [
-        "payload", "wing_structure", "fuselage_structure", "tail_structure",
+        "payload", "wing_structure", "fuselage_structure", "tail_structure", "landing_gear",
         "energy", "propulsion", "avionics", "airframe",
     ]
     seen = set()
@@ -321,6 +321,11 @@ def write_markdown_report(
         "",
         f"- Wing spar: **{_f(s['wing_spar_od_mm'], 2)} / {_f(s['wing_spar_id_mm'], 2)} mm OD/ID**",
         f"- Boom tube: **{_f(s['boom_od_mm'], 2)} / {_f(s['boom_id_mm'], 2)} mm OD/ID**",
+        (
+            f"- Landing legs (3g): **{_f(s.get('landing_leg_od_mm'), 2)} / {_f(s.get('landing_leg_id_mm'), 2)} mm OD/ID** "
+            f"(CFRP tube + 2 mm printed sleeve; nose + 2 wing)"
+            if s.get('landing_leg_od_mm') is not None else None
+        ),
         f"- Motor-mount limit thrust: **{_f(s['motor_mount_limit_thrust_N'], 1)} N/motor**",
         "",
         "## Integrated gates",

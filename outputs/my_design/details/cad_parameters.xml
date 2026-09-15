@@ -605,6 +605,160 @@
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
+      <name>landing_legs_enabled</name>
+      <typeCode>unitless</typeCode>
+      <value>1</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_ground_z</name>
+      <typeCode>mm</typeCode>
+      <value>-184.866 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_tube_OD</name>
+      <typeCode>mm</typeCode>
+      <value>8.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_tube_ID</name>
+      <typeCode>mm</typeCode>
+      <value>6.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_sleeve_OD</name>
+      <typeCode>mm</typeCode>
+      <value>12.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_sleeve_wall</name>
+      <typeCode>mm</typeCode>
+      <value>2.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_sizing_length</name>
+      <typeCode>mm</typeCode>
+      <value>260.875 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_nose_x</name>
+      <typeCode>mm</typeCode>
+      <value>70.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_nose_y</name>
+      <typeCode>mm</typeCode>
+      <value>0.000 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_nose_mount_z</name>
+      <typeCode>mm</typeCode>
+      <value>-114.009 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_nose_foot_z</name>
+      <typeCode>mm</typeCode>
+      <value>-184.866 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_nose_length</name>
+      <typeCode>mm</typeCode>
+      <value>70.856 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_left_x</name>
+      <typeCode>mm</typeCode>
+      <value>386.844 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_left_y</name>
+      <typeCode>mm</typeCode>
+      <value>-373.900 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_left_mount_z</name>
+      <typeCode>mm</typeCode>
+      <value>76.009 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_left_foot_z</name>
+      <typeCode>mm</typeCode>
+      <value>-184.866 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_left_length</name>
+      <typeCode>mm</typeCode>
+      <value>260.875 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_right_x</name>
+      <typeCode>mm</typeCode>
+      <value>386.844 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_right_y</name>
+      <typeCode>mm</typeCode>
+      <value>373.900 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_right_mount_z</name>
+      <typeCode>mm</typeCode>
+      <value>76.009 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_right_foot_z</name>
+      <typeCode>mm</typeCode>
+      <value>-184.866 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>landing_leg_wing_right_length</name>
+      <typeCode>mm</typeCode>
+      <value>260.875 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
       <name>lift_motor_front_x</name>
       <typeCode>mm</typeCode>
       <value>96.484 mm</value>

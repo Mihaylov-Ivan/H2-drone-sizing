@@ -365,7 +365,52 @@
         "wing_drop_from_flush_m": 0.010000000000000009,
         "boom_z_m": 0.09000930732488546,
         "lift_prop_disk_z_m": 0.12805930732488546,
-        "lift_prop_wing_clearance_m": 0.024050000000000002
+        "lift_prop_wing_clearance_m": 0.024050000000000002,
+        "landing_legs": {
+          "enabled": true,
+          "count": 3,
+          "layout": "nose_plus_wing",
+          "landing_load_factor": 3.0,
+          "side_load_fraction": 0.25,
+          "sleeve_wall_m": 0.002,
+          "printed_density_kg_m3": 1200.0,
+          "ground_z_m": -0.18486569267511452,
+          "prop_tip_z_m": -0.16486569267511453,
+          "prop_ground_clearance_m": 0.02,
+          "sizing_length_m": 0.26087499999999997,
+          "legs": [
+            {
+              "name": "nose",
+              "x_m": 0.07,
+              "y_m": 0.0,
+              "mount_z_m": -0.11400930732488547,
+              "foot_z_m": -0.18486569267511452,
+              "length_m": 0.07085638535022905,
+              "cg_z_m": -0.1494375
+            },
+            {
+              "name": "wing_left",
+              "x_m": 0.3868440000000001,
+              "y_m": -0.3739,
+              "mount_z_m": 0.07600930732488546,
+              "foot_z_m": -0.18486569267511452,
+              "length_m": 0.26087499999999997,
+              "cg_z_m": -0.05442819267511453
+            },
+            {
+              "name": "wing_right",
+              "x_m": 0.3868440000000001,
+              "y_m": 0.3739,
+              "mount_z_m": 0.07600930732488546,
+              "foot_z_m": -0.18486569267511452,
+              "length_m": 0.26087499999999997,
+              "cg_z_m": -0.05442819267511453
+            }
+          ],
+          "tube_od_m": 0.008,
+          "sleeve_od_m": 0.012
+        },
+        "landing_ground_z_m": -0.18486569267511452
       },
       "packaging": {
         "component_clearance_m": 0.01,
@@ -1668,6 +1713,16 @@
       "pod_reference_shear_stress_MPa": 0.53,
       "pod_printed_bending_allow_MPa": 14.5,
       "pod_printed_shear_allow_MPa": 4.62,
+      "landing_leg_enabled": true,
+      "landing_leg_length_m": 0.26087499999999997,
+      "landing_leg_count": 3,
+      "landing_leg_side_load_fraction": 0.25,
+      "landing_leg_deflection_limit_fraction": 0.05,
+      "landing_leg_slope_limit_deg": 3.0,
+      "landing_leg_id_over_od": 0.75,
+      "landing_leg_min_od_m": 0.008,
+      "landing_leg_max_od_m": 0.03,
+      "landing_leg_step_m": 0.00025,
       "recommended_sections_mode": "hardcoded",
       "hardcoded_wing_spar_od_m": 0.024,
       "hardcoded_wing_spar_id_m": 0.018000000000000002,
@@ -1680,6 +1735,7 @@
     },
     "load_cases": {
       "maneuver_load_factor": 3.0,
+      "landing_load_factor": 3.0,
       "rho_kg_m3": 1.225,
       "dive_speed_mps": 50.0,
       "horizontal_tail_design_CL_abs": 1.0,
@@ -4449,6 +4505,75 @@
       "design_tube_od_m": 0.022,
       "design_tube_id_m": 0.018000000000000002
     },
+    "landing_legs": {
+      "enabled": true,
+      "layout": "nose_plus_wing",
+      "landing_load_factor": 3.0,
+      "side_load_fraction": 0.25,
+      "sleeve_wall_m": 0.002,
+      "printed_density_kg_m3": 1200.0,
+      "prop_ground_clearance_m": 0.02,
+      "minimum_leg_length_m": 0.06,
+      "deflection_limit_fraction": 0.05,
+      "slope_limit_deg": 3.0,
+      "status": "engineering_assumption",
+      "source": "Tripod landing gear: 1 nose + 2 wing legs at boom/spar junction. CFRP tubes sized for 3g landing; 2 mm printed sleeve around each tube.",
+      "tube": {
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.05,
+        "hardcoded_mass_kg": null,
+        "reference_tube_od_m": 0.012,
+        "id_over_od": 0.75,
+        "status": "engineering_assumption",
+        "source": "Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS",
+        "design_tube_od_m": 0.008,
+        "design_tube_id_m": 0.006
+      },
+      "resolved": {
+        "enabled": true,
+        "count": 3,
+        "layout": "nose_plus_wing",
+        "landing_load_factor": 3.0,
+        "side_load_fraction": 0.25,
+        "sleeve_wall_m": 0.002,
+        "printed_density_kg_m3": 1200.0,
+        "ground_z_m": -0.18486569267511452,
+        "prop_tip_z_m": -0.16486569267511453,
+        "prop_ground_clearance_m": 0.02,
+        "sizing_length_m": 0.26087499999999997,
+        "legs": [
+          {
+            "name": "nose",
+            "x_m": 0.07,
+            "y_m": 0.0,
+            "mount_z_m": -0.11400930732488547,
+            "foot_z_m": -0.18486569267511452,
+            "length_m": 0.07085638535022905,
+            "cg_z_m": -0.1494375
+          },
+          {
+            "name": "wing_left",
+            "x_m": 0.3868440000000001,
+            "y_m": -0.3739,
+            "mount_z_m": 0.07600930732488546,
+            "foot_z_m": -0.18486569267511452,
+            "length_m": 0.26087499999999997,
+            "cg_z_m": -0.05442819267511453
+          },
+          {
+            "name": "wing_right",
+            "x_m": 0.3868440000000001,
+            "y_m": 0.3739,
+            "mount_z_m": 0.07600930732488546,
+            "foot_z_m": -0.18486569267511452,
+            "length_m": 0.26087499999999997,
+            "cg_z_m": -0.05442819267511453
+          }
+        ],
+        "tube_od_m": 0.008,
+        "sleeve_od_m": 0.012
+      }
+    },
     "fuselage_total_length_m": 0.8594000000000002,
     "fuselage_sections": [
       {
@@ -4511,7 +4636,7 @@
   },
   "carbon_fiber_tubes": {
     "section_mode": "hardcoded",
-    "note": "Off-the-shelf CFRP tubes. OD/ID rounded UP to even millimetres (2 mm steps) from my_design screening recommendations (wing 22.75/17.06, boom 21.25/17.25, HT 9.50/7.13, VT 7.25/5.44; longerons 6.5\u21928; secondaries already even).",
+    "note": "Off-the-shelf CFRP tubes. OD/ID rounded UP to even millimetres (2 mm steps) from my_design screening recommendations (wing 22.75/17.06, boom 21.25/17.25, HT 9.50/7.13, VT 7.25/5.44; longerons 6.5\u21928; secondaries already even). landing_legs omitted \u2192 auto-sized from 3g landing then rounded to even-mm COTS.",
     "main_wing_primary_spar": {
       "od_mm": 24,
       "id_mm": 18
@@ -4886,11 +5011,34 @@
         "reference_tube_od_m": 0.035,
         "status": "engineering_assumption",
         "source": "kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m"
+      },
+      "landing_legs": {
+        "enabled": true,
+        "layout": "nose_plus_wing",
+        "landing_load_factor": 3.0,
+        "side_load_fraction": 0.25,
+        "sleeve_wall_m": 0.002,
+        "printed_density_kg_m3": 1200.0,
+        "prop_ground_clearance_m": 0.02,
+        "minimum_leg_length_m": 0.06,
+        "deflection_limit_fraction": 0.05,
+        "slope_limit_deg": 3.0,
+        "status": "engineering_assumption",
+        "source": "Tripod landing gear: 1 nose + 2 wing legs at boom/spar junction. CFRP tubes sized for 3g landing; 2 mm printed sleeve around each tube.",
+        "tube": {
+          "mass_mode": "structural_linear",
+          "specific_mass_kg_per_m": 0.05,
+          "hardcoded_mass_kg": null,
+          "reference_tube_od_m": 0.012,
+          "id_over_od": 0.75,
+          "status": "engineering_assumption",
+          "source": "Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS"
+        }
       }
     },
     "carbon_fiber_tubes": {
       "section_mode": "hardcoded",
-      "note": "Off-the-shelf CFRP tubes. OD/ID rounded UP to even millimetres (2 mm steps) from my_design screening recommendations (wing 22.75/17.06, boom 21.25/17.25, HT 9.50/7.13, VT 7.25/5.44; longerons 6.5\u21928; secondaries already even).",
+      "note": "Off-the-shelf CFRP tubes. OD/ID rounded UP to even millimetres (2 mm steps) from my_design screening recommendations (wing 22.75/17.06, boom 21.25/17.25, HT 9.50/7.13, VT 7.25/5.44; longerons 6.5\u21928; secondaries already even). landing_legs omitted \u2192 auto-sized from 3g landing then rounded to even-mm COTS.",
       "main_wing_primary_spar": {
         "od_mm": 24,
         "id_mm": 18

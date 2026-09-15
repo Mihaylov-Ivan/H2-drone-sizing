@@ -188,6 +188,8 @@ def apply_high_wing_spar_stack(
         if "sixdof_control" in cfg and "aircraft" in cfg["sixdof_control"]:
             cfg["sixdof_control"]["aircraft"]["lift_motor_stations_m"] = new_centers
 
+    from .landing_legs import apply_landing_leg_layout
+    apply_landing_leg_layout(cfg)
     return spar_od
 
 
@@ -506,6 +508,9 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
             "Replace with AVL/CFD/CAD/test correlations before design freeze."
         ),
     }
+    # Landing legs need boom Y / wing lower / prop-tip stations from the resolved layout.
+    from .landing_legs import apply_landing_leg_layout
+    apply_landing_leg_layout(cfg)
     return cfg
 
 

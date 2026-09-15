@@ -68,6 +68,8 @@ class LoadCase:
     max_motor_thrust_N: float = 0.0
     max_motor_mount_bending_Nm: float = 0.0
     tail_force_N: float = 0.0
+    landing_leg_axial_N: float = 0.0
+    landing_leg_bending_Nm: float = 0.0
     note: str = ''
 
     def to_dict(self) -> Dict[str, Any]:
@@ -161,6 +163,7 @@ def size_tube_for_bending_and_stiffness(
     *, moment_Nm: float, length_m: float, material: Material, id_over_od: float,
     deflection_limit_fraction: float, slope_limit_deg: float,
     min_od_m: float = 0.008, max_od_m: float = 0.050, step_m: float = 0.00025,
+    axial_N: float = 0.0,
 ) -> Tuple[TubeSection, MemberCheck]:
     if not (0.0 <= id_over_od < 1.0):
         raise ValueError('id_over_od must be in [0,1)')
@@ -169,7 +172,7 @@ def size_tube_for_bending_and_stiffness(
         sec = TubeSection(od, od * id_over_od)
         chk = check_tube_member(
             member='candidate', case='sizing', section=sec, material=material,
-            length_m=length_m, bending_Nm=moment_Nm,
+            length_m=length_m, bending_Nm=moment_Nm, axial_N=axial_N,
             deflection_limit_fraction=deflection_limit_fraction,
             slope_limit_deg=slope_limit_deg,
         )
@@ -253,7 +256,9 @@ def build_load_cases(cfg: Mapping[str, Any]) -> List[LoadCase]:
     hover_root=(hover[0]+hover[2])*y
     hover_tors=rotor_wing_torsion_Nm(hover,xs,spar_x,sideidx,shaft_q*0.6)
 
-    return [
+    # Landing legs: 3g total reaction; governing member uses a two-leg share (0.5 nW)
+    # plus a configured side-load fraction for cantilever bending of the longest leg.
+    cases = [
         LoadCase('reference_trimmed_hover','VTOL',mass_ref,1.0,wing_root_bending_Nm=hover_root,wing_torsion_Nm=hover_tors,max_motor_thrust_N=max(hover),max_motor_mount_bending_Nm=max(hover)*float(s['motor_mount_lever_m']),note='6-DOF/control unequal rotor allocation at reference mass.'),
         LoadCase('15kg_zero_pitch_design_VTOL','VTOL',mass_design,1.0,wing_root_bending_Nm=vtol_root,wing_torsion_Nm=vtol_torsion,boom_root_bending_Nm=rear_motor_bend,max_motor_thrust_N=max(tf,tr),max_motor_mount_bending_Nm=max(tf,tr)*float(s['motor_mount_lever_m']),note='Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry.'),
         LoadCase('15kg_3g_wingborne_manoeuvre','wingborne',mass_design,float(lc['maneuver_load_factor']),wing_root_bending_Nm=man,wing_torsion_Nm=float(lc['wing_aero_torsion_Nm']),tail_force_N=hforce,note='Symmetric wing-borne structural manoeuvre screen.'),
@@ -264,6 +269,18 @@ def build_load_cases(cfg: Mapping[str, Any]) -> List[LoadCase]:
         LoadCase('single_motor_mount_limit','local',mass_design,1.0,max_motor_thrust_N=float(rotor['candidate_motor_max_thrust_N']),max_motor_mount_bending_Nm=float(rotor['candidate_motor_max_thrust_N'])*float(s['motor_mount_lever_m']),note='Local motor-mount load requirement. Geometry/material absent, so stress remains NOT_EVALUATED.'),
         LoadCase('one_motor_out_remaining_motor_peak','degraded',mass_design,1.0,max_motor_thrust_N=float(rotor['candidate_motor_max_thrust_N']),max_motor_mount_bending_Nm=float(rotor['candidate_motor_max_thrust_N'])*float(s['motor_mount_lever_m']),note='Structural local envelope for a surviving motor during motor-out recovery; flight controllability remains a 6-DOF/control/8 problem.'),
     ]
+    if bool(s.get('landing_leg_enabled', False)):
+        n_land = float(lc.get('landing_load_factor', 3.0))
+        F_leg = 0.5 * mass_design * G * n_land
+        L_leg = float(s.get('landing_leg_length_m', 0.25))
+        side = float(s.get('landing_leg_side_load_fraction', 0.25))
+        cases.append(LoadCase(
+            '3g_landing_impact', 'landing', mass_design, n_land,
+            landing_leg_axial_N=F_leg,
+            landing_leg_bending_Nm=side * F_leg * L_leg,
+            note='3g landing screen: governing tube uses half of total landing reaction (two-leg share) with configured lateral side-load bending on the longest leg.',
+        ))
+    return cases
 
 
 def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dict[str, Any]:
@@ -342,9 +359,84 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
     # Local motor mount remains unevaluated until mount geometry is controlled.
     local=max(cases,key=lambda c:c.max_motor_mount_bending_Nm)
 
+    landing = {'enabled': False, 'status': 'DISABLED'}
+    if bool(s.get('landing_leg_enabled', False)):
+        land_case = max(cases, key=lambda c: c.landing_leg_axial_N)
+        L_leg = float(s.get('landing_leg_length_m', 0.25))
+        dlim = float(s.get('landing_leg_deflection_limit_fraction', 0.05))
+        slim = float(s.get('landing_leg_slope_limit_deg', 3.0))
+        id_ratio = float(s.get('landing_leg_id_over_od', 0.75))
+        land_hardcoded = (
+            s.get('hardcoded_landing_leg_od_m') is not None
+            and s.get('hardcoded_landing_leg_id_m') is not None
+        )
+        if land_hardcoded:
+            land_rec = TubeSection(float(s['hardcoded_landing_leg_od_m']), float(s['hardcoded_landing_leg_id_m']))
+            land_chk = check_tube_member(
+                member='landing_leg_hardcoded_cots', case=land_case.name, section=land_rec, material=mat,
+                length_m=L_leg, bending_Nm=land_case.landing_leg_bending_Nm, axial_N=land_case.landing_leg_axial_N,
+                deflection_limit_fraction=dlim, slope_limit_deg=slim,
+            )
+        else:
+            land_rec, land_chk = size_tube_for_bending_and_stiffness(
+                moment_Nm=land_case.landing_leg_bending_Nm, length_m=L_leg, material=mat, id_over_od=id_ratio,
+                deflection_limit_fraction=dlim, slope_limit_deg=slim,
+                min_od_m=float(s.get('landing_leg_min_od_m', 0.008)),
+                max_od_m=float(s.get('landing_leg_max_od_m', 0.030)),
+                step_m=float(s.get('landing_leg_step_m', 0.00025)),
+                axial_N=land_case.landing_leg_axial_N,
+            )
+            # Lock to even-mm COTS OD/ID (same inventory rule as other tubes).
+            def _ceil_even_mm(value_mm: float) -> int:
+                from math import ceil
+                return int(ceil(float(value_mm) / 2.0) * 2)
+
+            od_mm = float(_ceil_even_mm(land_rec.od_m * 1000.0))
+            id_mm = float(_ceil_even_mm(land_rec.id_m * 1000.0))
+            if id_mm >= od_mm:
+                id_mm = max(2.0, od_mm - 2.0)
+            land_rec = TubeSection(od_mm * 1e-3, id_mm * 1e-3)
+            land_chk = check_tube_member(
+                member='landing_leg_recommended_cots', case=land_case.name, section=land_rec, material=mat,
+                length_m=L_leg, bending_Nm=land_case.landing_leg_bending_Nm, axial_N=land_case.landing_leg_axial_N,
+                deflection_limit_fraction=dlim, slope_limit_deg=slim,
+            )
+            if not land_chk.overall_pass:
+                od_mm = od_mm + 2.0
+                while od_mm * 1e-3 <= float(s.get('landing_leg_max_od_m', 0.030)) + EPS:
+                    id_mm = float(_ceil_even_mm(od_mm * id_ratio))
+                    if id_mm >= od_mm:
+                        id_mm = max(2.0, od_mm - 2.0)
+                    sec = TubeSection(od_mm * 1e-3, id_mm * 1e-3)
+                    chk = check_tube_member(
+                        member='landing_leg_recommended_cots', case=land_case.name, section=sec, material=mat,
+                        length_m=L_leg, bending_Nm=land_case.landing_leg_bending_Nm, axial_N=land_case.landing_leg_axial_N,
+                        deflection_limit_fraction=dlim, slope_limit_deg=slim,
+                    )
+                    if chk.overall_pass:
+                        land_rec, land_chk = sec, chk
+                        break
+                    od_mm += 2.0
+                else:
+                    raise RuntimeError('No even-mm COTS landing-leg tube satisfies 3g landing constraints')
+        landing = {
+            'enabled': True,
+            'governing_case': land_case.name,
+            'governing_axial_N': land_case.landing_leg_axial_N,
+            'governing_bending_Nm': land_case.landing_leg_bending_Nm,
+            'length_m': L_leg,
+            'recommended_screen': {'section': asdict(land_rec), 'check': land_chk.to_dict()},
+        }
+
     return {
         'material': asdict(mat),
-        'governing_cases': {'wing_bending':wing_case.name,'wing_torsion':wing_torsion_case.name,'boom':boom_case.name,'motor_mount':local.name},
+        'governing_cases': {
+            'wing_bending': wing_case.name,
+            'wing_torsion': wing_torsion_case.name,
+            'boom': boom_case.name,
+            'motor_mount': local.name,
+            **({'landing': landing['governing_case']} if landing.get('enabled') else {}),
+        },
         'wing': {
             # 'current' kept as alias of 'reference' for older report consumers.
             'reference': {'section':asdict(wing_reference),'check':wing_reference_chk.to_dict()},
@@ -368,6 +460,7 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
             'governing_root_bending_Nm':boom_case.boom_root_bending_Nm,
             'governing_axial_N':boom_case.boom_axial_N,
         },
+        'landing_legs': landing,
         'motor_mount': {
             'status':'NOT_EVALUATED',
             'required_limit_thrust_N':local.max_motor_thrust_N,
@@ -447,6 +540,16 @@ def evaluate_gates(cfg: Mapping[str, Any], structural: Mapping[str, Any], feedba
     for label,key in [('horizontal_tail_recommended','horizontal_recommended_screen'),('vertical_tail_recommended','vertical_recommended_screen')]:
         c=structural['tails'][key]['check']; add(label+'_screen','PASS' if c['overall_pass'] else 'FAIL',max(c['stress_utilization'],c['deflection_utilization'],c['slope_utilization']),'<=1.0')
     pod=structural['central_pod']; add('central_pod_scaled_strength','PASS' if pod['bending_pass'] and pod['shear_pass'] else 'FAIL',max(pod['scaled_bending_stress_MPa']/pod['bending_allow_MPa'],pod['scaled_shear_stress_MPa']/pod['shear_allow_MPa']),'<=1.0','Scaled audit screen; live pod shell/frame model remains authority.')
+    land = structural.get('landing_legs') or {}
+    if land.get('enabled'):
+        lc = land['recommended_screen']['check']
+        add(
+            'recommended_landing_leg_screen',
+            'PASS' if lc['overall_pass'] else 'FAIL',
+            max(lc['stress_utilization'], lc['deflection_utilization'], lc['slope_utilization']),
+            '<=1.0',
+            'CFRP tube screen for 3g landing with side-load bending on the longest leg.',
+        )
     add('motor_mount_strength','NOT_EVALUATED',structural['motor_mount']['required_limit_bending_Nm'],'controlled mount geometry + material allowables required')
     add('mass_ceiling_after_partial_structural_feedback','PASS' if feedback['screening_updated_mass_kg']<=float(cfg['aircraft']['design_mass_ceiling_kg']) else 'FAIL',feedback['screening_updated_mass_kg'],float(cfg['aircraft']['design_mass_ceiling_kg']))
     return gates
@@ -479,6 +582,15 @@ def build_phase7_result(cfg: Mapping[str, Any]) -> Dict[str, Any]:
             'vertical_tail_recommended_spar_od_mm':structural['tails']['vertical_recommended_screen']['section']['od_m']*1000,
             'required_motor_mount_limit_thrust_N':structural['motor_mount']['required_limit_thrust_N'],
             'required_motor_mount_limit_bending_Nm':structural['motor_mount']['required_limit_bending_Nm'],
+            'landing_legs_enabled': bool((structural.get('landing_legs') or {}).get('enabled')),
+            'recommended_landing_leg_od_mm': (
+                structural['landing_legs']['recommended_screen']['section']['od_m'] * 1000
+                if (structural.get('landing_legs') or {}).get('enabled') else None
+            ),
+            'recommended_landing_leg_id_mm': (
+                structural['landing_legs']['recommended_screen']['section']['id_m'] * 1000
+                if (structural.get('landing_legs') or {}).get('enabled') else None
+            ),
             'partial_structural_feedback_mass_kg':feedback['screening_updated_mass_kg'],
             'partial_structural_feedback_cg_x_m':feedback['screening_updated_cg_x_m'],
             'mass_margin_to_15kg_kg':feedback['mass_margin_to_15kg_kg'],
