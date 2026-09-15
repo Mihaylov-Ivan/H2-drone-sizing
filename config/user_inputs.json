@@ -231,8 +231,8 @@
       "mass_mode": "linear",
       "specific_mass_kg_per_m": 0.08974,
       "hardcoded_mass_kg": null,
-      "tube_od_m": 0.0065,
-      "boss_od_m": 0.0125,
+      "tube_od_m": 0.008,
+      "boss_od_m": 0.014,
       "spar_stack_gap_m": 0.001,
       "status": "engineering_assumption",
       "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; boss_od_m is the full-length 3D-printed sleeve/bedding OD around each tube (cabin keepout uses this). Wing Z references the TOP longeron sleeve."
@@ -263,7 +263,7 @@
         "tube_od_m": 0.01,
         "chord_fraction": 0.65,
         "status": "engineering_assumption",
-        "source": "Secondary spar placeholder; replace with selected CFRP tube kg/m"
+        "source": "COTS secondary spar OD (even mm); replace kg/m with supplier data"
       },
       "shell_cg_chord_fraction": 0.45
     },
@@ -331,6 +331,18 @@
       "status": "engineering_assumption",
       "source": "kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m"
     }
+  },
+  "carbon_fiber_tubes": {
+    "section_mode": "hardcoded",
+    "note": "Off-the-shelf CFRP tubes. OD/ID rounded UP to even millimetres (2 mm steps) from my_design screening recommendations (wing 22.75/17.06, boom 21.25/17.25, HT 9.50/7.13, VT 7.25/5.44; longerons 6.5→8; secondaries already even).",
+    "main_wing_primary_spar": { "od_mm": 24, "id_mm": 18 },
+    "boom_tubes": { "od_mm": 22, "id_mm": 18 },
+    "horizontal_tail_primary_spar": { "od_mm": 10, "id_mm": 8 },
+    "vertical_tail_primary_spar": { "od_mm": 8, "id_mm": 6 },
+    "main_wing_secondary_spar": { "od_mm": 10 },
+    "horizontal_tail_secondary_spar": { "od_mm": 4 },
+    "vertical_tail_secondary_spar": { "od_mm": 4 },
+    "fuselage_longerons": { "od_mm": 8, "boss_od_mm": 14 }
   },
   "optimizer": {
     "keep_existing_objective_and_constraint_logic": true,

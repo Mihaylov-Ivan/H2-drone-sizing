@@ -50,6 +50,96 @@ def _normalize_manufacturing_mass_model(mm_in: Mapping[str, Any]) -> Dict[str, A
     return mm
 
 
+def ceil_even_mm(value_mm: float) -> int:
+    """Round *up* to the next even millimetre (off-the-shelf 2 mm OD/ID steps)."""
+    from math import ceil
+    v = float(value_mm)
+    if v <= 0:
+        raise ValueError("tube dimension mm must be > 0")
+    return int(ceil(v / 2.0) * 2)
+
+
+def _tube_mm_pair(spec: Mapping[str, Any], *, require_id: bool) -> tuple[float, float | None]:
+    od = float(spec["od_mm"])
+    if od <= 0:
+        raise ValueError("carbon_fiber_tubes od_mm must be > 0")
+    if od != float(ceil_even_mm(od)):
+        raise ValueError(f"carbon_fiber_tubes od_mm must be an even integer mm, got {od}")
+    id_mm = spec.get("id_mm")
+    if id_mm is None:
+        if require_id:
+            raise ValueError("carbon_fiber_tubes primary/boom entries require id_mm")
+        return od * 1e-3, None
+    idv = float(id_mm)
+    if idv <= 0 or idv >= od:
+        raise ValueError(f"carbon_fiber_tubes id_mm must satisfy 0 < id < od, got od={od} id={idv}")
+    if idv != float(ceil_even_mm(idv)):
+        raise ValueError(f"carbon_fiber_tubes id_mm must be an even integer mm, got {idv}")
+    return od * 1e-3, idv * 1e-3
+
+
+def apply_carbon_fiber_tubes(cfg: Dict[str, Any], tubes: Mapping[str, Any]) -> None:
+    """Lock structural/layout CFRP tube sections from user COTS hardcodes."""
+    mode = str(tubes.get("section_mode", "auto")).lower().strip()
+    if mode not in {"hardcoded", "auto"}:
+        raise ValueError("carbon_fiber_tubes.section_mode must be 'hardcoded' or 'auto'")
+    cfg["carbon_fiber_tubes"] = deepcopy(tubes)
+    if mode != "hardcoded":
+        st = cfg["structures"]["structure"]
+        st["recommended_sections_mode"] = "auto"
+        return
+
+    wing_od, wing_id = _tube_mm_pair(tubes["main_wing_primary_spar"], require_id=True)
+    boom_od, boom_id = _tube_mm_pair(tubes["boom_tubes"], require_id=True)
+    ht_od, ht_id = _tube_mm_pair(tubes["horizontal_tail_primary_spar"], require_id=True)
+    vt_od, vt_id = _tube_mm_pair(tubes["vertical_tail_primary_spar"], require_id=True)
+    assert wing_id is not None and boom_id is not None and ht_id is not None and vt_id is not None
+
+    st = cfg["structures"]["structure"]
+    st["recommended_sections_mode"] = "hardcoded"
+    st["hardcoded_wing_spar_od_m"] = wing_od
+    st["hardcoded_wing_spar_id_m"] = wing_id
+    st["hardcoded_boom_od_m"] = boom_od
+    st["hardcoded_boom_id_m"] = boom_id
+    st["hardcoded_horizontal_tail_spar_od_m"] = ht_od
+    st["hardcoded_horizontal_tail_spar_id_m"] = ht_id
+    st["hardcoded_vertical_tail_spar_od_m"] = vt_od
+    st["hardcoded_vertical_tail_spar_id_m"] = vt_id
+
+    # Layout / packaging use design boom OD (not the 35 mm audit reference).
+    geom = cfg["geometry_mass"]["geometry_model"]["geometry"]
+    geom["boom_outer_diameter_m"] = boom_od
+    cfg["design"]["boom_outer_diameter_m"] = boom_od
+
+    mm = cfg["manufacturing_mass_model"]
+    # Primary spars: keep reference_* as mass-calibration sections; CAD/layout OD
+    # comes from structures hardcoded recommended + design coupling.
+    mm["main_wing"]["primary_spar"]["design_tube_od_m"] = wing_od
+    mm["main_wing"]["primary_spar"]["design_tube_id_m"] = wing_id
+    mm["horizontal_tail"]["primary_spar"]["design_tube_od_m"] = ht_od
+    mm["horizontal_tail"]["primary_spar"]["design_tube_id_m"] = ht_id
+    mm["vertical_tail"]["primary_spar"]["design_tube_od_m"] = vt_od
+    mm["vertical_tail"]["primary_spar"]["design_tube_id_m"] = vt_id
+    mm["boom_tubes"]["design_tube_od_m"] = boom_od
+    mm["boom_tubes"]["design_tube_id_m"] = boom_id
+
+    wsec_od, _ = _tube_mm_pair(tubes["main_wing_secondary_spar"], require_id=False)
+    hsec_od, _ = _tube_mm_pair(tubes["horizontal_tail_secondary_spar"], require_id=False)
+    vsec_od, _ = _tube_mm_pair(tubes["vertical_tail_secondary_spar"], require_id=False)
+    mm["main_wing"]["secondary_spar"]["tube_od_m"] = wsec_od
+    mm["horizontal_tail"]["secondary_spar"]["tube_od_m"] = hsec_od
+    mm["vertical_tail"]["secondary_spar"]["tube_od_m"] = vsec_od
+
+    long_spec = tubes["fuselage_longerons"]
+    long_od, _ = _tube_mm_pair(long_spec, require_id=False)
+    mm["fuselage_longerons"]["tube_od_m"] = long_od
+    if long_spec.get("boss_od_mm") is not None:
+        boss = float(long_spec["boss_od_mm"])
+        if boss <= long_spec["od_mm"]:
+            raise ValueError("fuselage_longerons boss_od_mm must exceed tube od_mm")
+        mm["fuselage_longerons"]["boss_od_m"] = boss * 1e-3
+
+
 def trapezoid_area(span_m: float, root_chord_m: float, taper_ratio: float) -> float:
     return float(span_m * root_chord_m * (1.0 + taper_ratio) / 2.0)
 
@@ -435,6 +525,8 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     cfg["manufacturing_mass_model"] = _normalize_manufacturing_mass_model(u["manufacturing_mass_model"])
     cfg["manufacturing_mass_model"]["fuselage_total_length_m"] = total_len
     cfg["manufacturing_mass_model"]["fuselage_sections"] = deepcopy(sections)
+    if u.get("carbon_fiber_tubes"):
+        apply_carbon_fiber_tubes(cfg, u["carbon_fiber_tubes"])
 
     # Store geometry definitions and user/derived classification for reporting.
     cfg["user_input_snapshot"] = deepcopy(u)
@@ -547,7 +639,7 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "user_input_file_schema": u.get("schema"),
         "user_editable_groups": [
             "mission", "fuselage", "lifting_surfaces", "propulsion",
-            "component_positions", "hardware", "hardware_selection", "manufacturing_mass_model", "cad_export", "optimizer",
+            "component_positions", "hardware", "hardware_selection", "manufacturing_mass_model", "carbon_fiber_tubes", "cad_export", "optimizer",
             "packaging_layout", "fuel_cell_cooling",
         ],
         "auto_calculated_examples": [
@@ -566,6 +658,7 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
             "VTOL thrust/power requirements",
             "mission energy, hydrogen use and battery SOC",
             "structural sizing feedback and converged MTOW",
+            "COTS carbon-tube OD/ID when carbon_fiber_tubes.section_mode=hardcoded",
         ],
-        "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity.",
+        "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity. carbon_fiber_tubes.section_mode='hardcoded' locks recommended structural tube OD/ID to even-mm COTS sizes.",
     }

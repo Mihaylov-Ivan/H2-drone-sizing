@@ -14,11 +14,13 @@ from .mass_properties import Component, Shape
 
 
 def _tube_od_m(rule: Mapping[str, Any], default: float = 0.0) -> float:
-    """OD used for ledger geometry / mass-reference section.
+    """OD used for ledger geometry.
 
-    Prefer ``reference_tube_od_m`` (kg/m calibration section for structural_linear
-    members). Legacy ``tube_od_m`` is still accepted.
+    Prefer ``design_tube_od_m`` (COTS/hardcoded design section), then
+    ``reference_tube_od_m`` (kg/m calibration), then legacy ``tube_od_m``.
     """
+    if rule.get("design_tube_od_m") is not None:
+        return float(rule["design_tube_od_m"])
     if rule.get("reference_tube_od_m") is not None:
         return float(rule["reference_tube_od_m"])
     if rule.get("tube_od_m") is not None:

@@ -282,7 +282,12 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
     wing_case=max(cases,key=lambda c:c.wing_root_bending_Nm)
     boom_case=max(cases,key=lambda c:c.boom_root_bending_Nm)
     wing_reference_chk=check_tube_member(member='wing_primary_spar_reference',case=wing_case.name,section=wing_reference,material=mat,length_m=float(s['design_wing_semispan_m']),bending_Nm=wing_case.wing_root_bending_Nm,deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']))
-    wing_rec,wing_rec_chk=size_tube_for_bending_and_stiffness(moment_Nm=wing_case.wing_root_bending_Nm,length_m=float(s['design_wing_semispan_m']),material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']),min_od_m=0.010,max_od_m=0.040,step_m=0.00025)
+    hardcoded = str(s.get('recommended_sections_mode', 'auto')).lower() == 'hardcoded'
+    if hardcoded:
+        wing_rec = TubeSection(float(s['hardcoded_wing_spar_od_m']), float(s['hardcoded_wing_spar_id_m']))
+        wing_rec_chk = check_tube_member(member='wing_primary_spar_hardcoded_cots',case=wing_case.name,section=wing_rec,material=mat,length_m=float(s['design_wing_semispan_m']),bending_Nm=wing_case.wing_root_bending_Nm,deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']))
+    else:
+        wing_rec,wing_rec_chk=size_tube_for_bending_and_stiffness(moment_Nm=wing_case.wing_root_bending_Nm,length_m=float(s['design_wing_semispan_m']),material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']),min_od_m=0.010,max_od_m=0.040,step_m=0.00025)
     boom_strength_chk=check_tube_member(member='boom_legacy_strength_only',case=boom_case.name,section=boom_strength,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
     boom_reference_chk=check_tube_member(member='boom_reference_geometry',case=boom_case.name,section=boom_reference,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
     # Tail spars: current code only sized these from the cruise tail load.
@@ -296,8 +301,14 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
     tail_current=TubeSection(float(s['current_tail_spar_reference_od_m']),float(s['current_tail_spar_reference_id_m']))
     hcur=check_tube_member(member='horizontal_tail_spar_current_reference',case=hcase.name,section=tail_current,material=mat,length_m=hL,bending_Nm=hM,deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']))
     vcur=check_tube_member(member='vertical_tail_spar_current_reference',case=vcase.name,section=tail_current,material=mat,length_m=vL,bending_Nm=vM,deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']))
-    hrec,hrec_chk=size_tube_for_bending_and_stiffness(moment_Nm=hM,length_m=hL,material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']),min_od_m=0.004,max_od_m=0.025,step_m=0.00025)
-    vrec,vrec_chk=size_tube_for_bending_and_stiffness(moment_Nm=vM,length_m=vL,material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']),min_od_m=0.004,max_od_m=0.025,step_m=0.00025)
+    if hardcoded:
+        hrec = TubeSection(float(s['hardcoded_horizontal_tail_spar_od_m']), float(s['hardcoded_horizontal_tail_spar_id_m']))
+        vrec = TubeSection(float(s['hardcoded_vertical_tail_spar_od_m']), float(s['hardcoded_vertical_tail_spar_id_m']))
+        hrec_chk = check_tube_member(member='horizontal_tail_spar_hardcoded_cots',case=hcase.name,section=hrec,material=mat,length_m=hL,bending_Nm=hM,deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']))
+        vrec_chk = check_tube_member(member='vertical_tail_spar_hardcoded_cots',case=vcase.name,section=vrec,material=mat,length_m=vL,bending_Nm=vM,deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']))
+    else:
+        hrec,hrec_chk=size_tube_for_bending_and_stiffness(moment_Nm=hM,length_m=hL,material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']),min_od_m=0.004,max_od_m=0.025,step_m=0.00025)
+        vrec,vrec_chk=size_tube_for_bending_and_stiffness(moment_Nm=vM,length_m=vL,material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']),min_od_m=0.004,max_od_m=0.025,step_m=0.00025)
 
     # Central pod: preserve the live structures.py shell model as authority, but
     # scale its reported stress to the larger Structures governing wing moment.
@@ -306,18 +317,22 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
     pod_shear=float(s['pod_reference_shear_stress_MPa'])*pod_scale
     pod={'scaled_bending_stress_MPa':pod_bending,'scaled_shear_stress_MPa':pod_shear,'bending_allow_MPa':float(s['pod_printed_bending_allow_MPa']),'shear_allow_MPa':float(s['pod_printed_shear_allow_MPa']),'bending_pass':pod_bending<=float(s['pod_printed_bending_allow_MPa']),'shear_pass':pod_shear<=float(s['pod_printed_shear_allow_MPa']),'status':'screen_scaled_from_current_live_structures.py_result'}
 
-    # Alternative boom preserving 2 mm wall, sized for strength+stiffness.
-    boom_candidate=None; boom_candidate_chk=None
-    wall=float(s['boom_candidate_wall_m'])
-    od=float(s['boom_candidate_min_od_m'])
-    while od<=float(s['boom_candidate_max_od_m'])+EPS:
-        sec=TubeSection(od,max(0.001,od-2*wall))
-        chk=check_tube_member(member='boom_stiffness_sized_candidate',case=boom_case.name,section=sec,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
-        if chk.overall_pass:
-            boom_candidate,boom_candidate_chk=sec,chk;break
-        od+=float(s['boom_candidate_step_m'])
-    if boom_candidate is None or boom_candidate_chk is None:
-        raise RuntimeError('No boom candidate met configured structural constraints')
+    # Boom recommended section: COTS hardcode or 2 mm-wall candidate search.
+    if hardcoded:
+        boom_candidate = TubeSection(float(s['hardcoded_boom_od_m']), float(s['hardcoded_boom_id_m']))
+        boom_candidate_chk = check_tube_member(member='boom_hardcoded_cots',case=boom_case.name,section=boom_candidate,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
+    else:
+        boom_candidate=None; boom_candidate_chk=None
+        wall=float(s['boom_candidate_wall_m'])
+        od=float(s['boom_candidate_min_od_m'])
+        while od<=float(s['boom_candidate_max_od_m'])+EPS:
+            sec=TubeSection(od,max(0.001,od-2*wall))
+            chk=check_tube_member(member='boom_stiffness_sized_candidate',case=boom_case.name,section=sec,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
+            if chk.overall_pass:
+                boom_candidate,boom_candidate_chk=sec,chk;break
+            od+=float(s['boom_candidate_step_m'])
+        if boom_candidate is None or boom_candidate_chk is None:
+            raise RuntimeError('No boom candidate met configured structural constraints')
 
     # Wing torsion is reported separately because the real closed-cell skin/dual-spar
     # torsional stiffness should be retained from structures.py rather than pretending
