@@ -1,0 +1,84 @@
+{
+  "results": [
+    {
+      "i": 1,
+      "status": "SCREENING_PASS",
+      "mass": 15.339063703431673,
+      "sm": 0.10162137910648271,
+      "values": {
+        "wing_ac_x_m": 0.455713970464386,
+        "horizontal_tail_ac_x_m": 1.0502255976100698,
+        "vertical_tail_ac_x_m": 1.1102914282385605,
+        "lift_row_center_x_m": 0.47573996394572915,
+        "energy_bay_order_code": 0.12149603137547474,
+        "main_wing_span_m": 3.5165573381537905,
+        "horizontal_tail_span_m": 0.8288971429975526,
+        "vertical_tail_height_m": 0.3276414187146925
+      }
+    },
+    {
+      "i": 2,
+      "status": "SCREENING_PASS",
+      "mass": 15.340828817289482,
+      "sm": 0.1405746543269973,
+      "values": {
+        "wing_ac_x_m": 0.4693451416518687,
+        "horizontal_tail_ac_x_m": 1.047333890868332,
+        "vertical_tail_ac_x_m": 1.1224315349633571,
+        "lift_row_center_x_m": 0.46228331984537885,
+        "energy_bay_order_code": 0.025769609662539918,
+        "main_wing_span_m": 3.50775563613374,
+        "horizontal_tail_span_m": 0.8471534478129552,
+        "vertical_tail_height_m": 0.32450401316981425
+      }
+    },
+    {
+      "i": 3,
+      "status": "SCREENING_PASS",
+      "mass": 15.35479961609871,
+      "sm": 0.1411249955138288,
+      "values": {
+        "wing_ac_x_m": 0.4679234103924125,
+        "horizontal_tail_ac_x_m": 1.037173768004294,
+        "vertical_tail_ac_x_m": 1.15,
+        "lift_row_center_x_m": 0.44575658147918373,
+        "energy_bay_order_code": 0.23662410531625203,
+        "main_wing_span_m": 3.511144019976034,
+        "horizontal_tail_span_m": 0.8653173258399424,
+        "vertical_tail_height_m": 0.32185850320695725
+      }
+    },
+    {
+      "i": 4,
+      "status": "SCREENING_PASS",
+      "mass": 15.378869382539246,
+      "sm": 0.08173787826317537,
+      "values": {
+        "wing_ac_x_m": 0.4497444631849906,
+        "horizontal_tail_ac_x_m": 1.0426094918616802,
+        "vertical_tail_ac_x_m": 1.1425094573565442,
+        "lift_row_center_x_m": 0.4636172384680104,
+        "energy_bay_order_code": 0.0,
+        "main_wing_span_m": 3.5694140845944053,
+        "horizontal_tail_span_m": 0.7571986011392362,
+        "vertical_tail_height_m": 0.3355015460595172
+      }
+    }
+  ],
+  "winner": {
+    "i": 1,
+    "status": "SCREENING_PASS",
+    "mass": 15.339063703431673,
+    "sm": 0.10162137910648271,
+    "values": {
+      "wing_ac_x_m": 0.455713970464386,
+      "horizontal_tail_ac_x_m": 1.0502255976100698,
+      "vertical_tail_ac_x_m": 1.1102914282385605,
+      "lift_row_center_x_m": 0.47573996394572915,
+      "energy_bay_order_code": 0.12149603137547474,
+      "main_wing_span_m": 3.5165573381537905,
+      "horizontal_tail_span_m": 0.8288971429975526,
+      "vertical_tail_height_m": 0.3276414187146925
+    }
+  }
+}

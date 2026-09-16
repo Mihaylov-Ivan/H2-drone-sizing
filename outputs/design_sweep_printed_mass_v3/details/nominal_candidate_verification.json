@@ -1,0 +1,49 @@
+[
+  {
+    "rank": 1,
+    "screening_score": 165.22747602692237,
+    "values": {
+      "wing_ac_x_m": 0.4497444631849906,
+      "horizontal_tail_ac_x_m": 1.0426094918616802,
+      "vertical_tail_ac_x_m": 1.1425094573565442,
+      "lift_row_center_x_m": 0.4636172384680104,
+      "energy_bay_order_code": 0.0,
+      "main_wing_span_m": 3.5694140845944053,
+      "horizontal_tail_span_m": 0.7571986011392362,
+      "vertical_tail_height_m": 0.3355015460595172
+    },
+    "verified_summary": {
+      "design_status": "SCREENING_PASS",
+      "reference_mass_kg": 14.707795768058967,
+      "post_structure_mass_kg": 15.378869382539246,
+      "post_structure_cg_x_m": 0.45638186669843367,
+      "mass_margin_to_15kg_kg": 0.1211306174607536,
+      "current_static_margin": 0.08173787826317537,
+      "post_structure_static_margin_if_np_fixed": 0.08173787826317537,
+      "cruise_drag_N": 16.478947281532335,
+      "cruise_bus_power_W": 492.7485355981204,
+      "landing_legs_CdA_m2": 0.003424483375797251,
+      "landing_legs_drag_N": 0.8218760101913402,
+      "forward_transition_duration_s": 21.399999999999633,
+      "reverse_transition_duration_s": 18.399999999999697,
+      "mission_energy_Wh": 1012.8036223457038,
+      "h2_used_kg": 0.052615000000020895,
+      "final_battery_soc": 0.43490751559786667,
+      "wing_spar_od_mm": 23.50000000000001,
+      "wing_spar_id_mm": 17.625000000000007,
+      "boom_od_mm": 20.750000000000007,
+      "boom_id_mm": 16.750000000000007,
+      "motor_mount_limit_thrust_N": 79.553113864,
+      "landing_leg_od_mm": 8.0,
+      "landing_leg_id_mm": 6.0,
+      "post_structure_15kg_zero_pitch_front_motor_N": 62.894620153202986,
+      "post_structure_15kg_zero_pitch_rear_motor_N": 59.82643609679701,
+      "fuel_cell_cooling_required_airflow_cfm": 100.97075994936881,
+      "fuel_cell_cooling_estimated_airflow_cfm": 118.1962687388564,
+      "fuel_cell_cooling_airflow_margin": 1.1705989813102844,
+      "fuel_cell_cooling_geometry_pass": true,
+      "fuel_cell_cooling_drag_N": 0.3270015,
+      "structural_closure_iterations": 2
+    }
+  }
+]

@@ -1,11 +1,11 @@
 {
   "schema": "H2AIR-user-inputs-v4",
-  "notes": "Ready-to-use design from study 'design_sweep' (nominal_mass_optimized). Copy over config/user_inputs.json to adopt. Selected spans are hardcoded.",
+  "notes": "Ready-to-use lightest SCREENING_PASS after updated printed-shell kg/m. Closed MTOW 15.405 kg with even-mm COTS tubes; mtow_ceiling raised to 15.5 kg (15.0 infeasible with new shells). Spans/stations hardcoded from design_sweep_printed_mass_v3 lightest full-verify.",
   "mission": {
     "payload_mass_kg": 1.2,
     "mtow_target_low_kg": 12.0,
-    "mtow_target_high_kg": 14.0,
-    "mtow_ceiling_kg": 15.0,
+    "mtow_target_high_kg": 15.0,
+    "mtow_ceiling_kg": 15.5,
     "cruise_speed_mps": 20.0,
     "mission_duration_min": 120.0,
     "target_static_margin": 0.12
@@ -26,10 +26,10 @@
         "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 1.4,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Updated printed fuselage nose kg/m"
         },
         "width_m": 0.14900000000000002,
         "height_m": 0.22137729577647663
@@ -40,10 +40,10 @@
         "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 1.2,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Updated printed fuselage center_a kg/m"
         },
         "width_m": 0.14900000000000002,
         "height_m": 0.22137729577647663
@@ -54,10 +54,10 @@
         "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 1.5,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Updated printed fuselage center_b kg/m"
         },
         "width_m": 0.14900000000000002,
         "height_m": 0.22137729577647663
@@ -68,10 +68,10 @@
         "diameter_m": 0.22137729577647663,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 1.4,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Updated printed fuselage tail kg/m"
         },
         "width_m": 0.14900000000000002,
         "height_m": 0.22137729577647663
@@ -88,10 +88,13 @@
       "twist_tip_deg": -2.0,
       "sweep_deg": 0.0,
       "dihedral_deg": 0.0,
-      "aerodynamic_center_x_m": 0.386844,
+      "aerodynamic_center_x_m": 0.455714,
       "span_mode": "hardcoded",
-      "span_bounds_m": [3.15, 3.6],
-      "hardcoded_span_m": 3.3742,
+      "span_bounds_m": [
+        3.15,
+        3.7
+      ],
+      "hardcoded_span_m": 3.516557,
       "minimum_transition_speed_over_stall": 1.3,
       "auto_area_margin_factor": 1.1,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
@@ -103,10 +106,13 @@
       "twist_root_deg": 0.0,
       "twist_tip_deg": 0.0,
       "sweep_deg": 0.0,
-      "aerodynamic_center_x_m": 1.048942,
+      "aerodynamic_center_x_m": 1.050226,
       "span_mode": "hardcoded",
-      "span_bounds_m": [0.8, 1.3],
-      "hardcoded_span_m": 0.8688,
+      "span_bounds_m": [
+        0.75,
+        1.35
+      ],
+      "hardcoded_span_m": 0.828897,
       "target_tail_volume_coefficient": 0.44,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
     },
@@ -115,10 +121,13 @@
       "root_chord_m": 0.148,
       "taper_ratio": 0.6,
       "naca_code": "NACA0012",
-      "aerodynamic_center_x_m": 1.021592,
+      "aerodynamic_center_x_m": 1.110291,
       "span_mode": "hardcoded",
-      "span_bounds_m": [0.3, 0.6],
-      "hardcoded_span_m": 0.3,
+      "span_bounds_m": [
+        0.28,
+        0.55
+      ],
+      "hardcoded_span_m": 0.327641,
       "target_vertical_tail_volume_coefficient": 0.0255,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
     }
@@ -127,7 +136,7 @@
     "cruise_lift_propeller_state": "stopped_aligned"
   },
   "component_positions": {
-    "lift_row_center_x_m": 0.385884,
+    "lift_row_center_x_m": 0.47574,
     "battery_x_m": 0.330287,
     "battery_z_m": 0.0631,
     "fuel_cell_x_m": 0.15285,
@@ -139,7 +148,7 @@
   "packaging_layout": {
     "enabled": true,
     "energy_bay_order": "fuel_cell_forward",
-    "energy_bay_order_mode": "auto",
+    "energy_bay_order_mode": "hardcoded",
     "cb_battery_order": "battery_forward",
     "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (X order of CB/battery on the shared top shelf). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB+battery sit on top in X tandem (first flush with forward energy host front; second axial behind); dual PDBs min-OD searched.",
     "clearances_m": {
@@ -162,7 +171,10 @@
         "length_m": 0.08,
         "width_m": 0.06,
         "height_m": 0.0235,
-        "mount_pattern_m": [0.05, 0.05],
+        "mount_pattern_m": [
+          0.05,
+          0.05
+        ],
         "mass_kg": null,
         "status": "supplier_confirmed",
         "source": "Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
@@ -242,10 +254,10 @@
       "thickness_m": 0.028,
       "shell": {
         "mass_mode": "linear",
-        "specific_mass_kg_per_m": 0.937,
+        "specific_mass_kg_per_m": 0.6256,
         "hardcoded_mass_kg": null,
         "status": "engineering_assumption",
-        "source": "Calibrated from current wing lump; replace with measured printed wing kg/m"
+        "source": "Target ~2.2 kg printed wing shell at current span (2.2/3.516557 m)"
       },
       "primary_spar": {
         "mass_mode": "structural_linear",
@@ -272,10 +284,10 @@
       "thickness_m": 0.022,
       "shell": {
         "mass_mode": "linear",
-        "specific_mass_kg_per_m": 0.1646,
+        "specific_mass_kg_per_m": 0.6032,
         "hardcoded_mass_kg": null,
         "status": "engineering_assumption",
-        "source": "Calibrated from current tail lump; replace with measured printed tail kg/m"
+        "source": "Target ~0.5 kg printed HT shell at current span (0.5/0.828897 m)"
       },
       "primary_spar": {
         "mass_mode": "structural_linear",
@@ -301,10 +313,11 @@
       "thickness_m": 0.012,
       "shell": {
         "mass_mode": "linear",
-        "specific_mass_kg_per_m": 0.0565,
+        "specific_mass_kg_per_m": 0.3815,
         "hardcoded_mass_kg": null,
         "status": "engineering_assumption",
-        "source": "Calibrated from current twin-fin lump; replace with measured printed fin kg/m"
+        
+        "source": "Target ~0.25 kg printed twin-fin shells at current height (0.25/(2*0.327641 m))"
       },
       "primary_spar": {
         "mass_mode": "structural_linear",
@@ -358,7 +371,7 @@
   },
   "carbon_fiber_tubes": {
     "section_mode": "hardcoded",
-    "note": "Off-the-shelf CFRP tubes. OD/ID rounded UP to even millimetres (2 mm steps) from my_design screening recommendations (wing 22.75/17.06, boom 21.25/17.25, HT 9.50/7.13, VT 7.25/5.44; longerons 6.5→8; secondaries already even). landing_legs omitted → auto-sized from 3g landing then rounded to even-mm COTS.",
+    "note": "Even-mm COTS lock from lightest PASS after printed-shell update (wing 23.25/17.44→24/18, boom 21.25/17.25→22/18, HT 9.0→10/8, VT 7.5→8/6; landing legs auto 8/6).",
     "main_wing_primary_spar": { "od_mm": 24, "id_mm": 18 },
     "boom_tubes": { "od_mm": 22, "id_mm": 18 },
     "horizontal_tail_primary_spar": { "od_mm": 10, "id_mm": 8 },
@@ -373,10 +386,22 @@
     "target_static_margin": 0.12,
     "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search. When packaging energy_bay_order_mode is auto, energy_bay_order_code (0=FC forward, 1=H2 forward) is swept.",
     "design_space": {
-      "wing_ac_x_m": [0.3, 0.46],
-      "horizontal_tail_ac_x_m": [1.0, 1.1],
-      "vertical_tail_ac_x_m": [1.0, 1.1],
-      "lift_row_center_x_m": [0.3, 0.46]
+      "wing_ac_x_m": [
+        0.28,
+        0.48
+      ],
+      "horizontal_tail_ac_x_m": [
+        0.98,
+        1.15
+      ],
+      "vertical_tail_ac_x_m": [
+        0.98,
+        1.15
+      ],
+      "lift_row_center_x_m": [
+        0.28,
+        0.48
+      ]
     }
   },
   "hardware_selection": {

@@ -4,7 +4,7 @@
   "bus_max_voltage_V": 48.0,
   "bus_voltage_ceiling_V": 48.0,
   "requirements": {
-    "lift_thrust_per_motor_N": 59.575398750000005,
+    "lift_thrust_per_motor_N": 61.561245375000006,
     "minimum_pusher_power_W": 750.0,
     "minimum_battery_capacity_Ah": 5.0,
     "battery_screen_current_A": 146.83445945945945

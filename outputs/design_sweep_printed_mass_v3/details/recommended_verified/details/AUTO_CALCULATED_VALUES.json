@@ -1,0 +1,54 @@
+{
+  "geometry": {
+    "fuselage_total_length_m": 0.8594000000000002,
+    "fuselage_max_diameter_m": 0.22137729577647663,
+    "main_wing_span_m": 3.7,
+    "main_wing_area_m2": 0.964368,
+    "main_wing_mac_m": 0.2660699999999999,
+    "horizontal_tail_span_m": 0.9202242671216888,
+    "horizontal_tail_area_m2": 0.17051755669764893,
+    "vertical_tail_height_m": 0.55,
+    "vertical_tail_area_total_m2": 0.13024,
+    "main_wing_CLmax_screen": 1.185,
+    "airfoils": {
+      "main_wing": {
+        "code": "NACA4412",
+        "mode": "screening_fallback",
+        "CLmax_used": 1.185,
+        "Re": null
+      },
+      "horizontal_tail": {
+        "code": "NACA0012",
+        "mode": "polar_file",
+        "Re": 200000
+      },
+      "vertical_tail": {
+        "code": "NACA0012",
+        "mode": "polar_file",
+        "Re": 200000
+      }
+    }
+  },
+  "closed_mtow_kg": 15.611305576935385,
+  "closed_cg_m": [
+    0.4617424080618104,
+    0.0,
+    0.048387865561525224
+  ],
+  "neutral_point_x_m": 0.49110989311018377,
+  "static_margin": 0.11037503306788964,
+  "cruise_bus_power_W": 491.64198100531115,
+  "mission_energy_Wh": 1011.3234044908565,
+  "h2_used_kg": 0.05261500000001825,
+  "final_battery_soc": 0.4409995396700729,
+  "wing_spar_od_mm": 24.00000000000001,
+  "boom_od_mm": 21.000000000000007,
+  "front_motor_15kg_N": 61.75804223650395,
+  "rear_motor_15kg_N": 60.96301401349606,
+  "fuel_cell_cooling_required_airflow_cfm": 100.97075994936881,
+  "fuel_cell_cooling_estimated_airflow_cfm": 118.1962687388564,
+  "fuel_cell_cooling_min_fuselage_width_m": 0.1424,
+  "fuel_cell_cooling_openings_CdA_m2": 0.0013347,
+  "landing_legs_CdA_m2": 0.003424483375797251,
+  "landing_legs_drag_N": 0.8218760101913402
+}

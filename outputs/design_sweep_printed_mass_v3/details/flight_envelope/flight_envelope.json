@@ -1,0 +1,218 @@
+{
+  "mass_kg": 15.378869382539246,
+  "hover": {
+    "speed_mps": 0.0,
+    "design_thrust_per_motor_N": 60.8810030501936,
+    "design_total_electrical_power_W": 5321.146560405007
+  },
+  "rows": [
+    {
+      "speed_mps": 10.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 0.6622641685049088,
+      "drag_N": 14.319125443548366,
+      "bus_power_W": 233.87674227150507,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 11.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 0.7284905853553997,
+      "drag_N": 13.153327452799523,
+      "bus_power_W": 235.95361386221495,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 12.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 0.7947170022058905,
+      "drag_N": 12.508382397353907,
+      "bus_power_W": 243.47303995589846,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 13.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 0.8609434190563814,
+      "drag_N": 12.250708051852625,
+      "bus_power_W": 256.1933398251168,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 14.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 0.9271698359068723,
+      "drag_N": 12.29265174060026,
+      "bus_power_W": 274.023783845005,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 15.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 0.9933962527573631,
+      "drag_N": 12.574765270035874,
+      "bus_power_W": 296.9742764590807,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 16.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.059622669607854,
+      "drag_N": 13.055575861479355,
+      "bus_power_W": 325.12390803287457,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 17.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.1258490864583448,
+      "drag_N": 13.705437432847269,
+      "bus_power_W": 358.6006060533383,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 18.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.1920755033088357,
+      "drag_N": 14.502702770471329,
+      "bus_power_W": 397.5675692617832,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 19.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.2583019201593266,
+      "drag_N": 15.43126682822545,
+      "bus_power_W": 442.2139857448383,
+      "classification": "STALL_MARGIN_FAIL"
+    },
+    {
+      "speed_mps": 20.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.3245283370098175,
+      "drag_N": 16.478947281532335,
+      "bus_power_W": 492.7485355981204,
+      "classification": "VALID"
+    },
+    {
+      "speed_mps": 21.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.3907547538603084,
+      "drag_N": 17.636391427601627,
+      "bus_power_W": 549.3947499717142,
+      "classification": "VALID"
+    },
+    {
+      "speed_mps": 22.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.4569811707107994,
+      "drag_N": 18.896322627180627,
+      "bus_power_W": 612.3876358305192,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 23.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.52320758756129,
+      "drag_N": 20.253010890111643,
+      "bus_power_W": 681.9711812118998,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 24.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.589434004411781,
+      "drag_N": 21.701894525067626,
+      "bus_power_W": 758.3964841689209,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 25.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.6556604212622719,
+      "drag_N": 23.239305526095617,
+      "bus_power_W": 841.920330767209,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 26.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.7218868381127628,
+      "drag_N": 24.86226741885362,
+      "bus_power_W": 932.8041012363807,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 27.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.7881132549632537,
+      "drag_N": 26.568344511971617,
+      "bus_power_W": 1031.3129191989356,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 28.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.8543396718137446,
+      "drag_N": 28.355528139614748,
+      "bus_power_W": 1137.7149832072403,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 29.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.9205660886642353,
+      "drag_N": 30.22214987378994,
+      "bus_power_W": 1252.281036583206,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 30.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 1.9867925055147262,
+      "drag_N": 32.16681463896077,
+      "bus_power_W": 1375.2839432900323,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 31.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 2.0530189223652173,
+      "drag_N": 34.18834867881187,
+      "bus_power_W": 1506.9983458932888,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 32.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 2.119245339215708,
+      "drag_N": 36.285758722221665,
+      "bus_power_W": 1647.7003876542963,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 33.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 2.1854717560661987,
+      "drag_N": 38.4581996760432,
+      "bus_power_W": 1797.6674851519801,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 34.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 2.2516981729166896,
+      "drag_N": 40.70494886887657,
+      "bus_power_W": 1957.1781410302826,
+      "classification": "POWER_GATE_FAIL"
+    },
+    {
+      "speed_mps": 35.0,
+      "stall_speed_mps": 15.099714699310173,
+      "V_over_Vstall": 2.3179245897671805,
+      "drag_N": 43.02538537054669,
+      "bus_power_W": 2126.5117888460195,
+      "classification": "POWER_GATE_FAIL"
+    }
+  ]
+}

@@ -173,14 +173,14 @@
     <ParamWithValue>
       <name>wing_span</name>
       <typeCode>mm</typeCode>
-      <value>3374.200 mm</value>
+      <value>3516.557 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>wing_half_span</name>
       <typeCode>mm</typeCode>
-      <value>1687.100 mm</value>
+      <value>1758.279 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -208,14 +208,14 @@
     <ParamWithValue>
       <name>wing_le_x</name>
       <typeCode>mm</typeCode>
-      <value>320.327 mm</value>
+      <value>389.197 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>wing_ac_x</name>
       <typeCode>mm</typeCode>
-      <value>386.844 mm</value>
+      <value>455.714 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -362,14 +362,14 @@
     <ParamWithValue>
       <name>horizontal_tail_span</name>
       <typeCode>mm</typeCode>
-      <value>868.800 mm</value>
+      <value>828.897 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_half_span</name>
       <typeCode>mm</typeCode>
-      <value>434.400 mm</value>
+      <value>414.449 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -397,14 +397,14 @@
     <ParamWithValue>
       <name>horizontal_tail_le_x</name>
       <typeCode>mm</typeCode>
-      <value>1002.136 mm</value>
+      <value>1003.420 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_ac_x</name>
       <typeCode>mm</typeCode>
-      <value>1048.942 mm</value>
+      <value>1050.226 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -467,7 +467,7 @@
     <ParamWithValue>
       <name>vertical_tail_height</name>
       <typeCode>mm</typeCode>
-      <value>300.000 mm</value>
+      <value>327.641 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -488,14 +488,14 @@
     <ParamWithValue>
       <name>vertical_tail_le_x</name>
       <typeCode>mm</typeCode>
-      <value>991.375 mm</value>
+      <value>1080.074 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>vertical_tail_ac_x</name>
       <typeCode>mm</typeCode>
-      <value>1021.592 mm</value>
+      <value>1110.291 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -544,14 +544,14 @@
     <ParamWithValue>
       <name>boom_length</name>
       <typeCode>mm</typeCode>
-      <value>1003.516 mm</value>
+      <value>913.660 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>boom_start_x</name>
       <typeCode>mm</typeCode>
-      <value>96.484 mm</value>
+      <value>186.340 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -691,7 +691,7 @@
     <ParamWithValue>
       <name>landing_leg_wing_left_x</name>
       <typeCode>mm</typeCode>
-      <value>386.844 mm</value>
+      <value>455.714 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -726,7 +726,7 @@
     <ParamWithValue>
       <name>landing_leg_wing_right_x</name>
       <typeCode>mm</typeCode>
-      <value>386.844 mm</value>
+      <value>455.714 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -761,14 +761,14 @@
     <ParamWithValue>
       <name>lift_motor_front_x</name>
       <typeCode>mm</typeCode>
-      <value>96.484 mm</value>
+      <value>186.340 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>lift_motor_rear_x</name>
       <typeCode>mm</typeCode>
-      <value>675.284 mm</value>
+      <value>765.140 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -1643,7 +1643,7 @@
     <ParamWithValue>
       <name>wing_rib_count</name>
       <typeCode>unitless</typeCode>
-      <value>15</value>
+      <value>16</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>

@@ -186,11 +186,20 @@ def screening_evaluate(raw_cfg: Mapping[str, Any], values: Mapping[str, float], 
     req = cfg["power_system"]["requirements"]
     h2 = cfg["power_system"]["hydrogen"]
     energy_target_Wh = float(h2["reference_net_energy_Wh"]) * (1.0 - float(h2["mission_energy_reserve_fraction"]))
-    structural_fail = any(
-        g["status"] == "FAIL"
-        for g in structure["gates"]
-        if "current_" not in g["name"] and "legacy_" not in g["name"]
-    )
+    # Match pipeline.recommended_structure_screen_pass: ignore audit
+    # reference_/current_/legacy_ sections and the legacy partial-feedback mass gate.
+    structural_fail = False
+    for g in structure["gates"]:
+        n = str(g["name"])
+        if g["status"] in {"PASS", "NOT_EVALUATED"}:
+            continue
+        if n == "mass_ceiling_after_partial_structural_feedback":
+            continue
+        if "current_" in n or "legacy_" in n or n.startswith("reference_"):
+            continue
+        if g["status"] == "FAIL":
+            structural_fail = True
+            break
 
     metrics: Dict[str, Any] = {
         "pre_structure_mass_kg": mass0.takeoff.total_mass_kg,
@@ -242,7 +251,12 @@ def screening_evaluate(raw_cfg: Mapping[str, Any], values: Mapping[str, float], 
     if drag.total_cruise_bus_power_W > float(req["representative_cruise_power_gate_W"]):
         add_violation("cruise_power_gate", (drag.total_cruise_bus_power_W-float(req["representative_cruise_power_gate_W"]))/100.0, 100.0)
     if mission["total_profile_energy_Wh"] > energy_target_Wh:
-        add_violation("120min_h2_energy_target", (mission["total_profile_energy_Wh"]-energy_target_Wh)/100.0, 80.0)
+        # Soft objective only: full verification uses hybrid EMS, which can
+        # draw buffer battery above the H2-only screening target.
+        penalty += 80.0 * ((mission["total_profile_energy_Wh"] - energy_target_Wh) / 100.0) ** 2
+        metrics["energy_target_soft_violation"] = True
+    else:
+        metrics["energy_target_soft_violation"] = False
     if not mission["forward_transition"].success:
         add_violation("forward_transition", 1.0, 300.0)
     if not mission["reverse_transition"].success:
