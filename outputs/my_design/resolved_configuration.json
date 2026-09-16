@@ -139,7 +139,8 @@
     "pdb2_y_m": 0.0,
     "pdb2_z_m": 0.05854069267511454,
     "main_wing_z_m": 0.09000930732488546,
-    "horizontal_tail_z_m": 0.09000930732488546
+    "horizontal_tail_z_m": 0.09000930732488546,
+    "landing_legs_CdA_m2": 0.003555638312101374
   },
   "power_system": {
     "model_version": "H2AIR-phase2-hybrid-power-1.0",
@@ -233,11 +234,11 @@
         ],
         [
           1.0,
-          4.2
+          4.0
         ]
       ],
       "minimum_loaded_cell_voltage_V": 3.3,
-      "maximum_charge_cell_voltage_V": 4.2,
+      "maximum_charge_cell_voltage_V": 4.0,
       "continuous_discharge_current_A": 165.0,
       "peak_discharge_current_A": null,
       "peak_duration_s": 10.0,
@@ -268,7 +269,8 @@
       "representative_cruise_power_gate_W": 550.0,
       "minimum_mission_endurance_min": 60.0,
       "target_mission_endurance_min": 120.0
-    }
+    },
+    "aircraft_bus_voltage_ceiling_V": 48.0
   },
   "geometry_mass": {
     "geometry_model": {
@@ -408,7 +410,8 @@
             }
           ],
           "tube_od_m": 0.008,
-          "sleeve_od_m": 0.012
+          "sleeve_od_m": 0.012,
+          "drag_CdA_m2": 0.003555638312101374
         },
         "landing_ground_z_m": -0.18486569267511452
       },
@@ -1165,7 +1168,8 @@
       "cruise_power_gate_W": 550.0,
       "minimum_transition_stall_ratio": 1.3,
       "stall_model": "direct_CLmax",
-      "cooling_openings_CdA_m2": 0.0013347
+      "cooling_openings_CdA_m2": 0.0013347,
+      "landing_legs_CdA_m2": 0.003555638312101374
     },
     "reference_calibration": {
       "reference_mass_kg": 10.893,
@@ -4209,7 +4213,8 @@
   "hardware_selection_result": {
     "mode": "auto",
     "bus_nominal_voltage_V": 44.400000000000006,
-    "bus_max_voltage_V": 50.400000000000006,
+    "bus_max_voltage_V": 48.0,
+    "bus_voltage_ceiling_V": 48.0,
     "requirements": {
       "lift_thrust_per_motor_N": 59.575398750000005,
       "minimum_pusher_power_W": 750.0,
@@ -4273,7 +4278,8 @@
     },
     "notes": [
       "AUTO selection is a database screening step. Final propulsion release requires measured thrust/power/thermal data at the selected voltage and propeller.",
-      "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power."
+      "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power.",
+      "Aircraft bus ceiling is 48.0 V (fuel-cell max); hardware bus_max is capped accordingly (not 12S\u00d74.2=50.4 V)."
     ]
   },
   "fuel_cell_cooling": {
@@ -4512,6 +4518,7 @@
       "side_load_fraction": 0.25,
       "sleeve_wall_m": 0.002,
       "printed_density_kg_m3": 1200.0,
+      "drag_coefficient_screen": 0.5,
       "prop_ground_clearance_m": 0.02,
       "minimum_leg_length_m": 0.06,
       "deflection_limit_fraction": 0.05,
@@ -4571,7 +4578,9 @@
           }
         ],
         "tube_od_m": 0.008,
-        "sleeve_od_m": 0.012
+        "sleeve_od_m": 0.012,
+        "drag_CdA_m2": 0.003555638312101374,
+        "drag_coefficient_screen": 0.5
       }
     },
     "fuselage_total_length_m": 0.8594000000000002,
@@ -5019,6 +5028,7 @@
         "side_load_fraction": 0.25,
         "sleeve_wall_m": 0.002,
         "printed_density_kg_m3": 1200.0,
+        "drag_coefficient_screen": 0.5,
         "prop_ground_clearance_m": 0.02,
         "minimum_leg_length_m": 0.06,
         "deflection_limit_fraction": 0.05,
@@ -5102,7 +5112,8 @@
       "auto_criteria": {
         "series_cells": 12,
         "nominal_cell_voltage_V": 3.7,
-        "maximum_cell_voltage_V": 4.2,
+        "maximum_cell_voltage_V": 4.0,
+        "bus_voltage_ceiling_V": 48.0,
         "number_of_lift_motors": 4,
         "lift_total_thrust_factor_at_mtow_ceiling": 1.5,
         "lift_climb_thrust_factor": 1.08,

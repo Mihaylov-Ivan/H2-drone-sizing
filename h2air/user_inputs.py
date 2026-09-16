@@ -510,9 +510,24 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
             )
             break
 
+    # Direct-bus architecture: never model pack/bus voltage above the FC ceiling.
+    from .hybrid_power import enforce_bus_voltage_ceiling_on_mapping
+    enforce_bus_voltage_ceiling_on_mapping(cfg["power_system"])
+
     # -------- Discrete motor/prop/battery database selection --------
     if u.get("hardware_selection"):
-        selection = select_hardware(u, root=root)
+        # Keep hardware screening criteria aligned with the clamped FC bus ceiling.
+        u_hw = deepcopy(u)
+        hs = u_hw.setdefault("hardware_selection", {})
+        crit = hs.setdefault("auto_criteria", {})
+        fc_max = float(cfg["power_system"]["fuel_cell"]["output_voltage_max_V"])
+        series = int(crit.get("series_cells", cfg["power_system"]["battery"]["series_cells"]))
+        crit["bus_voltage_ceiling_V"] = min(float(crit.get("bus_voltage_ceiling_V", fc_max)), fc_max)
+        crit["maximum_cell_voltage_V"] = min(
+            float(crit.get("maximum_cell_voltage_V", fc_max / max(series, 1))),
+            fc_max / max(series, 1),
+        )
+        selection = select_hardware(u_hw, root=root)
         apply_hardware_selection(cfg, selection)
 
     # -------- IE-SOAR fuel-cell cooling integration --------

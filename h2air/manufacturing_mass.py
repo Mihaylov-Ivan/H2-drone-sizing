@@ -310,4 +310,6 @@ def apply_structural_mass_updates(cfg: Mapping[str, Any], components: Sequence[C
             layout["sleeve_od_m"] = sod
             legs_cfg["resolved"] = layout
             cfg["geometry_mass"]["geometry_model"]["geometry"]["landing_legs"] = layout
+            from .landing_legs import sync_landing_legs_drag
+            sync_landing_legs_drag(cfg)
     return out

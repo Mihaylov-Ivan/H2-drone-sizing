@@ -33,6 +33,7 @@ class CruiseDragResult:
     dynamic_pressure_Pa: float
     non_lift_prop_parasite_drag_N: float
     cooling_drag_N: float
+    landing_legs_drag_N: float
     lift_prop_drag_N: float
     induced_drag_N: float
     total_drag_N: float
@@ -44,6 +45,7 @@ class CruiseDragResult:
     lift_prop_CdA_total_m2: float
     non_lift_prop_parasite_CdA_m2: float
     cooling_openings_CdA_m2: float
+    landing_legs_CdA_m2: float
     induced_drag_factor_k: float
     wing_area_m2: float
     wing_span_m: float
@@ -244,13 +246,14 @@ def cruise_drag(
         polar_point=interpolate_polar_by_cl(polar_rows,CL_req)
         wing_profile_CD=float(polar_point["CD"])
     fixed_other_CdA = max(0.0, constants["non_lift_prop_parasite_CdA_m2"] - D_wing_profile_ref / max(q_ref, EPS))
-    # Cooling inlet/exhaust openings are kept explicit instead of being hidden
-    # in the legacy calibrated parasite term.  This allows CAD cooling changes
-    # to propagate into cruise power and mission energy.
+    # Cooling inlet/exhaust openings and landing-leg sleeves are kept explicit
+    # instead of being hidden in the legacy calibrated parasite term.
     cooling_CdA = max(0.0, float(ac.get("cooling_openings_CdA_m2", 0.0)))
+    landing_CdA = max(0.0, float(ac.get("landing_legs_CdA_m2", 0.0)))
     D_cooling = q * cooling_CdA
+    D_landing = q * landing_CdA
     D_other_base = q * fixed_other_CdA + q * S * wing_profile_CD
-    D_other = D_other_base + D_cooling
+    D_other = D_other_base + D_cooling + D_landing
 
     n_lift = int(cfg["lift_system"]["number_of_propellers"])
     CdA_prop_each = lift_prop_drag_CdA_each_m2(cfg, lift_prop_diameter_in, lift_prop_state)
@@ -275,6 +278,7 @@ def cruise_drag(
         dynamic_pressure_Pa=q,
         non_lift_prop_parasite_drag_N=D_other,
         cooling_drag_N=D_cooling,
+        landing_legs_drag_N=D_landing,
         lift_prop_drag_N=D_props,
         induced_drag_N=D_induced,
         total_drag_N=D_total,
@@ -286,6 +290,7 @@ def cruise_drag(
         lift_prop_CdA_total_m2=CdA_props,
         non_lift_prop_parasite_CdA_m2=(D_other / max(q, EPS)),
         cooling_openings_CdA_m2=cooling_CdA,
+        landing_legs_CdA_m2=landing_CdA,
         induced_drag_factor_k=k,
         wing_area_m2=S,
         wing_span_m=b,

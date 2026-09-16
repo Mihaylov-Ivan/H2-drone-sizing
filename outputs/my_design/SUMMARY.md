@@ -82,10 +82,11 @@ A **14.461 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 
 ## Performance / mission
 
-- Cruise drag / bus power: **15.52 N / 466.2 W** (lift props **stopped_aligned**)
-- Forward / reverse transition: **20.00 s / 18.48 s**
-- Mission energy (120 min): **956.9 Wh**
-- H2 used / final battery SOC: **52.6 g / 66.5%**
+- Cruise drag / bus power: **16.37 N / 489.6 W** (lift props **stopped_aligned**)
+- Landing-leg parasite: **0.846 N** (CdA **35.24 cm²**, sleeve cylinder screen)
+- Forward / reverse transition: **20.02 s / 17.86 s**
+- Mission energy (120 min): **1003.1 Wh**
+- H2 used / final battery SOC: **52.6 g / 47.5%**
 
 ## Structures (recommended screen)
 
@@ -103,7 +104,7 @@ A **14.461 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - **NOT_EVALUATED** — fuel_cell_cooling_fan_curve: IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
 - **PASS** — 15kg_stall_margin: Wing area 0.879 m² vs minimum 0.874 m² screen.
-- **PASS** — cruise_power: 466.2 W vs configured gate.
+- **PASS** — cruise_power: 489.6 W vs configured gate.
 - **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
 - **PASS** — current_longitudinal_stability: Closed-aircraft static margin 8.72% MAC.

@@ -338,6 +338,7 @@
       "side_load_fraction": 0.25,
       "sleeve_wall_m": 0.002,
       "printed_density_kg_m3": 1200.0,
+      "drag_coefficient_screen": 0.5,
       "prop_ground_clearance_m": 0.02,
       "minimum_leg_length_m": 0.06,
       "deflection_limit_fraction": 0.05,
@@ -388,7 +389,8 @@
     "auto_criteria": {
       "series_cells": 12,
       "nominal_cell_voltage_V": 3.7,
-      "maximum_cell_voltage_V": 4.2,
+      "maximum_cell_voltage_V": 4.0,
+      "bus_voltage_ceiling_V": 48.0,
       "number_of_lift_motors": 4,
       "lift_total_thrust_factor_at_mtow_ceiling": 1.5,
       "lift_climb_thrust_factor": 1.08,

@@ -256,10 +256,11 @@ class BatteryConfig:
         (0.20, 3.70),
         (0.50, 3.80),
         (0.80, 3.95),
-        (1.00, 4.20),
+        # Cap at 4.00 V/cell so a 12S pack never exceeds the 48 V FC bus ceiling.
+        (1.00, 4.00),
     ])
     minimum_loaded_cell_voltage_V: float = 3.30
-    maximum_charge_cell_voltage_V: float = 4.20
+    maximum_charge_cell_voltage_V: float = 4.00
 
     # Unknown actual battery limits are represented by None, never silently passed.
     continuous_discharge_current_A: Optional[float] = None
@@ -301,6 +302,11 @@ class BatteryConfig:
         return self.series_cells * self.nominal_cell_voltage_V
 
     @property
+    def maximum_pack_voltage_V(self) -> float:
+        """Hard pack/bus ceiling used for charge and OCV (IE-SOAR-compatible)."""
+        return self.series_cells * self.maximum_charge_cell_voltage_V
+
+    @property
     def nominal_energy_Wh(self) -> float:
         return self.nominal_voltage_V * self.capacity_Ah
 
@@ -312,12 +318,15 @@ class BatteryConfig:
         s = max(0.0, min(1.0, soc))
         pts = self.ocv_curve_cell_V
         if s <= pts[0][0]:
-            return pts[0][1]
-        for (s0, v0), (s1, v1) in zip(pts, pts[1:]):
-            if s <= s1:
-                f = (s - s0) / max(s1 - s0, EPS)
-                return v0 + f * (v1 - v0)
-        return pts[-1][1]
+            v = pts[0][1]
+        else:
+            v = pts[-1][1]
+            for (s0, v0), (s1, v1) in zip(pts, pts[1:]):
+                if s <= s1:
+                    f = (s - s0) / max(s1 - s0, EPS)
+                    v = v0 + f * (v1 - v0)
+                    break
+        return min(float(v), float(self.maximum_charge_cell_voltage_V))
 
     def pack_ocv_V(self, soc: float) -> float:
         return self.series_cells * self.cell_ocv_V(soc)
@@ -367,10 +376,23 @@ class HybridPowerConfig:
 
     def validate(self) -> List[str]:
         e = self.fuel_cell.validate() + self.hydrogen.validate() + self.battery.validate()
-        if not (self.fuel_cell.output_voltage_min_V <= self.battery.nominal_voltage_V <= self.fuel_cell.output_voltage_max_V):
+        fc_min = float(self.fuel_cell.output_voltage_min_V)
+        fc_max = float(self.fuel_cell.output_voltage_max_V)
+        if not (fc_min <= self.battery.nominal_voltage_V <= fc_max):
             e.append(
                 f"12S/battery nominal voltage {self.battery.nominal_voltage_V:.1f} V is outside "
-                f"fuel-cell reported output range {self.fuel_cell.output_voltage_min_V:.1f}..{self.fuel_cell.output_voltage_max_V:.1f} V"
+                f"fuel-cell reported output range {fc_min:.1f}..{fc_max:.1f} V"
+            )
+        pack_max = float(self.battery.maximum_pack_voltage_V)
+        if pack_max > fc_max + 1e-9:
+            e.append(
+                f"battery maximum pack voltage {pack_max:.1f} V exceeds fuel-cell / aircraft bus "
+                f"ceiling {fc_max:.1f} V (set maximum_charge_cell_voltage_V ≤ {fc_max / max(self.battery.series_cells, 1):.3f} V/cell)"
+            )
+        ocv_peak = max(float(v) for _, v in self.battery.ocv_curve_cell_V) * self.battery.series_cells
+        if ocv_peak > fc_max + 1e-9:
+            e.append(
+                f"battery OCV curve peaks at {ocv_peak:.1f} V pack, above bus ceiling {fc_max:.1f} V"
             )
         return e
 
@@ -516,7 +538,7 @@ def _battery_current_voltage_for_power(
                 I = (voc - sqrt(max(0.0, disc))) / (2.0 * R)
                 V = voc - I * R
             warnings.append("battery_charge_power_limited")
-        max_charge_V = battery.series_cells * battery.maximum_charge_cell_voltage_V
+        max_charge_V = battery.maximum_pack_voltage_V
         if V > max_charge_V:
             # Reduce charge current to the voltage ceiling.
             I = (voc - max_charge_V) / max(R, EPS)
@@ -532,7 +554,38 @@ def _battery_current_voltage_for_power(
         P = max(0.0, V * I)
         warnings.append("battery_peak_current_limited")
 
+    # Hard aircraft-bus ceiling (fuel-cell max / charge clamp): never report above it.
+    if V > battery.maximum_pack_voltage_V + 1e-9:
+        V = battery.maximum_pack_voltage_V
+        P = V * I
+        warnings.append("battery_bus_voltage_ceiling_clamped")
+
     return P, I, V, warnings
+
+
+def enforce_bus_voltage_ceiling_on_mapping(power_system: Dict[str, Any]) -> Dict[str, Any]:
+    """Clamp battery charge/OCV settings so pack voltage never exceeds FC max.
+
+    Mutates and returns ``power_system``. Architecture rule: the direct aircraft
+    bus is limited by ``fuel_cell.output_voltage_max_V`` (48 V for IE-SOAR).
+    """
+    fc = power_system.setdefault("fuel_cell", {})
+    batt = power_system.setdefault("battery", {})
+    fc_max = float(fc.get("output_voltage_max_V", 48.0))
+    series = int(batt.get("series_cells", 12))
+    if series <= 0:
+        raise ValueError("battery.series_cells must be > 0")
+    cell_cap = fc_max / float(series)
+    configured = batt.get("maximum_charge_cell_voltage_V")
+    if configured is None:
+        batt["maximum_charge_cell_voltage_V"] = cell_cap
+    else:
+        batt["maximum_charge_cell_voltage_V"] = min(float(configured), cell_cap)
+    curve = batt.get("ocv_curve_cell_V")
+    if isinstance(curve, list) and curve:
+        batt["ocv_curve_cell_V"] = [[float(s), min(float(v), cell_cap)] for s, v in curve]
+    power_system["aircraft_bus_voltage_ceiling_V"] = fc_max
+    return power_system
 
 
 class HybridPowerSystem:
@@ -816,6 +869,7 @@ class HybridPowerSystem:
         peak_batt_power = 0.0
         peak_batt_current = 0.0
         min_batt_voltage = float("inf")
+        max_batt_voltage = 0.0
         min_soc = state.battery_soc
         peak_fc_bus = 0.0
         peak_bus_current = 0.0
@@ -837,6 +891,7 @@ class HybridPowerSystem:
                 peak_batt_power = max(peak_batt_power, max(0.0, res.battery_power_W))
                 peak_batt_current = max(peak_batt_current, max(0.0, res.battery_current_A))
                 min_batt_voltage = min(min_batt_voltage, res.battery_voltage_V)
+                max_batt_voltage = max(max_batt_voltage, res.battery_voltage_V)
                 min_soc = min(min_soc, res.battery_soc)
                 peak_fc_bus = max(peak_fc_bus, res.fc_bus_power_W)
                 peak_bus_current = max(peak_bus_current, res.total_bus_current_A)
@@ -846,6 +901,11 @@ class HybridPowerSystem:
                     failures.append(f"unserved bus power {res.unserved_power_W:.1f} W at t={res.time_s:.1f}s ({res.stage})")
                 if "battery_undervoltage" in res.warnings:
                     failures.append(f"battery undervoltage at t={res.time_s:.1f}s ({res.stage})")
+                if res.battery_voltage_V > self.c.fuel_cell.output_voltage_max_V + 1e-6:
+                    failures.append(
+                        f"bus voltage {res.battery_voltage_V:.2f} V above fuel-cell ceiling "
+                        f"{self.c.fuel_cell.output_voltage_max_V:.1f} V at t={res.time_s:.1f}s"
+                    )
                 if "battery_overtemperature" in res.warnings:
                     failures.append(f"battery overtemperature at t={res.time_s:.1f}s ({res.stage})")
                 if "fuel_cell_overtemperature" in res.warnings:
@@ -945,6 +1005,12 @@ class HybridPowerSystem:
             "Uses preliminary OCV/internal-resistance model until pack sag testing is available.",
         ))
         gates.append(GateResult(
+            "aircraft_bus_voltage_ceiling",
+            GateStatus.PASS.value if max_batt_voltage <= self.c.fuel_cell.output_voltage_max_V + 1e-9 else GateStatus.FAIL.value,
+            max_batt_voltage, self.c.fuel_cell.output_voltage_max_V, "V",
+            "No modelled pack/bus voltage may exceed the fuel-cell output maximum (48 V for IE-SOAR).",
+        ))
+        gates.append(GateResult(
             "landing_soc_reserve",
             GateStatus.PASS.value if final_soc >= self.c.battery.landing_reserve_soc else GateStatus.FAIL.value,
             final_soc, self.c.battery.landing_reserve_soc, "fraction",
@@ -971,6 +1037,8 @@ class HybridPowerSystem:
             "peak_battery_power_W": peak_batt_power,
             "peak_battery_current_A": peak_batt_current,
             "minimum_battery_voltage_V": min_batt_voltage,
+            "maximum_battery_voltage_V": max_batt_voltage,
+            "aircraft_bus_voltage_ceiling_V": self.c.fuel_cell.output_voltage_max_V,
             "minimum_battery_soc": min_soc,
             "final_battery_soc": final_soc,
             "maximum_fuel_cell_temperature_C": max_fc_temperature,

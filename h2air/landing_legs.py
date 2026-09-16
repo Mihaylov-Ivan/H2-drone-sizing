@@ -40,6 +40,44 @@ def sleeve_mass_kg(
     return sleeve_annulus_area_m2(tube_od_m, sleeve_wall_m) * float(length_m) * float(density_kg_m3) * int(count)
 
 
+def landing_legs_cda_m2(cfg: Mapping[str, Any]) -> float:
+    """Screening cruise CdA of exposed landing-leg sleeves.
+
+    Each vertical leg is treated as a circular cylinder with frontal area
+    ``sleeve_OD * exposed_length`` and a user Cd screen (default 1.0). This is a
+    geometry-level parasite allowance, not a CFD result.
+    """
+    layout = resolve_landing_leg_layout(cfg)
+    if layout is None:
+        return 0.0
+    legs_cfg = (cfg.get("manufacturing_mass_model") or {}).get("landing_legs") or {}
+    cd = float(legs_cfg.get("drag_coefficient_screen", 1.0))
+    if cd < 0.0:
+        raise ValueError("landing_legs.drag_coefficient_screen must be >= 0")
+    sleeve_od = float(layout.get("sleeve_od_m") or sleeve_od_m(float(layout["tube_od_m"]), float(layout["sleeve_wall_m"])))
+    cda = 0.0
+    for leg in layout["legs"]:
+        cda += cd * sleeve_od * float(leg["length_m"])
+    return max(0.0, cda)
+
+
+def sync_landing_legs_drag(cfg: MutableMapping[str, Any]) -> float:
+    """Write current landing-leg CdA into aero/design so cruise/mission see it."""
+    cda = landing_legs_cda_m2(cfg)
+    cfg.setdefault("aero_propulsion", {}).setdefault("aircraft", {})["landing_legs_CdA_m2"] = cda
+    cfg.setdefault("design", {})["landing_legs_CdA_m2"] = cda
+    legs_cfg = cfg.setdefault("manufacturing_mass_model", {}).setdefault("landing_legs", {})
+    if isinstance(legs_cfg, dict):
+        resolved = legs_cfg.get("resolved")
+        if isinstance(resolved, dict):
+            resolved["drag_CdA_m2"] = cda
+            resolved["drag_coefficient_screen"] = float(legs_cfg.get("drag_coefficient_screen", 1.0))
+    geom = cfg.get("geometry_mass", {}).get("geometry_model", {}).get("geometry")
+    if isinstance(geom, dict) and isinstance(geom.get("landing_legs"), dict):
+        geom["landing_legs"]["drag_CdA_m2"] = cda
+    return cda
+
+
 def resolve_landing_leg_layout(cfg: Mapping[str, Any]) -> Optional[Dict[str, Any]]:
     """Compute nose + wing landing-leg stations from the closed geometry.
 
@@ -173,6 +211,7 @@ def apply_landing_leg_layout(cfg: MutableMapping[str, Any]) -> Optional[Dict[str
     if layout is None:
         legs_cfg["resolved"] = {"enabled": False}
         geom.pop("landing_legs", None)
+        sync_landing_legs_drag(cfg)
         return None
 
     legs_cfg["resolved"] = deepcopy(layout)
@@ -193,4 +232,5 @@ def apply_landing_leg_layout(cfg: MutableMapping[str, Any]) -> Optional[Dict[str
         (legs_cfg.get("tube") or {}).get("id_over_od", st.get("landing_leg_id_over_od", 0.75))
     )
     lc["landing_load_factor"] = float(layout["landing_load_factor"])
+    sync_landing_legs_drag(cfg)
     return layout

@@ -118,11 +118,11 @@
         ],
         [
           1.0,
-          4.2
+          4.0
         ]
       ],
       "minimum_loaded_cell_voltage_V": 3.3,
-      "maximum_charge_cell_voltage_V": 4.2,
+      "maximum_charge_cell_voltage_V": 4.0,
       "continuous_discharge_current_A": null,
       "peak_discharge_current_A": null,
       "peak_duration_s": 10.0,

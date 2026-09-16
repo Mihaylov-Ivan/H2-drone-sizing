@@ -192,7 +192,9 @@ def _wing_aero(
         0.0,
         constants["non_lift_prop_parasite_CdA_m2"] - D_wing_profile_ref / max(q_ref, EPS),
     )
-    D_parasite = q * fixed_other_CdA + q * wing_area_m2 * wing_profile_CD
+    cooling_CdA = max(0.0, float(ac4.get("cooling_openings_CdA_m2", 0.0)))
+    landing_CdA = max(0.0, float(ac4.get("landing_legs_CdA_m2", 0.0)))
+    D_parasite = q * fixed_other_CdA + q * wing_area_m2 * wing_profile_CD + q * cooling_CdA + q * landing_CdA
 
     n_lift = int(cfg4["lift_system"]["number_of_propellers"])
     # We use the Aero/propulsion windmilling geometric CdA as the reference for an active rotor,

@@ -311,6 +311,11 @@ def write_markdown_report(
         "",
         f"- Cruise drag / bus power: **{_f(s['cruise_drag_N'], 2)} N / {_f(s['cruise_bus_power_W'], 1)} W** "
         f"(lift props **{d.get('cruise_lift_propeller_state', '—')}**)",
+        (
+            f"- Landing-leg parasite: **{_f(s.get('landing_legs_drag_N'), 3)} N** "
+            f"(CdA **{_f(1e4 * float(s.get('landing_legs_CdA_m2') or 0), 2)} cm²**, sleeve cylinder screen)"
+            if s.get('landing_legs_CdA_m2') else None
+        ),
         f"- Forward / reverse transition: **{_f(s['forward_transition_duration_s'], 2)} s / "
         f"{_f(s['reverse_transition_duration_s'], 2)} s**",
         f"- Mission energy ({_f(d.get('mission_duration_min', 120), 0)} min): **{_f(s['mission_energy_Wh'], 1)} Wh**",

@@ -6,7 +6,8 @@ from h2air.structures import (
     check_tube_member,
     evaluate_structure,
 )
-from h2air.landing_legs import sleeve_od_m, sleeve_mass_kg
+from h2air.landing_legs import sleeve_od_m, sleeve_mass_kg, landing_legs_cda_m2
+from h2air.aero_propulsion import cruise_drag
 
 
 def test_sleeve_geometry_2mm_wall():
@@ -87,3 +88,43 @@ def test_landing_leg_tube_passes_with_reasonable_section():
         slope_limit_deg=3.0,
     )
     assert chk.overall_pass
+
+
+def test_landing_legs_cda_scales_with_sleeve_and_length():
+    cfg = {
+        "design": {
+            "fuselage_height_m": 0.22,
+            "wing_mac_m": 0.26,
+            "wing_ac_x_m": 0.39,
+            "lift_propeller_diameter_in": 22.0,
+        },
+        "geometry_mass": {
+            "geometry_model": {
+                "geometry": {
+                    "wing_lower_z_m": 0.07,
+                    "boom_center_y_m": [-0.37, 0.37],
+                    "lift_prop_centers_m": [
+                        [0.1, -0.37, 0.12], [0.1, 0.37, 0.12],
+                        [0.7, -0.37, 0.12], [0.7, 0.37, 0.12],
+                    ],
+                }
+            }
+        },
+        "aero_propulsion": {"lift_layout": {"z_m": 0.12}},
+        "manufacturing_mass_model": {
+            "fuselage_sections": [{"name": "nose", "length_m": 0.14, "diameter_m": 0.2}],
+            "main_wing": {"primary_spar": {"chord_fraction": 0.25}, "thickness_m": 0.028, "z_m": 0.09},
+            "landing_legs": {
+                "enabled": True,
+                "sleeve_wall_m": 0.002,
+                "drag_coefficient_screen": 1.0,
+                "prop_ground_clearance_m": 0.02,
+                "minimum_leg_length_m": 0.06,
+                "tube": {"design_tube_od_m": 0.008, "reference_tube_od_m": 0.012},
+            },
+        },
+        "structures": {"structure": {}, "load_cases": {}},
+    }
+    cda = landing_legs_cda_m2(cfg)
+    assert cda > 0.0
+    assert abs(sleeve_od_m(0.008, 0.002) - 0.012) < 1e-12

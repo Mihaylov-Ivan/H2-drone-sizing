@@ -1,7 +1,8 @@
 {
   "mode": "auto",
   "bus_nominal_voltage_V": 44.400000000000006,
-  "bus_max_voltage_V": 50.400000000000006,
+  "bus_max_voltage_V": 48.0,
+  "bus_voltage_ceiling_V": 48.0,
   "requirements": {
     "lift_thrust_per_motor_N": 59.575398750000005,
     "minimum_pusher_power_W": 750.0,
@@ -65,6 +66,7 @@
   },
   "notes": [
     "AUTO selection is a database screening step. Final propulsion release requires measured thrust/power/thermal data at the selected voltage and propeller.",
-    "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power."
+    "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power.",
+    "Aircraft bus ceiling is 48.0 V (fuel-cell max); hardware bus_max is capped accordingly (not 12S\u00d74.2=50.4 V)."
   ]
 }

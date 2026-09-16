@@ -5,7 +5,15 @@ from pathlib import Path
 from typing import Any, Dict, Mapping, Type, TypeVar
 import json
 
-from .hybrid_power import BatteryConfig, EMSConfig, FuelCellConfig, HydrogenConfig, HybridPowerConfig, RequirementConfig
+from .hybrid_power import (
+    BatteryConfig,
+    EMSConfig,
+    FuelCellConfig,
+    HydrogenConfig,
+    HybridPowerConfig,
+    RequirementConfig,
+    enforce_bus_voltage_ceiling_on_mapping,
+)
 from .design_coupling import resolve_design_couplings
 from .user_inputs import load_user_input_config
 
@@ -18,17 +26,23 @@ def _strict_dataclass(cls: Type[T], raw: Mapping[str, Any]) -> T:
     return cls(**dict(raw))
 
 def hybrid_config_from_mapping(raw: Mapping[str,Any]) -> HybridPowerConfig:
-    allowed={"fuel_cell","hydrogen","battery","ems","requirements","model_version","metadata"}
+    allowed={"fuel_cell","hydrogen","battery","ems","requirements","model_version","metadata","aircraft_bus_voltage_ceiling_V"}
     unknown=sorted(set(raw)-allowed)
     if unknown: raise ValueError("Unknown hybrid-power config key(s): "+", ".join(unknown))
+    # Clamp pack charge/OCV to the fuel-cell bus ceiling before constructing dataclasses.
+    raw = enforce_bus_voltage_ceiling_on_mapping(deepcopy(dict(raw)))
     # Hydrogen may carry datasheet metadata (model, thread, …); keep only HydrogenConfig fields.
     h_raw = dict(raw.get("hydrogen", {}) or {})
     h_valid = {f.name for f in fields(HydrogenConfig)}
     h_cfg = {k: v for k, v in h_raw.items() if k in h_valid}
+    # Battery mapping may include non-dataclass bookkeeping keys; keep only BatteryConfig fields.
+    b_raw = dict(raw.get("battery", {}) or {})
+    b_valid = {f.name for f in fields(BatteryConfig)}
+    b_cfg = {k: v for k, v in b_raw.items() if k in b_valid}
     return HybridPowerConfig(
         fuel_cell=_strict_dataclass(FuelCellConfig,raw.get("fuel_cell",{})),
         hydrogen=_strict_dataclass(HydrogenConfig,h_cfg),
-        battery=_strict_dataclass(BatteryConfig,raw.get("battery",{})),
+        battery=_strict_dataclass(BatteryConfig,b_cfg),
         ems=_strict_dataclass(EMSConfig,raw.get("ems",{})),
         requirements=_strict_dataclass(RequirementConfig,raw.get("requirements",{})),
         model_version=str(raw.get("model_version","H2AIR-integrated-power")),

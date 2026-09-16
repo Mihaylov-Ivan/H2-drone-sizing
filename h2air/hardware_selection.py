@@ -42,8 +42,33 @@ def select_hardware(user: Mapping[str,Any], *, root: Path) -> Dict[str,Any]:
     mode=str(hs.get('mode','auto')).lower()
     hard=hs.get('hardcoded',{})
     crit=hs.get('auto_criteria',{})
-    nominal_cell=float(crit.get('nominal_cell_voltage_V',3.7)); max_cell=float(crit.get('maximum_cell_voltage_V',4.2))
-    s=int(crit.get('series_cells',12)); bus_nom=s*nominal_cell; bus_max=s*max_cell
+    nominal_cell=float(crit.get('nominal_cell_voltage_V',3.7))
+    max_cell=float(crit.get('maximum_cell_voltage_V',4.0))
+    s=int(crit.get('series_cells',12))
+    # Direct-bus architecture is limited by the fuel-cell max (IE-SOAR 48 V).
+    # Prefer explicit criteria, else FC rating from the user file, else 48 V.
+    fc_max = None
+    hw = user.get('hardware') or {}
+    if isinstance(hw, Mapping) and isinstance(hw.get('fuel_cell'), Mapping):
+        fc_max = hw['fuel_cell'].get('output_voltage_max_V')
+    if fc_max is None and isinstance(user.get('power_system'), Mapping):
+        fc = user['power_system'].get('fuel_cell') or {}
+        if isinstance(fc, Mapping):
+            fc_max = fc.get('output_voltage_max_V')
+    configured_ceiling = crit.get('bus_voltage_ceiling_V')
+    bus_ceiling = float(configured_ceiling if configured_ceiling is not None else (fc_max if fc_max is not None else 48.0))
+    if fc_max is not None:
+        bus_ceiling = min(bus_ceiling, float(fc_max))
+    # Never screen above the architecture bus ceiling (not 12S×4.2 = 50.4 V).
+    max_cell = min(max_cell, bus_ceiling / float(s))
+    bus_nom=s*nominal_cell
+    bus_max=min(s*max_cell, bus_ceiling)
+    if bus_nom > bus_ceiling + 1e-9:
+        raise ValueError(
+            f"Battery nominal bus {bus_nom:.1f} V exceeds aircraft bus ceiling {bus_ceiling:.1f} V"
+        )
+    if bus_max > bus_ceiling + 1e-9:
+        bus_max = bus_ceiling
     n_lift=int(crit.get('number_of_lift_motors',4))
     thrust_factor=float(crit.get('lift_total_thrust_factor_at_mtow_ceiling',1.5))
     climb_factor=float(crit.get('lift_climb_thrust_factor',1.08))
@@ -109,9 +134,14 @@ def select_hardware(user: Mapping[str,Any], *, root: Path) -> Dict[str,Any]:
     required_current=current_margin*total_peak/bus_nom
     return {
         'mode':mode,'bus_nominal_voltage_V':bus_nom,'bus_max_voltage_V':bus_max,
+        'bus_voltage_ceiling_V':bus_ceiling,
         'requirements':{'lift_thrust_per_motor_N':required_lift,'minimum_pusher_power_W':pusher_req,'minimum_battery_capacity_Ah':min_capacity,'battery_screen_current_A':required_current},
         'selected_lift_combo':lift,'selected_pusher_combo':push,'selected_battery':bat,
-        'notes':['AUTO selection is a database screening step. Final propulsion release requires measured thrust/power/thermal data at the selected voltage and propeller.','Battery current screen conservatively assumes simultaneous maximum lift + pusher database power.'],
+        'notes':[
+            'AUTO selection is a database screening step. Final propulsion release requires measured thrust/power/thermal data at the selected voltage and propeller.',
+            'Battery current screen conservatively assumes simultaneous maximum lift + pusher database power.',
+            f'Aircraft bus ceiling is {bus_ceiling:.1f} V (fuel-cell max); hardware bus_max is capped accordingly (not 12S×4.2=50.4 V).',
+        ],
     }
 
 
