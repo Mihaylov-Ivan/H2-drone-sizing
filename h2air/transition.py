@@ -167,7 +167,11 @@ def _wing_aero(
     cl_alpha = float(aero5["CL_alpha_per_rad"])
     alpha0 = radians(float(aero5["zero_lift_alpha_deg"]))
     cl_min = float(aero5["CL_min"])
-    cl_max = float(aero5["CL_max"])
+    cl_max = float(aero5["CL_max"]) + float(
+        aero5.get("transition_CLmax_increment")
+        or cfg4.get("aircraft", {}).get("transition_CLmax_increment", 0.0)
+        or 0.0
+    )
     polar_point = None
     if aero5.get("polar_rows"):
         polar_point = interpolate_polar(aero5["polar_rows"], alpha * 180.0 / pi)

@@ -68,6 +68,23 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
         ps=mw.get('primary_spar',{})
         layout_od=float(gm.get('wing_primary_spar_layout_od_m', ps.get('design_tube_od_m', ps.get('reference_tube_od_m', ps.get('tube_od_m', wsec['od_m'])))))
         out.append(_param('wing_primary_spar_layout_OD',_mm(layout_od)))
+        step=(cfg.get('structures') or {}).get('structure',{}).get('stepped_wing_primary_spar') or {}
+        if bool(ps.get('stepped')) or bool(step.get('enabled')):
+            inb=ps.get('inboard') or {}
+            outb=ps.get('outboard') or {}
+            in_od=float(inb.get('design_tube_od_m', step.get('inboard_od_m', layout_od)))
+            in_id=float(inb.get('design_tube_id_m', step.get('inboard_id_m', 0.75*in_od)))
+            out_od=float(outb.get('design_tube_od_m', step.get('outboard_od_m', 0.016)))
+            out_id=float(outb.get('design_tube_id_m', step.get('outboard_id_m', 0.75*out_od)))
+            frac=float(ps.get('joiner_span_fraction', step.get('joiner_span_fraction', 0.45)))
+            out += [
+                _param('wing_spar_inboard_OD',_mm(in_od)),
+                _param('wing_spar_inboard_ID',_mm(in_id)),
+                _param('wing_spar_outboard_OD',_mm(out_od)),
+                _param('wing_spar_outboard_ID',_mm(out_id)),
+                _param('wing_spar_joiner_station_y',_mm(0.5*frac*b)),
+                _param('wing_spar_joiner_span_fraction',frac,'unitless'),
+            ]
     longr=mm.get('fuselage_longerons',{})
     if longr:
         out += [

@@ -67,7 +67,7 @@ def ceil_even_mm(value_mm: float) -> int:
     return int(ceil(v / 2.0) * 2)
 
 
-def _tube_mm_pair(spec: Mapping[str, Any], *, require_id: bool) -> tuple[float, float | None]:
+def _tube_mm_pair(spec: Mapping[str, Any], *, require_id: bool, require_even_id: bool = True) -> tuple[float, float | None]:
     od = float(spec["od_mm"])
     if od <= 0:
         raise ValueError("carbon_fiber_tubes od_mm must be > 0")
@@ -81,7 +81,7 @@ def _tube_mm_pair(spec: Mapping[str, Any], *, require_id: bool) -> tuple[float, 
     idv = float(id_mm)
     if idv <= 0 or idv >= od:
         raise ValueError(f"carbon_fiber_tubes id_mm must satisfy 0 < id < od, got od={od} id={idv}")
-    if idv != float(ceil_even_mm(idv)):
+    if require_even_id and idv != float(ceil_even_mm(idv)):
         raise ValueError(f"carbon_fiber_tubes id_mm must be an even integer mm, got {idv}")
     return od * 1e-3, idv * 1e-3
 
@@ -97,7 +97,13 @@ def apply_carbon_fiber_tubes(cfg: Dict[str, Any], tubes: Mapping[str, Any]) -> N
         st["recommended_sections_mode"] = "auto"
         return
 
-    wing_od, wing_id = _tube_mm_pair(tubes["main_wing_primary_spar"], require_id=True)
+    wing_spec = tubes["main_wing_primary_spar"]
+    stepped = bool(wing_spec.get("stepped"))
+    # Root bending screen uses the inboard section; flat od/id is accepted as inboard.
+    root_spec = wing_spec.get("inboard") if stepped and isinstance(wing_spec.get("inboard"), Mapping) else wing_spec
+    if stepped and not isinstance(wing_spec.get("inboard"), Mapping) and wing_spec.get("od_mm") is not None:
+        root_spec = wing_spec
+    wing_od, wing_id = _tube_mm_pair(root_spec, require_id=True, require_even_id=not stepped)
     boom_od, boom_id = _tube_mm_pair(tubes["boom_tubes"], require_id=True)
     ht_od, ht_id = _tube_mm_pair(tubes["horizontal_tail_primary_spar"], require_id=True)
     vt_od, vt_id = _tube_mm_pair(tubes["vertical_tail_primary_spar"], require_id=True)
@@ -122,8 +128,42 @@ def apply_carbon_fiber_tubes(cfg: Dict[str, Any], tubes: Mapping[str, Any]) -> N
     mm = cfg["manufacturing_mass_model"]
     # Primary spars: keep reference_* as mass-calibration sections; CAD/layout OD
     # comes from structures hardcoded recommended + design coupling.
-    mm["main_wing"]["primary_spar"]["design_tube_od_m"] = wing_od
-    mm["main_wing"]["primary_spar"]["design_tube_id_m"] = wing_id
+    ps = mm["main_wing"]["primary_spar"]
+    ps["design_tube_od_m"] = wing_od
+    ps["design_tube_id_m"] = wing_id
+    if stepped:
+        inb_spec = wing_spec.get("inboard") if isinstance(wing_spec.get("inboard"), Mapping) else root_spec
+        out_spec = wing_spec.get("outboard")
+        if not isinstance(out_spec, Mapping):
+            raise ValueError("stepped main_wing_primary_spar requires outboard {od_mm,id_mm}")
+        in_od, in_id = _tube_mm_pair(inb_spec, require_id=True, require_even_id=False)
+        out_od, out_id = _tube_mm_pair(out_spec, require_id=True, require_even_id=False)
+        assert in_id is not None and out_id is not None
+        ps["stepped"] = True
+        ps["joiner_span_fraction"] = float(wing_spec.get("joiner_span_fraction", 0.45))
+        ps["joiner_mass_kg_each"] = float(wing_spec.get("joiner_mass_kg_each", 0.06))
+        ps["inboard"] = {"design_tube_od_m": in_od, "design_tube_id_m": in_id, "od_mm": float(inb_spec["od_mm"]), "id_mm": float(inb_spec["id_mm"])}
+        ps["outboard"] = {"design_tube_od_m": out_od, "design_tube_id_m": out_id, "od_mm": float(out_spec["od_mm"]), "id_mm": float(out_spec["id_mm"])}
+        st["stepped_wing_primary_spar"] = {
+            "enabled": True,
+            "joiner_span_fraction": ps["joiner_span_fraction"],
+            "inboard_od_m": in_od,
+            "inboard_id_m": in_id,
+            "outboard_od_m": out_od,
+            "outboard_id_m": out_id,
+            "joiner_mass_kg_each": ps["joiner_mass_kg_each"],
+        }
+        # Flat root OD/ID for structures screen / backward compat.
+        if wing_spec.get("od_mm") is None:
+            tubes = dict(tubes)
+            cfg["carbon_fiber_tubes"]["main_wing_primary_spar"] = {
+                **deepcopy(wing_spec),
+                "od_mm": float(inb_spec["od_mm"]),
+                "id_mm": float(inb_spec["id_mm"]),
+            }
+    else:
+        ps.pop("stepped", None)
+        st.pop("stepped_wing_primary_spar", None)
     mm["horizontal_tail"]["primary_spar"]["design_tube_od_m"] = ht_od
     mm["horizontal_tail"]["primary_spar"]["design_tube_id_m"] = ht_id
     mm["vertical_tail"]["primary_spar"]["design_tube_od_m"] = vt_od
@@ -322,7 +362,11 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     vtail_airfoil = _resolve_surface_airfoil(vtail, airfoil_db, root=root)
     main_clmax = float(main_airfoil["CLmax_used"])
     d["wing_CLmax"] = main_clmax
+    d["transition_CLmax_increment"] = float(main.get("transition_CLmax_increment", u.get("transition_CLmax_increment", 0.08)))
     cfg["aero_propulsion"]["aircraft"]["stall_model"] = "direct_CLmax"
+    cfg["aero_propulsion"]["aircraft"]["transition_CLmax_increment"] = d["transition_CLmax_increment"]
+    cfg["transition_mission"]["aerodynamics"]["transition_CLmax_increment"] = d["transition_CLmax_increment"]
+    cfg["transition_mission"]["aerodynamics"]["CL_max"] = main_clmax
     d["main_wing_root_chord_m"] = float(main["root_chord_m"])
     d["main_wing_taper_ratio"] = float(main["taper_ratio"])
     d["main_wing_naca_code"] = str(main["naca_code"])

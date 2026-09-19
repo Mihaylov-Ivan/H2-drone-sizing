@@ -160,12 +160,34 @@ def apply_high_wing_spar_stack(
     motor_len = float(lift_hw.get("motor_length_m") or 0.0)
     if motor_len <= 0.0:
         motor_len = 0.03
-    z_disk = wing_upper + clear_wing
-    z_on_boom = wing_z + 0.5 * boom_od + 0.5 * motor_len
-    z_motor = max(z_disk - 0.5 * motor_len, z_on_boom)
-    lay["z_m"] = z_motor
-    geom["lift_prop_disk_z_m"] = z_motor + 0.5 * motor_len
-    geom["lift_prop_wing_clearance_m"] = float(geom["lift_prop_disk_z_m"]) - wing_upper
+    mount_side = str(
+        d.get("lift_prop_mount_side")
+        or lay.get("lift_prop_mount_side")
+        or "under"
+    ).lower().strip()
+    if mount_side not in {"under", "above"}:
+        mount_side = "under"
+    if mount_side == "under":
+        z_disk = wing_lower - clear_wing
+        z_on_boom = wing_z - 0.5 * boom_od - 0.5 * motor_len
+        z_motor = min(z_disk + 0.5 * motor_len, z_on_boom)
+        disk_z = z_motor - 0.5 * motor_len
+        clearance = wing_lower - disk_z
+        lay["z_m"] = z_motor
+        geom["lift_prop_disk_z_m"] = disk_z
+        geom["lift_prop_wing_clearance_m"] = clearance
+        d["rear_thrust_recovery_factor"] = float(d.get("rear_thrust_recovery_factor", 1.15))
+    else:
+        z_disk = wing_upper + clear_wing
+        z_on_boom = wing_z + 0.5 * boom_od + 0.5 * motor_len
+        z_motor = max(z_disk - 0.5 * motor_len, z_on_boom)
+        lay["z_m"] = z_motor
+        geom["lift_prop_disk_z_m"] = z_motor + 0.5 * motor_len
+        geom["lift_prop_wing_clearance_m"] = float(geom["lift_prop_disk_z_m"]) - wing_upper
+        d.setdefault("rear_thrust_recovery_factor", 1.0)
+    geom["lift_prop_mount_side"] = mount_side
+    lay["lift_prop_mount_side"] = mount_side
+    d["lift_prop_mount_side"] = mount_side
 
     # Refresh already-placed lift-motor stations if present.
     centers = geom.get("lift_prop_centers_m")
@@ -338,7 +360,7 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     # Layout architecture (high-wing twin-boom):
     #   • boom tubes pass through the main wing at wing z
     #   • HT is high-mounted on the same z-plane as the main wing
-    #   • lift motors sit on the boom tubes above the wing with disk clearance
+    #   • lift motors sit on the boom tubes under the wing with disk clearance
     #   • boom spacing widens if disk-to-pod clearance requires it
     #   • HT span grows with boom spacing when fins sit on the boom tips
     #   • cruise pusher mounts on the fuselage aft bulkhead
@@ -385,13 +407,35 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
     z_longeron_bot = float(geom["fuselage_longeron_bottom_z_m"])
     boss_od = float(geom["fuselage_longeron_boss_od_m"])
 
-    # Prop disk above wing upper surface + clearance; motor stack on the boom.
-    z_disk = wing_upper + clear_wing
-    z_on_boom = boom_z + 0.5 * boom_od + 0.5 * motor_len
-    z = max(z_disk - 0.5 * motor_len, z_on_boom)
-    lay["z_m"] = z
-    geom["lift_prop_disk_z_m"] = z + 0.5 * motor_len
-    geom["lift_prop_wing_clearance_m"] = float(geom["lift_prop_disk_z_m"]) - wing_upper
+    # Prop disk under the boom/wing (default) or above wing upper surface + clearance.
+    mount_side = str(
+        d.get("lift_prop_mount_side")
+        or lay.get("lift_prop_mount_side")
+        or "under"
+    ).lower().strip()
+    if mount_side not in {"under", "above"}:
+        mount_side = "under"
+    wing_lower = float(geom.get("wing_lower_z_m", wing_z - 0.5 * wing_th))
+    if mount_side == "under":
+        z_disk = wing_lower - clear_wing
+        z_on_boom = boom_z - 0.5 * boom_od - 0.5 * motor_len
+        z = min(z_disk + 0.5 * motor_len, z_on_boom)
+        disk_z = z - 0.5 * motor_len
+        lay["z_m"] = z
+        geom["lift_prop_disk_z_m"] = disk_z
+        geom["lift_prop_wing_clearance_m"] = wing_lower - disk_z
+        d["rear_thrust_recovery_factor"] = float(d.get("rear_thrust_recovery_factor", 1.15))
+    else:
+        z_disk = wing_upper + clear_wing
+        z_on_boom = boom_z + 0.5 * boom_od + 0.5 * motor_len
+        z = max(z_disk - 0.5 * motor_len, z_on_boom)
+        lay["z_m"] = z
+        geom["lift_prop_disk_z_m"] = z + 0.5 * motor_len
+        geom["lift_prop_wing_clearance_m"] = float(geom["lift_prop_disk_z_m"]) - wing_upper
+        d.setdefault("rear_thrust_recovery_factor", 1.0)
+    geom["lift_prop_mount_side"] = mount_side
+    lay["lift_prop_mount_side"] = mount_side
+    d["lift_prop_mount_side"] = mount_side
 
     # Twin-fin / HT layout: horizontal-tail span must reach the boom stations.
     ht_span_in = float(d.get("horizontal_tail_span_m", 2.0 * y))
@@ -502,8 +546,8 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
             "Neutral-point and geometry mass scaling are screening relations calibrated to the accessible baseline. "
             "High-wing layout: fuselage longerons are top+bottom on the centreline; wing Z is auto-set so the "
             "TOP longeron boss sits just above the mid-wing primary spar (wing top flush-or-below the fuselage crown); "
-            "twin booms pass through the wing; HT shares the wing waterline; lift motors sit on the boom tubes with "
-            "prop-disk clearance above the wing; boom/HT spacing widens only if disk-to-pod clearance requires it. "
+            "twin booms pass through the wing; HT shares the wing waterline; lift motors sit on the boom tubes under "
+            "the boom/wing with prop-disk clearance; boom/HT spacing widens only if disk-to-pod clearance requires it. "
             "Cruise pusher mounts on the fuselage aft bulkhead. "
             "Replace with AVL/CFD/CAD/test correlations before design freeze."
         ),

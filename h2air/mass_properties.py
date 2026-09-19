@@ -18,6 +18,7 @@ screening PASS cannot be mistaken for hardware release evidence.
 """
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from math import hypot, sqrt
@@ -924,3 +925,48 @@ def build_phase3_result(
 
 # Clean integrated API alias; legacy development name retained for compatibility.
 build_mass_geometry_result = build_phase3_result
+
+
+_GROWTH_1P05 = frozenset({
+    "engineering_assumption", "calculated", "derived", "preliminary_target",
+    "legacy_placeholder", "open", "project_calibrated_placeholder",
+})
+_GROWTH_1P01 = frozenset({
+    "supplier_confirmed", "measured", "database", "certified",
+    "user_supplied_representative", "user_supplied_analysis_data",
+})
+
+
+_GROWTH_SKIP = frozenset({
+    "payload", "stored_hydrogen",
+})
+
+
+def apply_growth_margins(components: Sequence[Component]) -> list[Component]:
+    """Apply screening growth factors by evidence status.
+
+    * 1.05 for engineering_assumption / calculated / similar estimated statuses
+    * 1.01 for database / certified / supplier / measured statuses
+    * no growth on mission-specified payload / stored H2
+    """
+    out = deepcopy(list(components))
+    for c in out:
+        if str(c.name) in _GROWTH_SKIP or str(c.group) == "payload":
+            continue
+        st = str(c.status or "").lower().strip()
+        if st in _GROWTH_1P01 or "supplier" in st or "certified" in st or "database" in st or "measured" in st:
+            factor = 1.01
+        elif st in _GROWTH_1P05 or not st:
+            factor = 1.05
+        else:
+            factor = 1.05
+        c.mass_takeoff_kg = float(c.mass_takeoff_kg) * factor
+        if c.mass_end_kg is not None:
+            c.mass_end_kg = float(c.mass_end_kg) * factor
+        else:
+            c.mass_end_kg = c.mass_takeoff_kg
+        note = (c.note or "").strip()
+        tag = f"growth_margin x{factor:.2f}"
+        c.note = f"{note}; {tag}" if note else tag
+    return out
+

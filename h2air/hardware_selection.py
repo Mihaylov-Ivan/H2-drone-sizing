@@ -104,9 +104,17 @@ def select_hardware(user: Mapping[str,Any], *, root: Path) -> Dict[str,Any]:
             r=dict(r0)
             if not _role_ok(r,'pusher') or not _compatible_voltage(r,bus_nom,bus_max): continue
             if float(r['max_power_W'])+1e-9<pusher_req: continue
+            kv=float(r.get('motor_kv') or 0.0)
+            prop_d=float(r['prop_diameter_in'])
+            # Prefer cruise-efficient Kv ~150-180 and prop diameter ~17-18 in when auto.
+            kv_pen=0.0
+            if kv>0:
+                if 150.0<=kv<=180.0: kv_pen=-0.35
+                else: kv_pen=0.02*abs(kv-165.0)
+            prop_pen=0.02*abs(prop_d-17.5)
             m=float(r['motor_mass_kg'])+float(r['prop_mass_kg'])
             margin=float(r['max_power_W'])/pusher_req
-            score=5*m + 0.00015*float(r['max_power_W']) - 0.1*min(margin,1.5) + 0.01*float(r['prop_diameter_in'])
+            score=5*m + 0.00015*float(r['max_power_W']) - 0.1*min(margin,1.5) + prop_pen + kv_pen
             push_c.append((score,r))
         if not push_c: raise ValueError(f"No AUTO pusher combo meets {pusher_req:.0f} W at 12S-class voltage")
         push=min(push_c,key=lambda x:x[0])[1]

@@ -8,8 +8,8 @@ import numpy as np
 from .design_coupling import apply_high_wing_spar_stack, resolve_design_couplings
 from .config import hybrid_config_from_mapping
 from .hybrid_power import HybridPowerSystem, reference_sources
-from .mass_properties import component_from_mapping, build_mass_geometry_result
-from .manufacturing_mass import apply_manufacturing_mass_model, apply_structural_mass_updates
+from .mass_properties import component_from_mapping, build_mass_geometry_result, apply_growth_margins
+from .manufacturing_mass import apply_manufacturing_mass_model, apply_structural_mass_updates, check_manufacturing_ledger_consistency
 from .landing_legs import sync_landing_legs_drag
 from .aero_propulsion import cruise_drag, lift_layout, lift_system_sizing, minimum_wing_area_for_stall_margin
 from .transition import simulate_forward_transition, simulate_reverse_transition
@@ -53,6 +53,8 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
         "phase3_screening_mtow_kg":mass,"mtow_ceiling_kg":float(d["mtow_ceiling_kg"]),
         "wing_area_m2":float(d["wing_area_m2"]),"wing_span_m":float(d["wing_span_m"]),"wing_MAC_m":float(d["wing_mac_m"]),
         "wing_CLmax":float(d["wing_CLmax"]),"cruise_speed_mps":float(d["cruise_speed_mps"]),
+        "transition_CLmax_increment":float(d.get("transition_CLmax_increment",0.0)),
+        "pusher_propeller_diameter_in":float(d.get("pusher_propeller_diameter_in",18.0)),
     })
     main_af=cfg.get("airfoil_model",{}).get("main_wing",{})
     if main_af.get("polar_rows"):
@@ -77,6 +79,9 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
             "inertia_tensor_kgm2":[[mp.Ixx_kgm2,-mp.Ixy_kgm2,-mp.Ixz_kgm2],[-mp.Ixy_kgm2,mp.Iyy_kgm2,-mp.Iyz_kgm2],[-mp.Ixz_kgm2,-mp.Iyz_kgm2,mp.Izz_kgm2]],
         })
     s6["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
+    t["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
+    t["aerodynamics"]["transition_CLmax_increment"]=float(d.get("transition_CLmax_increment",0.0))
+    a["aircraft"]["transition_CLmax_increment"]=float(d.get("transition_CLmax_increment",0.0))
     s6["lift_system"].update({"max_thrust_per_motor_N":float(d["lift_motor_available_thrust_per_motor_N"]),"propeller_diameter_in":float(d["lift_propeller_diameter_in"])})
     s6["pusher"].update({"propeller_diameter_in":float(d["pusher_propeller_diameter_in"]),"max_electrical_power_W":float(d["pusher_max_electrical_power_W"])})
     return a,t,s6,st
@@ -123,6 +128,10 @@ def _components_with_power(cfg:Mapping[str,Any]):
     comps, manufacturing_ledger = apply_manufacturing_mass_model(cfg, comps)
     if isinstance(cfg, dict):
         cfg.setdefault("_runtime", {})["manufacturing_mass_ledger"] = manufacturing_ledger
+        if manufacturing_ledger:
+            ok, delta, msg = check_manufacturing_ledger_consistency(comps, manufacturing_ledger)
+            cfg["_runtime"]["manufacturing_ledger_consistency"] = {"ok": ok, "delta_kg": delta, "message": msg}
+    comps = apply_growth_margins(comps)
     return comps
 
 def _mass_result(cfg, comps):
@@ -251,6 +260,22 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
 
     total_design=4*float(lift_ceiling.design_thrust_per_motor_N);front_each,rear_each=_zero_pitch_pair(total_design,rows_x[0],rows_x[1],mass_final.takeoff.cg_m[0])
     post_static_margin=(float(d["neutral_point_station_x_m"])-mass_final.takeoff.cg_m[0])/float(d["wing_mac_m"])
+    rear_recovery=float(d.get("rear_thrust_recovery_factor", 1.0))
+    if str(d.get("lift_prop_mount_side", "under")).lower() == "under" and rear_recovery < 1.0 + 1e-12:
+        rear_recovery = 1.15
+        d["rear_thrust_recovery_factor"] = rear_recovery
+    avail_thrust=float(d["lift_motor_available_thrust_per_motor_N"])
+    rear_avail=avail_thrust*rear_recovery
+
+    # Payload-off CG / static-margin gate.
+    payload_off_comps=deepcopy(comps)
+    for c in payload_off_comps:
+        if c.name=="payload" or c.group=="payload":
+            c.mass_takeoff_kg=0.0
+            c.mass_end_kg=0.0
+    mass_payload_off=_mass_result(cfg,payload_off_comps)
+    sm_payload_off=(float(d["neutral_point_station_x_m"])-mass_payload_off.takeoff.cg_m[0])/float(d["wing_mac_m"])
+    min_sm=float(six_cfg["gates"]["minimum_static_margin"])
 
     gates=[]
     def gate(name,status,note):gates.append({"name":name,"status":status,"note":note})
@@ -265,10 +290,11 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("mission_ems","PASS" if ems.feasible else "FAIL","Dynamic mission profile through hybrid H2/battery EMS.")
     gate("transition","PASS" if mission["forward_transition"].success and mission["reverse_transition"].success else "FAIL","Forward and reverse point-mass transition completion on closed mass.")
     gate("current_longitudinal_stability","PASS" if current_model.static_margin>=float(six_cfg["gates"]["minimum_static_margin"]) else "FAIL",f"Closed-aircraft static margin {100*current_model.static_margin:.2f}% MAC.")
+    gate("payload_off_static_margin","PASS" if sm_payload_off>=min_sm else "FAIL",f"Payload-off static margin {100*sm_payload_off:.2f}% MAC (CG x={mass_payload_off.takeoff.cg_m[0]:.4f} m) vs minimum {100*min_sm:.1f}% MAC.")
     gate("current_layout_6dof","PASS" if control_cases["current_layout"]["gate_evaluation"]["pass"] else "FAIL","Actual closed geometry/control 6-DOF gate set.")
     gate("sixdof_linear_aero_validity",control_cases["current_layout"]["linear_aero_validity"]["status"],control_cases["current_layout"]["linear_aero_validity"]["note"]+f" Maximum |alpha| above 10 m/s = {control_cases["current_layout"]["linear_aero_validity"]["maximum_abs_alpha_above_10mps_deg"]:.1f} deg.")
     gate("stability_screen_6dof","PASS" if control_cases["stability_screen"]["gate_evaluation"]["pass"] else "FAIL",f"Explicit +{100*float(d['stability_screen_static_margin']):.0f}% SM reference screen.")
-    gate("15kg_zero_pitch_motor_thrust","PASS" if max(front_each,rear_each)<=float(d["lift_motor_available_thrust_per_motor_N"]) else "FAIL",f"Front/rear requirement {front_each:.1f}/{rear_each:.1f} N vs {float(d['lift_motor_available_thrust_per_motor_N']):.1f} N available screen.")
+    gate("15kg_zero_pitch_motor_thrust","PASS" if front_each<=avail_thrust+1e-9 and rear_each<=rear_avail+1e-9 else "FAIL",f"Front/rear requirement {front_each:.1f}/{rear_each:.1f} N vs available {avail_thrust:.1f}/{rear_avail:.1f} N (rear recovery x{rear_recovery:.2f}).")
     gate("recommended_structure_screen","PASS" if recommended_structure_screen_pass(structure["gates"]) else "FAIL","Recommended structural member screens. Audit reference/current/legacy sections and the legacy partial-feedback mass gate are excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.")
     gate("motor_mount","NOT_EVALUATED","Controlled mount CAD, fasteners and material allowables are still required.")
     selected_battery=cfg.get("hardware_selection_result",{}).get("selected_battery",{})
@@ -279,9 +305,18 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("certified_hydrogen_cylinder_mass","PASS" if cylinder_known else "NOT_EVALUATED",
          "Certified cylinder mass is present." if cylinder_known else "Selected certified 3.0 L / 300 bar cylinder mass remains open and is not released.")
     hard=[g for g in gates if g["status"]=="FAIL"]
-    status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","fuel_cell_cooling_geometry","current_longitudinal_stability","15kg_zero_pitch_motor_thrust","15kg_stall_margin"} for g in hard) else "SCREENING_FAIL")
+    status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","fuel_cell_cooling_geometry","current_longitudinal_stability","payload_off_static_margin","15kg_zero_pitch_motor_thrust","15kg_stall_margin"} for g in hard) else "SCREENING_FAIL")
 
-    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
+    usable_h2_Wh=float(ems.summary.get("fc_operational_energy_remaining_Wh", 0.0) or 0.0)
+    # Prefer total operational usable energy from hydrogen config when remaining is mid-mission.
+    try:
+        usable_h2_Wh=float(power_cfg.hydrogen.operational_net_energy_Wh)
+    except Exception:
+        pass
+    cruise_bus_W=float(drag.total_cruise_bus_power_W)
+    endurance_at_cruise_h=(usable_h2_Wh/cruise_bus_W) if cruise_bus_W>1e-9 else float("nan")
+
+    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"payload_off_static_margin":sm_payload_off,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"endurance_at_cruise_h":endurance_at_cruise_h,"usable_h2_Wh":usable_h2_Wh,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"rear_thrust_recovery_factor":rear_recovery,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
 
     # Top-level: summary + configs. Supporting artifacts live under details/.
     details = out / "details"

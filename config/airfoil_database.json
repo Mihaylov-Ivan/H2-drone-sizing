@@ -21,5 +21,15 @@
     "status": "project_calibrated_placeholder",
     "note": "Temporarily set equal to the current H2AIR CLmax=1.185 to preserve model continuity. Replace with Reynolds-specific XFOIL/CFD/test polar before design freeze.",
     "polar_file": null
+  },
+  "NACA6415": {
+    "polar_file": "data/airfoils/NACA6415_Re200000_XFOIL.csv",
+    "reynolds_number": 200000,
+    "thickness_fraction": 0.15,
+    "CLmax_screen": 1.37,
+    "alpha0_deg_screen": -5.0,
+    "Cm0_screen": -0.10,
+    "status": "engineering_assumption_xfoil_screen",
+    "note": "Screening polar approximating NACA 6415 at Re 2e5 (alpha0~-5, CLmax~1.55 in polar; CLmax_screen 1.37 for area sizing). Replace with measured/XFOIL at flight Reynolds before design freeze."
   }
 }

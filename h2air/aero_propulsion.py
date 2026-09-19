@@ -201,6 +201,42 @@ def lift_prop_drag_CdA_each_m2(cfg: Mapping[str, Any], diameter_in: float, state
     return projected_area * float(ls["blade_section_CD"])
 
 
+def compute_cruise_propulsive_efficiency(
+    cfg: Mapping[str, Any],
+    *,
+    speed_mps: float,
+    required_thrust_N: float,
+    prop_diameter_in: Optional[float] = None,
+) -> float:
+    """Overall cruise propulsive efficiency (thrust×V / electrical), with reference fallback."""
+    ac = cfg["aircraft"]
+    ref = float(
+        ac.get(
+            "cruise_propulsive_efficiency_reference",
+            ac.get("reference_cruise_propulsive_efficiency", 0.66),
+        )
+    )
+    D = prop_diameter_in
+    if D is None:
+        D = ac.get("pusher_propeller_diameter_in")
+    if D is None:
+        D = (cfg.get("pusher_screen") or {}).get("reference_prop_diameter_in", 18.0)
+    try:
+        op = pusher_operating_point(
+            cfg,
+            prop_diameter_in=float(D),
+            speed_mps=float(speed_mps),
+            required_aircraft_thrust_N=float(required_thrust_N),
+        )
+        if op.feasible and op.electrical_power_W > EPS:
+            eta = float(required_thrust_N) * float(speed_mps) / float(op.electrical_power_W)
+            if eta > 0.05:
+                return min(eta, 0.95)
+    except Exception:
+        pass
+    return ref
+
+
 def cruise_drag(
     cfg: Mapping[str, Any],
     *,
@@ -266,7 +302,10 @@ def cruise_drag(
     W = mass_kg * G
     D_induced = k * W * W / max(q * S, EPS)
     D_total = D_other + D_props + D_induced
-    eta = float(ac["cruise_propulsive_efficiency_reference"])
+    eta = compute_cruise_propulsive_efficiency(
+        cfg, speed_mps=speed_mps, required_thrust_N=D_total,
+        prop_diameter_in=ac.get("pusher_propeller_diameter_in"),
+    )
     P_propulsive = D_total * speed_mps
     P_cruise = P_propulsive / max(eta, EPS)
     aux = float(ac.get("continuous_auxiliary_power_W", 0.0))
@@ -330,6 +369,8 @@ def minimum_wing_area_for_stall_margin(
     S_ref = float(ref.get("reference_wing_area_m2", cfg["aircraft"]["wing_area_m2"]))
     if str(cfg["aircraft"].get("stall_model", "calibrated_reference")) == "direct_CLmax":
         rho=float(cfg["atmosphere"]["rho_kg_m3"]); clmax=float(cfg["aircraft"]["wing_CLmax"])
+        # Transition / stall-margin screen may credit aileron droop increment.
+        clmax = clmax + float(cfg["aircraft"].get("transition_CLmax_increment", 0.0) or 0.0)
         S_req = 2.0*float(mass_kg)*G/max(rho*target_vstall*target_vstall*clmax,EPS)
     else:
         S_req = S_ref * (float(mass_kg) / float(ref["reference_mass_kg"])) * (float(ref["reference_wing_stall_speed_mps"]) / max(target_vstall, EPS)) ** 2

@@ -1,0 +1,70 @@
+name,group,mass_takeoff_kg,mass_end_kg,x_m,y_m,z_m,status,source
+lift_motor_mount_1,airframe,0.0543375,0.0543375,0.14986465095068602,-0.3739,0.07083930732488547,calculated,Current H2AIR wing motor-mount mass split
+lift_motor_mount_2,airframe,0.0543375,0.0543375,0.14986465095068602,0.3739,0.07083930732488547,calculated,Current H2AIR wing motor-mount mass split
+lift_motor_mount_3,airframe,0.0543375,0.0543375,0.728664650950686,-0.3739,0.07083930732488547,calculated,Current H2AIR wing motor-mount mass split
+lift_motor_mount_4,airframe,0.0543375,0.0543375,0.728664650950686,0.3739,0.07083930732488547,calculated,Current H2AIR wing motor-mount mass split
+boom_forward_mount_left,airframe,0.05775,0.05775,0.34,-0.35,0.0,calculated,Design input allowance
+boom_forward_mount_right,airframe,0.05775,0.05775,0.34,0.35,0.0,calculated,Design input allowance
+boom_tail_mount_left,airframe,0.036750000000000005,0.036750000000000005,1.1,-0.35,0.0,calculated,Design input allowance
+boom_tail_mount_right,airframe,0.036750000000000005,0.036750000000000005,1.1,0.35,0.0,calculated,Design input allowance
+tail_crossmember,airframe,0.084,0.084,1.1,0.0,0.0,calculated,Design input allowance
+payload,payload,1.2,,0.10350000000000001,0.0,-0.03300930732488546,preliminary_target,Latest IH-MIE application / current design input
+buffer_battery,energy,1.65034,1.65034,0.22150000000000003,0.0,0.06229069267511454,supplier_confirmed,Integrated power-system config
+fuel_cell_system,energy,1.104132,1.104132,0.25525000000000003,0.0,-0.03310930732488546,supplier_confirmed,FCPM stack mass (share of module_mass_kg)
+hydrogen_cylinder,energy,1.6362,1.6362,0.5930000000000001,0.0,-0.03550930732488546,supplier_confirmed,Integrated power-system config
+hydrogen_regulator,energy,0.31815,0.31815,0.24525000000000002,0.0,-0.03310930732488546,supplier_confirmed,Integrated power-system config
+stored_hydrogen,energy,0.0619,0.009284999999996595,0.5930000000000001,0.0,-0.03550930732488546,preliminary_target,Integrated power-system config
+lift_propulsion_1,propulsion,0.28684,0.28684,0.14986465095068602,-0.3739,0.07083930732488547,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+lift_propulsion_2,propulsion,0.28684,0.28684,0.14986465095068602,0.3739,0.07083930732488547,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+lift_propulsion_3,propulsion,0.28684,0.28684,0.728664650950686,-0.3739,0.07083930732488547,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+lift_propulsion_4,propulsion,0.28684,0.28684,0.728664650950686,0.3739,0.07083930732488547,supplier_confirmed_motor_and_bench_data_prop_mass_assumption,T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S
+cruise_propulsion,propulsion,0.23099999999999998,0.23099999999999998,0.8963500000000002,0.0,0.0,engineering_assumption_screening,Screening pusher combo: MN501S-class 160 kV with 18x10 on 12S; replace with measured forward-flight map.
+lift_ESC_1,avionics,0.07350000000000001,0.07350000000000001,0.14986465095068602,-0.3739,0.07083930732488547,calculated,Current ESC mass split
+lift_ESC_2,avionics,0.07350000000000001,0.07350000000000001,0.14986465095068602,0.3739,0.07083930732488547,calculated,Current ESC mass split
+lift_ESC_3,avionics,0.07350000000000001,0.07350000000000001,0.728664650950686,-0.3739,0.07083930732488547,calculated,Current ESC mass split
+lift_ESC_4,avionics,0.07350000000000001,0.07350000000000001,0.728664650950686,0.3739,0.07083930732488547,calculated,Current ESC mass split
+cruise_ESC,avionics,0.05607000000000001,0.05607000000000001,0.82,0.0,0.0,calculated,Current H2AIR model; physical dimensions open
+autopilot,avionics,0.07372999999999999,0.07372999999999999,0.08275,0.0,0.03249069267511454,supplier_confirmed,Cube Orange on carrier board outline (94.5 x 44.3 x 31 mm)
+gps,avionics,0.026250000000000002,0.026250000000000002,0.43,0.0,0.1,calculated,Current H2AIR avionics model
+airspeed_sensor,avionics,0.0231,0.0231,0.028,0.0,0.0,calculated,Current H2AIR avionics model
+rc_receiver,avionics,0.0105,0.0105,0.371,0.0,0.0,calculated,Current H2AIR avionics model
+telemetry,avionics,0.021,0.021,0.371,0.0,0.0,calculated,Current H2AIR avionics model
+power_module,avionics,0.0404,0.0404,0.5652,0.0,0.05854069267511454,supplier_confirmed,"Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
+servos,avionics,0.2625,0.2625,0.88,0.0,0.03,calculated,Current H2AIR avionics model
+misc_electronics,avionics,0.17388,0.17388,0.575,0.0,0.0,engineering_assumption,Current H2AIR lumped allowance
+camera,avionics,0.029400000000000003,0.029400000000000003,0.023,0.0,0.0,calculated,Current H2AIR avionics model
+wiring_harness_pdb,avionics,0.28875000000000006,0.28875000000000006,0.5,0.0,0.0,engineering_assumption,Screening wiring/PDB harness allowance (mid pod)
+h2_plumbing_mounts,energy,0.21000000000000002,0.21000000000000002,0.52,0.0,-0.02,engineering_assumption,H2 plumbing/mounts near cylinder (screening)
+wing_joiners_fasteners,wing_structure,0.2625,0.2625,0.405,0.0,0.1,engineering_assumption,Wing joiners/fasteners at wing AC (screening)
+fuel_cell_control_box,energy,0.360368,0.360368,0.4141,0.0,0.059365692675114545,supplier_confirmed,FCPM control-box mass (share of module_mass_kg)
+power_module_2,energy,0.0,0.0,0.6552000000000001,0.0,0.05854069267511454,supplier_confirmed,"Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
+fuselage_nose_shell,fuselage_structure,0.2058,0.2058,0.07,0.0,0.0,engineering_assumption,Updated printed fuselage nose kg/m
+fuselage_center_a_shell,fuselage_structure,0.29673000000000005,0.29673000000000005,0.25775000000000003,0.0,0.0,engineering_assumption,Updated printed fuselage center_a kg/m
+fuselage_center_b_shell,fuselage_structure,0.5416425000000001,0.5416425000000001,0.5474500000000001,0.0,0.0,engineering_assumption,Updated printed fuselage center_b kg/m
+fuselage_tail_shell,fuselage_structure,0.2058,0.2058,0.7894000000000001,0.0,0.0,engineering_assumption,Updated printed fuselage tail kg/m
+fuselage_longeron_top,fuselage_structure,0.0809786838,0.0809786838,0.4297000000000001,0.0,0.11000930732488547,engineering_assumption,Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; boss_od_m is the full-length 3D-printed sleeve/bedding OD around each tube (cabin keepout uses this). Wing Z references the TOP longeron sleeve.
+fuselage_longeron_bottom,fuselage_structure,0.0809786838,0.0809786838,0.4297000000000001,0.0,-0.11000930732488547,engineering_assumption,Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; boss_od_m is the full-length 3D-printed sleeve/bedding OD around each tube (cabin keepout uses this). Wing Z references the TOP longeron sleeve.
+main_wing_shell,wing_structure,2.3253552,2.3253552,0.5112140000000001,0.0,0.09536430732488546,engineering_assumption,Target ~2.2 kg printed wing shell at current span (2.2/3.516557 m)
+main_wing_primary_spar_inboard,wing_structure,0.3289823804028383,0.3289823804028383,0.4580000000000001,0.0,0.09536430732488546,engineering_assumption,kg/m calibrated at reference_tube_od_m (mass-scaling section only — not the recommended design spar OD); structural sizing scales mass by section area
+main_wing_primary_spar_outboard,wing_structure,0.15173191548977863,0.15173191548977863,0.4580000000000001,0.0,0.09536430732488546,engineering_assumption,kg/m calibrated at reference_tube_od_m (mass-scaling section only — not the recommended design spar OD); structural sizing scales mass by section area
+main_wing_spar_joiner_left,wing_structure,0.063,0.063,0.4580000000000001,-0.7965,0.09536430732488546,engineering_assumption,kg/m calibrated at reference_tube_od_m (mass-scaling section only — not the recommended design spar OD); structural sizing scales mass by section area
+main_wing_spar_joiner_right,wing_structure,0.063,0.063,0.4580000000000001,0.7965,0.09536430732488546,engineering_assumption,kg/m calibrated at reference_tube_od_m (mass-scaling section only — not the recommended design spar OD); structural sizing scales mass by section area
+main_wing_secondary_spar,wing_structure,0.18611019,0.18611019,0.564428,0.0,0.09536430732488546,engineering_assumption,COTS secondary spar OD (even mm); replace kg/m with supplier data
+horizontal_tail_shell,tail_structure,0.5679310693257167,0.5679310693257167,1.0444003919017097,0.0,0.09536430732488546,engineering_assumption,Target ~0.5 kg printed HT shell at current span (0.5/0.828897 m)
+horizontal_tail_primary_spar,tail_structure,0.04192829818484131,0.04192829818484131,1.0444003919017097,0.0,0.09536430732488546,engineering_assumption,kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section
+horizontal_tail_secondary_spar,tail_structure,0.007852362596446415,0.007852362596446415,1.1192898036664156,0.0,0.09536430732488546,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
+vertical_tail_left_shell,tail_structure,0.12933985764750774,0.12933985764750774,1.0519240323639938,-0.3739,0.2568070554338635,engineering_assumption,Target ~0.25 kg printed twin-fin shells at current height (0.25/(2*0.327641 m))
+vertical_tail_right_shell,tail_structure,0.12933985764750774,0.12933985764750774,1.0519240323639938,0.3739,0.2568070554338635,engineering_assumption,Target ~0.25 kg printed twin-fin shells at current height (0.25/(2*0.327641 m))
+vertical_tail_left_primary_spar,tail_structure,0.011742655154087556,0.011742655154087556,1.0519240323639938,-0.3739,0.2568070554338635,engineering_assumption,kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section
+vertical_tail_right_primary_spar,tail_structure,0.011742655154087556,0.011742655154087556,1.0519240323639938,0.3739,0.2568070554338635,engineering_assumption,kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section
+vertical_tail_left_secondary_spar,tail_structure,0.0020036659467805263,0.0020036659467805263,1.0519240323639938,-0.3739,0.2568070554338635,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
+vertical_tail_right_secondary_spar,tail_structure,0.0020036659467805263,0.0020036659467805263,1.0519240323639938,0.3739,0.2568070554338635,engineering_assumption,Secondary spar placeholder; replace with selected CFRP tube kg/m
+boom_tube_left,tail_structure,0.19745366407916698,0.19745366407916698,0.624932325475343,-0.3739,0.09536430732488546,engineering_assumption,kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m
+boom_tube_right,tail_structure,0.19745366407916698,0.19745366407916698,0.624932325475343,0.3739,0.09536430732488546,engineering_assumption,kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m
+landing_leg_nose_tube,landing_gear,0.004165988969299303,0.004165988969299303,0.07,0.0,-0.171285,engineering_assumption,Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS
+landing_leg_nose_sleeve,landing_gear,0.009068819525005288,0.009068819525005288,0.07,0.0,-0.171285,engineering_assumption,Tripod landing gear: 1 nose + 2 wing legs at boom/spar junction. CFRP tubes sized for 3g landing; 2 mm printed sleeve around each tube. Total landing-gear mass floored at 3% of mtow_ceiling.
+landing_leg_wing_left_tube,landing_gear,0.011271309616750129,0.011271309616750129,0.4580000000000001,-0.3739,-0.07359819267511453,engineering_assumption,Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS
+landing_leg_wing_left_sleeve,landing_gear,0.024536184199728178,0.024536184199728178,0.4580000000000001,-0.3739,-0.07359819267511453,engineering_assumption,Tripod landing gear: 1 nose + 2 wing legs at boom/spar junction. CFRP tubes sized for 3g landing; 2 mm printed sleeve around each tube. Total landing-gear mass floored at 3% of mtow_ceiling.
+landing_leg_wing_right_tube,landing_gear,0.011271309616750129,0.011271309616750129,0.4580000000000001,0.3739,-0.07359819267511453,engineering_assumption,Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS
+landing_leg_wing_right_sleeve,landing_gear,0.024536184199728178,0.024536184199728178,0.4580000000000001,0.3739,-0.07359819267511453,engineering_assumption,Tripod landing gear: 1 nose + 2 wing legs at boom/spar junction. CFRP tubes sized for 3g landing; 2 mm printed sleeve around each tube. Total landing-gear mass floored at 3% of mtow_ceiling.
+landing_gear_margin,landing_gear,0.3651502038727388,0.3651502038727388,0.458,0.0,-0.05463569267511453,engineering_assumption,Landing-gear minimum mass floor vs mtow_ceiling

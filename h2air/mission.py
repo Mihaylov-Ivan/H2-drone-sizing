@@ -96,12 +96,27 @@ def build_phase5_mission_profile(
         wing_span_m=b,
     )
 
+    # Wing-borne climb: power from climb rate + cruise bus (screening energy model).
+    G = 9.80665
+    roc = float(mission.get("wingborne_climb_rate_mps", 2.0))
+    climb_height = float(mission.get("wingborne_climb_height_m", 40.0))
+    climb_eta = float(
+        mission.get(
+            "wingborne_climb_propulsive_efficiency",
+            cfg4.get("aircraft", {}).get("cruise_propulsive_efficiency_reference", 0.66),
+        )
+    )
+    wingborne_duration = float(mission.get("wingborne_climb_duration_s", climb_height / max(roc, 1e-6)))
+    if mission.get("wingborne_climb_height_m") is not None and mission.get("wingborne_climb_duration_s") is None:
+        wingborne_duration = climb_height / max(roc, 1e-6)
+    wingborne_W = mass * G * roc / max(climb_eta, 1e-6) + float(cruise.total_cruise_bus_power_W)
+
     fixed_no_cruise_s = (
         float(mission["preflight_duration_s"])
         + float(mission["vtol_takeoff_duration_s"])
         + float(mission["vertical_climb_duration_s"])
         + fwd.duration_s
-        + float(mission["wingborne_climb_duration_s"])
+        + wingborne_duration
         + rev.duration_s
         + float(mission["vertical_descent_duration_s"])
         + float(mission["landing_hover_duration_s"])
@@ -117,7 +132,7 @@ def build_phase5_mission_profile(
     t = _append_constant(profile, t, mission["vtol_takeoff_duration_s"], hover_W, "VTOL takeoff")
     t = _append_constant(profile, t, mission["vertical_climb_duration_s"], climb_W, "Vertical climb")
     t = _append_dynamic(profile, t, fwd, "Forward transition", float(mission["dynamic_transition_sample_period_s"]))
-    t = _append_constant(profile, t, mission["wingborne_climb_duration_s"], mission["wingborne_climb_bus_power_W"], "Wing-borne climb")
+    t = _append_constant(profile, t, wingborne_duration, wingborne_W, "Wing-borne climb")
     t = _append_constant(profile, t, cruise_duration_s, cruise.total_cruise_bus_power_W, "Cruise")
     t = _append_dynamic(profile, t, rev, "Reverse transition", float(mission["dynamic_transition_sample_period_s"]))
     t = _append_constant(

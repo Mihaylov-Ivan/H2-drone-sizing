@@ -186,6 +186,17 @@ def tube_mass_kg(section: TubeSection, length_m: float, density_kg_m3: float, co
     return section.area_m2 * length_m * density_kg_m3 * count
 
 
+def carbon_tube_mass_kg(
+    od_m: float,
+    id_m: float,
+    length_m: float,
+    count: int = 1,
+    density_kg_m3: float = 1575.0,
+) -> float:
+    """CFRP tube mass from OD/ID × length × density (default screening ρ=1575 kg/m³)."""
+    return tube_mass_kg(TubeSection(float(od_m), float(id_m)), float(length_m), float(density_kg_m3), int(count))
+
+
 def wing_maneuver_root_moment_Nm(mass_kg: float, load_factor: float, span_m: float) -> float:
     """Per-side root bending approximation for symmetric wing lift.
 
