@@ -542,7 +542,9 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
         case["gate_evaluation"]=evaluate_control_case(six_cfg,case,label=label);control_cases[label]=case;control_hist[label]=(fwd,rev,gust)
 
     # 5. Final structure report using the closed mass and actual rotor allocator.
-    design_span=max(float(d["wing_span_m"]),float(wing_ceiling["screened_span_preserving_AR_m"]))
+    # Use the actual selected wing geometry. 15 kg remains the structural load
+    # mass, but must not silently enlarge the beam length via a stall surrogate.
+    design_span=float(d["wing_span_m"])
     struct_cfg["aircraft"].update({"reference_mass_kg":mass_final.takeoff.total_mass_kg,"cg_station_x_m":mass_final.takeoff.cg_m[0],"design_mass_ceiling_kg":float(d["mtow_ceiling_kg"]),"reference_wing_span_m":float(d["wing_span_m"]),"design_wing_span_m":design_span,"horizontal_tail_area_m2":float(d.get("horizontal_tail_area_m2",struct_cfg["aircraft"].get("horizontal_tail_area_m2",0.1276)))})
     struct_cfg["rotor_system"].update({"row_x_m":rows_x,"motor_y_m":y,"phase4_equal_share_design_thrust_N":lift_ceiling.design_thrust_per_motor_N,"candidate_motor_max_thrust_N":float(d["lift_motor_structural_limit_thrust_per_motor_N"])})
     hover_thrusts,_=current_model.rotor_allocate(current_model.m*G,np.zeros(3));struct_cfg["rotor_system"]["phase6_reference_hover_thrusts_N"]=hover_thrusts.tolist();structure=build_structural_result(struct_cfg)
