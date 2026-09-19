@@ -41,8 +41,13 @@ def test_hardcoded_span_is_fixed_and_removed_from_optimizer(tmp_path):
     u['lifting_surfaces']['main_wing']['AutoSize Main Wing']=False
     u['lifting_surfaces']['main_wing']['span_mode']='hardcoded'
     u['lifting_surfaces']['main_wing']['hardcoded_span_m']=3.333
+    u['lifting_surfaces']['main_wing']['root_chord_m']=0.307
+    u['lifting_surfaces']['main_wing']['taper_ratio']=0.59
     c=load_model_config(_write(tmp_path,u))
+    assert c['design']['auto_size_main_wing'] is False
     assert abs(c['design']['wing_span_m']-3.333)<1e-12
+    assert abs(c['design']['main_wing_root_chord_m']-0.307)<1e-12
+    assert abs(c['design']['main_wing_taper_ratio']-0.59)<1e-12
     assert 'main_wing_span_m' not in default_space_for_config(c)
 
 
