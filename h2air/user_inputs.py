@@ -912,11 +912,21 @@ def user_inputs_from_design_values(
     if "main_wing_taper_ratio" in vals:
         main["taper_ratio"] = _round(vals["main_wing_taper_ratio"])
     if "horizontal_tail_span_m" in vals:
+        htail["AutoSize Horizontal Tail"] = False
         htail["span_mode"] = "hardcoded"
         htail["hardcoded_span_m"] = _round(vals["horizontal_tail_span_m"])
+    if "horizontal_tail_root_chord_m" in vals:
+        htail["root_chord_m"] = _round(vals["horizontal_tail_root_chord_m"])
+    if "horizontal_tail_taper_ratio" in vals:
+        htail["taper_ratio"] = _round(vals["horizontal_tail_taper_ratio"])
     if "vertical_tail_height_m" in vals:
+        vtail["AutoSize Vertical Tail"] = False
         vtail["span_mode"] = "hardcoded"
         vtail["hardcoded_span_m"] = _round(vals["vertical_tail_height_m"])
+    if "vertical_tail_root_chord_m" in vals:
+        vtail["root_chord_m"] = _round(vals["vertical_tail_root_chord_m"])
+    if "vertical_tail_taper_ratio" in vals:
+        vtail["taper_ratio"] = _round(vals["vertical_tail_taper_ratio"])
 
     for key in (
         "lift_row_center_x_m",
@@ -964,8 +974,8 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
             "AUTO motor/prop/battery database selection when enabled",
             "clean CAD parameter export (geometry/clearance/hardware/cooling only)",
             "fuel-cell waste heat, required airflow, duct pressure loss and cooling-airflow margin",
-            "horizontal-tail span/area in AUTO mode",
-            "vertical-tail height/area in AUTO mode",
+            "horizontal-tail span/root-chord/taper/area from AutoSize Horizontal Tail",
+            "vertical-tail height/root-chord/taper/area from AutoSize Vertical Tail",
             "component masses in LINEAR mode from kg/m x length",
             "CG and inertia tensor",
             "neutral point and static margin",
