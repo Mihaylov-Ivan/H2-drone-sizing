@@ -1,0 +1,559 @@
+{
+  "schema": "H2AIR-user-inputs-v4",
+  "notes": "4-hour endurance seed (IE UAV Cylinder Guide): AMS MC6.8 replacing 3 CF; mission 240 min; lift U8LiteL 28in + folded cruise props; wing root chord raised to 0.36 m so forward-transition handover stall ratio and point-mass transition clear at the heavier closed MTOW. Spans unlocked for design-study.",
+  "mission": {
+    "payload_mass_kg": 1.2,
+    "mtow_target_low_kg": 14.0,
+    "mtow_target_high_kg": 19.5,
+    "mtow_ceiling_kg": 20.5,
+    "cruise_speed_mps": 20.0,
+    "mission_duration_min": 240.0,
+    "target_static_margin": 0.12
+  },
+  "fuselage": {
+    "overall_reference_length_m": 1.55,
+    "diameter_mode": "auto",
+    "minimum_diameter_m": 0.2,
+    "diameter_margin_m": 0.007,
+    "cross_section": "rectangular_filleted",
+    "fillet_radius_m": 0.02,
+    "midbody_length_mode": "auto",
+    "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. diameter_margin_m adds per-side pad so cooling plenums clear the IE-SOAR cross-fuselage gap screen with a centred fuel cell. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H).",
+    "sections": [
+      {
+        "name": "nose",
+        "length_m": 0.14,
+        "diameter_m": 0.2687832758688245,
+        "mass": {
+          "mass_mode": "linear",
+          "specific_mass_kg_per_m": 1.4,
+          "hardcoded_mass_kg": null,
+          "status": "engineering_assumption",
+          "source": "Updated printed fuselage nose kg/m"
+        },
+        "width_m": 0.194,
+        "height_m": 0.2687832758688245
+      },
+      {
+        "name": "center_a",
+        "length_m": 0.529,
+        "diameter_m": 0.2687832758688245,
+        "mass": {
+          "mass_mode": "linear",
+          "specific_mass_kg_per_m": 1.2,
+          "hardcoded_mass_kg": null,
+          "status": "engineering_assumption",
+          "source": "Updated printed fuselage center_a kg/m"
+        },
+        "width_m": 0.194,
+        "height_m": 0.2687832758688245
+      },
+      {
+        "name": "center_b",
+        "length_m": 0.1494000000000001,
+        "diameter_m": 0.2687832758688245,
+        "mass": {
+          "mass_mode": "linear",
+          "specific_mass_kg_per_m": 1.5,
+          "hardcoded_mass_kg": null,
+          "status": "engineering_assumption",
+          "source": "Updated printed fuselage center_b kg/m"
+        },
+        "width_m": 0.194,
+        "height_m": 0.2687832758688245
+      },
+      {
+        "name": "tail",
+        "length_m": 0.14,
+        "diameter_m": 0.2687832758688245,
+        "mass": {
+          "mass_mode": "linear",
+          "specific_mass_kg_per_m": 1.4,
+          "hardcoded_mass_kg": null,
+          "status": "engineering_assumption",
+          "source": "Updated printed fuselage tail kg/m"
+        },
+        "width_m": 0.194,
+        "height_m": 0.2687832758688245
+      }
+    ]
+  },
+  "lifting_surfaces": {
+    "main_wing": {
+      "root_chord_m": 0.36,
+      "taper_ratio": 0.6,
+      "naca_code": "NACA4412",
+      "CLmax_override": null,
+      "twist_root_deg": 0.0,
+      "twist_tip_deg": -2.0,
+      "sweep_deg": 0.0,
+      "dihedral_deg": 0.0,
+      "aerodynamic_center_x_m": 0.55,
+      "span_mode": "auto",
+      "span_bounds_m": [
+        4.2,
+        5.1
+      ],
+      "hardcoded_span_m": null,
+      "minimum_transition_speed_over_stall": 1.3,
+      "auto_area_margin_factor": 1.12,
+      "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+    },
+    "horizontal_tail": {
+      "root_chord_m": 0.24,
+      "taper_ratio": 0.7,
+      "naca_code": "NACA0012",
+      "twist_root_deg": 0.0,
+      "twist_tip_deg": 0.0,
+      "sweep_deg": 0.0,
+      "aerodynamic_center_x_m": 1.4,
+      "span_mode": "auto",
+      "span_bounds_m": [
+        0.95,
+        1.6
+      ],
+      "hardcoded_span_m": null,
+      "target_tail_volume_coefficient": 0.44,
+      "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+    },
+    "vertical_tail": {
+      "count": 2,
+      "root_chord_m": 0.16,
+      "taper_ratio": 0.6,
+      "naca_code": "NACA0012",
+      "aerodynamic_center_x_m": 1.45,
+      "span_mode": "auto",
+      "span_bounds_m": [
+        0.35,
+        0.7
+      ],
+      "hardcoded_span_m": null,
+      "target_vertical_tail_volume_coefficient": 0.0255,
+      "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+    }
+  },
+  "propulsion": {
+    "cruise_lift_propeller_state": "folded"
+  },
+  "component_positions": {
+    "lift_row_center_x_m": 0.47574,
+    "battery_x_m": 0.330287,
+    "battery_z_m": 0.0631,
+    "fuel_cell_x_m": 0.15285,
+    "fuel_cell_z_m": 0.0,
+    "hydrogen_cylinder_x_m": 0.526502,
+    "hydrogen_cylinder_z_m": -0.02828,
+    "note": "With packaging_layout.enabled, battery/FC/H2 xyz are overwritten by rule-based placement; lift_row_center_x_m remains user-controlled."
+  },
+  "packaging_layout": {
+    "enabled": true,
+    "energy_bay_order": "fuel_cell_forward",
+    "energy_bay_order_mode": "auto",
+    "cb_battery_order": "battery_forward",
+    "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (X order of CB/battery on the shared top shelf). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB+battery sit on top in X tandem (first flush with forward energy host front; second axial behind); dual PDBs min-OD searched.",
+    "clearances_m": {
+      "fuselage_bottom_m": 0.003,
+      "fuselage_wall_m": 0.01,
+      "aft_tail_beyond_motor_m": 0.02,
+      "component_m": 0.003,
+      "bottom_to_top_m": 0.01,
+      "pdb_all_around_m": 0.02,
+      "cube_front_connector_m": 0.05,
+      "nose_bay_raise_m": 0.02,
+      "cylinder_to_top_inner_m": 0.005,
+      "component_axial_m": 0.01,
+      "longeron_boss_clearance_m": 0.01
+    },
+    "hardware": {
+      "holybro_pdb_300a": {
+        "name": "Holybro Power Distribution Board (PDB) 300A",
+        "count": 2,
+        "length_m": 0.08,
+        "width_m": 0.06,
+        "height_m": 0.0235,
+        "mount_pattern_m": [
+          0.05,
+          0.05
+        ],
+        "mass_kg": null,
+        "status": "supplier_confirmed",
+        "source": "Holybro PDB 300A mechanical drawing (80 x 60 x 23.5 mm, M3 50 x 50 mm)"
+      },
+      "cube_orange": {
+        "name": "CubePilot Cube Orange + carrier",
+        "length_m": 0.0945,
+        "width_m": 0.0443,
+        "height_m": 0.031,
+        "mass_kg": 0.073,
+        "status": "supplier_confirmed",
+        "source": "Cube Orange on carrier board outline (94.5 x 44.3 x 31 mm)"
+      },
+      "fuel_cell_stack": {
+        "name": "FCPM fuel cell",
+        "length_m": 0.2305,
+        "width_m": 0.1084,
+        "height_m": 0.1198,
+        "mass_kg": 1.0932,
+        "status": "supplier_confirmed",
+        "source": "FCPM datasheet fuel-cell envelope 230.5 x 108.4 x 119.8 mm; mass is volume share of 1450 g module"
+      },
+      "fuel_cell_control_box": {
+        "name": "FCPM control box",
+        "length_m": 0.2022,
+        "width_m": 0.107,
+        "height_m": 0.04515,
+        "mass_kg": 0.3568,
+        "status": "supplier_confirmed",
+        "source": "FCPM datasheet control-box envelope 202.2 x 107 x 45.15 mm; mass is volume share of 1450 g module"
+      }
+    }
+  },
+  "hardware": {
+    "fuel_cell": {
+      "rated_net_power_W": 800.0,
+      "module_mass_kg": 1.45
+    },
+    "hydrogen": {
+      "storage_name": "AMS Composites MC6.8, 6.8 L / 300 bar Type III",
+      "cylinder_model": "MC6.8",
+      "design_standard": "ISO 11119-2",
+      "certification": "TPED, DOT",
+      "cylinder_type": 3,
+      "pressure_bar": 300.0,
+      "water_volume_L": 6.8,
+      "cylinder_length_m": 0.524,
+      "cylinder_diameter_m": 0.16,
+      "cylinder_mass_kg": 3.9,
+      "nominal_h2_mass_kg": 0.1403,
+      "h2_mass_fraction_wt_pct": 3.5,
+      "thread": "M18 x 1.5",
+      "regulator_mass_kg": 0.315,
+      "reference_load_W": 400.0,
+      "reference_endurance_h": 5.84,
+      "reference_net_energy_Wh": 2336.0,
+      "mission_energy_reserve_fraction": 0.15,
+      "note": "Intelligent Energy UAV Cylinder Guide AMS row MC6.8: 6.8 L, 160 mm OD, 524 mm length, 3900 g, 300 bar, 140.3 g H2, 2336 Wh. Chosen over AMS MC5 (1717 Wh) which cannot close a 4 h mission at this cruise power with 15% reserve."
+    }
+  },
+  "manufacturing_mass_model": {
+    "enabled": true,
+    "fuselage_longerons": {
+      "count": 2,
+      "layout": "top_bottom",
+      "mass_mode": "linear",
+      "specific_mass_kg_per_m": 0.08974,
+      "hardcoded_mass_kg": null,
+      "tube_od_m": 0.008,
+      "boss_od_m": 0.014,
+      "spar_stack_gap_m": 0.001,
+      "status": "engineering_assumption",
+      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; boss_od_m is the full-length 3D-printed sleeve/bedding OD around each tube (cabin keepout uses this). Wing Z references the TOP longeron sleeve."
+    },
+    "main_wing": {
+      "z_m": 0.1,
+      "thickness_m": 0.028,
+      "shell": {
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.6256,
+        "hardcoded_mass_kg": null,
+        "status": "engineering_assumption",
+        "source": "Target ~2.2 kg printed wing shell at current span (2.2/3.516557 m)"
+      },
+      "primary_spar": {
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.08784,
+        "hardcoded_mass_kg": null,
+        "reference_tube_od_m": 0.01329,
+        "chord_fraction": 0.25,
+        "status": "engineering_assumption",
+        "source": "kg/m calibrated at reference_tube_od_m (mass-scaling section only \u2014 not the recommended design spar OD); structural sizing scales mass by section area"
+      },
+      "secondary_spar": {
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.05007,
+        "hardcoded_mass_kg": null,
+        "tube_od_m": 0.01,
+        "chord_fraction": 0.65,
+        "status": "engineering_assumption",
+        "source": "COTS secondary spar OD (even mm); replace kg/m with supplier data"
+      },
+      "shell_cg_chord_fraction": 0.45
+    },
+    "horizontal_tail": {
+      "z_m": 0.1,
+      "thickness_m": 0.022,
+      "shell": {
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.6032,
+        "hardcoded_mass_kg": null,
+        "status": "engineering_assumption",
+        "source": "Target ~0.5 kg printed HT shell at current span (0.5/0.828897 m)"
+      },
+      "primary_spar": {
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.01668,
+        "hardcoded_mass_kg": null,
+        "reference_tube_od_m": 0.00433,
+        "chord_fraction": 0.25,
+        "status": "engineering_assumption",
+        "source": "kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section"
+      },
+      "secondary_spar": {
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.00834,
+        "hardcoded_mass_kg": null,
+        "tube_od_m": 0.004,
+        "chord_fraction": 0.65,
+        "status": "engineering_assumption",
+        "source": "Secondary spar placeholder; replace with selected CFRP tube kg/m"
+      }
+    },
+    "vertical_tail": {
+      "count": 2,
+      "thickness_m": 0.012,
+      "shell": {
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.3815,
+        "hardcoded_mass_kg": null,
+        "status": "engineering_assumption",
+        "source": "Target ~0.25 kg printed twin-fin shells at current height (0.25/(2*0.327641 m))"
+      },
+      "primary_spar": {
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.00984,
+        "hardcoded_mass_kg": null,
+        "reference_tube_od_m": 0.00433,
+        "status": "engineering_assumption",
+        "source": "kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section"
+      },
+      "secondary_spar": {
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.00591,
+        "hardcoded_mass_kg": null,
+        "tube_od_m": 0.004,
+        "status": "engineering_assumption",
+        "source": "Secondary spar placeholder; replace with selected CFRP tube kg/m"
+      }
+    },
+    "boom_tubes": {
+      "mass_mode": "structural_linear",
+      "specific_mass_kg_per_m": 0.01592,
+      "hardcoded_mass_kg": null,
+      "reference_tube_od_m": 0.035,
+      "status": "engineering_assumption",
+      "source": "kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m"
+    },
+    "landing_legs": {
+      "enabled": true,
+      "layout": "nose_plus_wing",
+      "landing_load_factor": 3.0,
+      "side_load_fraction": 0.25,
+      "sleeve_wall_m": 0.002,
+      "printed_density_kg_m3": 1200.0,
+      "drag_coefficient_screen": 0.5,
+      "prop_ground_clearance_m": 0.02,
+      "minimum_leg_length_m": 0.06,
+      "deflection_limit_fraction": 0.05,
+      "slope_limit_deg": 3.0,
+      "status": "engineering_assumption",
+      "source": "Tripod landing gear: 1 nose + 2 wing legs at boom/spar junction. CFRP tubes sized for 3g landing; 2 mm printed sleeve around each tube.",
+      "tube": {
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.05,
+        "hardcoded_mass_kg": null,
+        "reference_tube_od_m": 0.012,
+        "id_over_od": 0.75,
+        "status": "engineering_assumption",
+        "source": "Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS"
+      }
+    }
+  },
+  "carbon_fiber_tubes": {
+    "section_mode": "auto",
+    "note": "Auto-size CFRP tubes for 4h / MC6.8 study; even-mm COTS rounding applied by structural screen. Re-lock section_mode=hardcoded after a passing study if desired.",
+    "main_wing_primary_spar": {
+      "od_mm": 24,
+      "id_mm": 18
+    },
+    "boom_tubes": {
+      "od_mm": 22,
+      "id_mm": 18
+    },
+    "horizontal_tail_primary_spar": {
+      "od_mm": 10,
+      "id_mm": 8
+    },
+    "vertical_tail_primary_spar": {
+      "od_mm": 8,
+      "id_mm": 6
+    },
+    "main_wing_secondary_spar": {
+      "od_mm": 10
+    },
+    "horizontal_tail_secondary_spar": {
+      "od_mm": 4
+    },
+    "vertical_tail_secondary_spar": {
+      "od_mm": 4
+    },
+    "fuselage_longerons": {
+      "od_mm": 8,
+      "boss_od_mm": 14
+    }
+  },
+  "optimizer": {
+    "keep_existing_objective_and_constraint_logic": true,
+    "target_static_margin": 0.12,
+    "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search. When packaging energy_bay_order_mode is auto, energy_bay_order_code (0=FC forward, 1=H2 forward) is swept.",
+    "design_space": {
+      "wing_ac_x_m": [
+        0.4,
+        0.7
+      ],
+      "horizontal_tail_ac_x_m": [
+        1.25,
+        1.6
+      ],
+      "vertical_tail_ac_x_m": [
+        1.25,
+        1.6
+      ],
+      "lift_row_center_x_m": [
+        0.45,
+        0.8
+      ]
+    }
+  },
+  "hardware_selection": {
+    "mode": "hardcoded",
+    "hardcoded": {
+      "lift_combo_name": "Tmotor_U8LiteL_110kV_G28x9p2_12S",
+      "pusher_combo_name": "Tmotor_MN501S_240kV_P15x5_12S",
+      "battery_name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh"
+    },
+    "auto_criteria": {
+      "series_cells": 12,
+      "nominal_cell_voltage_V": 3.7,
+      "maximum_cell_voltage_V": 4.0,
+      "bus_voltage_ceiling_V": 48.0,
+      "number_of_lift_motors": 4,
+      "lift_total_thrust_factor_at_mtow_ceiling": 1.5,
+      "lift_climb_thrust_factor": 1.08,
+      "minimum_lift_prop_diameter_in": 18.0,
+      "maximum_lift_prop_diameter_in": 28.0,
+      "minimum_pusher_power_W": 750.0,
+      "minimum_battery_capacity_Ah": 5.0,
+      "battery_current_margin": 1.05
+    },
+    "note": "Lift upgraded to U8LiteL 28in for MC6.8-class MTOW thrust; pusher/battery baseline."
+  },
+  "cad_export": {
+    "enabled": true,
+    "export_directory": "C:\\Users\\User\\OneDrive\\Work\\Hydrogenera\\R&D\\H2 Drone\\CAD Model",
+    "tolerances_mm": {
+      "general_print_tolerance": 0.3,
+      "transition_fit_clearance": 0.24,
+      "carbon_tube_fit_clearance": 0.5,
+      "component_keepout_clearance": 3.0,
+      "prop_disk_edge_clearance": 20.0,
+      "bolt_pocket_diameter_clearance": 1.7
+    },
+    "fasteners": {
+      "default_motor_mount_fastener": "M4",
+      "bolt_M3_OD": 3.0,
+      "bolt_M3_clearance_hole_OD": 3.2,
+      "bolt_M3_head_OD": 6.5,
+      "bolt_M4_OD": 4.0,
+      "bolt_M4_clearance_hole_OD": 4.2,
+      "bolt_M4_head_OD": 8.22,
+      "bolt_M5_OD": 5.0,
+      "bolt_M5_clearance_hole_OD": 5.2,
+      "bolt_M5_head_OD": 9.72
+    },
+    "rib_target_spacing_m": {
+      "main_wing": 0.25,
+      "horizontal_tail": 0.15,
+      "vertical_tail": 0.12
+    }
+  },
+  "fuel_cell_cooling": {
+    "enabled": true,
+    "architecture": "cross_fuselage",
+    "fan_flow_direction": "suction_through_stack_to_fan_side",
+    "fan_side": "right",
+    "inlet_side": "left",
+    "exhaust_side": "right",
+    "design_basis": "hover_and_ground_fan_only_no_ram_credit",
+    "target_max_opening_air_velocity_mps": 5.0,
+    "thermal_screen": {
+      "fuel_cell_net_power_W": 800.0,
+      "fuel_cell_efficiency_screen": 0.5,
+      "waste_heat_margin_factor": 1.1,
+      "allowable_air_temperature_rise_C": 15.0,
+      "air_density_kg_m3": 1.225,
+      "air_specific_heat_J_kgK": 1005.0,
+      "status": "engineering_assumption",
+      "source": "IE-SOAR is supplier-confirmed air-cooled; 50% efficiency is a screening assumption within the 46-52% family brochure range, not an 800W efficiency map."
+    },
+    "fans": {
+      "count": 2,
+      "diameter_m": 0.08,
+      "center_spacing_m": 0.086,
+      "assumed_module_airflow_no_external_duct_cfm": 150.0,
+      "assumed_external_shutoff_pressure_Pa": 90.0,
+      "status": "engineering_assumption",
+      "source": "Preliminary two-fan integration assumption from module imagery. Replace with Intelligent Energy fan/system airflow and allowed external pressure-drop data or bench test."
+    },
+    "plenum": {
+      "minimum_inlet_side_gap_m": 0.004,
+      "minimum_fan_side_shroud_gap_m": 0.01,
+      "note": "Required clear air gap between the fuel-cell envelope and inner fuselage skin/shroud. The model reports the minimum fuselage width needed but does not silently widen a hardcoded fuselage."
+    },
+    "inlet": {
+      "type": "naca_style_flush_side_inlet",
+      "geometry_mode": "hardcoded",
+      "slot_count": 12,
+      "slot_length_x_m": 0.17,
+      "slot_width_z_m": 0.006,
+      "slot_gap_z_m": 0.003,
+      "recess_depth_y_m": 0.008,
+      "ramp_length_x_m": 0.17,
+      "sidewall_angle_deg": 7.0,
+      "lip_radius_m": 0.002,
+      "center_x_offset_from_fc_m": 0.0,
+      "center_z_offset_from_fc_m": 0.0,
+      "external_drag_coefficient_screen": 0.03,
+      "cruise_pressure_recovery_fraction_screen": 0.15,
+      "note": "NACA-style shallow side inlet used as a fan-suction opening in hover. The cooling gate does not credit ram-air recovery."
+    },
+    "exhaust": {
+      "type": "flush_fan_exhaust_grille",
+      "geometry_mode": "hardcoded",
+      "slot_count": 12,
+      "slot_length_x_m": 0.18,
+      "slot_width_z_m": 0.0065,
+      "slot_gap_z_m": 0.003,
+      "fan_shroud_depth_y_m": 0.01,
+      "louvre_angle_deg": 15.0,
+      "lip_radius_m": 0.002,
+      "center_x_offset_from_fc_m": 0.0,
+      "center_z_offset_from_fc_m": 0.0,
+      "external_drag_coefficient_screen": 0.04,
+      "note": "Fan-side direct exhaust. Louvre angle is a CAD starting value intended to discourage hot-air recirculation."
+    },
+    "external_pressure_loss_coefficients": {
+      "inlet_entrance": 0.4,
+      "naca_ramp_and_turn": 0.35,
+      "inlet_grille": 0.25,
+      "outlet_plenum": 0.15,
+      "exhaust_grille_louvres": 0.35
+    },
+    "cad": {
+      "minimum_edge_distance_from_fuselage_section_joint_m": 0.012,
+      "grille_corner_radius_m": 0.004,
+      "minimum_web_between_slots_m": 0.003,
+      "removable_exhaust_grille_fastener": "M3",
+      "note": "Drawing-only cooling details exported with the calculated inlet/exhaust positions and flow areas."
+    }
+  }
+}

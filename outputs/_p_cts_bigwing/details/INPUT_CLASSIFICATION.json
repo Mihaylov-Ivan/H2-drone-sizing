@@ -1,0 +1,38 @@
+{
+  "user_input_file_schema": "H2AIR-user-inputs-v4",
+  "user_editable_groups": [
+    "mission",
+    "fuselage",
+    "lifting_surfaces",
+    "propulsion",
+    "component_positions",
+    "hardware",
+    "hardware_selection",
+    "manufacturing_mass_model",
+    "carbon_fiber_tubes",
+    "cad_export",
+    "optimizer",
+    "packaging_layout",
+    "fuel_cell_cooling"
+  ],
+  "auto_calculated_examples": [
+    "fuselage total length from section lengths",
+    "main wing span in AUTO mode and wing area/MAC",
+    "airfoil CL/CD/CM interpolation from a supplied polar when available",
+    "AUTO motor/prop/battery database selection when enabled",
+    "clean CAD parameter export (geometry/clearance/hardware/cooling only)",
+    "fuel-cell waste heat, required airflow, duct pressure loss and cooling-airflow margin",
+    "horizontal-tail span/area in AUTO mode",
+    "vertical-tail height/area in AUTO mode",
+    "component masses in LINEAR mode from kg/m x length",
+    "CG and inertia tensor",
+    "neutral point and static margin",
+    "aerodynamic drag/cruise power",
+    "VTOL thrust/power requirements",
+    "mission energy, hydrogen use and battery SOC",
+    "structural sizing feedback and converged MTOW",
+    "landing-leg CFRP tubes sized for 3g landing with 2 mm printed sleeves",
+    "COTS carbon-tube OD/ID when carbon_fiber_tubes.section_mode=hardcoded"
+  ],
+  "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity. carbon_fiber_tubes.section_mode='hardcoded' locks recommended structural tube OD/ID to even-mm COTS sizes. Optional carbon_fiber_tubes.landing_legs locks landing-leg tubes; otherwise they are auto-sized from the 3g landing screen and rounded to even-mm COTS."
+}

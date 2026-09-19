@@ -1,0 +1,11 @@
+name,category,mass_kg,load_factor,wing_root_bending_Nm,wing_torsion_Nm,boom_root_bending_Nm,boom_axial_N,max_motor_thrust_N,max_motor_mount_bending_Nm,tail_force_N,landing_leg_axial_N,landing_leg_bending_Nm,note
+reference_trimmed_hover,VTOL,18.00905122550101,1.0,35.04794932370101,31.39109804392496,0.0,0.0,52.693097990437465,2.6346548995218733,0.0,0.0,0.0,6-DOF/control unequal rotor allocation at reference mass.
+15kg_zero_pitch_design_VTOL,VTOL,19.0,1.0,59.706564986249994,53.317456393253806,38.16323442419215,0.0,89.76627563671298,4.488313781835649,0.0,0.0,0.0,Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry.
+15kg_3g_wingborne_manoeuvre,wingborne,19.0,3.0,319.8406864618659,25.7,0.0,0.0,0.0,0.0,274.20117830062765,0.0,0.0,Symmetric wing-borne structural manoeuvre screen.
+dive_tail_download,tail/boom,19.0,1.0,0.0,0.0,104.1964477542385,0.0,0.0,0.0,274.20117830062765,0.0,0.0,Horizontal-tail absolute CL design screen at configured dive speed.
+dive_crosswind_fin_load,tail/boom,19.0,1.0,0.0,0.0,104.1964477542385,0.0,0.0,0.0,184.24000000000004,0.0,0.0,Twin-fin side-force structural screen at configured dive speed.
+combined_boom_tail_plus_rear_rotor,tail/boom,19.0,1.0,0.0,0.0,142.35968217843066,30.0,89.76627563671298,0.0,0.0,0.0,0.0,"Conservative envelope combining boom tail load with rear lift-rotor bending; simultaneous occurrence is a sizing envelope, not a trajectory claim."
+pusher_axial_design,propulsion,19.0,1.0,0.0,0.0,0.0,30.0,0.0,0.0,0.0,0.0,0.0,Pusher design thrust divided across two booms.
+single_motor_mount_limit,local,19.0,1.0,0.0,0.0,0.0,0.0,79.553113864,3.9776556932,0.0,0.0,0.0,"Local motor-mount load requirement. Geometry/material absent, so stress remains NOT_EVALUATED."
+one_motor_out_remaining_motor_peak,degraded,19.0,1.0,0.0,0.0,0.0,0.0,79.553113864,3.9776556932,0.0,0.0,0.0,Structural local envelope for a surviving motor during motor-out recovery; flight controllability remains a 6-DOF/control/8 problem.
+3g_landing_impact,landing,19.0,3.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,279.48952499999996,20.691886514224176,3g landing screen: governing tube uses half of total landing reaction (two-leg share) with configured lateral side-load bending on the longest leg.

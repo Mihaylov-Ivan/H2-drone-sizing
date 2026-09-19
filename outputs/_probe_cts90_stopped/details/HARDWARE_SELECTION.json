@@ -1,0 +1,72 @@
+{
+  "mode": "hardcoded",
+  "bus_nominal_voltage_V": 44.400000000000006,
+  "bus_max_voltage_V": 48.0,
+  "bus_voltage_ceiling_V": 48.0,
+  "requirements": {
+    "lift_thrust_per_motor_N": 79.43386499999998,
+    "minimum_pusher_power_W": 750.0,
+    "minimum_battery_capacity_Ah": 5.0,
+    "battery_screen_current_A": 146.83445945945945
+  },
+  "selected_lift_combo": {
+    "name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
+    "role": "lift",
+    "motor_kv": 150,
+    "voltage_min_V": 36.0,
+    "voltage_max_V": 50.4,
+    "max_power_W": 1272.0,
+    "max_thrust_N": 71.02956594999999,
+    "prop_diameter_in": 22.0,
+    "prop_pitch_in": 6.6,
+    "motor_mass_kg": 0.239,
+    "prop_mass_kg": 0.045,
+    "motor_diameter_m": 0.0871,
+    "motor_length_m": 0.02705,
+    "peak_current_A": 26.5,
+    "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
+    "source_url": "https://www.ligpower.com/product/u8-lite-kv100-u-efficiency.html",
+    "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption"
+  },
+  "selected_pusher_combo": {
+    "name": "Tmotor_MN501S_240kV_P15x5_12S",
+    "motor_kv": 240,
+    "voltage_min_V": 36.0,
+    "voltage_max_V": 50.4,
+    "max_power_W": 1121.0,
+    "max_thrust_N": 45.698989,
+    "prop_diameter_in": 15.0,
+    "prop_pitch_in": 5.0,
+    "motor_mass_kg": 0.17,
+    "prop_mass_kg": 0.021,
+    "status": "supplier_confirmed_motor_and_bench_data_prop_mass_from_user_database",
+    "source": "T-MOTOR MN501-S KV240 official product/test table; P15x5 at 12S",
+    "role": "pusher",
+    "motor_diameter_m": 0.0556,
+    "motor_length_m": 0.0339,
+    "peak_current_A": 25.0,
+    "source_url": "https://store.tmotor.com/product/mn501-s-kv240-motor-navigator-type.html"
+  },
+  "selected_battery": {
+    "name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
+    "voltage_V": 44.4,
+    "series_cells": 12,
+    "capacity_mAh": 5500,
+    "capacity_Ah": 5.5,
+    "mass_kg": 1.634,
+    "max_discharge_C": 30,
+    "continuous_discharge_current_A": 165.0,
+    "energy_Wh": 244.2,
+    "length_m": 0.163,
+    "width_m": 0.092,
+    "height_m": 0.051,
+    "packaging_arrangement": "two identical 6S packs side-by-side, connected in series",
+    "status": "derived_from_user_supplied_pack_data",
+    "source": "Derived from user-supplied batteries(2).py; two identical 6S packs in series"
+  },
+  "notes": [
+    "AUTO selection is a database screening step. Final propulsion release requires measured thrust/power/thermal data at the selected voltage and propeller.",
+    "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power.",
+    "Aircraft bus ceiling is 48.0 V (fuel-cell max); hardware bus_max is capped accordingly (not 12S\u00d74.2=50.4 V)."
+  ]
+}
