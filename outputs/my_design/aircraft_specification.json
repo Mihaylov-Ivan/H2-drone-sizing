@@ -1,7 +1,7 @@
 {
   "schema": "H2AIR-aircraft-specification-v1",
   "description": "Closed-aircraft source of truth after the latest model run. Use this file for UAV specs; resolved_configuration.json also contains template/calibration seeds that are not closed-run values.",
-  "generated_at_utc": "2026-09-19T15:03:59.760224+00:00",
+  "generated_at_utc": "2026-09-19T15:05:07.571092+00:00",
   "run": {
     "design_status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
     "model": {
