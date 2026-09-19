@@ -317,6 +317,12 @@ def write_markdown_report(
         "",
         f"- Cruise drag / bus power: **{_f(s['cruise_drag_N'], 2)} N / {_f(s['cruise_bus_power_W'], 1)} W** "
         f"(lift props **{d.get('cruise_lift_propeller_state', '—')}**)",
+        f"- Inspection manoeuvre envelope: **+{_f(_get(r,'flight_envelope','positive_operational_limit_g'),2)} / {_f(_get(r,'flight_envelope','negative_operational_limit_g'),2)} g**, "
+        f"maximum planned bank **{_f(_get(r,'flight_envelope','maximum_bank_deg'),0)} deg** ({_f(_get(r,'flight_envelope','bank_load_factor_g'),2)} g)",
+        f"- Accelerated-stall margin at cruise: +g case uses **{_pct(_get(r,'flight_envelope','positive_manoeuvre_cl_utilization'),1)} of CLmax**, "
+        f"-g case **{_pct(_get(r,'flight_envelope','negative_manoeuvre_cl_utilization'),1)} of |CLmin|**",
+        f"- Gust stall screen: worst inspection gust uses **{_pct(s.get('worst_gust_cl_utilization'),1)} of conservative CLmax**; "
+        f"configured lateral/vertical gusts **{_f(d.get('inspection_lateral_gust_mps'),1)} / ±{_f(d.get('inspection_vertical_gust_mps'),1)} m/s** for **{_f(d.get('inspection_gust_duration_s'),1)} s**",
         (
             f"- Endurance at cruise (usable H₂ / cruise bus): **{_f(s.get('endurance_at_cruise_h'), 2)} h** "
             f"({_f(s.get('usable_h2_Wh'), 0)} Wh usable)"
