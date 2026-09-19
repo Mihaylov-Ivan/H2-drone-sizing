@@ -43,6 +43,86 @@ def required_area_for_positive_manoeuvre(
     return load_factor * mass_kg * G / max(q * cl_max * max_cl_utilization, EPS)
 
 
+def required_area_for_vertical_gust(
+    *,
+    mass_kg: float,
+    rho_kg_m3: float,
+    speed_mps: float,
+    cl_max: float,
+    cl_alpha_per_rad: float,
+    vertical_gust_mps: float,
+    max_cl_utilization: float,
+) -> float:
+    """Conservative sharp-edge vertical-gust wing-area requirement.
+
+    Uses ΔCL = a * U/V with no gust-alleviation credit.  This intentionally
+    screens the instantaneous aerodynamic load separately from the slower
+    closed-loop 6-DOF controller response.
+    """
+    if speed_mps <= 0 or mass_kg <= 0 or rho_kg_m3 <= 0 or cl_max <= 0 or cl_alpha_per_rad <= 0:
+        raise ValueError("vertical-gust sizing inputs must be positive")
+    if vertical_gust_mps < 0:
+        raise ValueError("vertical_gust_mps must be >= 0")
+    if not (0.0 < max_cl_utilization <= 1.0):
+        raise ValueError("max_cl_utilization must be in (0,1]")
+    q = 0.5 * rho_kg_m3 * speed_mps * speed_mps
+    gust_pressure_term = 0.5 * rho_kg_m3 * speed_mps * cl_alpha_per_rad * vertical_gust_mps
+    available_per_area = max_cl_utilization * q * cl_max - gust_pressure_term
+    if available_per_area <= EPS:
+        raise ValueError("configured vertical gust leaves no positive CL margin at this speed")
+    return mass_kg * G / available_per_area
+
+
+def evaluate_vertical_gust_stall(
+    *,
+    mass_kg: float,
+    rho_kg_m3: float,
+    wing_area_m2: float,
+    speed_mps: float,
+    cl_max: float,
+    cl_alpha_per_rad: float,
+    vertical_gust_mps: float,
+    max_cl_utilization: float,
+) -> Dict[str, Any]:
+    """Conservative no-alleviation sharp-edge upward-gust stall screen."""
+    W = mass_kg * G
+    q = 0.5 * rho_kg_m3 * speed_mps * speed_mps
+    delta_cl = cl_alpha_per_rad * vertical_gust_mps / max(speed_mps, EPS)
+    delta_lift_N = q * wing_area_m2 * delta_cl
+    delta_n = delta_lift_N / max(W, EPS)
+    n_gust = 1.0 + delta_n
+    n_stall = q * wing_area_m2 * cl_max / max(W, EPS)
+    utilization = n_gust / max(n_stall, EPS)
+    required_area = required_area_for_vertical_gust(
+        mass_kg=mass_kg,
+        rho_kg_m3=rho_kg_m3,
+        speed_mps=speed_mps,
+        cl_max=cl_max,
+        cl_alpha_per_rad=cl_alpha_per_rad,
+        vertical_gust_mps=vertical_gust_mps,
+        max_cl_utilization=max_cl_utilization,
+    )
+    return {
+        "model": "sharp_edge_no_alleviation",
+        "mass_kg": float(mass_kg),
+        "rho_kg_m3": float(rho_kg_m3),
+        "speed_mps": float(speed_mps),
+        "wing_area_m2": float(wing_area_m2),
+        "cl_max": float(cl_max),
+        "cl_alpha_per_rad": float(cl_alpha_per_rad),
+        "vertical_gust_mps": float(vertical_gust_mps),
+        "delta_cl": float(delta_cl),
+        "incremental_load_factor_g": float(delta_n),
+        "total_positive_load_factor_g": float(n_gust),
+        "positive_stall_load_factor_g": float(n_stall),
+        "clmax_utilization": float(utilization),
+        "maximum_cl_utilization": float(max_cl_utilization),
+        "required_wing_area_m2": float(required_area),
+        "pass": bool(utilization <= max_cl_utilization + 1e-12),
+        "note": "Sharp-edge vertical-gust screen with no gust-alleviation credit; conservative screening assumption, not a certification gust analysis.",
+    }
+
+
 def evaluate_vn_envelope(
     *,
     mass_kg: float,
