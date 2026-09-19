@@ -572,9 +572,14 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
 
     d["wing_ac_x_m"] = float(main["aerodynamic_center_x_m"])
 
-    # Horizontal tail: the tail-volume relation provides the robust seed/minimum
-    # area. A dedicated AutoSize Horizontal Tail pass may later optimize span,
-    # root chord and taper simultaneously while preserving that aerodynamic floor.
+    # Horizontal/vertical tail-volume coefficients are calibration references
+    # for the screening aero model, not hard sizing minimums.  The dedicated
+    # tail optimizer chooses geometry from static/control/gust/structural constraints.
+    tail_auto_cfg = u.get("tail_autosizing") or {}
+    tail_control_sf = float(tail_auto_cfg.get("control_safety_factor", 1.10))
+    if not (1.0 <= tail_control_sf <= 1.30):
+        raise ValueError("tail_autosizing control_safety_factor must be between 1.0 and 1.30")
+    d["tail_control_safety_factor"] = tail_control_sf
     ht_auto_raw = htail.get("AutoSize Horizontal Tail", htail.get("auto_size_horizontal_tail"))
     if ht_auto_raw is None:
         auto_size_ht = str(htail.get("span_mode", "auto")).lower() == "auto"
@@ -601,7 +606,7 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     tail_arm = max(float(htail["aerodynamic_center_x_m"]) - float(main["aerodynamic_center_x_m"]), 0.05)
     Vh = float(htail.get("target_tail_volume_coefficient", 0.50))
     d["horizontal_tail_target_volume_coefficient"] = Vh
-    d["horizontal_tail_minimum_volume_coefficient"] = float(htail.get("minimum_tail_volume_coefficient", Vh))
+    d["horizontal_tail_reference_volume_coefficient"] = float(htail.get("reference_tail_volume_coefficient", Vh))
     Sh_auto = Vh * Smain * d["wing_mac_m"] / tail_arm
     bh_auto = 2.0 * Sh_auto / (float(htail["root_chord_m"]) * (1.0 + float(htail["taper_ratio"])))
     bh = _surface_span(htail, auto_value=bh_auto) if auto_size_ht else float(htail["hardcoded_span_m"])
@@ -640,7 +645,7 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     lv = max(float(vtail["aerodynamic_center_x_m"]) - float(main["aerodynamic_center_x_m"]), 0.05)
     Vv = float(vtail.get("target_vertical_tail_volume_coefficient", 0.035))
     d["vertical_tail_target_volume_coefficient"] = Vv
-    d["vertical_tail_minimum_volume_coefficient"] = float(vtail.get("minimum_vertical_tail_volume_coefficient", Vv))
+    d["vertical_tail_reference_volume_coefficient"] = float(vtail.get("reference_vertical_tail_volume_coefficient", Vv))
     Sv_total_auto = Vv * Smain * bmain / lv
     h_auto = 2.0 * (Sv_total_auto / nfin) / (float(vtail["root_chord_m"]) * (1.0 + float(vtail["taper_ratio"])))
     hv = _surface_span(vtail, auto_value=h_auto) if auto_size_vt else float(vtail["hardcoded_span_m"])

@@ -143,13 +143,13 @@
         6.5
       ],
       "minimum_tip_chord_m": 0.1,
-      "minimum_tail_volume_coefficient": 0.44,
-      "autosize_samples": 36,
-      "autosize_local_samples": 12,
-      "note": "AutoSize Horizontal Tail=true: jointly optimize span, root chord and taper at the current wing geometry. The configured tail-volume coefficient is treated as a hard minimum; loaded static margin and structural/mass constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+      "autosize_samples": 72,
+      "autosize_local_samples": 20,
+      "note": "AutoSize Horizontal Tail=true: jointly optimize span, root chord and taper from actual aircraft stability/control/structural requirements. target_tail_volume_coefficient is now a calibration reference for the screening aerodynamic derivatives, not a hard minimum. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
       "preferred_aspect_ratio": 4.5,
       "preferred_taper_ratio": 0.6,
-      "profile_cd0_screen": 0.01
+      "profile_cd0_screen": 0.01,
+      "reference_tail_volume_coefficient": 0.44
     },
     "vertical_tail": {
       "count": 2,
@@ -179,13 +179,13 @@
         4.5
       ],
       "minimum_tip_chord_m": 0.075,
-      "minimum_vertical_tail_volume_coefficient": 0.0255,
-      "autosize_samples": 36,
-      "autosize_local_samples": 12,
-      "note": "AutoSize Vertical Tail=true: jointly optimize fin height, root chord and taper for the twin-fin layout. The configured vertical-tail-volume coefficient is treated as a hard minimum; structural and geometric constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+      "autosize_samples": 72,
+      "autosize_local_samples": 20,
+      "note": "AutoSize Vertical Tail=true: jointly optimize fin height, root chord and taper from actual directional stability/control/structural requirements. target_vertical_tail_volume_coefficient is now a calibration reference for the screening aerodynamic derivatives, not a hard minimum. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
       "preferred_aspect_ratio": 2.5,
       "preferred_taper_ratio": 0.6,
-      "profile_cd0_screen": 0.01
+      "profile_cd0_screen": 0.01,
+      "reference_vertical_tail_volume_coefficient": 0.0255
     }
   },
   "propulsion": {
@@ -620,5 +620,9 @@
     "maximum_gust_clmax_utilization": 0.95,
     "structural_design_positive_load_factor_g": 3,
     "note": "Non-aerobatic inspection-aircraft screen: 45 deg bank corresponds to ~1.41 g, so +1.5 g provides operational manoeuvre margin. -0.5 g covers unloading/gust response without implying aerobatics. Structure remains screened at +3.0 g. Gust screen uses 5 m/s lateral and +/-2 m/s vertical step gusts for 2 s, including a combined lateral+upward case."
+  },
+  "tail_autosizing": {
+    "control_safety_factor": 1.1,
+    "note": "A 10% control safety factor tightens trim and elevator/rudder reserve limits during tail optimization. Tail volume coefficients are calibration references only; selected Vh/Vv are outputs. Normal-run 6-DOF remains an independent validation layer."
   }
 }

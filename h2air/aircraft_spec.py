@@ -115,6 +115,8 @@ def build_aircraft_specification(
             ),
         },
         "flight_envelope": result.get("flight_envelope") or {},
+        "tail_autosizing": result.get("tail_planform_autosizing") or {},
+        "tail_control_authority": result.get("tail_control_authority") or {},
         "geometry": {
             "fuselage": {
                 "length_m": _f(d.get("fuselage_length_m")),

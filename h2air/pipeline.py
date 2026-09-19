@@ -84,6 +84,46 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
             "horizontal_tail_ac_station_x_m":float(d.get("horizontal_tail_ac_x_m",s6["aircraft"].get("horizontal_tail_ac_station_x_m",1.05))),
             "inertia_tensor_kgm2":[[mp.Ixx_kgm2,-mp.Ixy_kgm2,-mp.Ixz_kgm2],[-mp.Ixy_kgm2,mp.Iyy_kgm2,-mp.Iyz_kgm2],[-mp.Ixz_kgm2,-mp.Iyz_kgm2,mp.Izz_kgm2]],
         })
+    # Calibrated tail-effectiveness scaling. The configured Vh/Vv values are
+    # reference states for the screening derivatives, not hard sizing limits.
+    # This makes HT/VT geometry affect trim/damping/yaw control instead of only mass.
+    S=float(d["wing_area_m2"]); b=float(d["wing_span_m"]); mac=float(d["wing_mac_m"])
+    wing_ac=float(d["wing_ac_x_m"])
+    Sh=float(d.get("horizontal_tail_area_m2",0.0))
+    ht_arm=max(float(d.get("horizontal_tail_ac_x_m",wing_ac))-wing_ac,1e-6)
+    Vh=Sh*ht_arm/max(S*mac,1e-9)
+    nfin=max(int(d.get("vertical_tail_count",2)),1)
+    Sv=float(d.get("vertical_tail_area_total_m2",0.0))
+    vt_arm=max(float(d.get("vertical_tail_ac_x_m",wing_ac))-wing_ac,1e-6)
+    Vv=Sv*vt_arm/max(S*b,1e-9)
+    Vh_ref=max(float(d.get("horizontal_tail_reference_volume_coefficient",d.get("horizontal_tail_target_volume_coefficient",0.44))),1e-6)
+    Vv_ref=max(float(d.get("vertical_tail_reference_volume_coefficient",d.get("vertical_tail_target_volume_coefficient",0.0255))),1e-6)
+    ht_scale=float(np.clip(Vh/Vh_ref,0.20,2.50))
+    vt_scale=float(np.clip(Vv/Vv_ref,0.20,2.50))
+    ad6=s6["aerodynamics"]
+    # Elevator authority scales approximately with horizontal-tail volume.
+    ad6["Cm_de"]=float(ad6["Cm_de"])*ht_scale
+    # Pitch damping contains non-tail contributions; keep a conservative 20% residual.
+    ad6["Cm_q"]=float(ad6["Cm_q"])*(0.20+0.80*ht_scale)
+    # Directional static stability and damping retain small wing/fuselage residuals,
+    # while rudder control derivatives scale directly with fin/rudder effectiveness.
+    ad6["Cn_beta"]=float(ad6["Cn_beta"])*(0.20+0.80*vt_scale)
+    ad6["Cn_r"]=float(ad6["Cn_r"])*(0.25+0.75*vt_scale)
+    ad6["Cn_dr"]=float(ad6["Cn_dr"])*vt_scale
+    ad6["CY_beta"]=float(ad6["CY_beta"])*(0.35+0.65*vt_scale)
+    ad6["CY_r"]=float(ad6["CY_r"])*(0.35+0.65*vt_scale)
+    ad6["CY_dr"]=float(ad6["CY_dr"])*vt_scale
+    ad6["Cl_dr"]=float(ad6["Cl_dr"])*vt_scale
+    ad6["tail_effectiveness_scaling"]={
+        "horizontal_tail_volume_coefficient":Vh,
+        "vertical_tail_volume_coefficient":Vv,
+        "horizontal_reference_volume_coefficient":Vh_ref,
+        "vertical_reference_volume_coefficient":Vv_ref,
+        "horizontal_effectiveness_scale":ht_scale,
+        "vertical_effectiveness_scale":vt_scale,
+        "status":"calibrated_screening_assumption",
+    }
+
     s6["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
     t["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
     t["aerodynamics"]["transition_CLmax_increment"]=float(d.get("transition_CLmax_increment",0.0))
@@ -539,6 +579,72 @@ def _tail_design_overrides(
     return design_overrides(out, values)
 
 
+def _tail_quasi_steady_authority(
+    six_cfg: Mapping[str, Any],
+    d: Mapping[str, Any],
+    model: Model,
+    trim: Mapping[str, Any],
+) -> Dict[str, Any]:
+    """Screen elevator/rudder reserve against the configured inspection gusts.
+
+    Uses the candidate's geometry-scaled screening derivatives.  This avoids
+    sizing the tail around the current VTOL-oriented altitude controller while
+    still asking the aerodynamic surfaces themselves to have control reserve.
+    """
+    from math import atan2, degrees
+    sf=float(d.get("tail_control_safety_factor",1.10))
+    V=max(float(d["cruise_speed_mps"]),1e-6)
+    ad=six_cfg["aerodynamics"]; cs=six_cfg["control_surfaces"]; gates=six_cfg["gates"]
+    lateral=float(d.get("inspection_lateral_gust_mps",5.0))
+    vertical=float(d.get("inspection_vertical_gust_mps",2.0))
+    beta=atan2(lateral,V)
+    dalpha=atan2(vertical,V)
+
+    cmde=float(ad["Cm_de"]); cma=float(model.Cma)
+    cndr=float(ad["Cn_dr"]); cnb=float(ad["Cn_beta"])
+    if abs(cmde)<1e-9 or abs(cndr)<1e-9:
+        return {"pass":False,"reason":"near_zero_control_derivative","safety_factor":sf}
+
+    trim_e=float(trim.get("elevator_deg",999.0))
+    delta_e_deg=degrees(-cma/cmde*dalpha)
+    e_up=trim_e+delta_e_deg
+    e_down=trim_e-delta_e_deg
+    worst_e=max(abs(e_up),abs(e_down))
+    rudder_req_deg=abs(degrees(-cnb/cndr*beta))
+
+    surface_fraction=float(gates["maximum_surface_utilization_fraction"])/sf
+    elevator_limit_deg=float(cs["elevator_limit_deg"])*surface_fraction
+    rudder_limit_deg=float(cs["rudder_limit_deg"])*surface_fraction
+    trim_limit_deg=float(gates["maximum_abs_elevator_trim_deg"])/sf
+
+    checks=[
+        {"name":"cruise_trim_elevator","pass":bool(trim.get("success",False)) and abs(trim_e)<=trim_limit_deg+1e-9,
+         "value_deg":trim_e,"limit_deg":trim_limit_deg},
+        {"name":"vertical_gust_elevator_reserve","pass":worst_e<=elevator_limit_deg+1e-9,
+         "value_deg":worst_e,"limit_deg":elevator_limit_deg},
+        {"name":"lateral_gust_rudder_reserve","pass":rudder_req_deg<=rudder_limit_deg+1e-9,
+         "value_deg":rudder_req_deg,"limit_deg":rudder_limit_deg},
+        {"name":"directional_static_stability","pass":cnb>0.0,
+         "value":cnb,"limit":0.0},
+    ]
+    return {
+        "pass":all(bool(x["pass"]) for x in checks),
+        "safety_factor":sf,
+        "method":"quasi_steady_linearized_surface_authority",
+        "gust_inputs":{"lateral_mps":lateral,"vertical_mps":vertical,"beta_deg":degrees(beta),"delta_alpha_deg":degrees(dalpha)},
+        "derivatives":{"Cm_alpha_per_rad":cma,"Cm_de_per_rad":cmde,"Cn_beta_per_rad":cnb,"Cn_dr_per_rad":cndr},
+        "trim_elevator_deg":trim_e,
+        "vertical_gust_elevator_increment_deg":delta_e_deg,
+        "vertical_gust_total_elevator_up_deg":e_up,
+        "vertical_gust_total_elevator_down_deg":e_down,
+        "worst_abs_elevator_deg":worst_e,
+        "required_rudder_deg":rudder_req_deg,
+        "limits":{"trim_elevator_deg":trim_limit_deg,"gust_elevator_deg":elevator_limit_deg,"gust_rudder_deg":rudder_limit_deg,"surface_fraction":surface_fraction},
+        "checks":checks,
+        "note":"Linearized quasi-steady control-reserve screen using candidate-scaled derivatives. Vh/Vv are calibration references only. Final normal 6-DOF cases remain separate validation.",
+    }
+
+
 def _tail_planform_candidate_metrics(
     base_cfg: Mapping[str, Any],
     values: Mapping[str, float],
@@ -546,6 +652,12 @@ def _tail_planform_candidate_metrics(
     lock_ht: bool,
     lock_vt: bool,
 ) -> Dict[str, Any]:
+    """Evaluate a candidate tail planform from actual stability/control requirements.
+
+    Tail-volume coefficients are reported as outputs and used only to scale the
+    calibrated screening derivatives. They are deliberately NOT feasibility
+    constraints.
+    """
     cfg = _tail_design_overrides(base_cfg, values, lock_ht=lock_ht, lock_vt=lock_vt)
     d = cfg["design"]
     base_comps = _components_with_power(cfg)
@@ -580,24 +692,28 @@ def _tail_planform_candidate_metrics(
     vt_tip = cvr * lamv
 
     sm = (float(d["neutral_point_station_x_m"]) - mass.takeoff.cg_m[0]) / max(mac, 1e-9)
-    min_sm = max(
+    design_sm = max(
         float((six_cfg.get("gates") or {}).get("minimum_static_margin", 0.05)),
         float((cfg.get("optimizer_settings") or {}).get(
             "target_static_margin", d.get("stability_screen_static_margin", 0.12)
         )),
     )
-    ht_vmin = float(d.get("horizontal_tail_minimum_volume_coefficient", d.get("horizontal_tail_target_volume_coefficient", 0.44)))
-    vt_vmin = float(d.get("vertical_tail_minimum_volume_coefficient", d.get("vertical_tail_target_volume_coefficient", 0.0255)))
+    sf = float(d.get("tail_control_safety_factor", 1.10))
+    gates6 = six_cfg["gates"]
     ht_ar_lo, ht_ar_hi = [float(x) for x in d.get("horizontal_tail_aspect_ratio_bounds", [3.5, 6.5])]
     vt_ar_lo, vt_ar_hi = [float(x) for x in d.get("vertical_tail_aspect_ratio_bounds", [2.0, 4.5])]
     ht_tip_min = float(d.get("horizontal_tail_minimum_tip_chord_m", 0.10))
     vt_tip_min = float(d.get("vertical_tail_minimum_tip_chord_m", 0.075))
 
+    # Cruise trim is a cheap direct control-authority screen. The 10% default
+    # safety factor tightens the existing trim-elevator gate rather than adding
+    # an arbitrary tail-volume floor.
+    V = float(d["cruise_speed_mps"])
+    model = Model(six_cfg)
+    trim = model.trim_cruise(V)
+    trim_limit = float(gates6["maximum_abs_elevator_trim_deg"]) / sf
+
     violations = []
-    if lock_ht and Vh + 1e-9 < ht_vmin:
-        violations.append("horizontal_tail_volume")
-    if lock_vt and Vv + 1e-9 < vt_vmin:
-        violations.append("vertical_tail_volume")
     if lock_ht and not (ht_ar_lo - 1e-9 <= ht_ar <= ht_ar_hi + 1e-9):
         violations.append("horizontal_tail_aspect_ratio")
     if lock_vt and not (vt_ar_lo - 1e-9 <= vt_ar <= vt_ar_hi + 1e-9):
@@ -606,8 +722,13 @@ def _tail_planform_candidate_metrics(
         violations.append("horizontal_tail_tip_chord")
     if lock_vt and vt_tip + 1e-9 < vt_tip_min:
         violations.append("vertical_tail_tip_chord")
-    if sm + 1e-9 < min_sm:
+    if sm + 1e-9 < design_sm:
         violations.append("loaded_static_margin")
+    if not bool(trim.get("success", False)):
+        violations.append("cruise_trim_solver")
+    if abs(float(trim.get("elevator_deg", 999.0))) > trim_limit + 1e-9:
+        violations.append("cruise_trim_elevator_headroom")
+    cn_beta = float(six_cfg["aerodynamics"]["Cn_beta"])
     if mass.takeoff.total_mass_kg > float(d["mtow_ceiling_kg"]) + 1e-9:
         violations.append("mass_ceiling")
     if int(mass.summary.get("packaging_fail_count", 0)) != 0:
@@ -615,11 +736,15 @@ def _tail_planform_candidate_metrics(
     if not recommended_structure_screen_pass(structure["gates"]):
         violations.append("recommended_structure")
 
+    authority=_tail_quasi_steady_authority(six_cfg,d,model,trim)
+    for check in authority.get("checks",[]):
+        if not bool(check.get("pass",False)):
+            violations.append(str(check["name"]))
+
     # The current aircraft drag model does not resolve HT/VT profile drag
     # independently. Use a transparent low-lift profile-drag proxy only as a
     # secondary tie-breaker; closed MTOW remains the primary objective.
     rho = float(aero_cfg["atmosphere"]["rho_kg_m3"])
-    V = float(d["cruise_speed_mps"])
     q = 0.5 * rho * V * V
     ht_cd0 = float(d.get("horizontal_tail_profile_cd0_screen", 0.010))
     vt_cd0 = float(d.get("vertical_tail_profile_cd0_screen", 0.010))
@@ -632,10 +757,10 @@ def _tail_planform_candidate_metrics(
     pref_ht_taper = float(d.get("horizontal_tail_preferred_taper_ratio", 0.60))
     pref_vt_taper = float(d.get("vertical_tail_preferred_taper_ratio", 0.60))
     shape_regularizer = (
-        0.020 * abs(ht_ar - pref_ht_ar)
-        + 0.015 * abs(vt_ar - pref_vt_ar)
-        + 0.010 * abs(lamh - pref_ht_taper)
-        + 0.010 * abs(lamv - pref_vt_taper)
+        0.015 * abs(ht_ar - pref_ht_ar)
+        + 0.010 * abs(vt_ar - pref_vt_ar)
+        + 0.006 * abs(lamh - pref_ht_taper)
+        + 0.006 * abs(lamv - pref_vt_taper)
     )
     objective = (
         float(mass.takeoff.total_mass_kg)
@@ -644,6 +769,7 @@ def _tail_planform_candidate_metrics(
     )
     score = objective + 1000.0 * len(violations)
 
+    scaling = six_cfg["aerodynamics"].get("tail_effectiveness_scaling", {})
     return {
         "values": {k: float(v) for k, v in values.items()},
         "resolved_values": {
@@ -658,16 +784,26 @@ def _tail_planform_candidate_metrics(
         "objective": float(objective),
         "feasible": not violations,
         "violations": violations,
+        "control_authority": authority,
+        "control_safety_factor": sf,
         "closed_mass_kg": float(mass.takeoff.total_mass_kg),
         "cg_x_m": float(mass.takeoff.cg_m[0]),
         "loaded_static_margin": float(sm),
-        "minimum_loaded_static_margin": float(min_sm),
+        "minimum_loaded_static_margin": float(design_sm),
+        "cruise_trim": trim,
+        "trim_elevator_limit_with_safety_deg": trim_limit,
         "horizontal_tail_area_m2": Sh,
         "horizontal_tail_volume_coefficient": float(Vh),
+        "horizontal_tail_reference_volume_coefficient": float(d.get("horizontal_tail_reference_volume_coefficient", 0.44)),
+        "horizontal_tail_effectiveness_scale": float(scaling.get("horizontal_effectiveness_scale", Vh/max(float(d.get("horizontal_tail_reference_volume_coefficient",0.44)),1e-9))),
         "horizontal_tail_aspect_ratio": float(ht_ar),
         "horizontal_tail_tip_chord_m": float(ht_tip),
         "vertical_tail_area_total_m2": Sv_total,
         "vertical_tail_volume_coefficient": float(Vv),
+        "vertical_tail_reference_volume_coefficient": float(d.get("vertical_tail_reference_volume_coefficient", 0.0255)),
+        "vertical_tail_effectiveness_scale": float(scaling.get("vertical_effectiveness_scale", Vv/max(float(d.get("vertical_tail_reference_volume_coefficient",0.0255)),1e-9))),
+        "directional_Cn_beta": cn_beta,
+        "directional_Cn_dr": float(six_cfg["aerodynamics"]["Cn_dr"]),
         "vertical_tail_aspect_ratio_each": float(vt_ar),
         "vertical_tail_tip_chord_m": float(vt_tip),
         "tail_profile_drag_proxy_N": float(tail_profile_drag_N),
@@ -682,11 +818,10 @@ def _tail_planform_candidate_metrics(
 
 
 def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
-    """Jointly optimize HT and VT span/height, root chord and taper.
+    """Optimize HT/VT geometry from performance, control and structure constraints.
 
-    The configured tail-volume coefficients are hard minimums. The optimizer
-    minimizes structurally closed MTOW first, with small transparent secondary
-    regularizers for low-lift profile drag and moderate tail AR/taper.
+    Vh/Vv are calibration references and reported outputs, never hard minima.
+    A small configurable safety factor tightens actual control-authority gates.
     """
     clean = deepcopy(dict(cfg))
     d0 = clean["design"]
@@ -694,20 +829,6 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     auto_vt = bool(d0.get("auto_size_vertical_tail", False))
     if not (auto_ht or auto_vt):
         return clean, {"enabled": False, "horizontal_tail": auto_ht, "vertical_tail": auto_vt, "mode": "hardcoded"}
-
-    S = float(d0["wing_area_m2"])
-    b = float(d0["wing_span_m"])
-    mac = float(d0["wing_mac_m"])
-    wing_ac = float(d0["wing_ac_x_m"])
-    ht_arm = max(float(d0["horizontal_tail_ac_x_m"]) - wing_ac, 1e-6)
-    vt_arm = max(float(d0["vertical_tail_ac_x_m"]) - wing_ac, 1e-6)
-    nfin = max(int(d0.get("vertical_tail_count", 2)), 1)
-
-    ht_vmin = float(d0.get("horizontal_tail_minimum_volume_coefficient", d0.get("horizontal_tail_target_volume_coefficient", 0.44)))
-    vt_vmin = float(d0.get("vertical_tail_minimum_volume_coefficient", d0.get("vertical_tail_target_volume_coefficient", 0.0255)))
-    Sh_req = ht_vmin * S * mac / ht_arm
-    Sv_total_req = vt_vmin * S * b / vt_arm
-    Sv_each_req = Sv_total_req / nfin
 
     ht_span_lo, ht_span_hi = [float(x) for x in d0["horizontal_tail_span_bounds_m"]]
     ht_chord_lo, ht_chord_hi = [float(x) for x in d0["horizontal_tail_root_chord_bounds_m"]]
@@ -720,89 +841,67 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     vt_taper_lo, vt_taper_hi = [float(x) for x in d0["vertical_tail_taper_ratio_bounds"]]
     vt_ar_lo, vt_ar_hi = [float(x) for x in d0["vertical_tail_aspect_ratio_bounds"]]
     vt_tip_min = float(d0["vertical_tail_minimum_tip_chord_m"])
+    nfin = max(int(d0.get("vertical_tail_count", 2)), 1)
 
     n_global = max(
-        int(d0.get("horizontal_tail_autosize_samples", 36)) if auto_ht else 0,
-        int(d0.get("vertical_tail_autosize_samples", 36)) if auto_vt else 0,
-        12,
+        int(d0.get("horizontal_tail_autosize_samples", 64)) if auto_ht else 0,
+        int(d0.get("vertical_tail_autosize_samples", 64)) if auto_vt else 0,
+        24,
     )
     n_local = max(
-        int(d0.get("horizontal_tail_autosize_local_samples", 12)) if auto_ht else 0,
-        int(d0.get("vertical_tail_autosize_local_samples", 12)) if auto_vt else 0,
+        int(d0.get("horizontal_tail_autosize_local_samples", 18)) if auto_ht else 0,
+        int(d0.get("vertical_tail_autosize_local_samples", 18)) if auto_vt else 0,
         0,
     )
 
-    def ht_from_span_taper(span: float, taper: float):
-        if not auto_ht:
-            return (
-                float(d0["horizontal_tail_span_m"]),
-                float(d0["horizontal_tail_root_chord_m"]),
-                float(d0["horizontal_tail_taper_ratio"]),
-            )
-        if not (ht_span_lo <= span <= ht_span_hi and ht_taper_lo <= taper <= ht_taper_hi):
-            return None
-        cr = 2.0 * Sh_req / max(span * (1.0 + taper), 1e-9)
-        tip = cr * taper
-        ar = span * span / max(Sh_req, 1e-9)
-        if not (ht_chord_lo <= cr <= ht_chord_hi):
-            return None
-        if tip + 1e-9 < ht_tip_min or not (ht_ar_lo <= ar <= ht_ar_hi):
-            return None
-        return float(span), float(cr), float(taper)
+    def valid_geom(hs: float, hc: float, ht: float, vh: float, vc: float, vt: float):
+        Sh = hs * hc * (1.0 + ht) / 2.0
+        Sv_each = vh * vc * (1.0 + vt) / 2.0
+        ht_ar = hs * hs / max(Sh, 1e-9)
+        vt_ar = vh * vh / max(Sv_each, 1e-9)
+        if auto_ht:
+            if not (ht_span_lo <= hs <= ht_span_hi and ht_chord_lo <= hc <= ht_chord_hi and ht_taper_lo <= ht <= ht_taper_hi):
+                return False
+            if hc*ht + 1e-9 < ht_tip_min or not (ht_ar_lo <= ht_ar <= ht_ar_hi):
+                return False
+        if auto_vt:
+            if not (vt_h_lo <= vh <= vt_h_hi and vt_chord_lo <= vc <= vt_chord_hi and vt_taper_lo <= vt <= vt_taper_hi):
+                return False
+            if vc*vt + 1e-9 < vt_tip_min or not (vt_ar_lo <= vt_ar <= vt_ar_hi):
+                return False
+        return True
 
-    def vt_from_height_taper(height: float, taper: float):
-        if not auto_vt:
-            return (
-                float(d0["vertical_tail_height_m"]),
-                float(d0["vertical_tail_root_chord_m"]),
-                float(d0["vertical_tail_taper_ratio"]),
-            )
-        if not (vt_h_lo <= height <= vt_h_hi and vt_taper_lo <= taper <= vt_taper_hi):
-            return None
-        cr = 2.0 * Sv_each_req / max(height * (1.0 + taper), 1e-9)
-        tip = cr * taper
-        ar = height * height / max(Sv_each_req, 1e-9)
-        if not (vt_chord_lo <= cr <= vt_chord_hi):
-            return None
-        if tip + 1e-9 < vt_tip_min or not (vt_ar_lo <= ar <= vt_ar_hi):
-            return None
-        return float(height), float(cr), float(taper)
-
-    tuples = []
-    # Seed the existing planform and the preferred-AR/preferred-taper geometry.
-    ht_seed = ht_from_span_taper(float(d0["horizontal_tail_span_m"]), float(d0["horizontal_tail_taper_ratio"]))
-    vt_seed = vt_from_height_taper(float(d0["vertical_tail_height_m"]), float(d0["vertical_tail_taper_ratio"]))
-    if ht_seed is not None and vt_seed is not None:
-        tuples.append((*ht_seed, *vt_seed))
-
-    ht_pref_span = float(np.clip(
-        np.sqrt(float(d0.get("horizontal_tail_preferred_aspect_ratio", 4.5)) * Sh_req),
-        ht_span_lo, ht_span_hi,
-    ))
-    vt_pref_h = float(np.clip(
-        np.sqrt(float(d0.get("vertical_tail_preferred_aspect_ratio", 2.5)) * Sv_each_req),
-        vt_h_lo, vt_h_hi,
-    ))
-    ht_pref = ht_from_span_taper(ht_pref_span, float(d0.get("horizontal_tail_preferred_taper_ratio", 0.60)))
-    vt_pref = vt_from_height_taper(vt_pref_h, float(d0.get("vertical_tail_preferred_taper_ratio", 0.60)))
-    if ht_pref is not None and vt_pref is not None:
-        tuples.append((*ht_pref, *vt_pref))
+    seed = (
+        float(d0["horizontal_tail_span_m"]),
+        float(d0["horizontal_tail_root_chord_m"]),
+        float(d0["horizontal_tail_taper_ratio"]),
+        float(d0["vertical_tail_height_m"]),
+        float(d0["vertical_tail_root_chord_m"]),
+        float(d0["vertical_tail_taper_ratio"]),
+    )
+    tuples = [seed] if valid_geom(*seed) else []
 
     rng = np.random.default_rng(20260920)
+    # Independent geometry sampling lets the actual stability/control constraints
+    # choose tail area; no tail-volume equation fixes chord/area beforehand.
     for _ in range(n_global):
-        hs = float(rng.uniform(ht_span_lo, ht_span_hi)) if auto_ht else float(d0["horizontal_tail_span_m"])
-        ht = float(rng.uniform(ht_taper_lo, ht_taper_hi)) if auto_ht else float(d0["horizontal_tail_taper_ratio"])
-        vh = float(rng.uniform(vt_h_lo, vt_h_hi)) if auto_vt else float(d0["vertical_tail_height_m"])
-        vt = float(rng.uniform(vt_taper_lo, vt_taper_hi)) if auto_vt else float(d0["vertical_tail_taper_ratio"])
-        hgeom = ht_from_span_taper(hs, ht)
-        vgeom = vt_from_height_taper(vh, vt)
-        if hgeom is not None and vgeom is not None:
-            tuples.append((*hgeom, *vgeom))
+        hs = float(rng.uniform(ht_span_lo, ht_span_hi)) if auto_ht else seed[0]
+        hc = float(rng.uniform(ht_chord_lo, ht_chord_hi)) if auto_ht else seed[1]
+        ht = float(rng.uniform(ht_taper_lo, ht_taper_hi)) if auto_ht else seed[2]
+        vh = float(rng.uniform(vt_h_lo, vt_h_hi)) if auto_vt else seed[3]
+        vc = float(rng.uniform(vt_chord_lo, vt_chord_hi)) if auto_vt else seed[4]
+        vt = float(rng.uniform(vt_taper_lo, vt_taper_hi)) if auto_vt else seed[5]
+        if valid_geom(hs,hc,ht,vh,vc,vt):
+            tuples.append((hs,hc,ht,vh,vc,vt))
 
     evaluated = []
     seen = set()
     def evaluate_tuple(tup):
         hs,hc,ht,vh,vc,vt = tup
+        key = tuple(round(float(x), 6) for x in tup)
+        if key in seen:
+            return None
+        seen.add(key)
         values = {}
         if auto_ht:
             values.update({
@@ -816,62 +915,83 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
                 "vertical_tail_root_chord_m": vc,
                 "vertical_tail_taper_ratio": vt,
             })
-        key = tuple(round(float(x), 6) for x in (hs,hc,ht,vh,vc,vt))
-        if key in seen:
-            return
-        seen.add(key)
         try:
-            evaluated.append(_tail_planform_candidate_metrics(
-                clean, values, lock_ht=auto_ht, lock_vt=auto_vt
-            ))
+            return _tail_planform_candidate_metrics(
+                clean, values, lock_ht=auto_ht, lock_vt=auto_vt,
+            )
         except Exception:
-            return
+            return None
 
     for tup in tuples:
-        evaluate_tuple(tup)
-
-    ranked0 = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
-    parents = ranked0[:min(5, len(ranked0))]
-    for j in range(n_local):
-        if not parents:
-            break
-        p = parents[j % len(parents)]["resolved_values"]
-        hs = float(np.clip(p["horizontal_tail_span_m"] + rng.normal(0.0, 0.03*(ht_span_hi-ht_span_lo)), ht_span_lo, ht_span_hi)) if auto_ht else float(d0["horizontal_tail_span_m"])
-        ht = float(np.clip(p["horizontal_tail_taper_ratio"] + rng.normal(0.0, 0.04*(ht_taper_hi-ht_taper_lo)), ht_taper_lo, ht_taper_hi)) if auto_ht else float(d0["horizontal_tail_taper_ratio"])
-        vh = float(np.clip(p["vertical_tail_height_m"] + rng.normal(0.0, 0.03*(vt_h_hi-vt_h_lo)), vt_h_lo, vt_h_hi)) if auto_vt else float(d0["vertical_tail_height_m"])
-        vt = float(np.clip(p["vertical_tail_taper_ratio"] + rng.normal(0.0, 0.04*(vt_taper_hi-vt_taper_lo)), vt_taper_lo, vt_taper_hi)) if auto_vt else float(d0["vertical_tail_taper_ratio"])
-        hgeom = ht_from_span_taper(hs, ht)
-        vgeom = vt_from_height_taper(vh, vt)
-        if hgeom is not None and vgeom is not None:
-            evaluate_tuple((*hgeom, *vgeom))
+        m = evaluate_tuple(tup)
+        if m is not None:
+            evaluated.append(m)
 
     if not evaluated:
         raise RuntimeError("Tail planform autosizer found no candidates inside the configured bounds")
 
-    ranked = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
-    best = ranked[0]
-    if not best["feasible"]:
-        raise RuntimeError(f"Tail planform autosizer found no feasible candidate; best violations: {best['violations']}")
+    # Local simultaneous refinement around the best preliminary candidates.
+    ranked0 = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
+    parents = ranked0[:min(6, len(ranked0))]
+    widths = (
+        ht_span_hi-ht_span_lo, ht_chord_hi-ht_chord_lo, ht_taper_hi-ht_taper_lo,
+        vt_h_hi-vt_h_lo, vt_chord_hi-vt_chord_lo, vt_taper_hi-vt_taper_lo,
+    )
+    for j in range(n_local):
+        if not parents:
+            break
+        p = parents[j % len(parents)]["resolved_values"]
+        vals = [
+            float(p["horizontal_tail_span_m"]), float(p["horizontal_tail_root_chord_m"]), float(p["horizontal_tail_taper_ratio"]),
+            float(p["vertical_tail_height_m"]), float(p["vertical_tail_root_chord_m"]), float(p["vertical_tail_taper_ratio"]),
+        ]
+        for k in range(6):
+            if (k < 3 and not auto_ht) or (k >= 3 and not auto_vt):
+                continue
+            vals[k] += float(rng.normal(0.0, 0.035*widths[k]))
+        vals[0]=float(np.clip(vals[0],ht_span_lo,ht_span_hi)); vals[1]=float(np.clip(vals[1],ht_chord_lo,ht_chord_hi)); vals[2]=float(np.clip(vals[2],ht_taper_lo,ht_taper_hi))
+        vals[3]=float(np.clip(vals[3],vt_h_lo,vt_h_hi)); vals[4]=float(np.clip(vals[4],vt_chord_lo,vt_chord_hi)); vals[5]=float(np.clip(vals[5],vt_taper_lo,vt_taper_hi))
+        tup=tuple(vals)
+        if valid_geom(*tup):
+            m=evaluate_tuple(tup)
+            if m is not None:
+                evaluated.append(m)
 
+    preliminary = sorted([x for x in evaluated if x["feasible"]], key=lambda x:x["score"])
+    if not preliminary:
+        best0=sorted(evaluated,key=lambda x:x["score"])[0]
+        raise RuntimeError(f"Tail planform autosizer found no preliminary feasible candidate; best violations: {best0['violations']}")
+
+    # The candidate-level quasi-steady authority screen already includes the
+    # 1.10x trim/elevator/rudder reserve. Normal-run 6-DOF remains an independent
+    # final validation rather than an optimizer inner loop.
+    best=preliminary[0]
     selected_cfg = _tail_design_overrides(clean, best["values"], lock_ht=auto_ht, lock_vt=auto_vt)
+    sf=float(d0.get("tail_control_safety_factor",1.10))
     result = {
         "enabled": True,
-        "mode": "coupled_ht_vt_span_root_chord_taper",
+        "mode": "performance_constrained_ht_vt_span_root_chord_taper",
         "horizontal_tail": auto_ht,
         "vertical_tail": auto_vt,
-        "objective": "minimum_closed_mtow_with_secondary_profile_drag_and_moderate_shape_regularization",
+        "objective": "minimum_closed_mtow_with_secondary_profile_drag_and_shape_regularization",
+        "tail_volume_role": "calibration_reference_and_output_not_hard_constraint",
+        "control_safety_factor": sf,
         "constraints": {
-            "horizontal_tail_minimum_volume_coefficient": ht_vmin,
-            "vertical_tail_minimum_volume_coefficient": vt_vmin,
-            "horizontal_tail_required_area_m2": Sh_req,
-            "vertical_tail_required_total_area_m2": Sv_total_req,
             "loaded_static_margin_target": float((selected_cfg.get("optimizer_settings") or {}).get(
                 "target_static_margin", selected_cfg["design"].get("stability_screen_static_margin", 0.12)
             )),
+            "trim_elevator_limit_with_safety_deg": float(selected_cfg["sixdof_control"]["gates"]["maximum_abs_elevator_trim_deg"])/sf,
+            "gust_yaw_limit_with_safety_deg": float(selected_cfg["sixdof_control"]["gates"]["maximum_cruise_gust_yaw_deg"])/sf,
+            "gust_roll_limit_with_safety_deg": float(selected_cfg["sixdof_control"]["gates"]["maximum_cruise_gust_roll_deg"])/sf,
+            "surface_utilization_limit_with_safety": float(selected_cfg["sixdof_control"]["gates"]["maximum_surface_utilization_fraction"])/sf,
+            "horizontal_tail_reference_volume_coefficient": float(d0.get("horizontal_tail_reference_volume_coefficient",0.44)),
+            "vertical_tail_reference_volume_coefficient": float(d0.get("vertical_tail_reference_volume_coefficient",0.0255)),
         },
         "evaluated_candidates": len(evaluated),
-        "feasible_candidates": sum(1 for x in evaluated if x["feasible"]),
+        "preliminary_feasible_candidates": len(preliminary),
+        "control_authority_method": "quasi_steady_linearized_surface_authority",
         "selected": deepcopy(best),
+        "fidelity_note": "Tail control derivatives are scaled from calibrated reference Vh/Vv. Tail sizing uses quasi-steady elevator/rudder reserve plus static margin, trim and structural constraints; normal-run 6-DOF remains independent validation. Replace derivative scaling with AVL/CFD/wind-tunnel/flight correlation when available.",
     }
     return selected_cfg, result
 
@@ -1025,6 +1145,12 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     )
     max_gust_cl_util=max(max_dynamic_gust_cl_util,float(vertical_gust_screen["clmax_utilization"]))
 
+    # Final tail-authority verification using the same candidate-scaled
+    # quasi-steady elevator/rudder reserve used by the optimizer. Normal 6-DOF
+    # control cases above remain an independent dynamic validation layer.
+    tail_trim=current_model.trim_cruise(V)
+    tail_control_authority=_tail_quasi_steady_authority(six_cfg,d,current_model,tail_trim)
+
     gates=[]
     def gate(name,status,note):gates.append({"name":name,"status":status,"note":note})
     gate("mass_ceiling","PASS" if mass_final.takeoff.total_mass_kg<=float(d["mtow_ceiling_kg"]) else "FAIL",f"Structurally closed mass {mass_final.takeoff.total_mass_kg:.3f} kg vs {float(d['mtow_ceiling_kg']):.1f} kg ceiling.")
@@ -1042,6 +1168,8 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("mission_ems","PASS" if ems.feasible else "FAIL","Dynamic mission profile through hybrid H2/battery EMS.")
     gate("transition","PASS" if mission["forward_transition"].success and mission["reverse_transition"].success else "FAIL","Forward and reverse point-mass transition completion on closed mass.")
     gate("current_longitudinal_stability","PASS" if current_model.static_margin>=float(six_cfg["gates"]["minimum_static_margin"]) else "FAIL",f"Closed-aircraft static margin {100*current_model.static_margin:.2f}% MAC.")
+    failed_tail_checks=[x["name"] for x in tail_control_authority["checks"] if not x["pass"]]
+    gate("tail_control_authority","PASS" if tail_control_authority["pass"] else "FAIL",f"Tail trim/elevator/rudder reserve with {float(tail_control_authority['safety_factor']):.2f}x safety factor; failed checks: {failed_tail_checks if failed_tail_checks else 'none'}.")
     gate("payload_off_static_margin","PASS" if sm_payload_off>=min_sm else "FAIL",f"Payload-off static margin {100*sm_payload_off:.2f}% MAC (CG x={mass_payload_off.takeoff.cg_m[0]:.4f} m) vs minimum {100*min_sm:.1f}% MAC.")
     gate("current_layout_6dof","PASS" if control_cases["current_layout"]["gate_evaluation"]["pass"] else "FAIL","Actual closed geometry/control 6-DOF gate set.")
     gate("sixdof_linear_aero_validity",control_cases["current_layout"]["linear_aero_validity"]["status"],control_cases["current_layout"]["linear_aero_validity"]["note"]+f" Maximum |alpha| above 10 m/s = {control_cases["current_layout"]["linear_aero_validity"]["maximum_abs_alpha_above_10mps_deg"]:.1f} deg.")
@@ -1058,7 +1186,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("certified_hydrogen_cylinder_mass","PASS" if cylinder_known else "NOT_EVALUATED",
          "Certified cylinder mass is present." if cylinder_known else "Selected certified 3.0 L / 300 bar cylinder mass remains open and is not released.")
     hard=[g for g in gates if g["status"]=="FAIL"]
-    status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","fuel_cell_cooling_geometry","current_longitudinal_stability","payload_off_static_margin","15kg_zero_pitch_motor_thrust","15kg_stall_margin","positive_manoeuvre_stall_margin","negative_manoeuvre_stall_margin","inspection_gust_stall_margin"} for g in hard) else "SCREENING_FAIL")
+    status="SCREENING_PASS" if not hard else ("DESIGN_REQUIRES_GEOMETRY_UPDATE" if any(g["name"] in {"packaging","fuel_cell_cooling_geometry","current_longitudinal_stability","tail_control_authority","payload_off_static_margin","15kg_zero_pitch_motor_thrust","15kg_stall_margin","positive_manoeuvre_stall_margin","negative_manoeuvre_stall_margin","inspection_gust_stall_margin"} for g in hard) else "SCREENING_FAIL")
 
     usable_h2_Wh=float(ems.summary.get("fc_operational_energy_remaining_Wh", 0.0) or 0.0)
     # Prefer total operational usable energy from hydrogen config when remaining is mid-mission.
@@ -1069,7 +1197,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     cruise_bus_W=float(drag.total_cruise_bus_power_W)
     endurance_at_cruise_h=(usable_h2_Wh/cruise_bus_W) if cruise_bus_W>1e-9 else float("nan")
 
-    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"payload_off_static_margin":sm_payload_off,"post_structure_static_margin_if_np_fixed":post_static_margin,"positive_operational_load_factor_g":flight_envelope["positive_operational_limit_g"],"negative_operational_load_factor_g":flight_envelope["negative_operational_limit_g"],"maximum_bank_deg":flight_envelope["maximum_bank_deg"],"positive_manoeuvre_cl_utilization":flight_envelope["positive_manoeuvre_cl_utilization"],"negative_manoeuvre_cl_utilization":flight_envelope["negative_manoeuvre_cl_utilization"],"vertical_gust_cl_utilization":vertical_gust_screen["clmax_utilization"],"sixdof_worst_gust_cl_utilization":max_dynamic_gust_cl_util,"worst_gust_cl_utilization":max_gust_cl_util,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"endurance_at_cruise_h":endurance_at_cruise_h,"usable_h2_Wh":usable_h2_Wh,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"horizontal_tail_spar_od_mm":structure["summary"]["horizontal_tail_recommended_spar_od_mm"],"horizontal_tail_spar_id_mm":structure["summary"]["horizontal_tail_recommended_spar_id_mm"],"vertical_tail_spar_od_mm":structure["summary"]["vertical_tail_recommended_spar_od_mm"],"vertical_tail_spar_id_mm":structure["summary"]["vertical_tail_recommended_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"rear_thrust_recovery_factor":rear_recovery,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"flight_envelope":{**flight_envelope,"vertical_gust_screen":vertical_gust_screen,"sixdof_worst_clmax_utilization":max_dynamic_gust_cl_util},"main_wing_autosizing":main_wing_autosizing,"tail_planform_autosizing":tail_planform_autosizing,"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
+    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"payload_off_static_margin":sm_payload_off,"post_structure_static_margin_if_np_fixed":post_static_margin,"positive_operational_load_factor_g":flight_envelope["positive_operational_limit_g"],"negative_operational_load_factor_g":flight_envelope["negative_operational_limit_g"],"maximum_bank_deg":flight_envelope["maximum_bank_deg"],"positive_manoeuvre_cl_utilization":flight_envelope["positive_manoeuvre_cl_utilization"],"negative_manoeuvre_cl_utilization":flight_envelope["negative_manoeuvre_cl_utilization"],"vertical_gust_cl_utilization":vertical_gust_screen["clmax_utilization"],"sixdof_worst_gust_cl_utilization":max_dynamic_gust_cl_util,"worst_gust_cl_utilization":max_gust_cl_util,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"endurance_at_cruise_h":endurance_at_cruise_h,"usable_h2_Wh":usable_h2_Wh,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"horizontal_tail_spar_od_mm":structure["summary"]["horizontal_tail_recommended_spar_od_mm"],"horizontal_tail_spar_id_mm":structure["summary"]["horizontal_tail_recommended_spar_id_mm"],"vertical_tail_spar_od_mm":structure["summary"]["vertical_tail_recommended_spar_od_mm"],"vertical_tail_spar_id_mm":structure["summary"]["vertical_tail_recommended_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"rear_thrust_recovery_factor":rear_recovery,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"flight_envelope":{**flight_envelope,"vertical_gust_screen":vertical_gust_screen,"sixdof_worst_clmax_utilization":max_dynamic_gust_cl_util},"tail_control_authority":tail_control_authority,"main_wing_autosizing":main_wing_autosizing,"tail_planform_autosizing":tail_planform_autosizing,"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
 
     # Top-level: summary + configs. Supporting artifacts live under details/.
     details = out / "details"
@@ -1112,6 +1240,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
             "final_battery_soc": ems.summary.get("final_battery_soc"),
             "main_wing_autosizing": main_wing_autosizing,
             "tail_planform_autosizing": tail_planform_autosizing,
+            "tail_control_authority": tail_control_authority,
             "main_wing_span_m": float(d["wing_span_m"]),
             "main_wing_root_chord_m": float(d["main_wing_root_chord_m"]),
             "main_wing_taper_ratio": float(d["main_wing_taper_ratio"]),

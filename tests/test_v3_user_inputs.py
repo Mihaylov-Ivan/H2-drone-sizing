@@ -88,6 +88,11 @@ def test_auto_size_tail_triggers_and_bounds():
     assert d['horizontal_tail_taper_ratio_bounds']==[0.45,0.85]
     assert d['vertical_tail_root_chord_bounds_m']==[0.12,0.26]
     assert d['vertical_tail_taper_ratio_bounds']==[0.4,0.8]
+    assert abs(d['tail_control_safety_factor']-1.10)<1e-12
+    assert abs(d['horizontal_tail_reference_volume_coefficient']-0.44)<1e-12
+    assert abs(d['vertical_tail_reference_volume_coefficient']-0.0255)<1e-12
+    assert 'horizontal_tail_minimum_volume_coefficient' not in d
+    assert 'vertical_tail_minimum_volume_coefficient' not in d
     space=default_space_for_config(c)
     assert 'horizontal_tail_span_m' not in space
     assert 'vertical_tail_height_m' not in space
