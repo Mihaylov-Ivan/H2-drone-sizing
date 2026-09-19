@@ -1,0 +1,23 @@
+name: Baseline before inspection envelope
+
+on:
+  push:
+    branches:
+      - experiment/baseline-before-inspection-envelope
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run current-main baseline
+        run: python run_model.py --config config/user_inputs.json --output baseline_before_envelope --no-histories
+      - uses: actions/upload-artifact@v4
+        with:
+          name: baseline-before-envelope
+          path: baseline_before_envelope
+          if-no-files-found: error
