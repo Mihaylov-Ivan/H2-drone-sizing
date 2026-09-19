@@ -182,6 +182,48 @@ def size_tube_for_bending_and_stiffness(
     raise RuntimeError('No tube satisfies constraints in requested OD range')
 
 
+def size_cots_tube_for_bending_and_stiffness(
+    *, moment_Nm: float, length_m: float, material: Material,
+    deflection_limit_fraction: float, slope_limit_deg: float,
+    min_od_m: float, max_od_m: float, axial_N: float = 0.0,
+    od_step_mm: int = 2, id_step_mm: int = 2, min_wall_m: float = 0.001,
+) -> Tuple[TubeSection, MemberCheck]:
+    """Return the lightest passing tube on an even-mm screening grid.
+
+    This is a COTS-style geometry screen, not a supplier availability claim.
+    Candidates are ranked by section area (therefore mass for equal material
+    and length), then by smaller OD.  Both strength and stiffness must pass.
+    """
+    if od_step_mm <= 0 or id_step_mm <= 0:
+        raise ValueError('COTS tube steps must be positive')
+    min_od_mm = int(round(float(min_od_m) * 1000.0))
+    max_od_mm = int(round(float(max_od_m) * 1000.0))
+    first_od = ((min_od_mm + od_step_mm - 1) // od_step_mm) * od_step_mm
+    best: Optional[Tuple[float, float, TubeSection, MemberCheck]] = None
+    for od_mm in range(first_od, max_od_mm + 1, od_step_mm):
+        max_id_mm = od_mm - int(round(2.0 * float(min_wall_m) * 1000.0))
+        if max_id_mm <= 0:
+            continue
+        for id_mm in range(id_step_mm, max_id_mm + 1, id_step_mm):
+            if id_mm >= od_mm:
+                continue
+            sec = TubeSection(od_mm * 1e-3, id_mm * 1e-3)
+            chk = check_tube_member(
+                member='cots_candidate', case='sizing', section=sec, material=material,
+                length_m=length_m, bending_Nm=moment_Nm, axial_N=axial_N,
+                deflection_limit_fraction=deflection_limit_fraction,
+                slope_limit_deg=slope_limit_deg,
+            )
+            if not chk.overall_pass:
+                continue
+            rank = (sec.area_m2, sec.od_m)
+            if best is None or rank < (best[0], best[1]):
+                best = (rank[0], rank[1], sec, chk)
+    if best is None:
+        raise RuntimeError('No even-mm COTS-style tube satisfies configured structural constraints')
+    return best[2], best[3]
+
+
 def tube_mass_kg(section: TubeSection, length_m: float, density_kg_m3: float, count: int = 1) -> float:
     return section.area_m2 * length_m * density_kg_m3 * count
 
@@ -315,7 +357,15 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
         wing_rec = TubeSection(float(s['hardcoded_wing_spar_od_m']), float(s['hardcoded_wing_spar_id_m']))
         wing_rec_chk = check_tube_member(member='wing_primary_spar_hardcoded_cots',case=wing_case.name,section=wing_rec,material=mat,length_m=float(s['design_wing_semispan_m']),bending_Nm=wing_case.wing_root_bending_Nm,deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']))
     else:
-        wing_rec,wing_rec_chk=size_tube_for_bending_and_stiffness(moment_Nm=wing_case.wing_root_bending_Nm,length_m=float(s['design_wing_semispan_m']),material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),slope_limit_deg=float(s['wing_root_slope_limit_deg']),min_od_m=0.010,max_od_m=0.040,step_m=0.00025)
+        wing_rec,wing_rec_chk=size_cots_tube_for_bending_and_stiffness(
+            moment_Nm=wing_case.wing_root_bending_Nm,
+            length_m=float(s['design_wing_semispan_m']), material=mat,
+            deflection_limit_fraction=float(s['wing_tip_deflection_limit_fraction']),
+            slope_limit_deg=float(s['wing_root_slope_limit_deg']),
+            min_od_m=float(s.get('wing_auto_min_od_m', 0.010)),
+            max_od_m=float(s.get('wing_auto_max_od_m', 0.040)),
+            min_wall_m=float(s.get('auto_tube_min_wall_m', 0.001)),
+        )
     boom_strength_chk=check_tube_member(member='boom_legacy_strength_only',case=boom_case.name,section=boom_strength,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
     boom_reference_chk=check_tube_member(member='boom_reference_geometry',case=boom_case.name,section=boom_reference,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
     # Tail spars: current code only sized these from the cruise tail load.
@@ -335,8 +385,22 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
         hrec_chk = check_tube_member(member='horizontal_tail_spar_hardcoded_cots',case=hcase.name,section=hrec,material=mat,length_m=hL,bending_Nm=hM,deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']))
         vrec_chk = check_tube_member(member='vertical_tail_spar_hardcoded_cots',case=vcase.name,section=vrec,material=mat,length_m=vL,bending_Nm=vM,deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']))
     else:
-        hrec,hrec_chk=size_tube_for_bending_and_stiffness(moment_Nm=hM,length_m=hL,material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']),min_od_m=0.004,max_od_m=0.025,step_m=0.00025)
-        vrec,vrec_chk=size_tube_for_bending_and_stiffness(moment_Nm=vM,length_m=vL,material=mat,id_over_od=float(s['wing_spar_id_over_od']),deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),slope_limit_deg=float(s['tail_root_slope_limit_deg']),min_od_m=0.004,max_od_m=0.025,step_m=0.00025)
+        hrec,hrec_chk=size_cots_tube_for_bending_and_stiffness(
+            moment_Nm=hM, length_m=hL, material=mat,
+            deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),
+            slope_limit_deg=float(s['tail_root_slope_limit_deg']),
+            min_od_m=float(s.get('tail_auto_min_od_m', 0.004)),
+            max_od_m=float(s.get('tail_auto_max_od_m', 0.026)),
+            min_wall_m=float(s.get('auto_tube_min_wall_m', 0.001)),
+        )
+        vrec,vrec_chk=size_cots_tube_for_bending_and_stiffness(
+            moment_Nm=vM, length_m=vL, material=mat,
+            deflection_limit_fraction=float(s['tail_deflection_limit_fraction']),
+            slope_limit_deg=float(s['tail_root_slope_limit_deg']),
+            min_od_m=float(s.get('tail_auto_min_od_m', 0.004)),
+            max_od_m=float(s.get('tail_auto_max_od_m', 0.026)),
+            min_wall_m=float(s.get('auto_tube_min_wall_m', 0.001)),
+        )
 
     # Central pod: preserve the live structures.py shell model as authority, but
     # scale its reported stress to the larger Structures governing wing moment.
@@ -350,17 +414,16 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
         boom_candidate = TubeSection(float(s['hardcoded_boom_od_m']), float(s['hardcoded_boom_id_m']))
         boom_candidate_chk = check_tube_member(member='boom_hardcoded_cots',case=boom_case.name,section=boom_candidate,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
     else:
-        boom_candidate=None; boom_candidate_chk=None
-        wall=float(s['boom_candidate_wall_m'])
-        od=float(s['boom_candidate_min_od_m'])
-        while od<=float(s['boom_candidate_max_od_m'])+EPS:
-            sec=TubeSection(od,max(0.001,od-2*wall))
-            chk=check_tube_member(member='boom_stiffness_sized_candidate',case=boom_case.name,section=sec,material=mat,length_m=float(s['boom_length_m']),bending_Nm=boom_case.boom_root_bending_Nm,axial_N=boom_case.boom_axial_N,deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),slope_limit_deg=float(s['boom_root_slope_limit_deg']))
-            if chk.overall_pass:
-                boom_candidate,boom_candidate_chk=sec,chk;break
-            od+=float(s['boom_candidate_step_m'])
-        if boom_candidate is None or boom_candidate_chk is None:
-            raise RuntimeError('No boom candidate met configured structural constraints')
+        boom_candidate,boom_candidate_chk=size_cots_tube_for_bending_and_stiffness(
+            moment_Nm=boom_case.boom_root_bending_Nm,
+            length_m=float(s['boom_length_m']), material=mat,
+            axial_N=boom_case.boom_axial_N,
+            deflection_limit_fraction=float(s['boom_tip_deflection_limit_fraction']),
+            slope_limit_deg=float(s['boom_root_slope_limit_deg']),
+            min_od_m=float(s.get('boom_candidate_min_od_m', 0.012)),
+            max_od_m=float(s.get('boom_candidate_max_od_m', 0.040)),
+            min_wall_m=float(s.get('auto_tube_min_wall_m', 0.001)),
+        )
 
     # Wing torsion is reported separately because the real closed-cell skin/dual-spar
     # torsional stiffness should be retained from structures.py rather than pretending
@@ -389,47 +452,22 @@ def evaluate_structure(cfg: Mapping[str, Any], cases: Sequence[LoadCase]) -> Dic
                 deflection_limit_fraction=dlim, slope_limit_deg=slim,
             )
         else:
-            land_rec, land_chk = size_tube_for_bending_and_stiffness(
-                moment_Nm=land_case.landing_leg_bending_Nm, length_m=L_leg, material=mat, id_over_od=id_ratio,
+            land_rec, land_chk = size_cots_tube_for_bending_and_stiffness(
+                moment_Nm=land_case.landing_leg_bending_Nm,
+                length_m=L_leg, material=mat,
+                axial_N=land_case.landing_leg_axial_N,
                 deflection_limit_fraction=dlim, slope_limit_deg=slim,
                 min_od_m=float(s.get('landing_leg_min_od_m', 0.008)),
                 max_od_m=float(s.get('landing_leg_max_od_m', 0.030)),
-                step_m=float(s.get('landing_leg_step_m', 0.00025)),
-                axial_N=land_case.landing_leg_axial_N,
+                min_wall_m=float(s.get('auto_tube_min_wall_m', 0.001)),
             )
-            # Lock to even-mm COTS OD/ID (same inventory rule as other tubes).
-            def _ceil_even_mm(value_mm: float) -> int:
-                from math import ceil
-                return int(ceil(float(value_mm) / 2.0) * 2)
-
-            od_mm = float(_ceil_even_mm(land_rec.od_m * 1000.0))
-            id_mm = float(_ceil_even_mm(land_rec.id_m * 1000.0))
-            if id_mm >= od_mm:
-                id_mm = max(2.0, od_mm - 2.0)
-            land_rec = TubeSection(od_mm * 1e-3, id_mm * 1e-3)
             land_chk = check_tube_member(
-                member='landing_leg_recommended_cots', case=land_case.name, section=land_rec, material=mat,
-                length_m=L_leg, bending_Nm=land_case.landing_leg_bending_Nm, axial_N=land_case.landing_leg_axial_N,
+                member='landing_leg_recommended_cots', case=land_case.name,
+                section=land_rec, material=mat, length_m=L_leg,
+                bending_Nm=land_case.landing_leg_bending_Nm,
+                axial_N=land_case.landing_leg_axial_N,
                 deflection_limit_fraction=dlim, slope_limit_deg=slim,
             )
-            if not land_chk.overall_pass:
-                od_mm = od_mm + 2.0
-                while od_mm * 1e-3 <= float(s.get('landing_leg_max_od_m', 0.030)) + EPS:
-                    id_mm = float(_ceil_even_mm(od_mm * id_ratio))
-                    if id_mm >= od_mm:
-                        id_mm = max(2.0, od_mm - 2.0)
-                    sec = TubeSection(od_mm * 1e-3, id_mm * 1e-3)
-                    chk = check_tube_member(
-                        member='landing_leg_recommended_cots', case=land_case.name, section=sec, material=mat,
-                        length_m=L_leg, bending_Nm=land_case.landing_leg_bending_Nm, axial_N=land_case.landing_leg_axial_N,
-                        deflection_limit_fraction=dlim, slope_limit_deg=slim,
-                    )
-                    if chk.overall_pass:
-                        land_rec, land_chk = sec, chk
-                        break
-                    od_mm += 2.0
-                else:
-                    raise RuntimeError('No even-mm COTS landing-leg tube satisfies 3g landing constraints')
         landing = {
             'enabled': True,
             'governing_case': land_case.name,
