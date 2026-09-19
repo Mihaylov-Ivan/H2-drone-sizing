@@ -344,7 +344,7 @@ def simulate_tracking(model:Model,rows:Sequence[Mapping[str,float]],wind_fn=None
     return out
 
 
-def simulate_cruise_gust(model:Model,speed_mps:float=20.0,stabilized:bool=True,gust_ned_mps:Optional[Sequence[float]]=None)->List[Sample]:
+def simulate_cruise_gust(model:Model,speed_mps:float=20.0,stabilized:bool=True,gust_ned_mps:Optional[Sequence[float]]=None,disable_lift_rotors:bool=False)->List[Sample]:
     trim=model.trim_cruise(speed_mps); dt=float(model.cfg['simulation']['dt_s']); dur=float(model.cfg['simulation']['cruise_disturbance_duration_s']); sim=model.cfg['simulation']
     gust_vec=np.asarray(sim['wind_gust_ned_mps'] if gust_ned_mps is None else gust_ned_mps,dtype=float)
     if gust_vec.shape != (3,):
@@ -361,6 +361,10 @@ def simulate_cruise_gust(model:Model,speed_mps:float=20.0,stabilized:bool=True,g
         if float(sim['wind_gust_start_s'])<=st.t<=float(sim['wind_gust_start_s'])+float(sim['wind_gust_duration_s']): wind=gust_vec.copy()
         target={'speed_mps':speed_mps,'pitch_deg':trim['alpha_deg'],'altitude_m':30.0,'vertical_speed_mps':0,'roll_deg':0,'yaw_deg':0}
         c=ctl.command(st,target,wind,dt) if stabilized else Controls(np.zeros(4),st.pusher_rpm,st.surfaces.copy(),np.zeros(3),np.zeros(3),np.zeros(3),0)
+        if stabilized and disable_lift_rotors:
+            # Fixed-wing cruise authority screen: lift propellers are stopped/aligned,
+            # so do not let VTOL rotor moments hide inadequate aerodynamic tail control.
+            c=Controls(np.zeros(4),c.pusher_rpm_cmd,c.surface_cmd,c.desired_moment_body,np.zeros(3),c.surface_moment_cmd,c.rotor_allocation_residual)
         if stabilized: model.actuator_update(st,c,dt)
         out.append(make_sample(model,st,c,target,wind)); model.integrate(st,dt,wind)
         phi,theta,_=euler_from_quat(st.quat_bn)
