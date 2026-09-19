@@ -4,6 +4,7 @@
   "layout": {
     "top_level": [
       "SUMMARY.md",
+      "aircraft_specification.json",
       "resolved_configuration.json",
       "user_inputs.json"
     ],
@@ -36,6 +37,7 @@
   },
   "outputs": [
     "SUMMARY.md",
+    "aircraft_specification.json",
     "resolved_configuration.json",
     "user_inputs.json",
     "details/AUTO_CALCULATED_VALUES.json",

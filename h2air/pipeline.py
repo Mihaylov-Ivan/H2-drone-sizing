@@ -18,6 +18,7 @@ from .sixdof import Model, simulate_tracking, simulate_cruise_gust, summarize_sa
 from .control_gates import evaluate_case as evaluate_control_case
 from .structures import build_structural_result
 from .report import write_markdown_report
+from .aircraft_spec import write_aircraft_specification
 from .cad_export import write_cad_exports
 from .fuel_cell_cooling import analyze_fuel_cell_cooling
 
@@ -286,6 +287,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     details = out / "details"
     details.mkdir(parents=True, exist_ok=True)
     write_markdown_report(out / "SUMMARY.md", result, cfg=cfg)
+    write_aircraft_specification(out / "aircraft_specification.json", cfg, result)
     resolved = {k: v for k, v in cfg.items() if k != "_runtime"}
     (out / "resolved_configuration.json").write_text(json.dumps(resolved, indent=2, default=str) + "\n", encoding="utf-8")
     if cfg.get("user_input_snapshot") is not None:

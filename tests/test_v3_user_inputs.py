@@ -98,7 +98,15 @@ def test_v4_default_user_design_full_pipeline_runs(tmp_path):
     r=run_model(c,tmp_path/'run',write_histories=False)
     assert r['coupled_closure']['converged']
     assert (tmp_path/'run'/'SUMMARY.md').exists()
+    assert (tmp_path/'run'/'aircraft_specification.json').exists()
     assert (tmp_path/'run'/'resolved_configuration.json').exists()
+    spec = json.loads((tmp_path/'run'/'aircraft_specification.json').read_text(encoding='utf-8'))
+    assert spec['schema'] == 'H2AIR-aircraft-specification-v1'
+    assert spec['run']['design_status'] == r['summary']['design_status']
+    assert abs(spec['mass_balance']['closed_mtow_kg'] - r['summary']['post_structure_mass_kg']) < 1e-9
+    assert abs(spec['geometry']['main_wing']['span_m'] - c['design']['wing_span_m']) < 1e-9
+    assert 'components_takeoff_kg' in spec['mass_balance']
+    assert 'gates' in spec
     assert (tmp_path/'run'/'user_inputs.json').exists()
     assert (tmp_path/'run'/'details'/'AUTO_CALCULATED_VALUES.json').exists()
     assert (tmp_path/'run'/'details'/'manufacturing_mass_ledger.csv').exists()

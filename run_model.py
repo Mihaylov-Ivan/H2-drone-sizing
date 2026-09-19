@@ -183,6 +183,10 @@ def _run_design_study(root: Path, args, base_cfg):
     )
 
     selected_out = details / ("recommended_verified" if choose_robust else "nominal_verified")
+    spec_src = selected_out / "aircraft_specification.json"
+    if spec_src.exists():
+        import shutil
+        shutil.copy2(spec_src, study / "aircraft_specification.json")
     print(f"Selected design: {selected_name}")
     print(f"Nominal/robust uncertainty pass: {nominal_prob:.1%} / {robust_prob:.1%}")
     print(f"Design-study outputs: {study}")
