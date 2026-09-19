@@ -132,6 +132,27 @@ def apply_carbon_fiber_tubes(cfg: Dict[str, Any], tubes: Mapping[str, Any]) -> N
         ps.pop("outboard", None)
         ps.pop("joiner_span_fraction", None)
         ps.pop("joiner_mass_kg_each", None)
+
+        # Auto ownership applies only to primary load-carrying members.
+        # Secondary spars and fuselage longerons remain explicit user geometry.
+        secondary_rules = (
+            ("main_wing_secondary_spar", mm["main_wing"]["secondary_spar"]),
+            ("horizontal_tail_secondary_spar", mm["horizontal_tail"]["secondary_spar"]),
+            ("vertical_tail_secondary_spar", mm["vertical_tail"]["secondary_spar"]),
+        )
+        for name, rule in secondary_rules:
+            if tubes.get(name) is not None:
+                od, _ = _tube_mm_pair(tubes[name], require_id=False)
+                rule["tube_od_m"] = od
+        if tubes.get("fuselage_longerons") is not None:
+            long_spec = tubes["fuselage_longerons"]
+            long_od, _ = _tube_mm_pair(long_spec, require_id=False)
+            mm["fuselage_longerons"]["tube_od_m"] = long_od
+            if long_spec.get("boss_od_mm") is not None:
+                boss = float(long_spec["boss_od_mm"])
+                if boss <= float(long_spec["od_mm"]):
+                    raise ValueError("fuselage_longerons boss_od_mm must exceed tube od_mm")
+                mm["fuselage_longerons"]["boss_od_m"] = boss * 1e-3
         return
 
     wing_spec = tubes["main_wing_primary_spar"]
