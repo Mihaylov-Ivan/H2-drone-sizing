@@ -27,6 +27,21 @@ def test_v3_user_file_resolves_auto_geometry():
 
 
 
+def test_inspection_flight_envelope_user_inputs_resolve():
+    c=load_model_config(ROOT/'config'/'user_inputs.json')
+    d=c['design']
+    assert d['operational_positive_manoeuvre_load_factor_g']==1.5
+    assert d['operational_negative_manoeuvre_load_factor_g']==-0.5
+    assert d['operational_maximum_bank_deg']==45.0
+    assert d['maximum_manoeuvre_clmax_utilization']==0.90
+    assert d['maximum_gust_clmax_utilization']==0.95
+    assert c['structures']['load_cases']['maneuver_load_factor']==3.0
+    gusts=c['sixdof_control']['simulation']['inspection_gust_cases_ned_mps']
+    assert gusts['lateral']==[0.0,5.0,0.0]
+    assert gusts['vertical_up']==[0.0,0.0,-2.0]
+    assert gusts['vertical_down']==[0.0,0.0,2.0]
+
+
 def test_default_primary_structure_is_solver_owned():
     c=load_model_config(ROOT/'config'/'user_inputs.json')
     st=c['structures']['structure']
