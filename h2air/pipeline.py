@@ -468,7 +468,18 @@ def _csv(path:Path,rows:Sequence[Mapping[str,Any]]):
     with path.open("w",newline="",encoding="utf-8") as f:
         w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows(rows)
 
-def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:bool=True)->Dict[str,Any]:\n    cfg=resolve_design_couplings(raw_cfg)\n    out=Path(output_dir); out.mkdir(parents=True,exist_ok=True)\n\n    # Optional user-triggered coupled main-wing planform sizing.\n    main_wing_autosizing = {"enabled": False, "mode": "hardcoded"}\n    if bool(cfg["design"].get("auto_size_main_wing", False)):\n        cfg, main_wing_autosizing = _auto_size_main_wing(cfg)\n    d=cfg["design"]\n\n    # 1. Base ledger and actual structural mass/CG fixed-point closure.\n    base_comps=_components_with_power(cfg); mass_pre=_mass_result(cfg,base_comps)
+def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:bool=True)->Dict[str,Any]:
+    cfg=resolve_design_couplings(raw_cfg)
+    out=Path(output_dir); out.mkdir(parents=True,exist_ok=True)
+
+    # Optional user-triggered coupled main-wing planform sizing.
+    main_wing_autosizing = {"enabled": False, "mode": "hardcoded"}
+    if bool(cfg["design"].get("auto_size_main_wing", False)):
+        cfg, main_wing_autosizing = _auto_size_main_wing(cfg)
+    d=cfg["design"]
+
+    # 1. Base ledger and actual structural mass/CG fixed-point closure.
+    base_comps=_components_with_power(cfg); mass_pre=_mass_result(cfg,base_comps)
     comps,mass_final,structure,closure_history=_structural_closure(cfg,base_comps)
 
     # Structural closure writes the selected primary tube OD/ID back into the
@@ -631,7 +642,15 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
             "mission_energy_Wh": mission["total_profile_energy_Wh"],
             "h2_used_kg": ems.summary.get("h2_used_kg"),
             "final_battery_soc": ems.summary.get("final_battery_soc"),
-            "main_wing_autosizing": main_wing_autosizing,\n            "main_wing_span_m": float(d["wing_span_m"]),\n            "main_wing_root_chord_m": float(d["main_wing_root_chord_m"]),\n            "main_wing_taper_ratio": float(d["main_wing_taper_ratio"]),\n            "main_wing_area_m2": float(d["wing_area_m2"]),\n            "main_wing_mac_m": float(d["wing_mac_m"]),\n            "wing_spar_od_mm": structure["summary"]["recommended_wing_spar_od_mm"],\n            "boom_od_mm": structure["summary"]["recommended_boom_od_mm"],\n            "front_motor_15kg_N": front_each,
+            "main_wing_autosizing": main_wing_autosizing,
+            "main_wing_span_m": float(d["wing_span_m"]),
+            "main_wing_root_chord_m": float(d["main_wing_root_chord_m"]),
+            "main_wing_taper_ratio": float(d["main_wing_taper_ratio"]),
+            "main_wing_area_m2": float(d["wing_area_m2"]),
+            "main_wing_mac_m": float(d["wing_mac_m"]),
+            "wing_spar_od_mm": structure["summary"]["recommended_wing_spar_od_mm"],
+            "boom_od_mm": structure["summary"]["recommended_boom_od_mm"],
+            "front_motor_15kg_N": front_each,
             "rear_motor_15kg_N": rear_each,
             "fuel_cell_cooling_required_airflow_cfm": cooling.required_airflow_cfm,
             "fuel_cell_cooling_estimated_airflow_cfm": cooling.estimated_operating_airflow_cfm,
