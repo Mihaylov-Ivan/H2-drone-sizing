@@ -565,5 +565,18 @@
       "removable_exhaust_grille_fastener": "M3",
       "note": "Drawing-only cooling details exported with the calculated inlet/exhaust positions and flow areas."
     }
+  },
+  "flight_envelope": {
+    "role": "inspection_route_following",
+    "maximum_bank_deg": 45,
+    "positive_manoeuvre_load_factor_g": 1.5,
+    "negative_manoeuvre_load_factor_g": -0.5,
+    "maximum_manoeuvre_clmax_utilization": 0.9,
+    "lateral_gust_mps": 5,
+    "vertical_gust_mps": 2,
+    "gust_duration_s": 2,
+    "maximum_gust_clmax_utilization": 0.95,
+    "structural_design_positive_load_factor_g": 3,
+    "note": "Non-aerobatic inspection-aircraft screen: 45 deg bank corresponds to ~1.41 g, so +1.5 g provides operational manoeuvre margin. -0.5 g covers unloading/gust response without implying aerobatics. Structure remains screened at +3.0 g. Gust screen uses 5 m/s lateral and +/-2 m/s vertical step gusts for 2 s, including a combined lateral+upward case."
   }
 }
