@@ -349,9 +349,11 @@ def write_markdown_report(
         f"(no alleviation credit); 6-DOF gust cases peak at **{_pct(s.get('sixdof_worst_gust_cl_utilization'),1)}**; "
         f"configured lateral/vertical gusts **{_f(d.get('inspection_lateral_gust_mps'),1)} / ±{_f(d.get('inspection_vertical_gust_mps'),1)} m/s** for **{_f(d.get('inspection_gust_duration_s'),1)} s**",
         (
-            f"- Tail authority (fixed-wing, lift rotors disabled): **{'PASS' if bool(_get(r,'tail_control_authority','pass',default=False)) else 'FAIL'}** "
+            f"- Tail authority: **{'PASS' if bool(_get(r,'tail_control_authority','pass',default=False)) else 'FAIL'}** "
             f"with **{_f(_get(r,'tail_control_authority','safety_factor',default=None),2)}x** safety factor; "
-            f"cruise trim elevator **{_f(_get(r,'tail_control_authority','trim','elevator_deg',default=None),1)} deg**"
+            f"trim elevator **{_f(_get(r,'tail_control_authority','trim_elevator_deg',default=None),1)} deg**, "
+            f"worst vertical-gust elevator **{_f(_get(r,'tail_control_authority','worst_abs_elevator_deg',default=None),1)} deg**, "
+            f"lateral-gust rudder **{_f(_get(r,'tail_control_authority','required_rudder_deg',default=None),1)} deg**"
             if _get(r,'tail_control_authority',default=None) is not None else ""
         ),
         (
