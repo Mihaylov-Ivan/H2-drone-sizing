@@ -321,7 +321,8 @@ def write_markdown_report(
         f"maximum planned bank **{_f(_get(r,'flight_envelope','maximum_bank_deg'),0)} deg** ({_f(_get(r,'flight_envelope','bank_load_factor_g'),2)} g)",
         f"- Accelerated-stall margin at cruise: +g case uses **{_pct(_get(r,'flight_envelope','positive_manoeuvre_cl_utilization'),1)} of CLmax**, "
         f"-g case **{_pct(_get(r,'flight_envelope','negative_manoeuvre_cl_utilization'),1)} of |CLmin|**",
-        f"- Gust stall screen: worst inspection gust uses **{_pct(s.get('worst_gust_cl_utilization'),1)} of conservative CLmax**; "
+        f"- Gust stall screen: sharp-edge vertical case uses **{_pct(s.get('vertical_gust_cl_utilization'),1)} of CLmax** "
+        f"(no alleviation credit); 6-DOF gust cases peak at **{_pct(s.get('sixdof_worst_gust_cl_utilization'),1)}**; "
         f"configured lateral/vertical gusts **{_f(d.get('inspection_lateral_gust_mps'),1)} / ±{_f(d.get('inspection_vertical_gust_mps'),1)} m/s** for **{_f(d.get('inspection_gust_duration_s'),1)} s**",
         (
             f"- Endurance at cruise (usable H₂ / cruise bus): **{_f(s.get('endurance_at_cruise_h'), 2)} h** "
