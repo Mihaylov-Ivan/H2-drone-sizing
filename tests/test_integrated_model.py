@@ -19,6 +19,17 @@ def test_v4_default_run_closes(integrated_result):
     assert not (out/'model_results.json').exists()
     assert 'endurance_at_cruise_h' in r['summary']
 
+def test_autosized_sections_are_applied_to_mass_and_cad(integrated_result):
+    r,_=integrated_result
+    gate=next(g for g in r['gates'] if g['name']=='structural_mass_geometry_consistency')
+    assert gate['status']=='PASS'
+    assert next(g for g in r['gates'] if g['name']=='recommended_structure_screen')['status']=='PASS'
+    assert r['summary']['wing_spar_od_mm'] > 0
+    assert r['summary']['horizontal_tail_spar_od_mm'] > 0
+    assert r['summary']['vertical_tail_spar_od_mm'] > 0
+    assert r['summary']['boom_od_mm'] > 0
+
+
 def test_structural_closure_is_fixed_point(integrated_result):
     r,_=integrated_result
     h=r['coupled_closure']['history']
