@@ -84,6 +84,46 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
             "horizontal_tail_ac_station_x_m":float(d.get("horizontal_tail_ac_x_m",s6["aircraft"].get("horizontal_tail_ac_station_x_m",1.05))),
             "inertia_tensor_kgm2":[[mp.Ixx_kgm2,-mp.Ixy_kgm2,-mp.Ixz_kgm2],[-mp.Ixy_kgm2,mp.Iyy_kgm2,-mp.Iyz_kgm2],[-mp.Ixz_kgm2,-mp.Iyz_kgm2,mp.Izz_kgm2]],
         })
+    # Calibrated tail-effectiveness scaling. The configured Vh/Vv values are
+    # reference states for the screening derivatives, not hard sizing limits.
+    # This makes HT/VT geometry affect trim/damping/yaw control instead of only mass.
+    S=float(d["wing_area_m2"]); b=float(d["wing_span_m"]); mac=float(d["wing_mac_m"])
+    wing_ac=float(d["wing_ac_x_m"])
+    Sh=float(d.get("horizontal_tail_area_m2",0.0))
+    ht_arm=max(float(d.get("horizontal_tail_ac_x_m",wing_ac))-wing_ac,1e-6)
+    Vh=Sh*ht_arm/max(S*mac,1e-9)
+    nfin=max(int(d.get("vertical_tail_count",2)),1)
+    Sv=float(d.get("vertical_tail_area_total_m2",0.0))
+    vt_arm=max(float(d.get("vertical_tail_ac_x_m",wing_ac))-wing_ac,1e-6)
+    Vv=Sv*vt_arm/max(S*b,1e-9)
+    Vh_ref=max(float(d.get("horizontal_tail_reference_volume_coefficient",d.get("horizontal_tail_target_volume_coefficient",0.44))),1e-6)
+    Vv_ref=max(float(d.get("vertical_tail_reference_volume_coefficient",d.get("vertical_tail_target_volume_coefficient",0.0255))),1e-6)
+    ht_scale=float(np.clip(Vh/Vh_ref,0.20,2.50))
+    vt_scale=float(np.clip(Vv/Vv_ref,0.20,2.50))
+    ad6=s6["aerodynamics"]
+    # Elevator authority scales approximately with horizontal-tail volume.
+    ad6["Cm_de"]=float(ad6["Cm_de"])*ht_scale
+    # Pitch damping contains non-tail contributions; keep a conservative 20% residual.
+    ad6["Cm_q"]=float(ad6["Cm_q"])*(0.20+0.80*ht_scale)
+    # Directional static stability and damping retain small wing/fuselage residuals,
+    # while rudder control derivatives scale directly with fin/rudder effectiveness.
+    ad6["Cn_beta"]=float(ad6["Cn_beta"])*(0.20+0.80*vt_scale)
+    ad6["Cn_r"]=float(ad6["Cn_r"])*(0.25+0.75*vt_scale)
+    ad6["Cn_dr"]=float(ad6["Cn_dr"])*vt_scale
+    ad6["CY_beta"]=float(ad6["CY_beta"])*(0.35+0.65*vt_scale)
+    ad6["CY_r"]=float(ad6["CY_r"])*(0.35+0.65*vt_scale)
+    ad6["CY_dr"]=float(ad6["CY_dr"])*vt_scale
+    ad6["Cl_dr"]=float(ad6["Cl_dr"])*vt_scale
+    ad6["tail_effectiveness_scaling"]={
+        "horizontal_tail_volume_coefficient":Vh,
+        "vertical_tail_volume_coefficient":Vv,
+        "horizontal_reference_volume_coefficient":Vh_ref,
+        "vertical_reference_volume_coefficient":Vv_ref,
+        "horizontal_effectiveness_scale":ht_scale,
+        "vertical_effectiveness_scale":vt_scale,
+        "status":"calibrated_screening_assumption",
+    }
+
     s6["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
     t["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
     t["aerodynamics"]["transition_CLmax_increment"]=float(d.get("transition_CLmax_increment",0.0))
