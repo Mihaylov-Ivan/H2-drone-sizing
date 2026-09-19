@@ -2,13 +2,13 @@
   "geometry": {
     "fuselage_total_length_m": 0.8594000000000002,
     "fuselage_max_diameter_m": 0.22137729577647663,
-    "main_wing_span_m": 3.15,
-    "main_wing_area_m2": 0.8210159999999999,
-    "main_wing_mac_m": 0.2660699999999999,
-    "horizontal_tail_span_m": 0.8724974421265598,
-    "horizontal_tail_area_m2": 0.1616737760260515,
-    "vertical_tail_height_m": 0.4254611558200841,
-    "vertical_tail_area_total_m2": 0.1007492016981959,
+    "main_wing_span_m": 3.6,
+    "main_wing_area_m2": 0.9,
+    "main_wing_mac_m": 0.2548,
+    "horizontal_tail_span_m": 0.9159221570593505,
+    "horizontal_tail_area_m2": 0.16972037570309764,
+    "vertical_tail_height_m": 0.5330190749553178,
+    "vertical_tail_area_total_m2": 0.12621891694941925,
     "main_wing_CLmax_screen": 1.37,
     "airfoils": {
       "main_wing": {
@@ -29,26 +29,26 @@
       }
     }
   },
-  "closed_mtow_kg": 15.980216716000237,
+  "closed_mtow_kg": 14.735867825669455,
   "closed_cg_m": [
-    0.4704086225357406,
+    0.4567353379369665,
     0.0,
-    0.03630459343206335
+    0.03203427341704815
   ],
-  "neutral_point_x_m": 0.49287954972588,
-  "static_margin": 0.08445494490224147,
-  "cruise_bus_power_W": 541.5647653293664,
-  "mission_energy_Wh": 1109.0599658708463,
-  "h2_used_kg": 0.05261500000000179,
-  "final_battery_soc": 0.2,
+  "neutral_point_x_m": 0.4913053183378593,
+  "static_margin": 0.13567496232689466,
+  "cruise_bus_power_W": 368.76148652364435,
+  "mission_energy_Wh": 763.3535325419546,
+  "h2_used_kg": 0.044748783564192526,
+  "final_battery_soc": 0.9228327263227769,
   "wing_spar_od_mm": 28.0,
   "boom_od_mm": 22.0,
-  "front_motor_15kg_N": 60.47508630609162,
-  "rear_motor_15kg_N": 58.28722619390839,
+  "front_motor_15kg_N": 63.2806683697078,
+  "rear_motor_15kg_N": 55.48164413029221,
   "fuel_cell_cooling_required_airflow_cfm": 100.97075994936881,
   "fuel_cell_cooling_estimated_airflow_cfm": 118.1962687388564,
   "fuel_cell_cooling_min_fuselage_width_m": 0.1424,
   "fuel_cell_cooling_openings_CdA_m2": 0.0013347,
-  "landing_legs_CdA_m2": 0.004406408312101374,
-  "landing_legs_drag_N": 1.0575379949043298
+  "landing_legs_CdA_m2": 0.0015,
+  "landing_legs_drag_N": 0.29159999999999997
 }

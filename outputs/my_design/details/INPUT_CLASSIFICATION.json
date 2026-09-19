@@ -5,6 +5,7 @@
     "fuselage",
     "lifting_surfaces",
     "propulsion",
+    "component_mass_overrides",
     "component_positions",
     "hardware",
     "hardware_selection",

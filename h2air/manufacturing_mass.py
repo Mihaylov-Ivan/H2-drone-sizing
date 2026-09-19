@@ -66,13 +66,27 @@ def _cfrp_density(cfg: Mapping[str, Any], rule: Mapping[str, Any]) -> float:
     return DEFAULT_CFRP_DENSITY_KG_M3
 
 
-def _mass(rule: Mapping[str, Any], length_m: float, count: int = 1, *, cfg: Mapping[str, Any] | None = None) -> float:
+def _mass(
+    rule: Mapping[str, Any],
+    length_m: float,
+    count: int = 1,
+    *,
+    cfg: Mapping[str, Any] | None = None,
+    area_m2: float | None = None,
+) -> float:
     mode = str(rule.get("mass_mode", "linear")).lower()
     if mode == "hardcoded":
         v = rule.get("hardcoded_mass_kg")
         if v is None or float(v) < 0:
             raise ValueError("hardcoded mass_mode requires hardcoded_mass_kg >= 0")
         return float(v)
+    if mode in {"areal", "planform", "planform_areal"}:
+        if area_m2 is None:
+            raise ValueError(f"{mode} mass_mode requires area_m2")
+        kgm2 = float(rule.get("specific_mass_kg_per_m2", rule.get("specific_mass_kg_per_m", 0.0)))
+        if kgm2 < 0:
+            raise ValueError("specific_mass_kg_per_m2 cannot be negative")
+        return kgm2 * float(area_m2) * int(count)
     if mode == "carbon_density":
         od = _tube_od_m(rule)
         id_m = _tube_id_m(rule, od)
@@ -111,7 +125,9 @@ def _add_box(out, *, name, group, mass, pos, dims, rule, package_zone=None, coll
         position_m=tuple(float(x) for x in pos), shape=Shape.BOX.value,
         dimensions_m={"length_x": float(dims[0]), "width_y": float(dims[1]), "height_z": float(dims[2])},
         package_zone=package_zone, status=_status(rule), source=_source(rule),
-        note=f"v3 manufacturing mass mode={rule.get('mass_mode','linear')}; specific_mass_kg_per_m={rule.get('specific_mass_kg_per_m')}",
+        note=f"v3 manufacturing mass mode={rule.get('mass_mode','linear')}; "
+             f"specific_mass_kg_per_m={rule.get('specific_mass_kg_per_m')}; "
+             f"specific_mass_kg_per_m2={rule.get('specific_mass_kg_per_m2')}",
         include_in_collision_check=collide,
     ))
 
@@ -328,10 +344,12 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
     # Main wing shell and two spanwise spars.
     mw = mm["main_wing"]
     b=float(d["wing_span_m"]); mac=float(d["wing_mac_m"]); xac=float(d["wing_ac_x_m"])
+    S=float(d["wing_area_m2"])
     le=xac-0.25*mac
     shell_x=le+float(mw.get("shell_cg_chord_fraction",0.45))*mac
-    mshell=_mass(mw["shell"],b,cfg=cfg); _add_box(out,name="main_wing_shell",group="wing_structure",mass=mshell,pos=[shell_x,0,float(mw.get("z_m",0.10))],dims=[mac,b,float(mw.get("thickness_m",0.028))],rule=mw["shell"],collide=False)
-    ledger.append({"name":"main_wing_shell","length_m":b,"count":1,"mass_mode":mw["shell"].get("mass_mode"),"specific_mass_kg_per_m":mw["shell"].get("specific_mass_kg_per_m"),"mass_kg":mshell,"hardcoded":mw["shell"].get("mass_mode")=="hardcoded","component_names":["main_wing_shell"]})
+    mshell=_mass(mw["shell"],b,cfg=cfg,area_m2=S)
+    _add_box(out,name="main_wing_shell",group="wing_structure",mass=mshell,pos=[shell_x,0,float(mw.get("z_m",0.10))],dims=[mac,b,float(mw.get("thickness_m",0.028))],rule=mw["shell"],collide=False)
+    ledger.append({"name":"main_wing_shell","length_m":b,"area_m2":S,"count":1,"mass_mode":mw["shell"].get("mass_mode"),"specific_mass_kg_per_m":mw["shell"].get("specific_mass_kg_per_m"),"specific_mass_kg_per_m2":mw["shell"].get("specific_mass_kg_per_m2"),"mass_kg":mshell,"hardcoded":mw["shell"].get("mass_mode")=="hardcoded","component_names":["main_wing_shell"]})
     for label in ("primary_spar","secondary_spar"):
         rule=mw[label]; frac=float(rule.get("chord_fraction",0.25 if label=="primary_spar" else 0.65)); x=le+frac*mac
         if label == "primary_spar" and bool(rule.get("stepped")) and str(rule.get("mass_mode","linear")).lower() != "hardcoded":
@@ -345,8 +363,10 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
 
     # Horizontal tail shell and two spars.
     ht=mm["horizontal_tail"]; bh=float(d["horizontal_tail_span_m"]); hmac=float(d["horizontal_tail_mac_m"]); xh=float(d["horizontal_tail_ac_x_m"]); zh=float(ht.get("z_m",0.03))
-    mh=_mass(ht["shell"],bh,cfg=cfg); _add_box(out,name="horizontal_tail_shell",group="tail_structure",mass=mh,pos=[xh,0,zh],dims=[hmac,bh,float(ht.get("thickness_m",0.022))],rule=ht["shell"],collide=False)
-    ledger.append({"name":"horizontal_tail_shell","length_m":bh,"count":1,"mass_mode":ht["shell"].get("mass_mode"),"specific_mass_kg_per_m":ht["shell"].get("specific_mass_kg_per_m"),"mass_kg":mh,"hardcoded":ht["shell"].get("mass_mode")=="hardcoded","component_names":["horizontal_tail_shell"]})
+    Sh=float(d.get("horizontal_tail_area_m2", bh * hmac))
+    mh=_mass(ht["shell"],bh,cfg=cfg,area_m2=Sh)
+    _add_box(out,name="horizontal_tail_shell",group="tail_structure",mass=mh,pos=[xh,0,zh],dims=[hmac,bh,float(ht.get("thickness_m",0.022))],rule=ht["shell"],collide=False)
+    ledger.append({"name":"horizontal_tail_shell","length_m":bh,"area_m2":Sh,"count":1,"mass_mode":ht["shell"].get("mass_mode"),"specific_mass_kg_per_m":ht["shell"].get("specific_mass_kg_per_m"),"specific_mass_kg_per_m2":ht["shell"].get("specific_mass_kg_per_m2"),"mass_kg":mh,"hardcoded":ht["shell"].get("mass_mode")=="hardcoded","component_names":["horizontal_tail_shell"]})
     hle=xh-0.25*hmac
     for label in ("primary_spar","secondary_spar"):
         rule=ht[label]; frac=float(rule.get("chord_fraction",0.25 if label=="primary_spar" else 0.65)); m=_mass(rule,bh,cfg=cfg)
@@ -356,12 +376,13 @@ def apply_manufacturing_mass_model(cfg: Mapping[str, Any], components: Sequence[
     # Two vertical fins, each with two CFRP spars (roots on the boom waterline).
     vt=mm["vertical_tail"]; hv=float(d["vertical_tail_height_m"]); nfin=int(vt.get("count",2)); yabs=abs(float(gm.get("boom_center_y_m",[-0.35,0.35])[1])); xv=float(d.get("vertical_tail_ac_x_m",d["horizontal_tail_ac_x_m"])); vroot=float(d["vertical_tail_root_chord_m"])
     boom_z=float(gm.get("boom_z_m",0.0))
-    mvs=_mass(vt["shell"],hv,nfin,cfg=cfg)
+    Sv=float(d.get("vertical_tail_area_total_m2", nfin * hv * vroot * (1.0 + float(d.get("vertical_tail_taper_ratio", 0.6))) / 2.0))
+    mvs=_mass(vt["shell"],hv,1,cfg=cfg,area_m2=Sv)
     vt_shell_names=[]
     for side,y in (("left",-yabs),("right",yabs)):
         name=f"vertical_tail_{side}_shell"; vt_shell_names.append(name)
         _add_box(out,name=name,group="tail_structure",mass=mvs/nfin,pos=[xv,y,boom_z+hv/2],dims=[vroot,float(vt.get("thickness_m",0.012)),hv],rule=vt["shell"],collide=False)
-    ledger.append({"name":"vertical_tail_shells","length_m":hv,"count":nfin,"mass_mode":vt["shell"].get("mass_mode"),"specific_mass_kg_per_m":vt["shell"].get("specific_mass_kg_per_m"),"mass_kg":mvs,"hardcoded":vt["shell"].get("mass_mode")=="hardcoded","component_names":vt_shell_names})
+    ledger.append({"name":"vertical_tail_shells","length_m":hv,"area_m2":Sv,"count":nfin,"mass_mode":vt["shell"].get("mass_mode"),"specific_mass_kg_per_m":vt["shell"].get("specific_mass_kg_per_m"),"specific_mass_kg_per_m2":vt["shell"].get("specific_mass_kg_per_m2"),"mass_kg":mvs,"hardcoded":vt["shell"].get("mass_mode")=="hardcoded","component_names":vt_shell_names})
     for label in ("primary_spar","secondary_spar"):
         rule=vt[label]; mt=_mass(rule,hv,nfin,cfg=cfg)
         vt_names=[]

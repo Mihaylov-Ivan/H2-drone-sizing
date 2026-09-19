@@ -43,14 +43,16 @@ def sleeve_mass_kg(
 def landing_legs_cda_m2(cfg: Mapping[str, Any]) -> float:
     """Screening cruise CdA of exposed landing-leg sleeves.
 
-    Each vertical leg is treated as a circular cylinder with frontal area
-    ``sleeve_OD * exposed_length`` and a user Cd screen (default 1.0). This is a
-    geometry-level parasite allowance, not a CFD result.
+    Prefer an explicit ``drag_CdA_m2`` override (streamlined fairings). Otherwise
+    each vertical leg is treated as a circular cylinder with frontal area
+    ``sleeve_OD * exposed_length`` and a user Cd screen.
     """
+    legs_cfg = (cfg.get("manufacturing_mass_model") or {}).get("landing_legs") or {}
+    if legs_cfg.get("drag_CdA_m2") is not None:
+        return max(0.0, float(legs_cfg["drag_CdA_m2"]))
     layout = resolve_landing_leg_layout(cfg)
     if layout is None:
         return 0.0
-    legs_cfg = (cfg.get("manufacturing_mass_model") or {}).get("landing_legs") or {}
     cd = float(legs_cfg.get("drag_coefficient_screen", 1.0))
     if cd < 0.0:
         raise ValueError("landing_legs.drag_coefficient_screen must be >= 0")

@@ -458,6 +458,23 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         "pusher_propeller_diameter_in": float(prop.get("pusher_propeller_diameter_in", d["pusher_propeller_diameter_in"])),
         "pusher_max_electrical_power_W": float(prop.get("pusher_max_electrical_power_W", d["pusher_max_electrical_power_W"])),
     })
+    # Optional cruise lift-prop CdA split (blade + motor fairings) → lift_system.
+    ls = cfg["aero_propulsion"]["lift_system"]
+    if prop.get("blade_CdA_total_m2") is not None:
+        ls["blade_CdA_total_m2"] = float(prop["blade_CdA_total_m2"])
+    if prop.get("motor_mount_CdA_total_m2") is not None:
+        ls["motor_mount_CdA_total_m2"] = float(prop["motor_mount_CdA_total_m2"])
+    if prop.get("motor_mount_CdA_each_m2") is not None:
+        ls["motor_mount_CdA_each_m2"] = float(prop["motor_mount_CdA_each_m2"])
+    # Optional ledger mass overrides (dedupe joiners / harness vs misc).
+    for name, mass in (u.get("component_mass_overrides") or {}).items():
+        if name in {"note", "notes"} or mass is None or isinstance(mass, (dict, list)):
+            continue
+        for c in cfg["geometry_mass"]["component_ledger"]["components"]:
+            if c.get("name") == name:
+                c["mass_takeoff_kg"] = float(mass)
+                c["source"] = f"user_inputs.component_mass_overrides.{name}"
+                break
     pos = u["component_positions"]
     for key in (
         "lift_row_center_x_m", "battery_x_m", "battery_z_m", "fuel_cell_x_m",
@@ -716,7 +733,7 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
     return {
         "user_input_file_schema": u.get("schema"),
         "user_editable_groups": [
-            "mission", "fuselage", "lifting_surfaces", "propulsion",
+            "mission", "fuselage", "lifting_surfaces", "propulsion", "component_mass_overrides",
             "component_positions", "hardware", "hardware_selection", "manufacturing_mass_model", "carbon_fiber_tubes", "cad_export", "optimizer",
             "packaging_layout", "fuel_cell_cooling",
         ],

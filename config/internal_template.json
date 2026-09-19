@@ -841,7 +841,7 @@
         {
           "name": "misc_electronics",
           "group": "avionics",
-          "mass_takeoff_kg": 0.1656,
+          "mass_takeoff_kg": 0.08,
           "position_m": [
             0.575,
             0.0,
@@ -849,7 +849,7 @@
           ],
           "package_zone": "central_pod",
           "status": "engineering_assumption",
-          "source": "Current H2AIR lumped allowance"
+          "source": "Misc electronics after harness split (was 0.166 kg)"
         },
         {
           "name": "camera",
@@ -893,14 +893,14 @@
         {
           "name": "wing_joiners_fasteners",
           "group": "wing_structure",
-          "mass_takeoff_kg": 0.25,
+          "mass_takeoff_kg": 0.15,
           "position_m": [
             0.405,
             0.0,
             0.1
           ],
           "status": "engineering_assumption",
-          "source": "Wing joiners/fasteners at wing AC (screening)"
+          "source": "Wing joiners/fasteners excluding separate spar joiners (was 0.25 kg)"
         }
       ]
     }

@@ -41,8 +41,8 @@
   "side_opening_geometry_pass": true,
   "overall_geometry_pass": true,
   "cooling_openings_CdA_m2": 0.0013347,
-  "cooling_drag_at_cruise_N": 0.3270015,
-  "estimated_cruise_ram_pressure_Pa": 245.0,
+  "cooling_drag_at_cruise_N": 0.26487121500000005,
+  "estimated_cruise_ram_pressure_Pa": 198.45000000000002,
   "credited_cruise_ram_pressure_Pa": 0.0,
   "inlet_geometry": {
     "slot_count": 12,

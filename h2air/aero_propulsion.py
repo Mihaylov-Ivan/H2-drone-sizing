@@ -188,7 +188,32 @@ def calibrated_drag_constants(cfg: Mapping[str, Any]) -> Dict[str, float]:
 
 
 def lift_prop_drag_CdA_each_m2(cfg: Mapping[str, Any], diameter_in: float, state: str) -> float:
+    """Per-motor cruise CdA: blade projected area + optional motor/mount fairing.
+
+    When ``lift_system.blade_CdA_total_m2`` / ``motor_mount_CdA_total_m2`` are set,
+    those totals are split evenly across the lift motors (preferred screening path
+    with teardrop motor fairings). Otherwise the legacy blade-planform model is used
+    and ``motor_mount_CdA_each_m2`` is added.
+    """
     ls = cfg["lift_system"]
+    n = max(1, int(ls.get("number_of_propellers", 4)))
+    blade_total = ls.get("blade_CdA_total_m2")
+    motor_total = ls.get("motor_mount_CdA_total_m2")
+    if blade_total is not None or motor_total is not None:
+        blade = float(blade_total or 0.0) / n
+        motor = float(motor_total or 0.0) / n
+        # State factors still apply to the blade share only (folded vs stopped).
+        factors = ls.get("cruise_state_projected_area_factors") or {}
+        if state in factors and "stopped" in str(state):
+            # Totals are defined for the cruise stopped/aligned state.
+            pass
+        elif state in factors:
+            ref = float(factors.get("stopped_aligned", factors.get("stopped_random", 1.0)))
+            fac = float(factors[state])
+            if ref > EPS:
+                blade *= fac / ref
+        return max(0.0, blade + motor)
+
     D = float(diameter_in) * INCH_TO_M
     R = 0.5 * D
     n_blades = max(1, int(ls["blade_count"]))
@@ -198,7 +223,9 @@ def lift_prop_drag_CdA_each_m2(cfg: Mapping[str, Any], diameter_in: float, state
     if state not in factors:
         raise ValueError(f"Unsupported lift-prop cruise state {state!r}")
     projected_area = blade_planform_area * float(factors[state])
-    return projected_area * float(ls["blade_section_CD"])
+    blade = projected_area * float(ls["blade_section_CD"])
+    motor = float(ls.get("motor_mount_CdA_each_m2", 0.0) or 0.0)
+    return max(0.0, blade + motor)
 
 
 def compute_cruise_propulsive_efficiency(
