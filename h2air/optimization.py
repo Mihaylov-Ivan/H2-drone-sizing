@@ -82,9 +82,9 @@ def default_space_for_config(cfg: Mapping[str, Any]) -> Dict[str, Tuple[float,fl
     # inner fixed point. Do not let the outer design-study sweep span separately.
     if str(d.get("main_wing_span_mode","auto")).lower()=="auto" and not bool(d.get("auto_size_main_wing", False)):
         space["main_wing_span_m"] = tuple(float(x) for x in d["main_wing_span_bounds_m"])
-    if str(d.get("horizontal_tail_span_mode","auto")).lower()=="auto":
+    if str(d.get("horizontal_tail_span_mode","auto")).lower()=="auto" and not bool(d.get("auto_size_horizontal_tail", False)):
         space["horizontal_tail_span_m"] = tuple(float(x) for x in d["horizontal_tail_span_bounds_m"])
-    if str(d.get("vertical_tail_span_mode","auto")).lower()=="auto":
+    if str(d.get("vertical_tail_span_mode","auto")).lower()=="auto" and not bool(d.get("auto_size_vertical_tail", False)):
         space["vertical_tail_height_m"] = tuple(float(x) for x in d["vertical_tail_span_bounds_m"])
 
     # Constrain the lift-row midpoint to the physically feasible range for the
