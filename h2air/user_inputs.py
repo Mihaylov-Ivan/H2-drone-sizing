@@ -323,6 +323,52 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
         "stability_screen_static_margin": float(mission["target_static_margin"]),
     })
 
+    # -------- Inspection-aircraft operational flight envelope --------
+    fe = u.get("flight_envelope") or {}
+    pos_g = float(fe.get("positive_manoeuvre_load_factor_g", 1.5))
+    neg_g = float(fe.get("negative_manoeuvre_load_factor_g", -0.5))
+    max_bank = float(fe.get("maximum_bank_deg", 45.0))
+    cl_util = float(fe.get("maximum_manoeuvre_clmax_utilization", 0.90))
+    gust_cl_util = float(fe.get("maximum_gust_clmax_utilization", 0.95))
+    lateral_gust = float(fe.get("lateral_gust_mps", 5.0))
+    vertical_gust = float(fe.get("vertical_gust_mps", 2.0))
+    gust_duration = float(fe.get("gust_duration_s", 2.0))
+    structural_g = float(fe.get("structural_design_positive_load_factor_g", 3.0))
+    if pos_g <= 1.0:
+        raise ValueError("flight_envelope positive_manoeuvre_load_factor_g must be > 1")
+    if neg_g >= 0.0:
+        raise ValueError("flight_envelope negative_manoeuvre_load_factor_g must be < 0")
+    if not (0.0 <= max_bank < 90.0):
+        raise ValueError("flight_envelope maximum_bank_deg must be in [0,90)")
+    if not (0.0 < cl_util <= 1.0 and 0.0 < gust_cl_util <= 1.0):
+        raise ValueError("flight_envelope CL utilization limits must be in (0,1]")
+    if lateral_gust < 0.0 or vertical_gust < 0.0 or gust_duration <= 0.0:
+        raise ValueError("flight_envelope gust speeds must be >=0 and duration >0")
+    if structural_g < pos_g:
+        raise ValueError("structural_design_positive_load_factor_g must be >= operational positive load factor")
+
+    d.update({
+        "operational_positive_manoeuvre_load_factor_g": pos_g,
+        "operational_negative_manoeuvre_load_factor_g": neg_g,
+        "operational_maximum_bank_deg": max_bank,
+        "maximum_manoeuvre_clmax_utilization": cl_util,
+        "maximum_gust_clmax_utilization": gust_cl_util,
+        "inspection_lateral_gust_mps": lateral_gust,
+        "inspection_vertical_gust_mps": vertical_gust,
+        "inspection_gust_duration_s": gust_duration,
+        "structural_design_positive_load_factor_g": structural_g,
+    })
+    cfg["structures"]["load_cases"]["maneuver_load_factor"] = structural_g
+    cfg["sixdof_control"]["simulation"]["wind_gust_duration_s"] = gust_duration
+    cfg["sixdof_control"]["simulation"]["wind_gust_ned_mps"] = [0.0, lateral_gust, 0.0]
+    cfg["sixdof_control"]["simulation"]["inspection_gust_cases_ned_mps"] = {
+        "lateral": [0.0, lateral_gust, 0.0],
+        "vertical_up": [0.0, 0.0, -vertical_gust],
+        "vertical_down": [0.0, 0.0, vertical_gust],
+        "combined_lateral_up": [0.0, lateral_gust, -vertical_gust],
+    }
+    cfg["sixdof_control"]["gates"]["maximum_gust_cl_utilization_fraction"] = gust_cl_util
+
     # -------- Fuselage geometry (nose/tail lengths fixed; midbody/diameters may auto in packaging) --------
     fus = u["fuselage"]
     sections = fus["sections"]
@@ -419,7 +465,16 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     htail_airfoil = _resolve_surface_airfoil(htail, airfoil_db, root=root)
     vtail_airfoil = _resolve_surface_airfoil(vtail, airfoil_db, root=root)
     main_clmax = float(main_airfoil["CLmax_used"])
+    if main_airfoil.get("polar_rows"):
+        main_clmin = float(main_airfoil["polar_summary"]["CL_min"])
+    else:
+        main_clmin = float(cfg["sixdof_control"]["aerodynamics"].get("CL_min", -0.6))
+    if main_clmin >= 0.0:
+        raise ValueError("main-wing CL_min must be negative for the negative-g flight-envelope screen")
     d["wing_CLmax"] = main_clmax
+    d["wing_CLmin"] = main_clmin
+    cfg["sixdof_control"]["aerodynamics"]["stall_screen_CLmax"] = main_clmax
+    cfg["sixdof_control"]["aerodynamics"]["stall_screen_CLmin"] = main_clmin
     d["transition_CLmax_increment"] = float(main.get("transition_CLmax_increment", u.get("transition_CLmax_increment", 0.08)))
     cfg["aero_propulsion"]["aircraft"]["stall_model"] = "direct_CLmax"
     cfg["aero_propulsion"]["aircraft"]["transition_CLmax_increment"] = d["transition_CLmax_increment"]
