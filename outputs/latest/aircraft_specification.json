@@ -1,7 +1,7 @@
 {
   "schema": "H2AIR-aircraft-specification-v1",
   "description": "Closed-aircraft source of truth after the latest model run. Use this file for UAV specs; resolved_configuration.json also contains template/calibration seeds that are not closed-run values.",
-  "generated_at_utc": "2026-09-19T17:47:51.582133+00:00",
+  "generated_at_utc": "2026-09-19T19:20:28.671936+00:00",
   "run": {
     "design_status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
     "model": {
@@ -10,7 +10,7 @@
       "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export, discrete hardware selection and IE-SOAR cross-fuselage cooling integration.",
       "fidelity": "conceptual / screening; not flight-release evidence"
     },
-    "config_hash": "9f39b94bf34a9865a721307df52126b723bbe9bcb699873ef594e1729350758a",
+    "config_hash": "33a58fe63697526b09d054c5e492a4dbde321a870ed358152729a39aff1e7f6c",
     "fidelity_note": "Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation."
   },
   "mission": {
@@ -24,7 +24,7 @@
     "target_static_margin": 0.12
   },
   "flight_envelope": {
-    "mass_kg": 14.734779632233971,
+    "mass_kg": 14.709927002645406,
     "rho_kg_m3": 1.2,
     "speed_mps": 18.0,
     "wing_area_m2": 0.9691443276910183,
@@ -35,20 +35,20 @@
     "positive_operational_limit_g": 1.5,
     "negative_operational_limit_g": -0.5,
     "maximum_cl_utilization": 0.9,
-    "positive_1g_stall_speed_mps": 13.467966344764784,
-    "negative_1g_stall_speed_mps": 18.387328560697362,
-    "positive_stall_load_factor_at_speed_g": 1.7862447497659817,
-    "negative_stall_load_factor_at_speed_g": -0.9583137891080267,
-    "positive_manoeuvre_cl_utilization": 0.8397505438135043,
-    "negative_manoeuvre_cl_utilization": 0.5217497709861681,
-    "minimum_speed_for_positive_limit_with_margin_mps": 17.387069786851995,
-    "minimum_speed_for_negative_limit_with_margin_mps": 13.70510552878089,
+    "positive_1g_stall_speed_mps": 13.45660358115035,
+    "negative_1g_stall_speed_mps": 18.37181538947405,
+    "positive_stall_load_factor_at_speed_g": 1.789262635518404,
+    "negative_stall_load_factor_at_speed_g": -0.9599328738000197,
+    "positive_manoeuvre_cl_utilization": 0.8383341663899465,
+    "negative_manoeuvre_cl_utilization": 0.5208697541742525,
+    "minimum_speed_for_positive_limit_with_margin_mps": 17.372400522103465,
+    "minimum_speed_for_negative_limit_with_margin_mps": 13.693542693646917,
     "bank_within_positive_limit": true,
     "positive_manoeuvre_stall_pass": true,
     "negative_manoeuvre_stall_pass": true,
     "vertical_gust_screen": {
       "model": "sharp_edge_no_alleviation",
-      "mass_kg": 14.734779632233971,
+      "mass_kg": 14.709927002645406,
       "rho_kg_m3": 1.2,
       "speed_mps": 18.0,
       "wing_area_m2": 0.9691443276910183,
@@ -56,16 +56,16 @@
       "cl_alpha_per_rad": 4.8,
       "vertical_gust_mps": 2.0,
       "delta_cl": 0.5333333333333333,
-      "incremental_load_factor_g": 0.6953750850670488,
-      "total_positive_load_factor_g": 1.6953750850670488,
-      "positive_stall_load_factor_g": 1.7862447497659817,
-      "clmax_utilization": 0.9491280997686136,
+      "incremental_load_factor_g": 0.6965499311020551,
+      "total_positive_load_factor_g": 1.696549931102055,
+      "positive_stall_load_factor_g": 1.789262635518404,
+      "clmax_utilization": 0.9481838481529083,
       "maximum_cl_utilization": 0.95,
-      "required_wing_area_m2": 0.9676373030252625,
+      "required_wing_area_m2": 0.9660052235460718,
       "pass": true,
       "note": "Sharp-edge vertical-gust screen with no gust-alleviation credit; conservative screening assumption, not a certification gust analysis."
     },
-    "sixdof_worst_clmax_utilization": 0.5475876882432112
+    "sixdof_worst_clmax_utilization": 0.5466693250307748
   },
   "geometry": {
     "fuselage": {
@@ -103,22 +103,22 @@
       "dihedral_deg": 0.0
     },
     "horizontal_tail": {
-      "span_m": 1.1177329322499763,
-      "area_m2": 0.20711591234592058,
-      "mac_m": 0.18722352941176468,
-      "root_chord_m": 0.218,
-      "tip_chord_m": 0.15259999999999999,
-      "taper_ratio": 0.7,
+      "span_m": 0.9654126607604868,
+      "area_m2": 0.20711591234592064,
+      "mac_m": 0.21900564989474003,
+      "root_chord_m": 0.26817018354457967,
+      "tip_chord_m": 0.1609021101267478,
+      "taper_ratio": 0.6,
       "ac_x_m": 1.050226,
       "z_m": 0.08700930732488546,
       "naca_code": "NACA0012"
     },
     "vertical_tail": {
       "count": 2,
-      "height_m": 0.5394389142995056,
+      "height_m": 0.39959219040498484,
       "area_total_m2": 0.12773913490612293,
-      "root_chord_m": 0.148,
-      "tip_chord_m": 0.08879999999999999,
+      "root_chord_m": 0.19979609520249242,
+      "tip_chord_m": 0.11987765712149545,
       "taper_ratio": 0.6,
       "ac_x_m": 1.110291,
       "naca_code": "NACA0012"
@@ -3360,16 +3360,16 @@
     }
   },
   "mass_balance": {
-    "pre_structure_mtow_kg": 14.250184327938314,
-    "closed_mtow_kg": 14.734779632233971,
-    "mass_margin_to_ceiling_kg": 0.26522036776602853,
+    "pre_structure_mtow_kg": 14.241557291693203,
+    "closed_mtow_kg": 14.709927002645406,
+    "mass_margin_to_ceiling_kg": 0.2900729973545939,
     "cg_m": {
-      "x": 0.4609683822303438,
+      "x": 0.45991284980339664,
       "y": 0.0,
-      "z": 0.031565453979553924
+      "z": 0.02984766768453732
     },
     "neutral_point_x_m": 0.496048586404054,
-    "static_margin": 0.1214868176140618,
+    "static_margin": 0.12514224888815795,
     "mass_groups_takeoff_kg": {
       "airframe": 0.49035000000000006,
       "avionics": 1.2097,
@@ -3378,7 +3378,7 @@
       "landing_gear": 0.44999999999999996,
       "payload": 1.2,
       "propulsion": 1.3783599999999998,
-      "tail_structure": 1.020012992534499,
+      "tail_structure": 0.9951603629459341,
       "wing_structure": 2.6768305220994715
     },
     "components_takeoff_kg": {
@@ -3430,15 +3430,15 @@
       "main_wing_shell": 1.8316827793360246,
       "main_wing_primary_spar": 0.5097694453841408,
       "main_wing_secondary_spar": 0.1778782973793064,
-      "horizontal_tail_shell": 0.39144907433378995,
-      "horizontal_tail_primary_spar": 0.06387787526037511,
-      "horizontal_tail_secondary_spar": 0.009787987287713044,
+      "horizontal_tail_shell": 0.39144907433379,
+      "horizontal_tail_primary_spar": 0.05517284830707064,
+      "horizontal_tail_secondary_spar": 0.008454118670279584,
       "vertical_tail_left_shell": 0.12071348248628619,
       "vertical_tail_right_shell": 0.12071348248628619,
-      "vertical_tail_left_primary_spar": 0.025223451388718208,
-      "vertical_tail_right_primary_spar": 0.025223451388718208,
-      "vertical_tail_left_secondary_spar": 0.0033474881826855824,
-      "vertical_tail_right_secondary_spar": 0.0033474881826855824,
+      "vertical_tail_left_primary_spar": 0.01868440322493212,
+      "vertical_tail_right_primary_spar": 0.01868440322493212,
+      "vertical_tail_left_secondary_spar": 0.0024796693375581337,
+      "vertical_tail_right_secondary_spar": 0.0024796693375581337,
       "boom_tube_left": 0.12816460576862043,
       "boom_tube_right": 0.12816460576862043,
       "landing_leg_nose_tube": 0.004637522637570635,
@@ -3617,13 +3617,13 @@
       },
       {
         "name": "horizontal_tail_shell",
-        "length_m": 1.1177329322499763,
-        "area_m2": 0.20711591234592058,
+        "length_m": 0.9654126607604868,
+        "area_m2": 0.20711591234592064,
         "count": 1,
         "mass_mode": "areal",
         "specific_mass_kg_per_m": null,
         "specific_mass_kg_per_m2": 1.8,
-        "mass_kg": 0.3728086422226571,
+        "mass_kg": 0.37280864222265714,
         "hardcoded": false,
         "component_names": [
           "horizontal_tail_shell"
@@ -3631,11 +3631,11 @@
       },
       {
         "name": "horizontal_tail_primary_spar",
-        "length_m": 1.1177329322499763,
+        "length_m": 0.9654126607604868,
         "count": 1,
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.01668,
-        "mass_kg": 0.060836071676547726,
+        "mass_kg": 0.052545569816257756,
         "hardcoded": false,
         "component_names": [
           "horizontal_tail_primary_spar"
@@ -3643,11 +3643,11 @@
       },
       {
         "name": "horizontal_tail_secondary_spar",
-        "length_m": 1.1177329322499763,
+        "length_m": 0.9654126607604868,
         "count": 1,
         "mass_mode": "linear",
         "specific_mass_kg_per_m": 0.00834,
-        "mass_kg": 0.009321892654964803,
+        "mass_kg": 0.00805154159074246,
         "hardcoded": false,
         "component_names": [
           "horizontal_tail_secondary_spar"
@@ -3655,7 +3655,7 @@
       },
       {
         "name": "vertical_tail_shells",
-        "length_m": 0.5394389142995056,
+        "length_m": 0.39959219040498484,
         "area_m2": 0.12773913490612293,
         "count": 2,
         "mass_mode": "areal",
@@ -3670,11 +3670,11 @@
       },
       {
         "name": "vertical_tail_primary_spars",
-        "length_m": 0.5394389142995056,
+        "length_m": 0.39959219040498484,
         "count": 2,
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.00984,
-        "mass_kg": 0.0480446693118442,
+        "mass_kg": 0.03558933947606118,
         "hardcoded": false,
         "component_names": [
           "vertical_tail_left_primary_spar",
@@ -3683,11 +3683,11 @@
       },
       {
         "name": "vertical_tail_secondary_spars",
-        "length_m": 0.5394389142995056,
+        "length_m": 0.39959219040498484,
         "count": 2,
         "mass_mode": "linear",
         "specific_mass_kg_per_m": 0.00591,
-        "mass_kg": 0.006376167967020157,
+        "mass_kg": 0.004723179690586921,
         "hardcoded": false,
         "component_names": [
           "vertical_tail_left_secondary_spar",
@@ -3789,8 +3789,8 @@
       "prop_diameter_in": 22.0,
       "max_thrust_per_motor_N": 71.02956594999999,
       "structural_limit_thrust_per_motor_N": 79.553113864,
-      "zero_pitch_15kg_front_motor_N": 62.4121021478757,
-      "zero_pitch_15kg_rear_motor_N": 56.35021035212429,
+      "zero_pitch_15kg_front_motor_N": 62.6286838202029,
+      "zero_pitch_15kg_rear_motor_N": 56.13362867979709,
       "record": {
         "name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
         "role": "lift",
@@ -3885,12 +3885,12 @@
     },
     "mission_ems": {
       "feasible": true,
-      "bus_energy_demand_Wh": 886.8824069889928,
-      "fc_net_energy_used_Wh": 867.1309615070352,
-      "battery_net_energy_out_Wh": 19.7514454819663,
-      "h2_used_kg": 0.0521120451624067,
-      "h2_remaining_physical_kg": 0.009787954837593295,
-      "final_battery_soc": 0.9186901866863576,
+      "bus_energy_demand_Wh": 886.0043403725712,
+      "fc_net_energy_used_Wh": 866.3507196482731,
+      "battery_net_energy_out_Wh": 19.65362072430589,
+      "h2_used_kg": 0.05206515489927575,
+      "h2_remaining_physical_kg": 0.009834845100724243,
+      "final_battery_soc": 0.9190929043379216,
       "warnings": [
         "battery_charge_voltage_limited"
       ],
@@ -3898,32 +3898,32 @@
     }
   },
   "performance": {
-    "cruise_drag_N": 13.662183588710766,
-    "cruise_bus_power_W": 430.989189900568,
+    "cruise_drag_N": 13.648674532262559,
+    "cruise_bus_power_W": 430.59763899770456,
     "landing_legs_CdA_m2": 0.0015,
     "landing_legs_drag_N": 0.29159999999999997,
-    "forward_transition_duration_s": 19.419999999999675,
+    "forward_transition_duration_s": 19.339999999999677,
     "reverse_transition_duration_s": 20.65999999999965,
-    "mission_energy_Wh": 886.882406989056,
+    "mission_energy_Wh": 886.0043403727826,
     "drag_breakdown": {
-      "mass_kg": 14.734779632233971,
+      "mass_kg": 14.709927002645406,
       "speed_mps": 18.0,
       "lift_prop_diameter_in": 22.0,
       "lift_prop_state": "stopped_aligned",
       "dynamic_pressure_Pa": 194.39999999999998,
-      "non_lift_prop_parasite_drag_N": 7.995920688283854,
+      "non_lift_prop_parasite_drag_N": 7.993974626748094,
       "cooling_drag_N": 0.25946568,
       "landing_legs_drag_N": 0.29159999999999997,
       "lift_prop_drag_N": 2.2356,
-      "induced_drag_N": 3.430662900426911,
-      "total_drag_N": 13.662183588710766,
-      "lift_to_drag": 10.576554307164228,
-      "propulsive_power_W": 245.91930459679378,
-      "cruise_propulsion_electrical_W": 395.989189900568,
+      "induced_drag_N": 3.4190999055144657,
+      "total_drag_N": 13.648674532262559,
+      "lift_to_drag": 10.56916591420685,
+      "propulsive_power_W": 245.67614158072607,
+      "cruise_propulsion_electrical_W": 395.59763899770456,
       "auxiliary_power_W": 35.0,
-      "total_cruise_bus_power_W": 430.989189900568,
+      "total_cruise_bus_power_W": 430.59763899770456,
       "lift_prop_CdA_total_m2": 0.0115,
-      "non_lift_prop_parasite_CdA_m2": 0.04113127926071942,
+      "non_lift_prop_parasite_CdA_m2": 0.0411212686561116,
       "cooling_openings_CdA_m2": 0.0013347,
       "landing_legs_CdA_m2": 0.0015,
       "induced_drag_factor_k": 0.030955236294448966,
@@ -3933,14 +3933,14 @@
     },
     "mission_stage_energy_Wh": {
       "Preflight / ready": 0.6666666666666666,
-      "VTOL takeoff": 5.16905978817598,
-      "Vertical climb": 6.902888766827839,
-      "Forward transition": 8.173911564130448,
-      "Wing-borne climb": 4.9839690958713865,
-      "Cruise": 845.8067076423115,
-      "Reverse transition": 4.582630899311896,
-      "Vertical descent": 5.427512777584779,
-      "Landing hover": 5.1690597881755105
+      "VTOL takeoff": 5.156233467914829,
+      "Vertical climb": 6.886718037954267,
+      "Forward transition": 8.131331551720486,
+      "Wing-borne climb": 4.977426052505036,
+      "Cruise": 845.0478665329953,
+      "Reverse transition": 4.567819453800709,
+      "Vertical descent": 5.41404514131057,
+      "Landing hover": 5.156233467914829
     }
   },
   "structures": {
@@ -4102,7 +4102,7 @@
     {
       "name": "mass_ceiling",
       "status": "PASS",
-      "note": "Structurally closed mass 14.735 kg vs 15.0 kg ceiling."
+      "note": "Structurally closed mass 14.710 kg vs 15.0 kg ceiling."
     },
     {
       "name": "packaging",
@@ -4142,22 +4142,22 @@
     {
       "name": "positive_manoeuvre_stall_margin",
       "status": "PASS",
-      "note": "+1.50 g at 18.0 m/s uses 84.0% of CLmax; limit 90%. Minimum speed with margin 17.39 m/s."
+      "note": "+1.50 g at 18.0 m/s uses 83.8% of CLmax; limit 90%. Minimum speed with margin 17.37 m/s."
     },
     {
       "name": "negative_manoeuvre_stall_margin",
       "status": "PASS",
-      "note": "-0.50 g at 18.0 m/s uses 52.2% of |CLmin|; limit 90%."
+      "note": "-0.50 g at 18.0 m/s uses 52.1% of |CLmin|; limit 90%."
     },
     {
       "name": "inspection_gust_stall_margin",
       "status": "PASS",
-      "note": "Conservative sharp-edge +2.0 m/s vertical gust reaches 94.9% of CLmax (no alleviation credit); 6-DOF gust trajectories peak at 54.8%; hard limit 95%."
+      "note": "Conservative sharp-edge +2.0 m/s vertical gust reaches 94.8% of CLmax (no alleviation credit); 6-DOF gust trajectories peak at 54.7%; hard limit 95%."
     },
     {
       "name": "cruise_power",
       "status": "PASS",
-      "note": "431.0 W vs configured gate."
+      "note": "430.6 W vs configured gate."
     },
     {
       "name": "mission_ems",
@@ -4172,12 +4172,12 @@
     {
       "name": "current_longitudinal_stability",
       "status": "PASS",
-      "note": "Closed-aircraft static margin 12.15% MAC."
+      "note": "Closed-aircraft static margin 12.51% MAC."
     },
     {
       "name": "payload_off_static_margin",
       "status": "FAIL",
-      "note": "Payload-off static margin 1.17% MAC (CG x=0.4927 m) vs minimum 5.0% MAC."
+      "note": "Payload-off static margin 1.55% MAC (CG x=0.4916 m) vs minimum 5.0% MAC."
     },
     {
       "name": "current_layout_6dof",
@@ -4187,7 +4187,7 @@
     {
       "name": "sixdof_linear_aero_validity",
       "status": "PASS",
-      "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 10.8 deg."
+      "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 10.9 deg."
     },
     {
       "name": "stability_screen_6dof",
@@ -4197,7 +4197,7 @@
     {
       "name": "15kg_zero_pitch_motor_thrust",
       "status": "PASS",
-      "note": "Front/rear requirement 62.4/56.4 N vs available 71.0/81.7 N (rear recovery x1.15)."
+      "note": "Front/rear requirement 62.6/56.1 N vs available 71.0/81.7 N (rear recovery x1.15)."
     },
     {
       "name": "recommended_structure_screen",

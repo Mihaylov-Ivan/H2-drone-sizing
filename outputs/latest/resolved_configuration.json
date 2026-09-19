@@ -26,7 +26,7 @@
     "mission_duration_min": 120.0,
     "integration_note": "Primary aircraft-level source of truth. Integrated-v2 resolves geometry, packaging, stability and lift-row variables across all subsystems.",
     "wing_ac_x_m": 0.455714,
-    "horizontal_tail_area_m2": 0.20711591234592058,
+    "horizontal_tail_area_m2": 0.20711591234592064,
     "horizontal_tail_ac_x_m": 1.050226,
     "lift_row_center_x_m": 0.47574,
     "battery_x_m": 0.22150000000000003,
@@ -87,31 +87,73 @@
     "main_wing_autosize_local_samples": 12,
     "main_wing_autosize_max_iterations": 4,
     "main_wing_span_m": 3.3834212555623346,
-    "horizontal_tail_root_chord_m": 0.218,
-    "horizontal_tail_taper_ratio": 0.7,
-    "horizontal_tail_naca_code": "NACA0012",
+    "auto_size_horizontal_tail": true,
     "horizontal_tail_span_mode": "auto",
+    "horizontal_tail_root_chord_m": 0.26817018354457967,
+    "horizontal_tail_taper_ratio": 0.6,
+    "horizontal_tail_naca_code": "NACA0012",
     "horizontal_tail_span_bounds_m": [
       0.75,
       1.35
     ],
+    "horizontal_tail_root_chord_bounds_m": [
+      0.18,
+      0.32
+    ],
+    "horizontal_tail_taper_ratio_bounds": [
+      0.45,
+      0.85
+    ],
+    "horizontal_tail_aspect_ratio_bounds": [
+      3.5,
+      6.5
+    ],
+    "horizontal_tail_minimum_tip_chord_m": 0.1,
+    "horizontal_tail_preferred_aspect_ratio": 4.5,
+    "horizontal_tail_preferred_taper_ratio": 0.6,
+    "horizontal_tail_profile_cd0_screen": 0.01,
+    "horizontal_tail_autosize_samples": 36,
+    "horizontal_tail_autosize_local_samples": 12,
     "horizontal_tail_target_volume_coefficient": 0.44,
-    "horizontal_tail_span_m": 1.1177329322499763,
-    "horizontal_tail_mac_m": 0.18722352941176468,
-    "vertical_tail_root_chord_m": 0.148,
+    "horizontal_tail_minimum_volume_coefficient": 0.44,
+    "horizontal_tail_span_m": 0.9654126607604868,
+    "horizontal_tail_mac_m": 0.21900564989474003,
+    "horizontal_tail_thickness_ratio": 0.12,
+    "auto_size_vertical_tail": true,
+    "vertical_tail_span_mode": "auto",
+    "vertical_tail_root_chord_m": 0.19979609520249242,
     "vertical_tail_taper_ratio": 0.6,
     "vertical_tail_naca_code": "NACA0012",
-    "vertical_tail_span_mode": "auto",
     "vertical_tail_span_bounds_m": [
       0.28,
       0.55
     ],
+    "vertical_tail_root_chord_bounds_m": [
+      0.12,
+      0.26
+    ],
+    "vertical_tail_taper_ratio_bounds": [
+      0.4,
+      0.8
+    ],
+    "vertical_tail_aspect_ratio_bounds": [
+      2.0,
+      4.5
+    ],
+    "vertical_tail_minimum_tip_chord_m": 0.075,
+    "vertical_tail_preferred_aspect_ratio": 2.5,
+    "vertical_tail_preferred_taper_ratio": 0.6,
+    "vertical_tail_profile_cd0_screen": 0.01,
+    "vertical_tail_autosize_samples": 36,
+    "vertical_tail_autosize_local_samples": 12,
     "vertical_tail_ac_x_m": 1.110291,
     "vertical_tail_count": 2,
     "vertical_tail_target_volume_coefficient": 0.0255,
-    "vertical_tail_height_m": 0.5394389142995056,
+    "vertical_tail_minimum_volume_coefficient": 0.0255,
+    "vertical_tail_height_m": 0.39959219040498484,
     "vertical_tail_area_each_m2": 0.06386956745306147,
     "vertical_tail_area_total_m2": 0.12773913490612293,
+    "vertical_tail_thickness_ratio": 0.12,
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "hardcoded",
     "energy_bay_order_code": 0.0,
@@ -173,6 +215,8 @@
     "lift_prop_mount_side": "under",
     "landing_legs_CdA_m2": 0.0015,
     "main_wing_autosize_sizing_mass_kg": 14.734779632233971,
+    "horizontal_tail_planform_locked": true,
+    "vertical_tail_planform_locked": true,
     "boom_outer_diameter_m": 0.028
   },
   "power_system": {
@@ -333,8 +377,8 @@
         "wing_ac_x_m": 0.455714,
         "reference_neutral_point_x_m": 0.496048586404054,
         "horizontal_tail_le_x_m": 0.976,
-        "horizontal_tail_span_m": 1.1177329322499763,
-        "vertical_fin_height_m": 0.5394389142995056,
+        "horizontal_tail_span_m": 0.9654126607604868,
+        "vertical_fin_height_m": 0.39959219040498484,
         "boom_center_y_m": [
           -0.3739,
           0.3739
@@ -507,7 +551,7 @@
           },
           "status": "engineering_assumption",
           "source": "Current H2AIR results.txt",
-          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized.",
+          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized.",
           "mass_end_kg": 3.9977967826661205
         },
         {
@@ -676,7 +720,7 @@
         {
           "name": "horizontal_tail_structure",
           "group": "airframe",
-          "mass_takeoff_kg": 0.21182309217196424,
+          "mass_takeoff_kg": 0.2118230921719643,
           "position_m": [
             1.050226,
             0.0,
@@ -690,7 +734,7 @@
           },
           "status": "engineering_assumption",
           "source": "Current H2AIR tail result",
-          "mass_end_kg": 0.21182309217196424
+          "mass_end_kg": 0.2118230921719643
         },
         {
           "name": "vertical_tail_left",
@@ -2698,7 +2742,7 @@
         0.0,
         0.0
       ],
-      "horizontal_tail_area_m2": 0.20711591234592058,
+      "horizontal_tail_area_m2": 0.20711591234592064,
       "horizontal_tail_ac_station_x_m": 1.050226,
       "vertical_tail_total_area_m2": 0.1504,
       "vertical_tail_ac_station_x_m": 1.05
@@ -3933,7 +3977,7 @@
       "cg_station_x_m": 0.4496127355,
       "reference_wing_span_m": 3.3834212555623346,
       "design_wing_span_m": 3.3834212555623346,
-      "horizontal_tail_area_m2": 0.20711591234592058,
+      "horizontal_tail_area_m2": 0.20711591234592064,
       "vertical_tail_total_area_m2": 0.1504
     },
     "materials": {
@@ -3990,8 +4034,8 @@
       "legacy_reported_boom_tube_mass_total_kg": 0.0242,
       "boom_mass_station_x_m": 0.72,
       "motor_mount_lever_m": 0.05,
-      "horizontal_tail_semispan_m": 0.5588664661249881,
-      "vertical_tail_height_m": 0.5394389142995056,
+      "horizontal_tail_semispan_m": 0.4827063303802434,
+      "vertical_tail_height_m": 0.39959219040498484,
       "current_tail_spar_reference_od_m": 0.00433,
       "current_tail_spar_reference_id_m": 0.00325,
       "current_horizontal_tail_spar_mass_total_kg": 0.027,
@@ -7829,7 +7873,7 @@
     },
     "horizontal_tail": {
       "z_m": 0.08700930732488546,
-      "thickness_m": 0.02616,
+      "thickness_m": 0.032180422025349556,
       "shell": {
         "mass_mode": "areal",
         "specific_mass_kg_per_m2": 1.8,
@@ -7861,7 +7905,7 @@
     },
     "vertical_tail": {
       "count": 2,
-      "thickness_m": 0.01776,
+      "thickness_m": 0.02397553142429909,
       "shell": {
         "mass_mode": "areal",
         "specific_mass_kg_per_m2": 1.8,
@@ -8202,7 +8246,28 @@
         ],
         "hardcoded_span_m": 0.828897,
         "target_tail_volume_coefficient": 0.44,
-        "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+        "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback",
+        "AutoSize Horizontal Tail": true,
+        "root_chord_bounds_m": [
+          0.18,
+          0.32
+        ],
+        "taper_ratio_bounds": [
+          0.45,
+          0.85
+        ],
+        "aspect_ratio_bounds": [
+          3.5,
+          6.5
+        ],
+        "minimum_tip_chord_m": 0.1,
+        "minimum_tail_volume_coefficient": 0.44,
+        "autosize_samples": 36,
+        "autosize_local_samples": 12,
+        "note": "AutoSize Horizontal Tail=true: jointly optimize span, root chord and taper at the current wing geometry. The configured tail-volume coefficient is treated as a hard minimum; loaded static margin and structural/mass constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+        "preferred_aspect_ratio": 4.5,
+        "preferred_taper_ratio": 0.6,
+        "profile_cd0_screen": 0.01
       },
       "vertical_tail": {
         "count": 2,
@@ -8217,7 +8282,28 @@
         ],
         "hardcoded_span_m": 0.327641,
         "target_vertical_tail_volume_coefficient": 0.0255,
-        "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+        "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback",
+        "AutoSize Vertical Tail": true,
+        "root_chord_bounds_m": [
+          0.12,
+          0.26
+        ],
+        "taper_ratio_bounds": [
+          0.4,
+          0.8
+        ],
+        "aspect_ratio_bounds": [
+          2,
+          4.5
+        ],
+        "minimum_tip_chord_m": 0.075,
+        "minimum_vertical_tail_volume_coefficient": 0.0255,
+        "autosize_samples": 36,
+        "autosize_local_samples": 12,
+        "note": "AutoSize Vertical Tail=true: jointly optimize fin height, root chord and taper for the twin-fin layout. The configured vertical-tail-volume coefficient is treated as a hard minimum; structural and geometric constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+        "preferred_aspect_ratio": 2.5,
+        "preferred_taper_ratio": 0.6,
+        "profile_cd0_screen": 0.01
       }
     },
     "propulsion": {
