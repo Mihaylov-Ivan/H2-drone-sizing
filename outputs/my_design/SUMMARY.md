@@ -9,10 +9,14 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 ## Configuration / look
 
 ### Fuselage / pod
+
 - Length x outer size: **0.859 m x 0.228 m** (228 mm) (rectangular_filleted, fillet 20 mm) (auto side 228 mm, uniform sections); midbody auto lengths: center_a 236 mm, center_b 344 mm; component axial 10 mm
 - Overall reference length (nose-to-tail layout): **1.25 m**
 
+
+
 ### Main wing
+
 - Span / area / AR: **3.150 m / 0.821 m² / 12.09**
 - Root / tip / MAC: **0.326 / 0.195 / 0.266 m** (taper 0.60)
 - Airfoil: **NACA6415**, CLmax screen **1.370**
@@ -20,11 +24,17 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - Twist root to tip: **0.0 deg to -2.0 deg**; sweep **0.0 deg**; dihedral **0.0 deg**
 - Vertical station (structure CG height): **z = 0.088 m**
 
+
+
 ### Empennage
+
 - Horizontal tail: span **0.872 m**, area **0.162 m²**, root/tip **0.218/0.153 m**, **NACA0012**, AC **x = 1.0502 m**, z = **0.088 m**
 - Vertical tails: **twin fins**, height **0.425 m** each, total area **0.101 m²**, root/tip **0.148/0.089 m**, **NACA0012**, AC **x = 1.1103 m**
 
+
+
 ### Booms & lift layout
+
 - Twin boom spacing (centre-to-centre): **0.748 m**
 - Boom longitudinal extent: **x = 0.186 to 1.100 m**
 - Lift-row midpoint: **x = 0.4757 m**; front/rear rotor rows at **0.186 / 0.765 m**
@@ -34,7 +44,10 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - Empennage waterline: HT z = **0.088 m** (aligned with main wing z = **0.088 m**)
 - Wing/fuselage junction: fuse top z = **0.114 m**; wing drop from flush = **12.0 mm**; longerons **top/bottom** (wing uses top boss only)
 
+
+
 ### Energy / avionics packaging (stations)
+
 - Energy bay order: **fuel_cell_forward** (mode hardcoded)
 - Longeron boss cabin clear: **10 mm**; Z lifts (mm): fc 0.0, h2 0.0, nose 0.0, top 0.0
 - Fuel cell: **x = 0.2553 m**, z = **-0.0331 m** (1.093 kg)
@@ -45,13 +58,18 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - PDBs: **(0.5652, 0.0000, 0.0585)** and **(0.6552, 0.0000, 0.0585)** m
 - Fuselage wall keepout: **10.0 mm** (circular cross-section; packaging gate fails on radial protrusion)
 
+
+
 ## Mass & balance
 
 - Closed MTOW: **15.980 kg** (pre-structure **16.003 kg**; margin to ceiling **-0.980 kg**)
 - CG: **(0.4704, 0.0000, 0.0363) m**
 - Neutral point / static margin: **x_NP = 0.4929 m**, **8.45% MAC**
 
+
+
 ### Mass breakdown (takeoff)
+
 - payload: **1.200 kg**
 - wing structure: **3.051 kg**
 - fuselage structure: **1.412 kg**
@@ -62,6 +80,8 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - avionics: **1.300 kg**
 - airframe: **0.490 kg**
 
+
+
 ## Propulsion & power
 
 - Lift set: **Tmotor_U8Lite_150kV_P22x6p6_12S** (22.0 in, max thrust **71.0 N/motor**)
@@ -71,7 +91,10 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - Hydrogen store: **3.0 L** / **300 bar**, nominal H2 **62 g**, cylinder **1.62 kg**
 - 15 kg zero-pitch motor need: front/rear **60.5 / 58.3 N**
 
+
+
 ### Fuel-cell cooling integration
+
 - Architecture: **cross_fuselage**, fan direction **suction_through_stack_to_fan_side**
 - Inlet / exhaust sides: **left / right**
 - Thermal screen: **880 W** design waste heat, required airflow **101.0 CFM**
@@ -80,14 +103,18 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - Inlet/exhaust inner side gap: **10.3 / 10.3 mm**; minimum fuselage width for configured gaps **142.4 mm**
 - Cooling-opening cruise drag allowance: **0.327 N**
 
+
+
 ## Performance / mission
 
-- Cruise drag / bus power: **17.96 N / 708.2 W** (lift props **stopped_aligned**)
-- Endurance at cruise (usable H₂ / cruise bus): **1.24 h** (876 Wh usable)
+- Cruise drag / bus power: **17.96 N / 541.6 W** (lift props **stopped_aligned**)
+- Endurance at cruise (usable H₂ / cruise bus): **1.62 h** (876 Wh usable)
 - Landing-leg parasite: **1.058 N** (CdA **44.06 cm²**, sleeve cylinder screen)
 - Forward / reverse transition: **21.72 s / 19.14 s**
-- Mission energy (120 min): **1436.9 Wh**
+- Mission energy (120 min): **1109.1 Wh**
 - H2 used / final battery SOC: **52.6 g / 20.0%**
+
+
 
 ## Structures (recommended screen)
 
@@ -95,6 +122,8 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - Boom tube: **22.00 / 18.00 mm OD/ID**
 - Landing legs (3g): **8.00 / 6.00 mm OD/ID** (CFRP tube + 2 mm printed sleeve; nose + 2 wing)
 - Motor-mount limit thrust: **79.6 N/motor**
+
+
 
 ## Integrated gates
 
@@ -105,7 +134,7 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - **NOT_EVALUATED** — fuel_cell_cooling_fan_curve: IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
 - **PASS** — 15kg_stall_margin: Wing area 0.821 m² vs minimum 0.714 m² screen.
-- **FAIL** — cruise_power: 708.2 W vs configured gate.
+- **PASS** — cruise_power: 541.6 W vs configured gate.
 - **FAIL** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
 - **PASS** — current_longitudinal_stability: Closed-aircraft static margin 8.45% MAC.
@@ -118,6 +147,8 @@ A **15.980 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.15 m** main win
 - **NOT_EVALUATED** — motor_mount: Controlled mount CAD, fasteners and material allowables are still required.
 - **PASS** — selected_battery_database_record: Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation.
 - **PASS** — certified_hydrogen_cylinder_mass: Certified cylinder mass is present.
+
+
 
 ## Fidelity boundary
 

@@ -208,7 +208,11 @@ def compute_cruise_propulsive_efficiency(
     required_thrust_N: float,
     prop_diameter_in: Optional[float] = None,
 ) -> float:
-    """Overall cruise propulsive efficiency (thrust×V / electrical), with reference fallback."""
+    """Overall cruise propulsive efficiency (thrust×V / electrical), with reference fallback.
+
+    Uses an unmargined pusher solve at thrust = cruise drag. The pusher screen's
+    thrust_margin is for sizing/headroom only and must not inflate cruise bus power.
+    """
     ac = cfg["aircraft"]
     ref = float(
         ac.get(
@@ -227,9 +231,12 @@ def compute_cruise_propulsive_efficiency(
             prop_diameter_in=float(D),
             speed_mps=float(speed_mps),
             required_aircraft_thrust_N=float(required_thrust_N),
+            apply_thrust_margin=False,
         )
         if op.feasible and op.electrical_power_W > EPS:
-            eta = float(required_thrust_N) * float(speed_mps) / float(op.electrical_power_W)
+            # Prefer actual delivered thrust at the solved RPM (matches electrical).
+            thrust_ref = float(op.thrust_N) if op.thrust_N > EPS else float(required_thrust_N)
+            eta = thrust_ref * float(speed_mps) / float(op.electrical_power_W)
             if eta > 0.05:
                 return min(eta, 0.95)
     except Exception:
@@ -481,6 +488,7 @@ def pusher_operating_point(
     speed_mps: float,
     required_aircraft_thrust_N: float,
     measured_map: Optional[Sequence[Mapping[str, float]]] = None,
+    apply_thrust_margin: bool = True,
 ) -> PusherOperatingPoint:
     ps = cfg["pusher_screen"]
     prop_map = measured_map if measured_map is not None else ps["generic_prop_map"]
@@ -490,7 +498,8 @@ def pusher_operating_point(
     a = float(cfg["atmosphere"]["speed_of_sound_mps"])
     eta_drive = float(ps["motor_efficiency_assumption"]) * float(ps["esc_efficiency_assumption"])
     best: Optional[PusherOperatingPoint] = None
-    required = required_aircraft_thrust_N * float(ps["thrust_margin"])
+    margin = float(ps["thrust_margin"]) if apply_thrust_margin else 1.0
+    required = required_aircraft_thrust_N * margin
 
     rpm = float(ps["rpm_min"])
     while rpm <= float(ps["rpm_max"]) + EPS:
