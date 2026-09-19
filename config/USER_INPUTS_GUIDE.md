@@ -10,8 +10,9 @@ The optional top-level `flight_envelope` block controls the non-aerobatic route-
 - `positive_manoeuvre_load_factor_g`: operational accelerated-stall screen; default **+1.5 g**.
 - `negative_manoeuvre_load_factor_g`: unloading/gust screen; default **-0.5 g**. This is not an aerobatic capability target.
 - `maximum_manoeuvre_clmax_utilization`: maximum allowed fraction of the conservative wing CLmax during the manoeuvre screen; default **0.90**.
-- `lateral_gust_mps` / `vertical_gust_mps`: 6-DOF disturbance cases. Defaults are **5 m/s lateral** and **±2 m/s vertical**, including a combined lateral+upward case.
-- `maximum_gust_clmax_utilization`: hard stall-margin gate for those 6-DOF gust cases; default **0.95**.
+- `lateral_gust_mps` / `vertical_gust_mps`: disturbance cases. Defaults are **5 m/s lateral** and **±2 m/s vertical**, including a combined lateral+upward 6-DOF case.
+- The upward vertical gust also drives a conservative **sharp-edge, no-alleviation** stall screen. AutoSize Main Wing must satisfy this instantaneous aerodynamic screen as well as the slower closed-loop 6-DOF disturbance cases.
+- `maximum_gust_clmax_utilization`: hard CLmax-utilization limit for the gust stall screen; default **0.95**.
 - `structural_design_positive_load_factor_g`: structural wing-bending screen, kept at **+3.0 g** to provide structural margin above the operational +1.5 g envelope.
 
 AutoSize Main Wing includes the +1.5 g accelerated-stall requirement using the current M2 iteration mass. The 15 kg ceiling remains a separate mass/stall robustness check and the +3 g structural case remains based on the 15 kg ceiling.
