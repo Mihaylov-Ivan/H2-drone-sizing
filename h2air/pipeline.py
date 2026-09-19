@@ -1145,45 +1145,11 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     )
     max_gust_cl_util=max(max_dynamic_gust_cl_util,float(vertical_gust_screen["clmax_utilization"]))
 
-    # Final fixed-wing tail-authority verification. Lift rotors are explicitly
-    # disabled so stopped/aligned VTOL propellers cannot mask inadequate
-    # elevator/rudder authority in cruise.
-    tail_sf=float(d.get("tail_control_safety_factor",1.10))
+    # Final tail-authority verification using the same candidate-scaled
+    # quasi-steady elevator/rudder reserve used by the optimizer. Normal 6-DOF
+    # control cases above remain an independent dynamic validation layer.
     tail_trim=current_model.trim_cruise(V)
-    tail_limits={
-        "maximum_abs_elevator_trim_deg":float(six_cfg["gates"]["maximum_abs_elevator_trim_deg"])/tail_sf,
-        "maximum_abs_yaw_deg":float(six_cfg["gates"]["maximum_cruise_gust_yaw_deg"])/tail_sf,
-        "maximum_abs_roll_deg":float(six_cfg["gates"]["maximum_cruise_gust_roll_deg"])/tail_sf,
-        "maximum_altitude_loss_m":float(six_cfg["gates"]["maximum_cruise_gust_altitude_loss_m"])/tail_sf,
-        "maximum_surface_utilization":float(six_cfg["gates"]["maximum_surface_utilization_fraction"])/tail_sf,
-        "maximum_abs_pitch_tracking_error_deg":float(six_cfg["gates"]["maximum_transition_pitch_tracking_error_deg"])/tail_sf,
-    }
-    tail_surface_cases={}
-    tail_surface_checks=[]
-    tail_selected_gusts={
-        "lateral":gust_vectors.get("lateral",[0.0,5.0,0.0]),
-        "vertical_up":gust_vectors.get("vertical_up",[0.0,0.0,-2.0]),
-        "combined_lateral_up":gust_vectors.get("combined_lateral_up",[0.0,5.0,-2.0]),
-    }
-    for tail_case_name,tail_gust_vec in tail_selected_gusts.items():
-        samples=simulate_cruise_gust(current_model,speed_mps=V,stabilized=True,gust_ned_mps=tail_gust_vec,disable_lift_rotors=True)
-        ss=summarize_samples(samples,current_model);tail_surface_cases[tail_case_name]=ss
-        if tail_case_name in ("lateral","combined_lateral_up"):
-            tail_surface_checks.append({"name":f"{tail_case_name}_yaw","pass":float(ss["maximum_abs_yaw_deg"])<=tail_limits["maximum_abs_yaw_deg"]+1e-9,"value":float(ss["maximum_abs_yaw_deg"]),"limit":tail_limits["maximum_abs_yaw_deg"]})
-            tail_surface_checks.append({"name":f"{tail_case_name}_roll","pass":float(ss["maximum_abs_roll_deg"])<=tail_limits["maximum_abs_roll_deg"]+1e-9,"value":float(ss["maximum_abs_roll_deg"]),"limit":tail_limits["maximum_abs_roll_deg"]})
-        tail_surface_checks.append({"name":f"{tail_case_name}_surface","pass":float(ss["maximum_surface_utilization"])<=tail_limits["maximum_surface_utilization"]+1e-9,"value":float(ss["maximum_surface_utilization"]),"limit":tail_limits["maximum_surface_utilization"]})
-    tail_surface_checks.insert(0,{"name":"cruise_trim_elevator","pass":bool(tail_trim.get("success",False)) and abs(float(tail_trim.get("elevator_deg",999.0)))<=tail_limits["maximum_abs_elevator_trim_deg"]+1e-9,"value":float(tail_trim.get("elevator_deg",999.0)),"limit":tail_limits["maximum_abs_elevator_trim_deg"]})
-    tail_control_authority={
-        "safety_factor":tail_sf,
-        "surface_only_fixed_wing":True,
-        "trim":tail_trim,
-        "limits":tail_limits,
-        "cases":tail_surface_cases,
-        "checks":tail_surface_checks,
-        "pass":all(bool(x["pass"]) for x in tail_surface_checks),
-        "tail_effectiveness_scaling":six_cfg["aerodynamics"].get("tail_effectiveness_scaling",{}),
-        "note":"Cruise tail-authority screen with lift rotors disabled. Hard checks are trim elevator, lateral/combined yaw-roll response and surface headroom, with limits divided by the safety factor. Pitch/altitude histories are reported but are not hard tail-sizing gates because the current cruise altitude loop is lift-rotor based.",
-    }
+    tail_control_authority=_tail_quasi_steady_authority(six_cfg,d,current_model,tail_trim)
 
     gates=[]
     def gate(name,status,note):gates.append({"name":name,"status":status,"note":note})
@@ -1203,7 +1169,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("transition","PASS" if mission["forward_transition"].success and mission["reverse_transition"].success else "FAIL","Forward and reverse point-mass transition completion on closed mass.")
     gate("current_longitudinal_stability","PASS" if current_model.static_margin>=float(six_cfg["gates"]["minimum_static_margin"]) else "FAIL",f"Closed-aircraft static margin {100*current_model.static_margin:.2f}% MAC.")
     failed_tail_checks=[x["name"] for x in tail_control_authority["checks"] if not x["pass"]]
-    gate("tail_control_authority","PASS" if tail_control_authority["pass"] else "FAIL",f"Fixed-wing surface-only trim/gust authority with {tail_sf:.2f}x safety factor; failed checks: {failed_tail_checks if failed_tail_checks else 'none'}.")
+    gate("tail_control_authority","PASS" if tail_control_authority["pass"] else "FAIL",f"Tail trim/elevator/rudder reserve with {float(tail_control_authority['safety_factor']):.2f}x safety factor; failed checks: {failed_tail_checks if failed_tail_checks else 'none'}.")
     gate("payload_off_static_margin","PASS" if sm_payload_off>=min_sm else "FAIL",f"Payload-off static margin {100*sm_payload_off:.2f}% MAC (CG x={mass_payload_off.takeoff.cg_m[0]:.4f} m) vs minimum {100*min_sm:.1f}% MAC.")
     gate("current_layout_6dof","PASS" if control_cases["current_layout"]["gate_evaluation"]["pass"] else "FAIL","Actual closed geometry/control 6-DOF gate set.")
     gate("sixdof_linear_aero_validity",control_cases["current_layout"]["linear_aero_validity"]["status"],control_cases["current_layout"]["linear_aero_validity"]["note"]+f" Maximum |alpha| above 10 m/s = {control_cases["current_layout"]["linear_aero_validity"]["maximum_abs_alpha_above_10mps_deg"]:.1f} deg.")
