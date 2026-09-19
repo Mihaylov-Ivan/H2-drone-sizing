@@ -160,16 +160,24 @@ def write_markdown_report(
         "",
         "### Empennage",
         (
-            f"- AutoSize Horizontal Tail: **ON** — coupled span/root-chord/taper optimization "
-            f"(AR **{_f(ht_ar, 2)}**, Vh **{_f(_get(r,'tail_planform_autosizing','selected','horizontal_tail_volume_coefficient',default=None),3)}**)"
+            f"- AutoSize Horizontal Tail: **ON** — performance-constrained span/root-chord/taper optimization "
+            f"(AR **{_f(ht_ar, 2)}**, resulting Vh **{_f(_get(r,'tail_planform_autosizing','selected','horizontal_tail_volume_coefficient',default=None),3)}**; "
+            f"reference **{_f(_get(r,'tail_planform_autosizing','constraints','horizontal_tail_reference_volume_coefficient',default=None),3)}**)"
             if bool(_get(r, "tail_planform_autosizing", "horizontal_tail", default=False))
             else "- AutoSize Horizontal Tail: **OFF** — hardcoded span/root chord/taper"
         ),
         (
-            f"- AutoSize Vertical Tail: **ON** — coupled height/root-chord/taper optimization "
-            f"(per-fin AR **{_f(vt_ar, 2)}**, Vv **{_f(_get(r,'tail_planform_autosizing','selected','vertical_tail_volume_coefficient',default=None),4)}**)"
+            f"- AutoSize Vertical Tail: **ON** — performance-constrained height/root-chord/taper optimization "
+            f"(per-fin AR **{_f(vt_ar, 2)}**, resulting Vv **{_f(_get(r,'tail_planform_autosizing','selected','vertical_tail_volume_coefficient',default=None),4)}**; "
+            f"reference **{_f(_get(r,'tail_planform_autosizing','constraints','vertical_tail_reference_volume_coefficient',default=None),4)}**)"
             if bool(_get(r, "tail_planform_autosizing", "vertical_tail", default=False))
             else "- AutoSize Vertical Tail: **OFF** — hardcoded height/root chord/taper"
+        ),
+        (
+            f"- Tail control sizing safety factor: **{_f(_get(r,'tail_planform_autosizing','control_safety_factor',default=None),2)}x**; "
+            f"Vh/Vv are **outputs/calibration references, not hard minimums**"
+            if bool(_get(r, "tail_planform_autosizing", "enabled", default=False))
+            else ""
         ),
         f"- Horizontal tail: span **{_f(bh, 3)} m**, area **{_f(Sh, 3)} m²**, "
         f"root/tip **{_f(chr_, 3)}/{_f(_tip_chord(chr_, lamh), 3)} m**, "
@@ -340,6 +348,12 @@ def write_markdown_report(
         f"- Gust stall screen: sharp-edge vertical case uses **{_pct(s.get('vertical_gust_cl_utilization'),1)} of CLmax** "
         f"(no alleviation credit); 6-DOF gust cases peak at **{_pct(s.get('sixdof_worst_gust_cl_utilization'),1)}**; "
         f"configured lateral/vertical gusts **{_f(d.get('inspection_lateral_gust_mps'),1)} / ±{_f(d.get('inspection_vertical_gust_mps'),1)} m/s** for **{_f(d.get('inspection_gust_duration_s'),1)} s**",
+        (
+            f"- Tail authority (fixed-wing, lift rotors disabled): **{'PASS' if bool(_get(r,'tail_control_authority','pass',default=False)) else 'FAIL'}** "
+            f"with **{_f(_get(r,'tail_control_authority','safety_factor',default=None),2)}x** safety factor; "
+            f"cruise trim elevator **{_f(_get(r,'tail_control_authority','trim','elevator_deg',default=None),1)} deg**"
+            if _get(r,'tail_control_authority',default=None) is not None else ""
+        ),
         (
             f"- Endurance at cruise (usable H₂ / cruise bus): **{_f(s.get('endurance_at_cruise_h'), 2)} h** "
             f"({_f(s.get('usable_h2_Wh'), 0)} Wh usable)"
