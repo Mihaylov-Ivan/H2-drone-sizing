@@ -203,7 +203,11 @@ def _structural_closure(cfg, base_comps, *, max_iterations=8, mass_tol_kg=2e-4, 
         m=_mass_result(cfg,comps); a,_,_,st=_sync_design(cfg,m)
         layout=lift_layout(a,float(d["lift_propeller_diameter_in"])); rows=[layout.proposed_front_x_m,layout.proposed_rear_x_m]
         lift15=lift_system_sizing(a,mass_kg=float(d["mtow_ceiling_kg"]),prop_diameter_in=float(d["lift_propeller_diameter_in"]))
-        # Structural loads retain the 15 kg certification/screening mass, but\n        # the member geometry is the ACTUAL current wing. The previous code\n        # mixed a 15 kg stall-derived surrogate span into structural geometry.\n        st["aircraft"].update({"reference_mass_kg":m.takeoff.total_mass_kg,"cg_station_x_m":m.takeoff.cg_m[0],"design_mass_ceiling_kg":float(d["mtow_ceiling_kg"]),"reference_wing_span_m":float(d["wing_span_m"]),"design_wing_span_m":float(d["wing_span_m"]),"horizontal_tail_area_m2":float(d.get("horizontal_tail_area_m2",st["aircraft"].get("horizontal_tail_area_m2",0.1276)))})\n        y=float(a["lift_layout"]["y_abs_m"])
+        # Structural loads retain the 15 kg certification/screening mass, but
+        # the member geometry is the ACTUAL current wing. The previous code
+        # mixed a 15 kg stall-derived surrogate span into structural geometry.
+        st["aircraft"].update({"reference_mass_kg":m.takeoff.total_mass_kg,"cg_station_x_m":m.takeoff.cg_m[0],"design_mass_ceiling_kg":float(d["mtow_ceiling_kg"]),"reference_wing_span_m":float(d["wing_span_m"]),"design_wing_span_m":float(d["wing_span_m"]),"horizontal_tail_area_m2":float(d.get("horizontal_tail_area_m2",st["aircraft"].get("horizontal_tail_area_m2",0.1276)))})
+        y=float(a["lift_layout"]["y_abs_m"])
         st["rotor_system"].update({"row_x_m":rows,"motor_y_m":y,"phase4_equal_share_design_thrust_N":lift15.design_thrust_per_motor_N,"candidate_motor_max_thrust_N":float(d["lift_motor_structural_limit_thrust_per_motor_N"])})
         f,r=_zero_pitch_pair(m.takeoff.total_mass_kg*G,rows[0],rows[1],m.takeoff.cg_m[0]); st["rotor_system"]["phase6_reference_hover_thrusts_N"]=[f,f,r,r]
         structure=build_structural_result(st)
