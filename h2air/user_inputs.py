@@ -580,9 +580,6 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     if not (1.0 <= tail_control_sf <= 1.30):
         raise ValueError("tail_autosizing control_safety_factor must be between 1.0 and 1.30")
     d["tail_control_safety_factor"] = tail_control_sf
-    d["tail_dynamic_validation_candidates"] = int(tail_auto_cfg.get("dynamic_validation_candidates", 12))
-    if d["tail_dynamic_validation_candidates"] < 1:
-        raise ValueError("tail_autosizing dynamic_validation_candidates must be >= 1")
     ht_auto_raw = htail.get("AutoSize Horizontal Tail", htail.get("auto_size_horizontal_tail"))
     if ht_auto_raw is None:
         auto_size_ht = str(htail.get("span_mode", "auto")).lower() == "auto"
