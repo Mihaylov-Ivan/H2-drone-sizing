@@ -428,6 +428,17 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["main_wing_root_chord_m"] = float(main["root_chord_m"])
     d["main_wing_taper_ratio"] = float(main["taper_ratio"])
     d["main_wing_naca_code"] = str(main["naca_code"])
+    # Preserve the airfoil thickness ratio when root chord changes during
+    # AutoSize Main Wing.  For a standard 4-digit NACA code the final two
+    # digits are t/c; an explicit user thickness_ratio overrides that parser.
+    if main.get("thickness_ratio") is not None:
+        thickness_ratio = float(main["thickness_ratio"])
+    else:
+        code_digits = "".join(ch for ch in str(main["naca_code"]) if ch.isdigit())
+        thickness_ratio = (float(code_digits[-2:]) / 100.0) if len(code_digits) >= 4 else 0.15
+    if not (0.05 <= thickness_ratio <= 0.30):
+        raise ValueError("main_wing thickness_ratio must be between 0.05 and 0.30")
+    d["main_wing_thickness_ratio"] = thickness_ratio
     cfg["airfoil_model"] = {
         "main_wing": main_airfoil,
         "horizontal_tail": htail_airfoil,
@@ -449,19 +460,55 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["main_wing_sweep_deg"] = float(main.get("sweep_deg", 0.0))
     d["main_wing_dihedral_deg"] = float(main.get("dihedral_deg", 0.0))
     d["surface_geometry_mode"] = "root_taper_span"
-    d["main_wing_span_mode"] = str(main.get("span_mode", "auto"))
-    d["main_wing_span_bounds_m"] = [float(x) for x in main["span_bounds_m"]]
 
-    # Normal-run AUTO sizing starts from the minimum span that gives the configured
-    # stall-speed ratio at the 15 kg design ceiling, then applies the requested
-    # robust area factor. Full --design-study is still the MDO optimizer.
-    V = float(mission["cruise_speed_mps"])
-    stall_ratio = float(main.get("minimum_transition_speed_over_stall", 1.30))
-    Vstall_max = V / stall_ratio
-    Sreq = 2.0 * float(mission["mtow_ceiling_kg"]) * G / (RHO0 * Vstall_max * Vstall_max * main_clmax)
-    Sauto = Sreq * float(main.get("auto_area_margin_factor", 1.10))
-    bauto = 2.0 * Sauto / (float(main["root_chord_m"]) * (1.0 + float(main["taper_ratio"])))
-    bmain = _surface_span(main, auto_value=bauto)
+    # User-facing trigger.  When it is absent we retain backwards compatibility
+    # with legacy span_mode='auto' files.  When present it is authoritative:
+    # False = use the hardcoded span/root chord/taper exactly;
+    # True  = the coupled pipeline optimizes span + root chord + taper together.
+    auto_raw = main.get("AutoSize Main Wing", main.get("auto_size_main_wing"))
+    if auto_raw is None:
+        auto_size_main_wing = str(main.get("span_mode", "hardcoded")).lower() == "auto"
+    elif isinstance(auto_raw, bool):
+        auto_size_main_wing = auto_raw
+    else:
+        raise ValueError("main_wing 'AutoSize Main Wing' must be true or false")
+    d["auto_size_main_wing"] = bool(auto_size_main_wing)
+    d["main_wing_span_mode"] = "auto" if auto_size_main_wing else "hardcoded"
+
+    span_bounds = [float(x) for x in main.get("span_bounds_m", [3.15, 3.70])]
+    chord_bounds = [float(x) for x in main.get("root_chord_bounds_m", [0.26, 0.36])]
+    taper_bounds = [float(x) for x in main.get("taper_ratio_bounds", [0.45, 0.75])]
+    if len(span_bounds) != 2 or not (0 < span_bounds[0] < span_bounds[1]):
+        raise ValueError("main_wing span_bounds_m must be [positive_min, larger_max]")
+    if len(chord_bounds) != 2 or not (0 < chord_bounds[0] < chord_bounds[1]):
+        raise ValueError("main_wing root_chord_bounds_m must be [positive_min, larger_max]")
+    if len(taper_bounds) != 2 or not (0 < taper_bounds[0] < taper_bounds[1] <= 1.0):
+        raise ValueError("main_wing taper_ratio_bounds must satisfy 0 < min < max <= 1")
+    d["main_wing_span_bounds_m"] = span_bounds
+    d["main_wing_root_chord_bounds_m"] = chord_bounds
+    d["main_wing_taper_ratio_bounds"] = taper_bounds
+    d["main_wing_minimum_tip_chord_m"] = float(main.get("minimum_tip_chord_m", 0.15))
+    d["main_wing_minimum_transition_speed_over_stall"] = float(main.get("minimum_transition_speed_over_stall", 1.30))
+    d["main_wing_auto_area_margin_factor"] = float(main.get("auto_area_margin_factor", 1.10))
+    d["main_wing_autosize_samples"] = int(main.get("autosize_samples", 28))
+    d["main_wing_autosize_local_samples"] = int(main.get("autosize_local_samples", 12))
+    d["main_wing_autosize_max_iterations"] = int(main.get("autosize_max_iterations", 4))
+    if d["main_wing_auto_area_margin_factor"] < 1.0:
+        raise ValueError("main_wing auto_area_margin_factor must be >= 1.0")
+    if d["main_wing_minimum_transition_speed_over_stall"] <= 1.0:
+        raise ValueError("main_wing minimum_transition_speed_over_stall must be > 1.0")
+
+    hardcoded_span = main.get("hardcoded_span_m")
+    if hardcoded_span is None:
+        if auto_size_main_wing:
+            hardcoded_span = 0.5 * (span_bounds[0] + span_bounds[1])
+        else:
+            raise ValueError("AutoSize Main Wing=false requires hardcoded_span_m")
+    bmain = float(hardcoded_span)
+    if auto_size_main_wing:
+        bmain = min(max(bmain, span_bounds[0]), span_bounds[1])
+    elif bmain <= 0:
+        raise ValueError("hardcoded_span_m must be > 0")
     Smain = trapezoid_area(bmain, float(main["root_chord_m"]), float(main["taper_ratio"]))
     d["main_wing_span_m"] = bmain
     d["wing_span_m"] = bmain
@@ -480,6 +527,7 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["horizontal_tail_ac_x_m"] = float(htail["aerodynamic_center_x_m"])
     tail_arm = max(float(htail["aerodynamic_center_x_m"]) - float(main["aerodynamic_center_x_m"]), 0.05)
     Vh = float(htail.get("target_tail_volume_coefficient", 0.50))
+    d["horizontal_tail_target_volume_coefficient"] = Vh
     Sh_auto = Vh * Smain * d["wing_mac_m"] / tail_arm
     bh_auto = 2.0 * Sh_auto / (float(htail["root_chord_m"]) * (1.0 + float(htail["taper_ratio"])))
     bh = _surface_span(htail, auto_value=bh_auto)
@@ -498,6 +546,7 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     nfin = int(vtail.get("count", 2))
     lv = max(float(vtail["aerodynamic_center_x_m"]) - float(main["aerodynamic_center_x_m"]), 0.05)
     Vv = float(vtail.get("target_vertical_tail_volume_coefficient", 0.035))
+    d["vertical_tail_target_volume_coefficient"] = Vv
     Sv_total_auto = Vv * Smain * bmain / lv
     h_auto = 2.0 * (Sv_total_auto / nfin) / (float(vtail["root_chord_m"]) * (1.0 + float(vtail["taper_ratio"])))
     hv = _surface_span(vtail, auto_value=h_auto)
