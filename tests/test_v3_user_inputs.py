@@ -26,6 +26,16 @@ def test_v3_user_file_resolves_auto_geometry():
     assert float(c['design']['wing_span_m']) > 0
 
 
+
+def test_default_primary_structure_is_solver_owned():
+    c=load_model_config(ROOT/'config'/'user_inputs.json')
+    st=c['structures']['structure']
+    assert st['recommended_sections_mode']=='auto'
+    ps=c['manufacturing_mass_model']['main_wing']['primary_spar']
+    assert not ps.get('stepped', False)
+    assert ps.get('design_tube_od_m') is None
+    assert c['manufacturing_mass_model']['boom_tubes'].get('design_tube_od_m') is None
+
 def test_hardcoded_span_is_fixed_and_removed_from_optimizer(tmp_path):
     u=json.loads((ROOT/'config'/'user_inputs.json').read_text())
     u['lifting_surfaces']['main_wing']['span_mode']='hardcoded'

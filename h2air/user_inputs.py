@@ -93,8 +93,66 @@ def apply_carbon_fiber_tubes(cfg: Dict[str, Any], tubes: Mapping[str, Any]) -> N
         raise ValueError("carbon_fiber_tubes.section_mode must be 'hardcoded' or 'auto'")
     cfg["carbon_fiber_tubes"] = deepcopy(tubes)
     if mode != "hardcoded":
+        # Auto mode means the structural solver owns all primary load-carrying
+        # tube sections.  Clear any stale hardcoded/design values so a config
+        # that was previously run in hardcoded mode cannot silently pin a
+        # section during the coupled mass/CG closure.
         st = cfg["structures"]["structure"]
         st["recommended_sections_mode"] = "auto"
+        for key in (
+            "hardcoded_wing_spar_od_m", "hardcoded_wing_spar_id_m",
+            "hardcoded_boom_od_m", "hardcoded_boom_id_m",
+            "hardcoded_horizontal_tail_spar_od_m", "hardcoded_horizontal_tail_spar_id_m",
+            "hardcoded_vertical_tail_spar_od_m", "hardcoded_vertical_tail_spar_id_m",
+            "hardcoded_landing_leg_od_m", "hardcoded_landing_leg_id_m",
+            "stepped_wing_primary_spar",
+        ):
+            st.pop(key, None)
+
+        mm = cfg["manufacturing_mass_model"]
+        for rule in (
+            mm["main_wing"]["primary_spar"],
+            mm["horizontal_tail"]["primary_spar"],
+            mm["vertical_tail"]["primary_spar"],
+            mm["boom_tubes"],
+            (mm.get("landing_legs") or {}).get("tube", {}),
+        ):
+            if not isinstance(rule, dict):
+                continue
+            rule.pop("design_tube_od_m", None)
+            rule.pop("design_tube_id_m", None)
+
+        # A stepped primary spar is only accepted when its sections are
+        # explicitly controlled.  Auto sizing therefore starts from one
+        # structurally consistent full-span primary member; a future stepped
+        # optimization must verify each segment/load envelope explicitly.
+        ps = mm["main_wing"]["primary_spar"]
+        ps.pop("stepped", None)
+        ps.pop("inboard", None)
+        ps.pop("outboard", None)
+        ps.pop("joiner_span_fraction", None)
+        ps.pop("joiner_mass_kg_each", None)
+
+        # Auto ownership applies only to primary load-carrying members.
+        # Secondary spars and fuselage longerons remain explicit user geometry.
+        secondary_rules = (
+            ("main_wing_secondary_spar", mm["main_wing"]["secondary_spar"]),
+            ("horizontal_tail_secondary_spar", mm["horizontal_tail"]["secondary_spar"]),
+            ("vertical_tail_secondary_spar", mm["vertical_tail"]["secondary_spar"]),
+        )
+        for name, rule in secondary_rules:
+            if tubes.get(name) is not None:
+                od, _ = _tube_mm_pair(tubes[name], require_id=False)
+                rule["tube_od_m"] = od
+        if tubes.get("fuselage_longerons") is not None:
+            long_spec = tubes["fuselage_longerons"]
+            long_od, _ = _tube_mm_pair(long_spec, require_id=False)
+            mm["fuselage_longerons"]["tube_od_m"] = long_od
+            if long_spec.get("boss_od_mm") is not None:
+                boss = float(long_spec["boss_od_mm"])
+                if boss <= float(long_spec["od_mm"]):
+                    raise ValueError("fuselage_longerons boss_od_mm must exceed tube od_mm")
+                mm["fuselage_longerons"]["boss_od_m"] = boss * 1e-3
         return
 
     wing_spec = tubes["main_wing_primary_spar"]

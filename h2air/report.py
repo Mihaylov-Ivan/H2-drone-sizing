@@ -330,6 +330,8 @@ def write_markdown_report(
         "## Structures (recommended screen)",
         "",
         f"- Wing spar: **{_f(s['wing_spar_od_mm'], 2)} / {_f(s['wing_spar_id_mm'], 2)} mm OD/ID**",
+        f"- Horizontal-tail spar: **{_f(s.get('horizontal_tail_spar_od_mm'), 2)} / {_f(s.get('horizontal_tail_spar_id_mm'), 2)} mm OD/ID**",
+        f"- Vertical-tail spars: **{_f(s.get('vertical_tail_spar_od_mm'), 2)} / {_f(s.get('vertical_tail_spar_id_mm'), 2)} mm OD/ID**",
         f"- Boom tube: **{_f(s['boom_od_mm'], 2)} / {_f(s['boom_id_mm'], 2)} mm OD/ID**",
         (
             f"- Landing legs (3g): **{_f(s.get('landing_leg_od_mm'), 2)} / {_f(s.get('landing_leg_id_mm'), 2)} mm OD/ID** "
