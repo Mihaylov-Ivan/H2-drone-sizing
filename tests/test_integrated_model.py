@@ -33,6 +33,28 @@ def test_main_wing_autosizing_uses_live_M2_and_joint_planform(integrated_result)
     assert a['selected']['wing_area_m2'] + 1e-9 >= a['selected']['required_area_with_margin_m2']
 
 
+def test_inspection_flight_envelope_and_gust_stall_gates(integrated_result):
+    r,_=integrated_result
+    env=r['flight_envelope']
+    assert abs(env['positive_operational_limit_g']-1.5)<1e-12
+    assert abs(env['negative_operational_limit_g']+0.5)<1e-12
+    assert abs(env['maximum_bank_deg']-45.0)<1e-12
+    assert 1.40 < env['bank_load_factor_g'] < 1.42
+    names={g['name']:g for g in r['gates']}
+    assert names['inspection_bank_load']['status']=='PASS'
+    assert names['positive_manoeuvre_stall_margin']['status']=='PASS'
+    assert names['negative_manoeuvre_stall_margin']['status']=='PASS'
+    assert names['inspection_gust_stall_margin']['status']=='PASS'
+    gusts=r['sixdof_control']['current_layout']['inspection_gust_cases']
+    assert {'lateral','vertical_up','vertical_down','combined_lateral_up'} <= set(gusts)
+    sharp=r['flight_envelope']['vertical_gust_screen']
+    assert sharp['model']=='sharp_edge_no_alleviation'
+    assert sharp['pass'] is True
+    assert sharp['required_wing_area_m2'] <= r['main_wing_autosizing']['selected']['wing_area_m2'] + 1e-9
+    assert max(v['maximum_clmax_utilization'] for v in gusts.values()) <= r['summary']['worst_gust_cl_utilization'] + 1e-12
+    assert sharp['clmax_utilization'] <= r['summary']['worst_gust_cl_utilization'] + 1e-12
+
+
 def test_autosized_sections_are_applied_to_mass_and_cad(integrated_result):
     r,_=integrated_result
     gate=next(g for g in r['gates'] if g['name']=='structural_mass_geometry_consistency')

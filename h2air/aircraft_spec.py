@@ -114,6 +114,7 @@ def build_aircraft_specification(
                 _get(cfg, "optimizer_settings", "target_static_margin", default=d.get("stability_screen_static_margin"))
             ),
         },
+        "flight_envelope": result.get("flight_envelope") or {},
         "geometry": {
             "fuselage": {
                 "length_m": _f(d.get("fuselage_length_m")),

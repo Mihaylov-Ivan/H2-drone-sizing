@@ -124,6 +124,8 @@ class Sample:
     target_pitch_deg: float; target_speed_mps: float; target_altitude_m: float
     pitch_tracking_error_deg: float; altitude_error_m: float
     rotor_allocation_residual: float
+    CL: float
+    clmax_utilization: float
 
     def to_dict(self) -> Dict[str,Any]: return asdict(self)
 
@@ -317,7 +319,9 @@ def target_from_phase5_rows(rows:Sequence[Mapping[str,float]],t:float,final_spee
 def make_sample(model:Model,state:State,ctrl:Controls,target:Mapping[str,float],wind:np.ndarray)->Sample:
     ar=model.aero(state,wind); phi,theta,psi=euler_from_quat(state.quat_bn); alt=-state.pos_ned[2]
     cs=model.cfg['control_surfaces']; slims=np.radians([cs['aileron_limit_deg'],cs['elevator_limit_deg'],cs['rudder_limit_deg']]); surfutil=float(np.max(np.abs(state.surfaces)/slims))
-    return Sample(state.t,float(state.pos_ned[0]),float(state.pos_ned[1]),float(alt),*map(float,state.vel_body),ar.Va,degrees(phi),degrees(theta),degrees(psi),*map(degrees,state.omega_body),degrees(ar.alpha),degrees(ar.beta),float(np.sum(state.lift_thrusts)),float(state.pusher_rpm),*map(float,state.lift_thrusts),degrees(state.surfaces[0]),degrees(state.surfaces[1]),degrees(state.surfaces[2]),float(np.max(state.lift_thrusts)/model.tmax),surfutil,float(target.get('pitch_deg',0)),float(target.get('speed_mps',0)),float(target.get('altitude_m',alt)),degrees(theta)-float(target.get('pitch_deg',0)),alt-float(target.get('altitude_m',alt)),ctrl.rotor_allocation_residual)
+    screen_clmax=float(model.cfg['aerodynamics'].get('stall_screen_CLmax', model.cfg['aerodynamics']['CL_max']))
+    clutil=float(ar.CL/max(screen_clmax,EPS))
+    return Sample(state.t,float(state.pos_ned[0]),float(state.pos_ned[1]),float(alt),*map(float,state.vel_body),ar.Va,degrees(phi),degrees(theta),degrees(psi),*map(degrees,state.omega_body),degrees(ar.alpha),degrees(ar.beta),float(np.sum(state.lift_thrusts)),float(state.pusher_rpm),*map(float,state.lift_thrusts),degrees(state.surfaces[0]),degrees(state.surfaces[1]),degrees(state.surfaces[2]),float(np.max(state.lift_thrusts)/model.tmax),surfutil,float(target.get('pitch_deg',0)),float(target.get('speed_mps',0)),float(target.get('altitude_m',alt)),degrees(theta)-float(target.get('pitch_deg',0)),alt-float(target.get('altitude_m',alt)),ctrl.rotor_allocation_residual,float(ar.CL),clutil)
 
 
 def simulate_tracking(model:Model,rows:Sequence[Mapping[str,float]],wind_fn=None,initial_roll_deg:float=0,initial_yaw_deg:float=0,final_speed_override:Optional[float]=20.0,max_duration_s:Optional[float]=None)->List[Sample]:
@@ -340,8 +344,11 @@ def simulate_tracking(model:Model,rows:Sequence[Mapping[str,float]],wind_fn=None
     return out
 
 
-def simulate_cruise_gust(model:Model,speed_mps:float=20.0,stabilized:bool=True)->List[Sample]:
+def simulate_cruise_gust(model:Model,speed_mps:float=20.0,stabilized:bool=True,gust_ned_mps:Optional[Sequence[float]]=None)->List[Sample]:
     trim=model.trim_cruise(speed_mps); dt=float(model.cfg['simulation']['dt_s']); dur=float(model.cfg['simulation']['cruise_disturbance_duration_s']); sim=model.cfg['simulation']
+    gust_vec=np.asarray(sim['wind_gust_ned_mps'] if gust_ned_mps is None else gust_ned_mps,dtype=float)
+    if gust_vec.shape != (3,):
+        raise ValueError('gust_ned_mps must contain exactly three NED components')
     alpha=radians(trim['alpha_deg']); q0=quat_from_euler(0,alpha,0)
     rpm0=0.0; err=1e9
     for rpm in np.linspace(0,float(model.cfg['pusher']['max_rpm']),161):
@@ -351,7 +358,7 @@ def simulate_cruise_gust(model:Model,speed_mps:float=20.0,stabilized:bool=True)-
     ctl=Controller(model); out=[]
     while st.t<=dur+EPS:
         wind=np.zeros(3)
-        if float(sim['wind_gust_start_s'])<=st.t<=float(sim['wind_gust_start_s'])+float(sim['wind_gust_duration_s']): wind=np.array(sim['wind_gust_ned_mps'],dtype=float)
+        if float(sim['wind_gust_start_s'])<=st.t<=float(sim['wind_gust_start_s'])+float(sim['wind_gust_duration_s']): wind=gust_vec.copy()
         target={'speed_mps':speed_mps,'pitch_deg':trim['alpha_deg'],'altitude_m':30.0,'vertical_speed_mps':0,'roll_deg':0,'yaw_deg':0}
         c=ctl.command(st,target,wind,dt) if stabilized else Controls(np.zeros(4),st.pusher_rpm,st.surfaces.copy(),np.zeros(3),np.zeros(3),np.zeros(3),0)
         if stabilized: model.actuator_update(st,c,dt)
@@ -371,6 +378,8 @@ def summarize_samples(samples:Sequence[Sample],model:Model)->Dict[str,Any]:
         'maximum_abs_beta_deg':max(abs(s.beta_deg) for s in samples),'maximum_abs_alpha_deg':max(abs(s.alpha_deg) for s in samples),
         'minimum_altitude_m':min(alts),'altitude_loss_m':max(0,samples[0].altitude_m-min(alts)),
         'maximum_surface_utilization':max(s.max_surface_utilization for s in samples),'maximum_rotor_utilization':max(s.max_rotor_utilization for s in samples),
+        'maximum_positive_CL':max(s.CL for s in samples),'minimum_CL':min(s.CL for s in samples),
+        'maximum_clmax_utilization':max(s.clmax_utilization for s in samples),
         'maximum_rotor_allocation_residual':max(s.rotor_allocation_residual for s in samples),
         'final_roll_deg':samples[-1].roll_deg,'final_pitch_deg':samples[-1].pitch_deg,'final_yaw_deg':samples[-1].yaw_deg,
     }

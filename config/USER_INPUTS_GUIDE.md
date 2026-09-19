@@ -2,6 +2,21 @@
 
 Normal users should edit **`config/user_inputs.json` only**.
 
+## Inspection flight envelope
+
+The optional top-level `flight_envelope` block controls the non-aerobatic route-following manoeuvre/gust screen.
+
+- `maximum_bank_deg`: planned mission bank limit. The default inspection profile uses **45 deg** (about **1.41 g** in a level coordinated turn).
+- `positive_manoeuvre_load_factor_g`: operational accelerated-stall screen; default **+1.5 g**.
+- `negative_manoeuvre_load_factor_g`: unloading/gust screen; default **-0.5 g**. This is not an aerobatic capability target.
+- `maximum_manoeuvre_clmax_utilization`: maximum allowed fraction of the conservative wing CLmax during the manoeuvre screen; default **0.90**.
+- `lateral_gust_mps` / `vertical_gust_mps`: disturbance cases. Defaults are **5 m/s lateral** and **±2 m/s vertical**, including a combined lateral+upward 6-DOF case.
+- The upward vertical gust also drives a conservative **sharp-edge, no-alleviation** stall screen. AutoSize Main Wing must satisfy this instantaneous aerodynamic screen as well as the slower closed-loop 6-DOF disturbance cases.
+- `maximum_gust_clmax_utilization`: hard CLmax-utilization limit for the gust stall screen; default **0.95**.
+- `structural_design_positive_load_factor_g`: structural wing-bending screen, kept at **+3.0 g** to provide structural margin above the operational +1.5 g envelope.
+
+AutoSize Main Wing includes the +1.5 g accelerated-stall requirement using the current M2 iteration mass. The 15 kg ceiling remains a separate mass/stall robustness check and the +3 g structural case remains based on the 15 kg ceiling.
+
 ## Modes
 
 - Main wing: `"AutoSize Main Wing": true` jointly optimizes **span + root chord + taper ratio** inside the normal integrated run. The stall/transition area calculation uses the **current structurally closed iteration mass M2**, not the fixed 15 kg ceiling. The 15 kg value remains the hard final mass constraint and the structural design/load-case mass.
