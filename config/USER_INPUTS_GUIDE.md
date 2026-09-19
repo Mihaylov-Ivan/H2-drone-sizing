@@ -4,8 +4,10 @@ Normal users should edit **`config/user_inputs.json` only**.
 
 ## Modes
 
-- `span_mode: "auto"` — the lifting-surface span is derived automatically for a normal run and is available to the design-study optimizer.
-- `span_mode: "hardcoded"` — `hardcoded_span_m` is used exactly and the optimizer does not vary that span.
+- Main wing: `"AutoSize Main Wing": true` jointly optimizes **span + root chord + taper ratio** inside the normal integrated run. The stall/transition area calculation uses the **current structurally closed iteration mass M2**, not the fixed 15 kg ceiling. The 15 kg value remains the hard final mass constraint and the structural design/load-case mass.
+- Main wing: `"AutoSize Main Wing": false` uses `hardcoded_span_m`, `root_chord_m` and `taper_ratio` exactly.
+- Main-wing search bounds are `span_bounds_m`, `root_chord_bounds_m` and `taper_ratio_bounds`; `minimum_tip_chord_m` prevents an impractically narrow tip. `auto_area_margin_factor` is applied to the live-M2 stall/transition area requirement.
+- Horizontal/vertical tails retain `span_mode: "auto"` / `"hardcoded"`. When the main wing is autosized, AUTO tail spans are recomputed from their configured tail-volume targets for each candidate.
 - `mass_mode: "linear"` — mass = `specific_mass_kg_per_m × geometric length × count`.
 - `mass_mode: "structural_linear"` — same measured kg/m basis, but the primary structural member mass is scaled if the structure solver selects a different tube section. Enter the calibration OD as `reference_tube_od_m` (not the recommended design OD). Legacy `tube_od_m` on these members is still accepted and renamed on load.
 - `mass_mode: "hardcoded"` — `hardcoded_mass_kg` is fixed and structural/geometry sizing does not change that member's mass.
@@ -13,7 +15,7 @@ Normal users should edit **`config/user_inputs.json` only**.
 
 ## User-defined versus calculated
 
-User-defined examples: payload, mission duration, fuselage section lengths/diameters, root chords, taper ratios, NACA codes, twist/sweep/dihedral, propeller sizes, hardware data (including H₂ cylinder length/diameter/mass from `hardware.hydrogen`), component positions, kg/m values and hardcode switches.
+User-defined examples: payload, mission duration, fuselage section lengths/diameters, main-wing autosize trigger and bounds, hardcoded/seed root chords and taper ratios, NACA codes, twist/sweep/dihedral, propeller sizes, hardware data (including H₂ cylinder length/diameter/mass from `hardware.hydrogen`), component positions, kg/m values and hardcode switches.
 
 ## Hydrogen cylinder
 
