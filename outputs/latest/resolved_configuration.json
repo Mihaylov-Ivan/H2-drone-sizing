@@ -11,9 +11,9 @@
     "mtow_target_high_kg": 15.0,
     "mtow_ceiling_kg": 15.0,
     "cruise_speed_mps": 18.0,
-    "wing_area_m2": 0.9,
-    "wing_span_m": 3.6,
-    "wing_mac_m": 0.2548,
+    "wing_area_m2": 0.8833842943837464,
+    "wing_span_m": 3.359385380530533,
+    "wing_mac_m": 0.2648595888198138,
     "wing_CLmax": 1.37,
     "lift_propeller_diameter_in": 22.0,
     "cruise_lift_propeller_state": "stopped_aligned",
@@ -21,12 +21,12 @@
     "lift_motor_structural_limit_thrust_per_motor_N": 79.553113864,
     "pusher_propeller_diameter_in": 18.0,
     "pusher_max_electrical_power_W": 1000.0,
-    "neutral_point_station_x_m": 0.4913053183378593,
+    "neutral_point_station_x_m": 0.49271047543375396,
     "stability_screen_static_margin": 0.12,
     "mission_duration_min": 120.0,
     "integration_note": "Primary aircraft-level source of truth. Integrated-v2 resolves geometry, packaging, stability and lift-row variables across all subsystems.",
     "wing_ac_x_m": 0.455714,
-    "horizontal_tail_area_m2": 0.16972037570309764,
+    "horizontal_tail_area_m2": 0.17316392676911244,
     "horizontal_tail_ac_x_m": 1.050226,
     "lift_row_center_x_m": 0.47574,
     "battery_x_m": 0.22150000000000003,
@@ -47,20 +47,36 @@
     "fuselage_height_m": 0.22801861464977094,
     "fuselage_max_diameter_m": 0.22801861464977094,
     "transition_CLmax_increment": 0.08,
-    "main_wing_root_chord_m": 0.31,
-    "main_wing_taper_ratio": 0.6129032258064516,
+    "main_wing_root_chord_m": 0.30167022487538864,
+    "main_wing_taper_ratio": 0.743361273339173,
     "main_wing_naca_code": "NACA6415",
+    "main_wing_thickness_ratio": 0.15,
     "main_wing_twist_root_deg": 0.0,
     "main_wing_twist_tip_deg": -2.0,
     "main_wing_sweep_deg": 0.0,
     "main_wing_dihedral_deg": 0.0,
     "surface_geometry_mode": "root_taper_span",
-    "main_wing_span_mode": "hardcoded",
+    "auto_size_main_wing": true,
+    "main_wing_span_mode": "auto",
     "main_wing_span_bounds_m": [
       3.15,
       3.7
     ],
-    "main_wing_span_m": 3.6,
+    "main_wing_root_chord_bounds_m": [
+      0.27,
+      0.35
+    ],
+    "main_wing_taper_ratio_bounds": [
+      0.45,
+      0.75
+    ],
+    "main_wing_minimum_tip_chord_m": 0.15,
+    "main_wing_minimum_transition_speed_over_stall": 1.3,
+    "main_wing_auto_area_margin_factor": 1.04,
+    "main_wing_autosize_samples": 28,
+    "main_wing_autosize_local_samples": 12,
+    "main_wing_autosize_max_iterations": 4,
+    "main_wing_span_m": 3.359385380530533,
     "horizontal_tail_root_chord_m": 0.218,
     "horizontal_tail_taper_ratio": 0.7,
     "horizontal_tail_naca_code": "NACA0012",
@@ -69,7 +85,8 @@
       0.75,
       1.35
     ],
-    "horizontal_tail_span_m": 0.9159221570593505,
+    "horizontal_tail_target_volume_coefficient": 0.44,
+    "horizontal_tail_span_m": 0.934505810950418,
     "horizontal_tail_mac_m": 0.18722352941176468,
     "vertical_tail_root_chord_m": 0.148,
     "vertical_tail_taper_ratio": 0.6,
@@ -80,9 +97,11 @@
       0.55
     ],
     "vertical_tail_ac_x_m": 1.110291,
-    "vertical_tail_height_m": 0.5330190749553178,
-    "vertical_tail_area_each_m2": 0.06310945847470963,
-    "vertical_tail_area_total_m2": 0.12621891694941925,
+    "vertical_tail_count": 2,
+    "vertical_tail_target_volume_coefficient": 0.0255,
+    "vertical_tail_height_m": 0.488210642814369,
+    "vertical_tail_area_each_m2": 0.05780414010922128,
+    "vertical_tail_area_total_m2": 0.11560828021844256,
     "energy_bay_order": "fuel_cell_forward",
     "energy_bay_order_mode": "hardcoded",
     "energy_bay_order_code": 0.0,
@@ -138,11 +157,12 @@
     "pdb2_x_m": 0.6552000000000001,
     "pdb2_y_m": 0.0,
     "pdb2_z_m": 0.05854069267511454,
-    "main_wing_z_m": 0.08600930732488546,
-    "horizontal_tail_z_m": 0.08600930732488546,
+    "main_wing_z_m": 0.08700930732488546,
+    "horizontal_tail_z_m": 0.08700930732488546,
     "rear_thrust_recovery_factor": 1.15,
     "lift_prop_mount_side": "under",
     "landing_legs_CdA_m2": 0.0015,
+    "main_wing_autosize_sizing_mass_kg": 14.444221807830978,
     "boom_outer_diameter_m": 0.026000000000000002
   },
   "power_system": {
@@ -296,15 +316,15 @@
             0.22801861464977094
           ]
         },
-        "wing_area_m2": 0.9,
-        "wing_span_m": 3.6,
-        "wing_MAC_m": 0.2548,
-        "wing_mean_geometric_chord_m": 0.25,
+        "wing_area_m2": 0.8833842943837464,
+        "wing_span_m": 3.359385380530533,
+        "wing_MAC_m": 0.2648595888198138,
+        "wing_mean_geometric_chord_m": 0.2629600936836361,
         "wing_ac_x_m": 0.455714,
-        "reference_neutral_point_x_m": 0.4913053183378593,
+        "reference_neutral_point_x_m": 0.49271047543375396,
         "horizontal_tail_le_x_m": 0.976,
-        "horizontal_tail_span_m": 0.9159221570593505,
-        "vertical_fin_height_m": 0.5330190749553178,
+        "horizontal_tail_span_m": 0.934505810950418,
+        "vertical_fin_height_m": 0.488210642814369,
         "boom_center_y_m": [
           -0.3739,
           0.3739
@@ -316,22 +336,22 @@
           [
             0.18634,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           [
             0.18634,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           [
             0.7651399999999999,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           [
             0.7651399999999999,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ]
         ],
         "lift_prop_diameter_m": 0.5588,
@@ -363,13 +383,13 @@
         "fuselage_longeron_z_m": 0.11000930732488547,
         "fuselage_longeron_y_abs_m": 0.0,
         "fuselage_longeron_boss_od_m": 0.014,
-        "wing_primary_spar_layout_od_m": 0.032,
-        "wing_upper_z_m": 0.10925930732488545,
-        "wing_lower_z_m": 0.06275930732488547,
-        "wing_z_flush_m": 0.09075930732488546,
-        "wing_drop_from_flush_m": 0.004750000000000004,
-        "boom_z_m": 0.08600930732488546,
-        "lift_prop_disk_z_m": 0.04275930732488546,
+        "wing_primary_spar_layout_od_m": 0.03,
+        "wing_upper_z_m": 0.10963457419053961,
+        "wing_lower_z_m": 0.06438404045923131,
+        "wing_z_flush_m": 0.09138404045923132,
+        "wing_drop_from_flush_m": 0.0043747331343458595,
+        "boom_z_m": 0.08700930732488546,
+        "lift_prop_disk_z_m": 0.044384040459231305,
         "lift_prop_wing_clearance_m": 0.020000000000000004,
         "lift_prop_mount_side": "under",
         "landing_legs": {
@@ -380,44 +400,44 @@
           "side_load_fraction": 0.28,
           "sleeve_wall_m": 0.002,
           "printed_density_kg_m3": 1200.0,
-          "ground_z_m": -0.24311569267511454,
-          "prop_tip_z_m": -0.22311569267511452,
+          "ground_z_m": -0.24149095954076866,
+          "prop_tip_z_m": -0.22149095954076867,
           "prop_ground_clearance_m": 0.02,
-          "sizing_length_m": 0.305875,
+          "sizing_length_m": 0.30587499999999995,
           "legs": [
             {
               "name": "nose",
               "x_m": 0.07,
               "y_m": 0.0,
               "mount_z_m": -0.11400930732488547,
-              "foot_z_m": -0.24311569267511454,
-              "length_m": 0.12910638535022906,
-              "cg_z_m": -0.1785625
+              "foot_z_m": -0.24149095954076866,
+              "length_m": 0.1274816522158832,
+              "cg_z_m": -0.17775013343282706
             },
             {
               "name": "wing_left",
-              "x_m": 0.45571399999999995,
+              "x_m": 0.455714,
               "y_m": -0.3739,
-              "mount_z_m": 0.06275930732488547,
-              "foot_z_m": -0.24311569267511454,
-              "length_m": 0.305875,
-              "cg_z_m": -0.09017819267511454
+              "mount_z_m": 0.06438404045923131,
+              "foot_z_m": -0.24149095954076866,
+              "length_m": 0.30587499999999995,
+              "cg_z_m": -0.08855345954076868
             },
             {
               "name": "wing_right",
-              "x_m": 0.45571399999999995,
+              "x_m": 0.455714,
               "y_m": 0.3739,
-              "mount_z_m": 0.06275930732488547,
-              "foot_z_m": -0.24311569267511454,
-              "length_m": 0.305875,
-              "cg_z_m": -0.09017819267511454
+              "mount_z_m": 0.06438404045923131,
+              "foot_z_m": -0.24149095954076866,
+              "length_m": 0.30587499999999995,
+              "cg_z_m": -0.08855345954076868
             }
           ],
           "tube_od_m": 0.008,
           "sleeve_od_m": 0.012,
           "drag_CdA_m2": 0.0015
         },
-        "landing_ground_z_m": -0.24311569267511454
+        "landing_ground_z_m": -0.24149095954076866
       },
       "packaging": {
         "component_clearance_m": 0.01,
@@ -463,7 +483,7 @@
         {
           "name": "wing_structure",
           "group": "airframe",
-          "mass_takeoff_kg": 3.7125709779179807,
+          "mass_takeoff_kg": 3.6440298818640566,
           "position_m": [
             0.508714,
             0.0,
@@ -471,14 +491,14 @@
           ],
           "shape": "box",
           "dimensions_m": {
-            "length_x": 0.2548,
-            "width_y": 3.6,
+            "length_x": 0.2648595888198138,
+            "width_y": 3.359385380530533,
             "height_z": 0.028
           },
           "status": "engineering_assumption",
           "source": "Current H2AIR results.txt",
-          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized.",
-          "mass_end_kg": 3.7125709779179807
+          "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized.",
+          "mass_end_kg": 3.6440298818640566
         },
         {
           "name": "lift_motor_mount_1",
@@ -487,7 +507,7 @@
           "position_m": [
             0.18634,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -499,7 +519,7 @@
           "position_m": [
             0.18634,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -511,7 +531,7 @@
           "position_m": [
             0.7651399999999999,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -523,7 +543,7 @@
           "position_m": [
             0.7651399999999999,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -646,7 +666,7 @@
         {
           "name": "horizontal_tail_structure",
           "group": "airframe",
-          "mass_takeoff_kg": 0.17357765696907715,
+          "mass_takeoff_kg": 0.17709947055931954,
           "position_m": [
             1.050226,
             0.0,
@@ -660,7 +680,7 @@
           },
           "status": "engineering_assumption",
           "source": "Current H2AIR tail result",
-          "mass_end_kg": 0.17357765696907715
+          "mass_end_kg": 0.17709947055931954
         },
         {
           "name": "vertical_tail_left",
@@ -822,7 +842,7 @@
           "position_m": [
             0.18634,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -840,7 +860,7 @@
           "position_m": [
             0.18634,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -858,7 +878,7 @@
           "position_m": [
             0.7651399999999999,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -876,7 +896,7 @@
           "position_m": [
             0.7651399999999999,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -912,7 +932,7 @@
           "position_m": [
             0.18634,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -924,7 +944,7 @@
           "position_m": [
             0.18634,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -936,7 +956,7 @@
           "position_m": [
             0.7651399999999999,
             -0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -948,7 +968,7 @@
           "position_m": [
             0.7651399999999999,
             0.3739,
-            0.056284307324885464
+            0.05790904045923131
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -1198,9 +1218,9 @@
       "mtow_target_low_kg": 12.0,
       "mtow_target_high_kg": 14.0,
       "mtow_ceiling_kg": 15.0,
-      "wing_area_m2": 0.9,
-      "wing_span_m": 3.6,
-      "wing_MAC_m": 0.2548,
+      "wing_area_m2": 0.8833842943837464,
+      "wing_span_m": 3.359385380530533,
+      "wing_MAC_m": 0.2648595888198138,
       "wing_CLmax": 1.185,
       "cruise_speed_mps": 20.0,
       "continuous_auxiliary_power_W": 35.0,
@@ -1274,7 +1294,7 @@
       "minimum_front_x_m": 0.0,
       "maximum_rear_x_m": 0.8594000000000002,
       "y_abs_m": 0.3739,
-      "z_m": 0.056284307324885464,
+      "z_m": 0.05790904045923131,
       "required_disk_edge_clearance_m": 0.02,
       "central_pod_width_m": 0.14900000000000002,
       "required_disk_to_pod_clearance_m": 0.02,
@@ -1409,8 +1429,8 @@
     },
     "reference_case": {
       "mass_kg": 11.0777,
-      "wing_area_m2": 0.9,
-      "wing_span_m": 3.6,
+      "wing_area_m2": 0.8833842943837464,
+      "wing_span_m": 3.359385380530533,
       "lift_prop_diameter_in": 18.0,
       "pusher_prop_diameter_in": 18.0,
       "cruise_lift_prop_state": "folded",
@@ -2612,12 +2632,12 @@
     },
     "aircraft": {
       "mass_kg": 11.0777,
-      "wing_area_m2": 0.9,
-      "wing_span_m": 3.6,
-      "wing_mac_m": 0.2548,
+      "wing_area_m2": 0.8833842943837464,
+      "wing_span_m": 3.359385380530533,
+      "wing_mac_m": 0.2648595888198138,
       "cg_station_x_m": 0.4496127355,
       "cg_z_up_m": 0.0395143938,
-      "neutral_point_station_x_m": 0.4913053183378593,
+      "neutral_point_station_x_m": 0.49271047543375396,
       "inertia_tensor_kgm2": [
         [
           2.2780978456,
@@ -2639,22 +2659,22 @@
         [
           0.18634,
           -0.3739,
-          0.056284307324885464
+          0.05790904045923131
         ],
         [
           0.18634,
           0.3739,
-          0.056284307324885464
+          0.05790904045923131
         ],
         [
           0.7651399999999999,
           -0.3739,
-          0.056284307324885464
+          0.05790904045923131
         ],
         [
           0.7651399999999999,
           0.3739,
-          0.056284307324885464
+          0.05790904045923131
         ]
       ],
       "lift_motor_rotation_sign": [
@@ -2668,7 +2688,7 @@
         0.0,
         0.0
       ],
-      "horizontal_tail_area_m2": 0.16972037570309764,
+      "horizontal_tail_area_m2": 0.17316392676911244,
       "horizontal_tail_ac_station_x_m": 1.050226,
       "vertical_tail_total_area_m2": 0.1504,
       "vertical_tail_ac_station_x_m": 1.05
@@ -3874,9 +3894,9 @@
       "reference_mass_kg": 11.0777,
       "design_mass_ceiling_kg": 15.0,
       "cg_station_x_m": 0.4496127355,
-      "reference_wing_span_m": 3.6,
-      "design_wing_span_m": 3.6,
-      "horizontal_tail_area_m2": 0.16972037570309764,
+      "reference_wing_span_m": 3.359385380530533,
+      "design_wing_span_m": 3.359385380530533,
+      "horizontal_tail_area_m2": 0.17316392676911244,
       "vertical_tail_total_area_m2": 0.1504
     },
     "materials": {
@@ -3909,7 +3929,7 @@
     },
     "structure": {
       "wing_primary_spar_x_m": 0.387,
-      "design_wing_semispan_m": 1.8,
+      "design_wing_semispan_m": 1.6796926902652665,
       "reference_wing_spar_od_m": 0.01329,
       "reference_wing_spar_id_m": 0.00997,
       "wing_spar_id_over_od": 0.75,
@@ -3933,8 +3953,8 @@
       "legacy_reported_boom_tube_mass_total_kg": 0.0242,
       "boom_mass_station_x_m": 0.72,
       "motor_mount_lever_m": 0.05,
-      "horizontal_tail_semispan_m": 0.45796107852967527,
-      "vertical_tail_height_m": 0.5330190749553178,
+      "horizontal_tail_semispan_m": 0.467252905475209,
+      "vertical_tail_height_m": 0.488210642814369,
       "current_tail_spar_reference_od_m": 0.00433,
       "current_tail_spar_reference_id_m": 0.00325,
       "current_horizontal_tail_spar_mass_total_kg": 0.027,
@@ -3949,7 +3969,7 @@
       "pod_printed_bending_allow_MPa": 14.5,
       "pod_printed_shear_allow_MPa": 4.62,
       "landing_leg_enabled": true,
-      "landing_leg_length_m": 0.305875,
+      "landing_leg_length_m": 0.30587499999999995,
       "landing_leg_count": 3,
       "landing_leg_side_load_fraction": 0.28,
       "landing_leg_deflection_limit_fraction": 0.05,
@@ -4033,10 +4053,10 @@
       "boom_mounted_lift_motors": true,
       "boom_y_abs_m": 0.3739,
       "boom_y_input_m": 0.3739,
-      "boom_z_m": 0.09075930732488546,
+      "boom_z_m": 0.09138404045923132,
       "boom_widened_for_pod_clearance": false,
-      "main_wing_z_m": 0.09075930732488546,
-      "main_wing_z_flush_m": 0.09075930732488546,
+      "main_wing_z_m": 0.09138404045923132,
+      "main_wing_z_flush_m": 0.09138404045923132,
       "main_wing_drop_from_flush_m": 0.0,
       "wing_primary_spar_layout_od_m": 0.01329,
       "fuselage_top_z_m": 0.11400930732488547,
@@ -4045,10 +4065,10 @@
       "fuselage_longeron_bottom_z_m": -0.11000930732488547,
       "fuselage_longeron_z_m": 0.11000930732488547,
       "fuselage_longeron_boss_od_m": 0.014,
-      "lift_motor_z_m": 0.05973430732488546,
-      "lift_prop_disk_z_m": 0.04620930732488546,
-      "lift_prop_wing_clearance_m": 0.021300000000000013,
-      "horizontal_tail_z_m": 0.09075930732488546,
+      "lift_motor_z_m": 0.060359040459231315,
+      "lift_prop_disk_z_m": 0.04683404045923131,
+      "lift_prop_wing_clearance_m": 0.021924733134345856,
+      "horizontal_tail_z_m": 0.09138404045923132,
       "horizontal_tail_span_widened_to_boom": false,
       "pusher_fuselage_mount": true,
       "pusher_station_m": [
@@ -7738,8 +7758,8 @@
       ]
     },
     "main_wing": {
-      "z_m": 0.08600930732488546,
-      "thickness_m": 0.0465,
+      "z_m": 0.08700930732488546,
+      "thickness_m": 0.045250533731308294,
       "shell": {
         "mass_mode": "areal",
         "specific_mass_kg_per_m2": 1.8,
@@ -7756,8 +7776,8 @@
         "chord_fraction": 0.25,
         "status": "engineering_assumption",
         "source": "kg/m calibrated at reference_tube_od_m (mass-scaling section only \u2014 not the recommended design spar OD); structural sizing scales mass by section area",
-        "design_tube_od_m": 0.032,
-        "design_tube_id_m": 0.03
+        "design_tube_od_m": 0.03,
+        "design_tube_id_m": 0.028
       },
       "secondary_spar": {
         "mass_mode": "linear",
@@ -7771,7 +7791,7 @@
       "shell_cg_chord_fraction": 0.45
     },
     "horizontal_tail": {
-      "z_m": 0.08600930732488546,
+      "z_m": 0.08700930732488546,
       "thickness_m": 0.02616,
       "shell": {
         "mass_mode": "areal",
@@ -7789,8 +7809,8 @@
         "chord_fraction": 0.25,
         "status": "engineering_assumption",
         "source": "kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section",
-        "design_tube_od_m": 0.01,
-        "design_tube_id_m": 0.008
+        "design_tube_od_m": 0.012,
+        "design_tube_id_m": 0.01
       },
       "secondary_spar": {
         "mass_mode": "linear",
@@ -7877,37 +7897,37 @@
         "side_load_fraction": 0.28,
         "sleeve_wall_m": 0.002,
         "printed_density_kg_m3": 1200.0,
-        "ground_z_m": -0.24311569267511454,
-        "prop_tip_z_m": -0.22311569267511452,
+        "ground_z_m": -0.24149095954076866,
+        "prop_tip_z_m": -0.22149095954076867,
         "prop_ground_clearance_m": 0.02,
-        "sizing_length_m": 0.305875,
+        "sizing_length_m": 0.30587499999999995,
         "legs": [
           {
             "name": "nose",
             "x_m": 0.07,
             "y_m": 0.0,
             "mount_z_m": -0.11400930732488547,
-            "foot_z_m": -0.24311569267511454,
-            "length_m": 0.12910638535022906,
-            "cg_z_m": -0.1785625
+            "foot_z_m": -0.24149095954076866,
+            "length_m": 0.1274816522158832,
+            "cg_z_m": -0.17775013343282706
           },
           {
             "name": "wing_left",
-            "x_m": 0.45571399999999995,
+            "x_m": 0.455714,
             "y_m": -0.3739,
-            "mount_z_m": 0.06275930732488547,
-            "foot_z_m": -0.24311569267511454,
-            "length_m": 0.305875,
-            "cg_z_m": -0.09017819267511454
+            "mount_z_m": 0.06438404045923131,
+            "foot_z_m": -0.24149095954076866,
+            "length_m": 0.30587499999999995,
+            "cg_z_m": -0.08855345954076868
           },
           {
             "name": "wing_right",
-            "x_m": 0.45571399999999995,
+            "x_m": 0.455714,
             "y_m": 0.3739,
-            "mount_z_m": 0.06275930732488547,
-            "foot_z_m": -0.24311569267511454,
-            "length_m": 0.305875,
-            "cg_z_m": -0.09017819267511454
+            "mount_z_m": 0.06438404045923131,
+            "foot_z_m": -0.24149095954076866,
+            "length_m": 0.30587499999999995,
+            "cg_z_m": -0.08855345954076868
           }
         ],
         "tube_od_m": 0.008,
@@ -7994,16 +8014,16 @@
     },
     "resolved_primary_sections": {
       "main_wing_primary_spar": {
-        "od_m": 0.032,
-        "id_m": 0.03
+        "od_m": 0.03,
+        "id_m": 0.028
       },
       "boom_tubes": {
         "od_m": 0.026000000000000002,
         "id_m": 0.024
       },
       "horizontal_tail_primary_spar": {
-        "od_m": 0.01,
-        "id_m": 0.008
+        "od_m": 0.012,
+        "id_m": 0.01
       },
       "vertical_tail_primary_spar": {
         "od_m": 0.01,
@@ -8107,16 +8127,28 @@
         "sweep_deg": 0,
         "dihedral_deg": 0,
         "aerodynamic_center_x_m": 0.455714,
-        "span_mode": "hardcoded",
         "span_bounds_m": [
           3.15,
           3.7
         ],
         "hardcoded_span_m": 3.6,
         "minimum_transition_speed_over_stall": 1.3,
-        "auto_area_margin_factor": 1.1,
+        "auto_area_margin_factor": 1.04,
         "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback",
-        "note": "Span 3.6 m, tip chord 0.19 m (taper 0.6129), area 0.90 m2, AR 14.4; 15% NACA6415 section."
+        "note": "AutoSize Main Wing=true: jointly optimize span, root chord and taper using the current structurally closed iteration mass M2 for stall/transition sizing. The 1.30 V/Vstall requirement is the primary stall margin; auto_area_margin_factor=1.04 adds a modest area contingency. hardcoded_span_m, root_chord_m and taper_ratio are the seed/fallback values. Set false to use them exactly.",
+        "AutoSize Main Wing": true,
+        "root_chord_bounds_m": [
+          0.27,
+          0.35
+        ],
+        "taper_ratio_bounds": [
+          0.45,
+          0.75
+        ],
+        "minimum_tip_chord_m": 0.15,
+        "autosize_samples": 28,
+        "autosize_local_samples": 12,
+        "autosize_max_iterations": 4
       },
       "horizontal_tail": {
         "root_chord_m": 0.218,
