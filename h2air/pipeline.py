@@ -83,7 +83,12 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
     t["aerodynamics"]["transition_CLmax_increment"]=float(d.get("transition_CLmax_increment",0.0))
     a["aircraft"]["transition_CLmax_increment"]=float(d.get("transition_CLmax_increment",0.0))
     s6["lift_system"].update({"max_thrust_per_motor_N":float(d["lift_motor_available_thrust_per_motor_N"]),"propeller_diameter_in":float(d["lift_propeller_diameter_in"])})
-    s6["pusher"].update({"propeller_diameter_in":float(d["pusher_propeller_diameter_in"]),"max_electrical_power_W":float(d["pusher_max_electrical_power_W"])})
+    s6["pusher"].update({
+        "propeller_diameter_in": float(d["pusher_propeller_diameter_in"]),
+        "max_electrical_power_W": float(d["pusher_max_electrical_power_W"]),
+        "motor_efficiency_assumption": float(a["pusher_screen"]["motor_efficiency_assumption"]),
+        "esc_efficiency_assumption": float(a["pusher_screen"]["esc_efficiency_assumption"]),
+    })
     return a,t,s6,st
 
 def _components_with_power(cfg:Mapping[str,Any]):

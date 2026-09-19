@@ -148,25 +148,25 @@
     },
     {
       "name": "wing_root_chord",
-      "value": 301.6702248753886,
+      "value": 301.7133004569913,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "wing_tip_chord",
-      "value": 224.24996249188357,
+      "value": 224.28198321107354,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "wing_mac",
-      "value": 264.8595888198138,
+      "value": 264.89740819968847,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "wing_le_x",
-      "value": 389.49910279504655,
+      "value": 389.4896479500779,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -184,7 +184,7 @@
     },
     {
       "name": "wing_thickness",
-      "value": 45.250533731308295,
+      "value": 45.2569950685487,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -292,19 +292,19 @@
     },
     {
       "name": "wing_drop_from_flush",
-      "value": 4.37473313434586,
+      "value": 4.371502465725666,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_span",
-      "value": 934.505810950418,
+      "value": 934.7727067324057,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_half_span",
-      "value": 467.252905475209,
+      "value": 467.38635336620285,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -388,7 +388,7 @@
     },
     {
       "name": "vertical_tail_height",
-      "value": 488.210642814369,
+      "value": 488.28035455802046,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -514,7 +514,7 @@
     },
     {
       "name": "landing_ground_z",
-      "value": -241.49095954076867,
+      "value": -241.4941902093889,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -544,7 +544,7 @@
     },
     {
       "name": "landing_leg_sizing_length",
-      "value": 305.87499999999994,
+      "value": 305.875,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -568,13 +568,13 @@
     },
     {
       "name": "landing_leg_nose_foot_z",
-      "value": -241.49095954076867,
+      "value": -241.4941902093889,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "landing_leg_nose_length",
-      "value": 127.4816522158832,
+      "value": 127.48488288450343,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -592,19 +592,19 @@
     },
     {
       "name": "landing_leg_wing_left_mount_z",
-      "value": 64.38404045923131,
+      "value": 64.38080979061111,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "landing_leg_wing_left_foot_z",
-      "value": -241.49095954076867,
+      "value": -241.4941902093889,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "landing_leg_wing_left_length",
-      "value": 305.87499999999994,
+      "value": 305.875,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -622,19 +622,19 @@
     },
     {
       "name": "landing_leg_wing_right_mount_z",
-      "value": 64.38404045923131,
+      "value": 64.38080979061111,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "landing_leg_wing_right_foot_z",
-      "value": -241.49095954076867,
+      "value": -241.4941902093889,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "landing_leg_wing_right_length",
-      "value": 305.87499999999994,
+      "value": 305.875,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -658,7 +658,7 @@
     },
     {
       "name": "lift_motor_z",
-      "value": 57.909040459231306,
+      "value": 57.905809790611116,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },

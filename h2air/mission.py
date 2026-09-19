@@ -103,7 +103,7 @@ def build_phase5_mission_profile(
     climb_eta = float(
         mission.get(
             "wingborne_climb_propulsive_efficiency",
-            cfg4.get("aircraft", {}).get("cruise_propulsive_efficiency_reference", 0.66),
+            cfg4.get("aircraft", {}).get("cruise_propulsive_efficiency_reference", 0.62),
         )
     )
     wingborne_duration = float(mission.get("wingborne_climb_duration_s", climb_height / max(roc, 1e-6)))

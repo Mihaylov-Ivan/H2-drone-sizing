@@ -244,7 +244,7 @@ def compute_cruise_propulsive_efficiency(
     ref = float(
         ac.get(
             "cruise_propulsive_efficiency_reference",
-            ac.get("reference_cruise_propulsive_efficiency", 0.66),
+            ac.get("reference_cruise_propulsive_efficiency", 0.62),
         )
     )
     D = prop_diameter_in

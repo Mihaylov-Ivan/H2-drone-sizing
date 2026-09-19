@@ -188,7 +188,10 @@ class Model:
             for (j0,ct0,cp0),(j1,ct1,cp1) in zip(table,table[1:]):
                 if j0<=J<=j1:
                     f=(J-j0)/(j1-j0); Ct=ct0+(ct1-ct0)*f; Cp=cp0+(cp1-cp0)*f; break
-        T=Ct*self.rho*n*n*D**4; Pshaft=Cp*self.rho*n**3*D**5; Pelec=Pshaft/(0.92*0.97)
+        T=Ct*self.rho*n*n*D**4; Pshaft=Cp*self.rho*n**3*D**5
+        eta_m=float(self.cfg['pusher'].get('motor_efficiency_assumption', 0.82))
+        eta_e=float(self.cfg['pusher'].get('esc_efficiency_assumption', 0.95))
+        Pelec=Pshaft/max(eta_m*eta_e, EPS)
         pmax=float(self.cfg['pusher']['max_electrical_power_W'])
         if Pelec>pmax:
             ratio=pmax/Pelec; T*=ratio; Pelec=pmax

@@ -4,7 +4,7 @@
 
 ## Aircraft at a glance
 
-A **14.444 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.36 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **18.0 m/s** for **120 min** with **1.2 kg** payload.
+A **14.445 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.36 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **18.0 m/s** for **120 min** with **1.2 kg** payload.
 
 ## Configuration / look
 
@@ -13,8 +13,8 @@ A **14.444 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.36 m** main win
 - Overall reference length (nose-to-tail layout): **1.25 m**
 
 ### Main wing
-- AutoSize Main Wing: **ON** — coupled span/root-chord/taper optimization using current iteration M2 (final sizing mass **14.447 kg**)
-- Span / area / AR: **3.359 m / 0.883 m² / 12.78**
+- AutoSize Main Wing: **ON** — coupled span/root-chord/taper optimization using current iteration M2 (final sizing mass **14.449 kg**)
+- Span / area / AR: **3.359 m / 0.884 m² / 12.77**
 - Root / tip / MAC: **0.302 / 0.224 / 0.265 m** (taper 0.74)
 - Airfoil: **NACA6415**, CLmax screen **1.370**
 - Aerodynamic centre: **x = 0.4557 m**
@@ -48,7 +48,7 @@ A **14.444 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.36 m** main win
 
 ## Mass & balance
 
-- Closed MTOW: **14.444 kg** (pre-structure **13.991 kg**; margin to ceiling **0.556 kg**)
+- Closed MTOW: **14.445 kg** (pre-structure **13.991 kg**; margin to ceiling **0.555 kg**)
 - CG: **(0.4551, 0.0000, 0.0303) m**
 - Neutral point / static margin: **x_NP = 0.4927 m**, **14.21% MAC**
 
@@ -56,7 +56,7 @@ A **14.444 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.36 m** main win
 - payload: **1.200 kg**
 - wing structure: **2.510 kg**
 - fuselage structure: **0.968 kg**
-- tail structure: **0.896 kg**
+- tail structure: **0.897 kg**
 - landing gear: **0.450 kg**
 - energy: **5.341 kg**
 - propulsion: **1.378 kg**
@@ -83,12 +83,12 @@ A **14.444 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.36 m** main win
 
 ## Performance / mission
 
-- Cruise drag / bus power: **13.48 N / 376.1 W** (lift props **stopped_aligned**)
-- Endurance at cruise (usable H₂ / cruise bus): **2.33 h** (876 Wh usable)
+- Cruise drag / bus power: **13.48 N / 425.7 W** (lift props **stopped_aligned**)
+- Endurance at cruise (usable H₂ / cruise bus): **2.06 h** (876 Wh usable)
 - Landing-leg parasite: **0.292 N** (CdA **15.00 cm²**, sleeve cylinder screen)
 - Forward / reverse transition: **16.12 s / 20.52 s**
-- Mission energy (120 min): **776.8 Wh**
-- H2 used / final battery SOC: **45.6 g / 92.7%**
+- Mission energy (120 min): **875.1 Wh**
+- H2 used / final battery SOC: **51.5 g / 92.3%**
 
 ## Structures (recommended screen)
 
@@ -101,14 +101,14 @@ A **14.444 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.36 m** main win
 
 ## Integrated gates
 
-- **PASS** — mass_ceiling: Structurally closed mass 14.444 kg vs 15.0 kg ceiling.
+- **PASS** — mass_ceiling: Structurally closed mass 14.445 kg vs 15.0 kg ceiling.
 - **PASS** — packaging: 0 packaging collision/containment failures remain.
 - **PASS** — fuel_cell_cooling_airflow_screen: Estimated fan/duct operating flow 118.2 CFM vs 101.0 CFM required by the configured thermal screen.
 - **PASS** — fuel_cell_cooling_geometry: Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps 10.3/10.3 mm vs 4.0/10.0 mm required.
 - **NOT_EVALUATED** — fuel_cell_cooling_fan_curve: IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
-- **PASS** — 15kg_stall_margin: Wing area 0.883 m² vs minimum 0.882 m² screen.
-- **PASS** — cruise_power: 376.1 W vs configured gate.
+- **PASS** — 15kg_stall_margin: Wing area 0.884 m² vs minimum 0.882 m² screen.
+- **PASS** — cruise_power: 425.7 W vs configured gate.
 - **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
 - **PASS** — current_longitudinal_stability: Closed-aircraft static margin 14.21% MAC.

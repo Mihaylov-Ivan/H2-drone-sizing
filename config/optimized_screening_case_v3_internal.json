@@ -925,7 +925,7 @@
       "wing_CLmax": 1.185,
       "cruise_speed_mps": 20.0,
       "continuous_auxiliary_power_W": 35.0,
-      "cruise_propulsive_efficiency_reference": 0.72,
+      "cruise_propulsive_efficiency_reference": 0.62,
       "cruise_power_target_low_W": 400.0,
       "cruise_power_target_high_W": 435.0,
       "cruise_power_gate_W": 550.0,
@@ -941,7 +941,7 @@
       "reference_stopped_lift_prop_drag_N": 8.83,
       "reference_lift_prop_diameter_in": 18.0,
       "reference_lift_prop_state": "stopped_random",
-      "reference_cruise_propulsive_efficiency": 0.72,
+      "reference_cruise_propulsive_efficiency": 0.62,
       "reference_cruise_electrical_power_W": 525.147,
       "reference_wing_stall_speed_mps": 14.75,
       "reference_main_wing_drag_N": 3.374,
@@ -1007,8 +1007,8 @@
       "rpm_min": 1500,
       "rpm_max": 8000,
       "rpm_step": 25,
-      "motor_efficiency_assumption": 0.92,
-      "esc_efficiency_assumption": 0.97,
+      "motor_efficiency_assumption": 0.82,
+      "esc_efficiency_assumption": 0.95,
       "maximum_tip_mach": 0.65,
       "generic_prop_map_status": "engineering_assumption",
       "generic_prop_map": [
@@ -1347,6 +1347,8 @@
       "max_electrical_power_W": 1200.0,
       "max_rpm": 8000.0,
       "rpm_time_constant_s": 0.12,
+      "motor_efficiency_assumption": 0.82,
+      "esc_efficiency_assumption": 0.95,
       "status": "generic_prop_map_screen"
     },
     "controller": {

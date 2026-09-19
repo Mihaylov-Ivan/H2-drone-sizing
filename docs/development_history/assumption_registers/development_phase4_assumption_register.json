@@ -16,9 +16,15 @@
     "note": "Generic Ct/Cp vs J map is for operating-point screening only; use manufacturer or thrust-stand maps for design release."
   },
   "cruise_propulsive_efficiency_reference": {
-    "status": "current_model_assumption",
-    "value": 0.72,
-    "note": "Used only to preserve current aircraft-model electrical cruise power."
+    "status": "engineering_assumption",
+    "value": 0.62,
+    "note": "Fallback overall bus-to-thrust efficiency when the pusher CT/CP solve is infeasible. Active cruise eta is computed as prop*motor*esc with motor=0.82 and esc=0.95 continuous-cruise screening assumptions (not brochure peak)."
+  },
+  "pusher_drive_efficiency_assumptions": {
+    "status": "engineering_assumption",
+    "motor_efficiency_assumption": 0.82,
+    "esc_efficiency_assumption": 0.95,
+    "note": "Continuous cruise screening values. Brochure peaks (~0.92/0.97) were optimistic for installed bus-to-thrust; with the generic prop map this lands overall eta near 0.62."
   },
   "wing_area_scaling": {
     "status": "calibrated_screening_assumption",
