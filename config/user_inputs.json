@@ -143,8 +143,8 @@
         6.5
       ],
       "minimum_tip_chord_m": 0.1,
-      "autosize_samples": 36,
-      "autosize_local_samples": 12,
+      "autosize_samples": 72,
+      "autosize_local_samples": 20,
       "note": "AutoSize Horizontal Tail=true: jointly optimize span, root chord and taper from actual aircraft stability/control/structural requirements. target_tail_volume_coefficient is now a calibration reference for the screening aerodynamic derivatives, not a hard minimum. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
       "preferred_aspect_ratio": 4.5,
       "preferred_taper_ratio": 0.6,
@@ -179,8 +179,8 @@
         4.5
       ],
       "minimum_tip_chord_m": 0.075,
-      "autosize_samples": 36,
-      "autosize_local_samples": 12,
+      "autosize_samples": 72,
+      "autosize_local_samples": 20,
       "note": "AutoSize Vertical Tail=true: jointly optimize fin height, root chord and taper from actual directional stability/control/structural requirements. target_vertical_tail_volume_coefficient is now a calibration reference for the screening aerodynamic derivatives, not a hard minimum. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
       "preferred_aspect_ratio": 2.5,
       "preferred_taper_ratio": 0.6,
@@ -623,7 +623,7 @@
   },
   "tail_autosizing": {
     "control_safety_factor": 1.1,
-    "dynamic_validation_candidates": 12,
+    "dynamic_validation_candidates": 14,
     "note": "A 10% control safety factor tightens trim, surface-headroom and fixed-wing cruise gust limits during tail optimization. Tail volume coefficients are calibration references only; selected Vh/Vv are outputs."
   }
 }
