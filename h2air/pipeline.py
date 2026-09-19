@@ -205,6 +205,13 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     # 1. Base ledger and actual structural mass/CG fixed-point closure.
     base_comps=_components_with_power(cfg); mass_pre=_mass_result(cfg,base_comps)
     comps,mass_final,structure,closure_history=_structural_closure(cfg,base_comps)
+
+    # Structural closure writes the selected primary tube OD/ID back into the
+    # manufacturing rules. Rebuild once for its ledger side effect so exported
+    # manufacturing_mass_ledger.csv describes the same resolved structure as
+    # the final component ledger, rather than the pre-sizing reference tubes.
+    _components_with_power(cfg)
+
     aero_cfg,trans_cfg,six_cfg,struct_cfg=_sync_design(cfg,mass_final)
 
     # Fuel-cell cooling architecture is evaluated on the resolved package before
