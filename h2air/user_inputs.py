@@ -797,8 +797,13 @@ def user_inputs_from_design_values(
         vtail["aerodynamic_center_x_m"] = _round(vals["vertical_tail_ac_x_m"])
 
     if "main_wing_span_m" in vals:
+        main["AutoSize Main Wing"] = False
         main["span_mode"] = "hardcoded"
         main["hardcoded_span_m"] = _round(vals["main_wing_span_m"])
+    if "main_wing_root_chord_m" in vals:
+        main["root_chord_m"] = _round(vals["main_wing_root_chord_m"])
+    if "main_wing_taper_ratio" in vals:
+        main["taper_ratio"] = _round(vals["main_wing_taper_ratio"])
     if "horizontal_tail_span_m" in vals:
         htail["span_mode"] = "hardcoded"
         htail["hardcoded_span_m"] = _round(vals["horizontal_tail_span_m"])
