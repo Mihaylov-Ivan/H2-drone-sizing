@@ -579,13 +579,78 @@ def _tail_design_overrides(
     return design_overrides(out, values)
 
 
+def _tail_quasi_steady_authority(
+    six_cfg: Mapping[str, Any],
+    d: Mapping[str, Any],
+    model: Model,
+    trim: Mapping[str, Any],
+) -> Dict[str, Any]:
+    """Screen elevator/rudder reserve against the configured inspection gusts.
+
+    Uses the candidate's geometry-scaled screening derivatives.  This avoids
+    sizing the tail around the current VTOL-oriented altitude controller while
+    still asking the aerodynamic surfaces themselves to have control reserve.
+    """
+    from math import atan2, degrees
+    sf=float(d.get("tail_control_safety_factor",1.10))
+    V=max(float(d["cruise_speed_mps"]),1e-6)
+    ad=six_cfg["aerodynamics"]; cs=six_cfg["control_surfaces"]; gates=six_cfg["gates"]
+    lateral=float(d.get("inspection_lateral_gust_mps",5.0))
+    vertical=float(d.get("inspection_vertical_gust_mps",2.0))
+    beta=atan2(lateral,V)
+    dalpha=atan2(vertical,V)
+
+    cmde=float(ad["Cm_de"]); cma=float(model.Cma)
+    cndr=float(ad["Cn_dr"]); cnb=float(ad["Cn_beta"])
+    if abs(cmde)<1e-9 or abs(cndr)<1e-9:
+        return {"pass":False,"reason":"near_zero_control_derivative","safety_factor":sf}
+
+    trim_e=float(trim.get("elevator_deg",999.0))
+    delta_e_deg=degrees(-cma/cmde*dalpha)
+    e_up=trim_e+delta_e_deg
+    e_down=trim_e-delta_e_deg
+    worst_e=max(abs(e_up),abs(e_down))
+    rudder_req_deg=abs(degrees(-cnb/cndr*beta))
+
+    surface_fraction=float(gates["maximum_surface_utilization_fraction"])/sf
+    elevator_limit_deg=float(cs["elevator_limit_deg"])*surface_fraction
+    rudder_limit_deg=float(cs["rudder_limit_deg"])*surface_fraction
+    trim_limit_deg=float(gates["maximum_abs_elevator_trim_deg"])/sf
+
+    checks=[
+        {"name":"cruise_trim_elevator","pass":bool(trim.get("success",False)) and abs(trim_e)<=trim_limit_deg+1e-9,
+         "value_deg":trim_e,"limit_deg":trim_limit_deg},
+        {"name":"vertical_gust_elevator_reserve","pass":worst_e<=elevator_limit_deg+1e-9,
+         "value_deg":worst_e,"limit_deg":elevator_limit_deg},
+        {"name":"lateral_gust_rudder_reserve","pass":rudder_req_deg<=rudder_limit_deg+1e-9,
+         "value_deg":rudder_req_deg,"limit_deg":rudder_limit_deg},
+        {"name":"directional_static_stability","pass":cnb>0.0,
+         "value":cnb,"limit":0.0},
+    ]
+    return {
+        "pass":all(bool(x["pass"]) for x in checks),
+        "safety_factor":sf,
+        "method":"quasi_steady_linearized_surface_authority",
+        "gust_inputs":{"lateral_mps":lateral,"vertical_mps":vertical,"beta_deg":degrees(beta),"delta_alpha_deg":degrees(dalpha)},
+        "derivatives":{"Cm_alpha_per_rad":cma,"Cm_de_per_rad":cmde,"Cn_beta_per_rad":cnb,"Cn_dr_per_rad":cndr},
+        "trim_elevator_deg":trim_e,
+        "vertical_gust_elevator_increment_deg":delta_e_deg,
+        "vertical_gust_total_elevator_up_deg":e_up,
+        "vertical_gust_total_elevator_down_deg":e_down,
+        "worst_abs_elevator_deg":worst_e,
+        "required_rudder_deg":rudder_req_deg,
+        "limits":{"trim_elevator_deg":trim_limit_deg,"gust_elevator_deg":elevator_limit_deg,"gust_rudder_deg":rudder_limit_deg,"surface_fraction":surface_fraction},
+        "checks":checks,
+        "note":"Linearized quasi-steady control-reserve screen using candidate-scaled derivatives. Vh/Vv are calibration references only. Final normal 6-DOF cases remain separate validation.",
+    }
+
+
 def _tail_planform_candidate_metrics(
     base_cfg: Mapping[str, Any],
     values: Mapping[str, float],
     *,
     lock_ht: bool,
     lock_vt: bool,
-    run_dynamic: bool = False,
 ) -> Dict[str, Any]:
     """Evaluate a candidate tail planform from actual stability/control requirements.
 
@@ -663,10 +728,7 @@ def _tail_planform_candidate_metrics(
         violations.append("cruise_trim_solver")
     if abs(float(trim.get("elevator_deg", 999.0))) > trim_limit + 1e-9:
         violations.append("cruise_trim_elevator_headroom")
-    # The calibrated directional derivative must remain statically stabilizing.
     cn_beta = float(six_cfg["aerodynamics"]["Cn_beta"])
-    if lock_vt and cn_beta <= 0.0:
-        violations.append("directional_static_stability")
     if mass.takeoff.total_mass_kg > float(d["mtow_ceiling_kg"]) + 1e-9:
         violations.append("mass_ceiling")
     if int(mass.summary.get("packaging_fail_count", 0)) != 0:
@@ -674,59 +736,10 @@ def _tail_planform_candidate_metrics(
     if not recommended_structure_screen_pass(structure["gates"]):
         violations.append("recommended_structure")
 
-    dynamic = {
-        "evaluated": False,
-        "surface_only_fixed_wing": True,
-        "safety_factor": sf,
-        "cases": {},
-    }
-    if run_dynamic and not any(v in violations for v in (
-        "loaded_static_margin", "cruise_trim_solver", "cruise_trim_elevator_headroom",
-        "mass_ceiling", "packaging", "recommended_structure"
-    )):
-        gust_vectors = six_cfg["simulation"].get("inspection_gust_cases_ned_mps", {})
-        selected_cases = {
-            "lateral": gust_vectors.get("lateral", [0.0, 5.0, 0.0]),
-            "vertical_up": gust_vectors.get("vertical_up", [0.0, 0.0, -2.0]),
-            "combined_lateral_up": gust_vectors.get("combined_lateral_up", [0.0, 5.0, -2.0]),
-        }
-        yaw_limit = float(gates6["maximum_cruise_gust_yaw_deg"]) / sf
-        roll_limit = float(gates6["maximum_cruise_gust_roll_deg"]) / sf
-        alt_limit = float(gates6["maximum_cruise_gust_altitude_loss_m"]) / sf
-        surface_limit = float(gates6["maximum_surface_utilization_fraction"]) / sf
-        pitch_limit = float(gates6["maximum_transition_pitch_tracking_error_deg"]) / sf
-        dynamic["limits"] = {
-            "maximum_abs_yaw_deg": yaw_limit,
-            "maximum_abs_roll_deg": roll_limit,
-            "maximum_altitude_loss_m": alt_limit,
-            "maximum_surface_utilization": surface_limit,
-            "maximum_abs_pitch_tracking_error_deg": pitch_limit,
-        }
-        for name, vec in selected_cases.items():
-            samples = simulate_cruise_gust(
-                model, speed_mps=V, stabilized=True, gust_ned_mps=vec,
-                disable_lift_rotors=True,
-            )
-            summary = summarize_samples(samples, model)
-            dynamic["cases"][name] = summary
-            if name in ("lateral", "combined_lateral_up"):
-                if float(summary["maximum_abs_yaw_deg"]) > yaw_limit + 1e-9:
-                    violations.append(f"{name}_yaw_headroom")
-                if float(summary["maximum_abs_roll_deg"]) > roll_limit + 1e-9:
-                    violations.append(f"{name}_roll_headroom")
-            # Pitch/altitude response is recorded but not a hard tail-sizing gate:
-            # the present cruise controller's altitude loop is allocated to VTOL
-            # lift rotors, which are deliberately disabled in this aerodynamic-tail
-            # authority screen. Using its altitude/pitch errors as hard constraints
-            # would therefore size the tail around a controller-architecture artifact.
-            if float(summary["maximum_surface_utilization"]) > surface_limit + 1e-9:
-                violations.append(f"{name}_surface_headroom")
-        dynamic["evaluated"] = True
-        dynamic["pass"] = not any(
-            v.endswith(("_headroom", "_yaw_headroom", "_roll_headroom", "_pitch_headroom",
-                        "_altitude_headroom", "_surface_headroom"))
-            for v in violations
-        )
+    authority=_tail_quasi_steady_authority(six_cfg,d,model,trim)
+    for check in authority.get("checks",[]):
+        if not bool(check.get("pass",False)):
+            violations.append(str(check["name"]))
 
     # The current aircraft drag model does not resolve HT/VT profile drag
     # independently. Use a transparent low-lift profile-drag proxy only as a
@@ -771,7 +784,7 @@ def _tail_planform_candidate_metrics(
         "objective": float(objective),
         "feasible": not violations,
         "violations": violations,
-        "dynamic_validation": dynamic,
+        "control_authority": authority,
         "control_safety_factor": sf,
         "closed_mass_kg": float(mass.takeoff.total_mass_kg),
         "cg_x_m": float(mass.takeoff.cg_m[0]),
@@ -840,7 +853,6 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         int(d0.get("vertical_tail_autosize_local_samples", 18)) if auto_vt else 0,
         0,
     )
-    n_dynamic = max(int(d0.get("tail_dynamic_validation_candidates", 12)), 1)
 
     def valid_geom(hs: float, hc: float, ht: float, vh: float, vc: float, vt: float):
         Sh = hs * hc * (1.0 + ht) / 2.0
@@ -884,9 +896,9 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
 
     evaluated = []
     seen = set()
-    def evaluate_tuple(tup, *, run_dynamic=False):
+    def evaluate_tuple(tup):
         hs,hc,ht,vh,vc,vt = tup
-        key = tuple(round(float(x), 6) for x in tup) + (bool(run_dynamic),)
+        key = tuple(round(float(x), 6) for x in tup)
         if key in seen:
             return None
         seen.add(key)
@@ -906,7 +918,6 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         try:
             return _tail_planform_candidate_metrics(
                 clean, values, lock_ht=auto_ht, lock_vt=auto_vt,
-                run_dynamic=run_dynamic,
             )
         except Exception:
             return None
@@ -951,26 +962,10 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         best0=sorted(evaluated,key=lambda x:x["score"])[0]
         raise RuntimeError(f"Tail planform autosizer found no preliminary feasible candidate; best violations: {best0['violations']}")
 
-    # Validate the lightest/best preliminary candidates with fixed-wing,
-    # surface-only lateral/vertical/combined gusts.  This prevents stopped lift
-    # rotors from masking inadequate aerodynamic tail authority.
-    dynamic_evaluated=[]
-    for candidate in preliminary[:n_dynamic]:
-        rv=candidate["resolved_values"]
-        tup=(
-            rv["horizontal_tail_span_m"],rv["horizontal_tail_root_chord_m"],rv["horizontal_tail_taper_ratio"],
-            rv["vertical_tail_height_m"],rv["vertical_tail_root_chord_m"],rv["vertical_tail_taper_ratio"],
-        )
-        m=evaluate_tuple(tup,run_dynamic=True)
-        if m is not None:
-            dynamic_evaluated.append(m)
-
-    dynamic_feasible=sorted([x for x in dynamic_evaluated if x["feasible"]],key=lambda x:x["score"])
-    if not dynamic_feasible:
-        bestd=sorted(dynamic_evaluated,key=lambda x:x["score"])[0] if dynamic_evaluated else preliminary[0]
-        raise RuntimeError(f"Tail planform autosizer found no dynamically feasible candidate with safety margin; best violations: {bestd['violations']}")
-
-    best=dynamic_feasible[0]
+    # The candidate-level quasi-steady authority screen already includes the
+    # 1.10x trim/elevator/rudder reserve. Normal-run 6-DOF remains an independent
+    # final validation rather than an optimizer inner loop.
+    best=preliminary[0]
     selected_cfg = _tail_design_overrides(clean, best["values"], lock_ht=auto_ht, lock_vt=auto_vt)
     sf=float(d0.get("tail_control_safety_factor",1.10))
     result = {
@@ -994,10 +989,9 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         },
         "evaluated_candidates": len(evaluated),
         "preliminary_feasible_candidates": len(preliminary),
-        "dynamic_validation_candidates": len(dynamic_evaluated),
-        "dynamic_feasible_candidates": len(dynamic_feasible),
+        "control_authority_method": "quasi_steady_linearized_surface_authority",
         "selected": deepcopy(best),
-        "fidelity_note": "Tail control derivatives are scaled from the calibrated reference Vh/Vv. Surface-only cruise gust validation disables lift-rotor assistance. Replace derivative scaling with AVL/CFD/wind-tunnel/flight correlation when available.",
+        "fidelity_note": "Tail control derivatives are scaled from calibrated reference Vh/Vv. Tail sizing uses quasi-steady elevator/rudder reserve plus static margin, trim and structural constraints; normal-run 6-DOF remains independent validation. Replace derivative scaling with AVL/CFD/wind-tunnel/flight correlation when available.",
     }
     return selected_cfg, result
 
