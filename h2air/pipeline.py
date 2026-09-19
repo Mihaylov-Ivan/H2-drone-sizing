@@ -714,11 +714,11 @@ def _tail_planform_candidate_metrics(
                     violations.append(f"{name}_yaw_headroom")
                 if float(summary["maximum_abs_roll_deg"]) > roll_limit + 1e-9:
                     violations.append(f"{name}_roll_headroom")
-            if name in ("vertical_up", "combined_lateral_up"):
-                if float(summary["maximum_abs_pitch_tracking_error_deg"]) > pitch_limit + 1e-9:
-                    violations.append(f"{name}_pitch_headroom")
-            if float(summary["altitude_loss_m"]) > alt_limit + 1e-9:
-                violations.append(f"{name}_altitude_headroom")
+            # Pitch/altitude response is recorded but not a hard tail-sizing gate:
+            # the present cruise controller's altitude loop is allocated to VTOL
+            # lift rotors, which are deliberately disabled in this aerodynamic-tail
+            # authority screen. Using its altitude/pitch errors as hard constraints
+            # would therefore size the tail around a controller-architecture artifact.
             if float(summary["maximum_surface_utilization"]) > surface_limit + 1e-9:
                 violations.append(f"{name}_surface_headroom")
         dynamic["evaluated"] = True
@@ -1177,9 +1177,6 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
         if tail_case_name in ("lateral","combined_lateral_up"):
             tail_surface_checks.append({"name":f"{tail_case_name}_yaw","pass":float(ss["maximum_abs_yaw_deg"])<=tail_limits["maximum_abs_yaw_deg"]+1e-9,"value":float(ss["maximum_abs_yaw_deg"]),"limit":tail_limits["maximum_abs_yaw_deg"]})
             tail_surface_checks.append({"name":f"{tail_case_name}_roll","pass":float(ss["maximum_abs_roll_deg"])<=tail_limits["maximum_abs_roll_deg"]+1e-9,"value":float(ss["maximum_abs_roll_deg"]),"limit":tail_limits["maximum_abs_roll_deg"]})
-        if tail_case_name in ("vertical_up","combined_lateral_up"):
-            tail_surface_checks.append({"name":f"{tail_case_name}_pitch","pass":float(ss["maximum_abs_pitch_tracking_error_deg"])<=tail_limits["maximum_abs_pitch_tracking_error_deg"]+1e-9,"value":float(ss["maximum_abs_pitch_tracking_error_deg"]),"limit":tail_limits["maximum_abs_pitch_tracking_error_deg"]})
-        tail_surface_checks.append({"name":f"{tail_case_name}_altitude","pass":float(ss["altitude_loss_m"])<=tail_limits["maximum_altitude_loss_m"]+1e-9,"value":float(ss["altitude_loss_m"]),"limit":tail_limits["maximum_altitude_loss_m"]})
         tail_surface_checks.append({"name":f"{tail_case_name}_surface","pass":float(ss["maximum_surface_utilization"])<=tail_limits["maximum_surface_utilization"]+1e-9,"value":float(ss["maximum_surface_utilization"]),"limit":tail_limits["maximum_surface_utilization"]})
     tail_surface_checks.insert(0,{"name":"cruise_trim_elevator","pass":bool(tail_trim.get("success",False)) and abs(float(tail_trim.get("elevator_deg",999.0)))<=tail_limits["maximum_abs_elevator_trim_deg"]+1e-9,"value":float(tail_trim.get("elevator_deg",999.0)),"limit":tail_limits["maximum_abs_elevator_trim_deg"]})
     tail_control_authority={
@@ -1191,7 +1188,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
         "checks":tail_surface_checks,
         "pass":all(bool(x["pass"]) for x in tail_surface_checks),
         "tail_effectiveness_scaling":six_cfg["aerodynamics"].get("tail_effectiveness_scaling",{}),
-        "note":"Cruise tail-authority screen with lift rotors disabled. Limits are existing control gates divided by the configured safety factor.",
+        "note":"Cruise tail-authority screen with lift rotors disabled. Hard checks are trim elevator, lateral/combined yaw-roll response and surface headroom, with limits divided by the safety factor. Pitch/altitude histories are reported but are not hard tail-sizing gates because the current cruise altitude loop is lift-rotor based.",
     }
 
     gates=[]
