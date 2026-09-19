@@ -26,6 +26,7 @@ def test_main_wing_autosizing_uses_live_M2_and_joint_planform(integrated_result)
     assert a['mode']=='coupled_span_root_chord_taper'
     assert a['mass_basis']=='current_iteration_M2'
     assert a['history']
+    assert a['converged'] is True
     assert abs(float(a['history'][0]['input_M2_kg'])-15.0) > 0.05
     vals=a['selected']['values']
     assert set(vals)=={'main_wing_span_m','main_wing_root_chord_m','main_wing_taper_ratio'}
