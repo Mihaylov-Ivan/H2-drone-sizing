@@ -71,6 +71,10 @@ def write_markdown_report(
     Sv = float(d.get("vertical_tail_area_total_m2", 0.0) or 0.0)
     cvr = float(d.get("vertical_tail_root_chord_m", 0.0) or 0.0)
     lamv = float(d.get("vertical_tail_taper_ratio", 0.0) or 0.0)
+    ht_ar = (bh * bh / Sh) if Sh > 1e-12 else 0.0
+    nfin = max(int(d.get("vertical_tail_count", 2) or 2), 1)
+    sv_each = Sv / nfin if nfin else 0.0
+    vt_ar = (hv * hv / sv_each) if sv_each > 1e-12 else 0.0
     Lf = float(d.get("fuselage_length_m", 0.0) or 0.0)
     Df = float(d.get("fuselage_max_diameter_m", 0.0) or 0.0)
     boom_y = geom.get("boom_center_y_m") or [-0.35, 0.35]
@@ -155,6 +159,18 @@ def write_markdown_report(
         f"- Vertical station (structure CG height): **z = {_f(wing_z, 3)} m**",
         "",
         "### Empennage",
+        (
+            f"- AutoSize Horizontal Tail: **ON** — coupled span/root-chord/taper optimization "
+            f"(AR **{_f(ht_ar, 2)}**, Vh **{_f(_get(r,'tail_planform_autosizing','selected','horizontal_tail_volume_coefficient',default=None),3)}**)"
+            if bool(_get(r, "tail_planform_autosizing", "horizontal_tail", default=False))
+            else "- AutoSize Horizontal Tail: **OFF** — hardcoded span/root chord/taper"
+        ),
+        (
+            f"- AutoSize Vertical Tail: **ON** — coupled height/root-chord/taper optimization "
+            f"(per-fin AR **{_f(vt_ar, 2)}**, Vv **{_f(_get(r,'tail_planform_autosizing','selected','vertical_tail_volume_coefficient',default=None),4)}**)"
+            if bool(_get(r, "tail_planform_autosizing", "vertical_tail", default=False))
+            else "- AutoSize Vertical Tail: **OFF** — hardcoded height/root chord/taper"
+        ),
         f"- Horizontal tail: span **{_f(bh, 3)} m**, area **{_f(Sh, 3)} m²**, "
         f"root/tip **{_f(chr_, 3)}/{_f(_tip_chord(chr_, lamh), 3)} m**, "
         f"**{d.get('horizontal_tail_naca_code', '—')}**, AC **x = {_f(d.get('horizontal_tail_ac_x_m'), 4)} m**, "
