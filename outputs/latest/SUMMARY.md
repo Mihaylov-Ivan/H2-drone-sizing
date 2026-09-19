@@ -4,7 +4,7 @@
 
 ## Aircraft at a glance
 
-A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **20.0 m/s** for **120 min** with **1.2 kg** payload.
+A **14.569 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.60 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **18.0 m/s** for **120 min** with **1.2 kg** payload.
 
 ## Configuration / look
 
@@ -13,62 +13,63 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - Overall reference length (nose-to-tail layout): **1.25 m**
 
 ### Main wing
-- Span / area / AR: **3.374 m / 0.879 m² / 12.95**
-- Root / tip / MAC: **0.326 / 0.195 / 0.266 m** (taper 0.60)
-- Airfoil: **NACA4412**, CLmax screen **1.185**
-- Aerodynamic centre: **x = 0.3868 m**
+- Span / area / AR: **3.600 m / 0.900 m² / 14.40**
+- Root / tip / MAC: **0.310 / 0.190 / 0.255 m** (taper 0.61)
+- Airfoil: **NACA6415**, CLmax screen **1.370**
+- Aerodynamic centre: **x = 0.4557 m**
 - Twist root to tip: **0.0 deg to -2.0 deg**; sweep **0.0 deg**; dihedral **0.0 deg**
-- Vertical station (structure CG height): **z = 0.097 m**
+- Vertical station (structure CG height): **z = 0.086 m**
 
 ### Empennage
-- Horizontal tail: span **0.869 m**, area **0.161 m²**, root/tip **0.218/0.153 m**, **NACA0012**, AC **x = 1.0489 m**, z = **0.097 m**
-- Vertical tails: **twin fins**, height **0.300 m** each, total area **0.071 m²**, root/tip **0.148/0.089 m**, **NACA0012**, AC **x = 1.0216 m**
+- Horizontal tail: span **0.916 m**, area **0.170 m²**, root/tip **0.218/0.153 m**, **NACA0012**, AC **x = 1.0502 m**, z = **0.086 m**
+- Vertical tails: **twin fins**, height **0.533 m** each, total area **0.126 m²**, root/tip **0.148/0.089 m**, **NACA0012**, AC **x = 1.1103 m**
 
 ### Booms & lift layout
-- Twin boom spacing (centre-to-centre): **0.734 m**
-- Boom longitudinal extent: **x = 0.096 to 1.100 m**
-- Lift-row midpoint: **x = 0.3859 m**; front/rear rotor rows at **0.096 / 0.675 m**
-- Rotor lateral station: **|y| = 0.367 m** (boom-mounted through wing); motor z = **0.128 m**; prop diameter **22.0 in**; edge clearance **20 mm**
-- Cruise lift-prop state: **folded**
+- Twin boom spacing (centre-to-centre): **0.748 m**
+- Boom longitudinal extent: **x = 0.186 to 1.100 m**
+- Lift-row midpoint: **x = 0.4757 m**; front/rear rotor rows at **0.186 / 0.765 m**
+- Rotor lateral station: **|y| = 0.374 m** (boom-mounted through wing); motor z = **0.056 m**; prop diameter **22.0 in**; edge clearance **20 mm**
+- Cruise lift-prop state: **stopped_aligned**
 - Cruise pusher: fuselage-aft mount at **x = 0.896 m**
-- Empennage waterline: HT z = **0.097 m** (aligned with main wing z = **0.097 m**)
-- Wing/fuselage junction: fuse top z = **0.114 m**; wing drop from flush = **3.1 mm**; longerons **top/bottom** (wing uses top boss only)
+- Empennage waterline: HT z = **0.086 m** (aligned with main wing z = **0.086 m**)
+- Wing/fuselage junction: fuse top z = **0.114 m**; wing drop from flush = **4.8 mm**; longerons **top/bottom** (wing uses top boss only)
 
 ### Energy / avionics packaging (stations)
-- Energy bay order: **fuel_cell_forward** (mode auto)
+- Energy bay order: **fuel_cell_forward** (mode hardcoded)
 - Longeron boss cabin clear: **10 mm**; Z lifts (mm): fc 0.0, h2 0.0, nose 0.0, top 0.0
-- Fuel cell: **x = 0.2553 m**, z = **-0.0281 m** (1.093 kg)
-- FC control box (h2_top): **x,y,z = (0.4141, 0.0000, 0.0574) m** (0.357 kg)
-- Buffer battery (fc_top): **x,y,z = (0.2215, 0.0000, 0.0603) m**
-- H2 cylinder (+ stored H2): **x = 0.5930 m**, z = **-0.0305 m**
-- Payload / Cube Orange: **x,z = (0.1035, -0.0280) / (0.0828, 0.0305) m** (nose aft flush x=0.1400 m)
-- PDBs: **(0.5652, 0.0000, 0.0635)** and **(0.6552, 0.0000, 0.0635)** m
+- Fuel cell: **x = 0.2553 m**, z = **-0.0331 m** (1.093 kg)
+- FC control box (h2_top): **x,y,z = (0.4141, 0.0000, 0.0594) m** (0.357 kg)
+- Buffer battery (fc_top): **x,y,z = (0.2215, 0.0000, 0.0623) m**
+- H2 cylinder (+ stored H2): **x = 0.5930 m**, z = **-0.0355 m**
+- Payload / Cube Orange: **x,z = (0.1035, -0.0330) / (0.0828, 0.0325) m** (nose aft flush x=0.1400 m)
+- PDBs: **(0.5652, 0.0000, 0.0585)** and **(0.6552, 0.0000, 0.0585)** m
 - Fuselage wall keepout: **10.0 mm** (circular cross-section; packaging gate fails on radial protrusion)
 
 ## Mass & balance
 
-- Closed MTOW: **14.308 kg** (pre-structure **13.683 kg**; margin to ceiling **0.692 kg**)
-- CG: **(0.4025, 0.0000, 0.0445) m**
-- Neutral point / static margin: **x_NP = 0.4253 m**, **8.56% MAC**
+- Closed MTOW: **14.569 kg** (pre-structure **14.072 kg**; margin to ceiling **0.431 kg**)
+- CG: **(0.4554, 0.0000, 0.0314) m**
+- Neutral point / static margin: **x_NP = 0.4913 m**, **14.09% MAC**
 
 ### Mass breakdown (takeoff)
 - payload: **1.200 kg**
-- wing structure: **4.200 kg**
-- fuselage structure: **1.097 kg**
-- tail structure: **0.293 kg**
-- energy: **5.081 kg**
-- propulsion: **1.327 kg**
-- avionics: **0.643 kg**
-- airframe: **0.467 kg**
+- wing structure: **2.628 kg**
+- fuselage structure: **0.968 kg**
+- tail structure: **0.904 kg**
+- landing gear: **0.450 kg**
+- energy: **5.341 kg**
+- propulsion: **1.378 kg**
+- avionics: **1.210 kg**
+- airframe: **0.490 kg**
 
 ## Propulsion & power
 
 - Lift set: **Tmotor_U8Lite_150kV_P22x6p6_12S** (22.0 in, max thrust **71.0 N/motor**)
-- Pusher set: **Tmotor_MN501S_240kV_P15x5_12S** (15.0 in, max thrust **45.7 N**)
+- Pusher set: **Tmotor_MN501S_160kV_P18x10_12S** (18.0 in, max thrust **42.0 N**)
 - Battery: **SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh** (1.634 kg, **244.2 Wh**, 5.5 Ah)
 - Fuel cell: **800 W** net, module **1.45 kg** (stack 1.093 kg + control 0.357 kg)
 - Hydrogen store: **3.0 L** / **300 bar**, nominal H2 **62 g**, cylinder **1.62 kg**
-- 15 kg zero-pitch motor need: front/rear **56.0 / 62.8 N**
+- 15 kg zero-pitch motor need: front/rear **63.6 / 55.2 N**
 
 ### Fuel-cell cooling integration
 - Architecture: **cross_fuselage**, fan direction **suction_through_stack_to_fan_side**
@@ -76,40 +77,47 @@ A **14.308 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.37 m** main win
 - Thermal screen: **880 W** design waste heat, required airflow **101.0 CFM**
 - Fan/duct screening flow: **118.2 CFM** (margin **1.17x**) — engineering assumption until fan data are confirmed
 - Inlet/exhaust free area: **122.4 / 140.4 cm²**
-- Inlet/exhaust inner side gap: **3.3 / 3.3 mm**; minimum fuselage width for configured gaps **142.4 mm**
-- Cooling-opening cruise drag allowance: **0.327 N**
+- Inlet/exhaust inner side gap: **10.3 / 10.3 mm**; minimum fuselage width for configured gaps **142.4 mm**
+- Cooling-opening cruise drag allowance: **0.265 N**
 
 ## Performance / mission
 
-- Cruise drag / bus power: **12.83 N / 391.3 W** (lift props **folded**)
-- Forward / reverse transition: **19.44 s / 18.48 s**
-- Mission energy (120 min): **809.3 Wh**
-- H2 used / final battery SOC: **47.4 g / 91.7%**
+- Cruise drag / bus power: **13.12 N / 366.4 W** (lift props **stopped_aligned**)
+- Endurance at cruise (usable H₂ / cruise bus): **2.39 h** (876 Wh usable)
+- Landing-leg parasite: **0.292 N** (CdA **15.00 cm²**, sleeve cylinder screen)
+- Forward / reverse transition: **16.00 s / 21.12 s**
+- Mission energy (120 min): **758.0 Wh**
+- H2 used / final battery SOC: **44.5 g / 92.5%**
 
 ## Structures (recommended screen)
 
-- Wing spar: **22.75 / 17.06 mm OD/ID**
-- Boom tube: **21.25 / 17.25 mm OD/ID**
+- Wing spar: **32.00 / 30.00 mm OD/ID**
+- Horizontal-tail spar: **10.00 / 8.00 mm OD/ID**
+- Vertical-tail spars: **10.00 / 8.00 mm OD/ID**
+- Boom tube: **26.00 / 24.00 mm OD/ID**
+- Landing legs (3g): **8.00 / 6.00 mm OD/ID** (CFRP tube + 2 mm printed sleeve; nose + 2 wing)
 - Motor-mount limit thrust: **79.6 N/motor**
 
 ## Integrated gates
 
-- **PASS** — mass_ceiling: Structurally closed mass 14.308 kg vs 15.0 kg ceiling.
-- **FAIL** — packaging: 1 packaging collision/containment failures remain.
+- **PASS** — mass_ceiling: Structurally closed mass 14.569 kg vs 15.0 kg ceiling.
+- **PASS** — packaging: 0 packaging collision/containment failures remain.
 - **PASS** — fuel_cell_cooling_airflow_screen: Estimated fan/duct operating flow 118.2 CFM vs 101.0 CFM required by the configured thermal screen.
-- **FAIL** — fuel_cell_cooling_geometry: Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps 3.3/3.3 mm vs 4.0/10.0 mm required.
+- **PASS** — fuel_cell_cooling_geometry: Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps 10.3/10.3 mm vs 4.0/10.0 mm required.
 - **NOT_EVALUATED** — fuel_cell_cooling_fan_curve: IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
-- **PASS** — 15kg_stall_margin: Wing area 0.879 m² vs minimum 0.874 m² screen.
-- **PASS** — cruise_power: 391.3 W vs configured gate.
+- **PASS** — 15kg_stall_margin: Wing area 0.900 m² vs minimum 0.882 m² screen.
+- **PASS** — cruise_power: 366.4 W vs configured gate.
 - **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
-- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 8.56% MAC.
+- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 14.09% MAC.
+- **FAIL** — payload_off_static_margin: Payload-off static margin 1.69% MAC (CG x=0.4870 m) vs minimum 5.0% MAC.
 - **FAIL** — current_layout_6dof: Actual closed geometry/control 6-DOF gate set.
-- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 10.0 deg.
+- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 5.4 deg.
 - **FAIL** — stability_screen_6dof: Explicit +12% SM reference screen.
-- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 56.0/62.8 N vs 71.0 N available screen.
-- **PASS** — recommended_structure_screen: Recommended structural member screens. The legacy partial-feedback mass gate is excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.
+- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 63.6/55.2 N vs available 71.0/81.7 N (rear recovery x1.15).
+- **PASS** — recommended_structure_screen: Recommended structural member screens. Audit reference/current/legacy sections and the legacy partial-feedback mass gate are excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.
+- **PASS** — structural_mass_geometry_consistency: All verified primary sections match mass/CAD geometry.
 - **NOT_EVALUATED** — motor_mount: Controlled mount CAD, fasteners and material allowables are still required.
 - **PASS** — selected_battery_database_record: Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation.
 - **PASS** — certified_hydrogen_cylinder_mass: Certified cylinder mass is present.

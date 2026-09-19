@@ -1,0 +1,4237 @@
+{
+  "schema": "H2AIR-aircraft-specification-v1",
+  "description": "Closed-aircraft source of truth after the latest model run. Use this file for UAV specs; resolved_configuration.json also contains template/calibration seeds that are not closed-run values.",
+  "generated_at_utc": "2026-09-19T15:41:51.686430+00:00",
+  "run": {
+    "design_status": "DESIGN_REQUIRES_GEOMETRY_UPDATE",
+    "model": {
+      "name": "H2AIR Integrated Model",
+      "version": "H2AIR-integrated-v4.1",
+      "description": "Single-entry H2AIR model with separated user inputs, automatic lifting-surface sizing, measured linear-mass manufacturing model, polar-based airfoils, CAD export, discrete hardware selection and IE-SOAR cross-fuselage cooling integration.",
+      "fidelity": "conceptual / screening; not flight-release evidence"
+    },
+    "config_hash": "4785f0dd57d5377f40317b63e7d48cc7a3b10ad36445f64a0abec69da3edf744",
+    "fidelity_note": "Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation."
+  },
+  "mission": {
+    "payload_mass_kg": 1.2,
+    "cruise_speed_mps": 18.0,
+    "cruise_speed_kph": 64.8,
+    "mission_duration_min": 120.0,
+    "mtow_target_low_kg": 12.0,
+    "mtow_target_high_kg": 15.0,
+    "mtow_ceiling_kg": 15.0,
+    "target_static_margin": 0.12
+  },
+  "geometry": {
+    "fuselage": {
+      "length_m": 0.8594000000000002,
+      "max_diameter_m": 0.22801861464977094,
+      "width_m": 0.14900000000000002,
+      "height_m": 0.22801861464977094,
+      "cross_section": "rectangular_filleted",
+      "fillet_radius_m": 0.02,
+      "diameter_mode": "auto",
+      "midbody_length_mode": "auto",
+      "section_lengths_m": {
+        "nose": 0.14,
+        "center_a": 0.23550000000000001,
+        "center_b": 0.3439000000000001,
+        "tail": 0.14
+      },
+      "overall_reference_length_m": 1.25
+    },
+    "main_wing": {
+      "span_m": 3.6,
+      "area_m2": 0.9,
+      "aspect_ratio": 14.4,
+      "mac_m": 0.2548,
+      "root_chord_m": 0.31,
+      "tip_chord_m": 0.19,
+      "taper_ratio": 0.6129032258064516,
+      "ac_x_m": 0.455714,
+      "z_m": 0.08600930732488546,
+      "CLmax_screen": 1.37,
+      "naca_code": "NACA6415",
+      "twist_root_deg": 0.0,
+      "twist_tip_deg": -2.0,
+      "sweep_deg": 0.0,
+      "dihedral_deg": 0.0
+    },
+    "horizontal_tail": {
+      "span_m": 0.9159221570593505,
+      "area_m2": 0.16972037570309764,
+      "mac_m": 0.18722352941176468,
+      "root_chord_m": 0.218,
+      "tip_chord_m": 0.15259999999999999,
+      "taper_ratio": 0.7,
+      "ac_x_m": 1.050226,
+      "z_m": 0.08600930732488546,
+      "naca_code": "NACA0012"
+    },
+    "vertical_tail": {
+      "count": 2,
+      "height_m": 0.5330190749553178,
+      "area_total_m2": 0.12621891694941925,
+      "root_chord_m": 0.148,
+      "tip_chord_m": 0.08879999999999999,
+      "taper_ratio": 0.6,
+      "ac_x_m": 1.110291,
+      "naca_code": "NACA0012"
+    },
+    "booms_and_lift": {
+      "boom_spacing_m": 0.7478,
+      "boom_x_start_m": 0.18634,
+      "boom_x_end_m": 1.1,
+      "boom_z_m": 0.08600930732488546,
+      "boom_outer_diameter_m": 0.026000000000000002,
+      "lift_row_center_x_m": 0.47574,
+      "front_rotor_x_m": 0.18634,
+      "rear_rotor_x_m": 0.7651399999999999,
+      "rotor_y_abs_m": 0.3739,
+      "motor_z_m": 0.056284307324885464,
+      "lift_prop_diameter_in": 22.0,
+      "disk_edge_clearance_m": 0.020000000000000018,
+      "cruise_lift_propeller_state": "stopped_aligned",
+      "pusher_station_m": [
+        0.8963500000000002,
+        0.0,
+        0.0
+      ]
+    },
+    "airfoils": {
+      "main_wing": {
+        "polar_file": "data/airfoils/NACA6415_Re200000_XFOIL.csv",
+        "reynolds_number": 200000,
+        "thickness_fraction": 0.15,
+        "CLmax_screen": 1.37,
+        "alpha0_deg_screen": -5.0,
+        "Cm0_screen": -0.1,
+        "status": "engineering_assumption_xfoil_screen",
+        "note": "Screening polar approximating NACA 6415 at Re 2e5 (alpha0~-5, CLmax~1.55 in polar; CLmax_screen 1.37 for area sizing). Replace with measured/XFOIL at flight Reynolds before design freeze.",
+        "code": "NACA6415",
+        "polar_rows": [
+          {
+            "alpha": -12.0,
+            "CL": -0.735,
+            "CD": 0.02635,
+            "CDp": 0.0224,
+            "CM": -0.076,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -11.75,
+            "CL": -0.7087,
+            "CD": 0.02561,
+            "CDp": 0.02177,
+            "CM": -0.0765,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -11.5,
+            "CL": -0.6825,
+            "CD": 0.02489,
+            "CDp": 0.02116,
+            "CM": -0.077,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -11.25,
+            "CL": -0.6562,
+            "CD": 0.02419,
+            "CDp": 0.02056,
+            "CM": -0.0775,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -11.0,
+            "CL": -0.63,
+            "CD": 0.0235,
+            "CDp": 0.01997,
+            "CM": -0.078,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -10.75,
+            "CL": -0.6038,
+            "CD": 0.02282,
+            "CDp": 0.0194,
+            "CM": -0.0785,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -10.5,
+            "CL": -0.5775,
+            "CD": 0.02217,
+            "CDp": 0.01884,
+            "CM": -0.079,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -10.25,
+            "CL": -0.5513,
+            "CD": 0.02153,
+            "CDp": 0.0183,
+            "CM": -0.0795,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -10.0,
+            "CL": -0.525,
+            "CD": 0.02091,
+            "CDp": 0.01777,
+            "CM": -0.08,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -9.75,
+            "CL": -0.4987,
+            "CD": 0.0203,
+            "CDp": 0.01726,
+            "CM": -0.0805,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -9.5,
+            "CL": -0.4725,
+            "CD": 0.01971,
+            "CDp": 0.01676,
+            "CM": -0.081,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -9.25,
+            "CL": -0.4462,
+            "CD": 0.01914,
+            "CDp": 0.01627,
+            "CM": -0.0815,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -9.0,
+            "CL": -0.42,
+            "CD": 0.01858,
+            "CDp": 0.0158,
+            "CM": -0.082,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -8.75,
+            "CL": -0.3937,
+            "CD": 0.01804,
+            "CDp": 0.01534,
+            "CM": -0.0825,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -8.5,
+            "CL": -0.3675,
+            "CD": 0.01752,
+            "CDp": 0.01489,
+            "CM": -0.083,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -8.25,
+            "CL": -0.3412,
+            "CD": 0.01701,
+            "CDp": 0.01446,
+            "CM": -0.0835,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -8.0,
+            "CL": -0.315,
+            "CD": 0.01652,
+            "CDp": 0.01404,
+            "CM": -0.084,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -7.75,
+            "CL": -0.2888,
+            "CD": 0.01605,
+            "CDp": 0.01364,
+            "CM": -0.0845,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -7.5,
+            "CL": -0.2625,
+            "CD": 0.01559,
+            "CDp": 0.01325,
+            "CM": -0.085,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -7.25,
+            "CL": -0.2362,
+            "CD": 0.01515,
+            "CDp": 0.01288,
+            "CM": -0.0855,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -7.0,
+            "CL": -0.21,
+            "CD": 0.01473,
+            "CDp": 0.01252,
+            "CM": -0.086,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -6.75,
+            "CL": -0.1837,
+            "CD": 0.01432,
+            "CDp": 0.01217,
+            "CM": -0.0865,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -6.5,
+            "CL": -0.1575,
+            "CD": 0.01393,
+            "CDp": 0.01184,
+            "CM": -0.087,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -6.25,
+            "CL": -0.1313,
+            "CD": 0.01355,
+            "CDp": 0.01152,
+            "CM": -0.0875,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -6.0,
+            "CL": -0.105,
+            "CD": 0.0132,
+            "CDp": 0.01122,
+            "CM": -0.088,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -5.75,
+            "CL": -0.0788,
+            "CD": 0.01285,
+            "CDp": 0.01093,
+            "CM": -0.0885,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -5.5,
+            "CL": -0.0525,
+            "CD": 0.01253,
+            "CDp": 0.01065,
+            "CM": -0.089,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -5.25,
+            "CL": -0.0262,
+            "CD": 0.01222,
+            "CDp": 0.01039,
+            "CM": -0.0895,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -5.0,
+            "CL": 0.0,
+            "CD": 0.01193,
+            "CDp": 0.01014,
+            "CM": -0.09,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.05
+          },
+          {
+            "alpha": -4.75,
+            "CL": 0.0262,
+            "CD": 0.01165,
+            "CDp": 0.00991,
+            "CM": -0.0905,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0625
+          },
+          {
+            "alpha": -4.5,
+            "CL": 0.0525,
+            "CD": 0.0114,
+            "CDp": 0.00969,
+            "CM": -0.091,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.075
+          },
+          {
+            "alpha": -4.25,
+            "CL": 0.0788,
+            "CD": 0.01115,
+            "CDp": 0.00948,
+            "CM": -0.0915,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0875
+          },
+          {
+            "alpha": -4.0,
+            "CL": 0.105,
+            "CD": 0.01093,
+            "CDp": 0.00929,
+            "CM": -0.092,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1
+          },
+          {
+            "alpha": -3.75,
+            "CL": 0.1313,
+            "CD": 0.01072,
+            "CDp": 0.00911,
+            "CM": -0.0925,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1125
+          },
+          {
+            "alpha": -3.5,
+            "CL": 0.1575,
+            "CD": 0.01053,
+            "CDp": 0.00895,
+            "CM": -0.093,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.125
+          },
+          {
+            "alpha": -3.25,
+            "CL": 0.1837,
+            "CD": 0.01035,
+            "CDp": 0.0088,
+            "CM": -0.0935,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1375
+          },
+          {
+            "alpha": -3.0,
+            "CL": 0.21,
+            "CD": 0.01019,
+            "CDp": 0.00866,
+            "CM": -0.094,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.15
+          },
+          {
+            "alpha": -2.75,
+            "CL": 0.2362,
+            "CD": 0.01005,
+            "CDp": 0.00854,
+            "CM": -0.0945,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1625
+          },
+          {
+            "alpha": -2.5,
+            "CL": 0.2625,
+            "CD": 0.00992,
+            "CDp": 0.00843,
+            "CM": -0.095,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.175
+          },
+          {
+            "alpha": -2.25,
+            "CL": 0.2888,
+            "CD": 0.00981,
+            "CDp": 0.00834,
+            "CM": -0.0955,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1875
+          },
+          {
+            "alpha": -2.0,
+            "CL": 0.315,
+            "CD": 0.00972,
+            "CDp": 0.00826,
+            "CM": -0.096,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2
+          },
+          {
+            "alpha": -1.75,
+            "CL": 0.3412,
+            "CD": 0.00964,
+            "CDp": 0.0082,
+            "CM": -0.0965,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2125
+          },
+          {
+            "alpha": -1.5,
+            "CL": 0.3675,
+            "CD": 0.00958,
+            "CDp": 0.00814,
+            "CM": -0.097,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.225
+          },
+          {
+            "alpha": -1.25,
+            "CL": 0.3937,
+            "CD": 0.00954,
+            "CDp": 0.00811,
+            "CM": -0.0975,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2375
+          },
+          {
+            "alpha": -1.0,
+            "CL": 0.42,
+            "CD": 0.00951,
+            "CDp": 0.00808,
+            "CM": -0.098,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.25
+          },
+          {
+            "alpha": -0.75,
+            "CL": 0.4462,
+            "CD": 0.0095,
+            "CDp": 0.00808,
+            "CM": -0.0985,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2625
+          },
+          {
+            "alpha": -0.5,
+            "CL": 0.4725,
+            "CD": 0.00951,
+            "CDp": 0.00808,
+            "CM": -0.099,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.275
+          },
+          {
+            "alpha": -0.25,
+            "CL": 0.4987,
+            "CD": 0.00953,
+            "CDp": 0.0081,
+            "CM": -0.0995,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2875
+          },
+          {
+            "alpha": 0.0,
+            "CL": 0.525,
+            "CD": 0.00957,
+            "CDp": 0.00813,
+            "CM": -0.1,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3
+          },
+          {
+            "alpha": 0.25,
+            "CL": 0.5513,
+            "CD": 0.00962,
+            "CDp": 0.00818,
+            "CM": -0.1005,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3125
+          },
+          {
+            "alpha": 0.5,
+            "CL": 0.5775,
+            "CD": 0.0097,
+            "CDp": 0.00824,
+            "CM": -0.101,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.325
+          },
+          {
+            "alpha": 0.75,
+            "CL": 0.6038,
+            "CD": 0.00978,
+            "CDp": 0.00832,
+            "CM": -0.1015,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3375
+          },
+          {
+            "alpha": 1.0,
+            "CL": 0.63,
+            "CD": 0.00989,
+            "CDp": 0.00841,
+            "CM": -0.102,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.35
+          },
+          {
+            "alpha": 1.25,
+            "CL": 0.6562,
+            "CD": 0.01001,
+            "CDp": 0.00851,
+            "CM": -0.1025,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3625
+          },
+          {
+            "alpha": 1.5,
+            "CL": 0.6825,
+            "CD": 0.01015,
+            "CDp": 0.00863,
+            "CM": -0.103,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.375
+          },
+          {
+            "alpha": 1.75,
+            "CL": 0.7087,
+            "CD": 0.0103,
+            "CDp": 0.00876,
+            "CM": -0.1035,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3875
+          },
+          {
+            "alpha": 2.0,
+            "CL": 0.735,
+            "CD": 0.01047,
+            "CDp": 0.0089,
+            "CM": -0.104,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4
+          },
+          {
+            "alpha": 2.25,
+            "CL": 0.7612,
+            "CD": 0.01066,
+            "CDp": 0.00906,
+            "CM": -0.1045,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4125
+          },
+          {
+            "alpha": 2.5,
+            "CL": 0.7875,
+            "CD": 0.01087,
+            "CDp": 0.00924,
+            "CM": -0.105,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.425
+          },
+          {
+            "alpha": 2.75,
+            "CL": 0.8137,
+            "CD": 0.01109,
+            "CDp": 0.00942,
+            "CM": -0.1055,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4375
+          },
+          {
+            "alpha": 3.0,
+            "CL": 0.84,
+            "CD": 0.01133,
+            "CDp": 0.00963,
+            "CM": -0.106,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.45
+          },
+          {
+            "alpha": 3.25,
+            "CL": 0.8662,
+            "CD": 0.01158,
+            "CDp": 0.00984,
+            "CM": -0.1065,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4625
+          },
+          {
+            "alpha": 3.5,
+            "CL": 0.8925,
+            "CD": 0.01185,
+            "CDp": 0.01007,
+            "CM": -0.107,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.475
+          },
+          {
+            "alpha": 3.75,
+            "CL": 0.9187,
+            "CD": 0.01214,
+            "CDp": 0.01032,
+            "CM": -0.1075,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4875
+          },
+          {
+            "alpha": 4.0,
+            "CL": 0.945,
+            "CD": 0.01244,
+            "CDp": 0.01057,
+            "CM": -0.108,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5
+          },
+          {
+            "alpha": 4.25,
+            "CL": 0.9712,
+            "CD": 0.01276,
+            "CDp": 0.01085,
+            "CM": -0.1085,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5125
+          },
+          {
+            "alpha": 4.5,
+            "CL": 0.9975,
+            "CD": 0.0131,
+            "CDp": 0.01113,
+            "CM": -0.109,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.525
+          },
+          {
+            "alpha": 4.75,
+            "CL": 1.0237,
+            "CD": 0.01345,
+            "CDp": 0.01143,
+            "CM": -0.1095,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5375
+          },
+          {
+            "alpha": 5.0,
+            "CL": 1.05,
+            "CD": 0.01382,
+            "CDp": 0.01175,
+            "CM": -0.11,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.55
+          },
+          {
+            "alpha": 5.25,
+            "CL": 1.0762,
+            "CD": 0.01421,
+            "CDp": 0.01208,
+            "CM": -0.1105,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5625
+          },
+          {
+            "alpha": 5.5,
+            "CL": 1.1025,
+            "CD": 0.01461,
+            "CDp": 0.01242,
+            "CM": -0.111,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.575
+          },
+          {
+            "alpha": 5.75,
+            "CL": 1.1287,
+            "CD": 0.01503,
+            "CDp": 0.01277,
+            "CM": -0.1115,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5875
+          },
+          {
+            "alpha": 6.0,
+            "CL": 1.155,
+            "CD": 0.01546,
+            "CDp": 0.01314,
+            "CM": -0.112,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.6
+          },
+          {
+            "alpha": 6.25,
+            "CL": 1.1812,
+            "CD": 0.01592,
+            "CDp": 0.01353,
+            "CM": -0.1125,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.6125
+          },
+          {
+            "alpha": 6.5,
+            "CL": 1.2075,
+            "CD": 0.01639,
+            "CDp": 0.01393,
+            "CM": -0.113,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.625
+          },
+          {
+            "alpha": 6.75,
+            "CL": 1.2337,
+            "CD": 0.01687,
+            "CDp": 0.01434,
+            "CM": -0.1135,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.6375
+          },
+          {
+            "alpha": 7.0,
+            "CL": 1.26,
+            "CD": 0.01737,
+            "CDp": 0.01477,
+            "CM": -0.114,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.65
+          },
+          {
+            "alpha": 7.25,
+            "CL": 1.2862,
+            "CD": 0.01789,
+            "CDp": 0.01521,
+            "CM": -0.1145,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.6625
+          },
+          {
+            "alpha": 7.5,
+            "CL": 1.3125,
+            "CD": 0.01843,
+            "CDp": 0.01566,
+            "CM": -0.115,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.675
+          },
+          {
+            "alpha": 7.75,
+            "CL": 1.3387,
+            "CD": 0.01898,
+            "CDp": 0.01613,
+            "CM": -0.1155,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.6875
+          },
+          {
+            "alpha": 8.0,
+            "CL": 1.365,
+            "CD": 0.01955,
+            "CDp": 0.01661,
+            "CM": -0.116,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.7
+          },
+          {
+            "alpha": 8.25,
+            "CL": 1.3912,
+            "CD": 0.02013,
+            "CDp": 0.01711,
+            "CM": -0.1165,
+            "Top_Xtr": 0.975,
+            "Bot_Xtr": 0.7125
+          },
+          {
+            "alpha": 8.5,
+            "CL": 1.4173,
+            "CD": 0.02073,
+            "CDp": 0.01762,
+            "CM": -0.117,
+            "Top_Xtr": 0.95,
+            "Bot_Xtr": 0.725
+          },
+          {
+            "alpha": 8.75,
+            "CL": 1.4422,
+            "CD": 0.02131,
+            "CDp": 0.01812,
+            "CM": -0.1175,
+            "Top_Xtr": 0.925,
+            "Bot_Xtr": 0.7375
+          },
+          {
+            "alpha": 9.0,
+            "CL": 1.4646,
+            "CD": 0.02185,
+            "CDp": 0.01858,
+            "CM": -0.118,
+            "Top_Xtr": 0.9,
+            "Bot_Xtr": 0.75
+          },
+          {
+            "alpha": 9.25,
+            "CL": 1.4839,
+            "CD": 0.02233,
+            "CDp": 0.01898,
+            "CM": -0.1185,
+            "Top_Xtr": 0.875,
+            "Bot_Xtr": 0.7625
+          },
+          {
+            "alpha": 9.5,
+            "CL": 1.4999,
+            "CD": 0.02273,
+            "CDp": 0.01932,
+            "CM": -0.119,
+            "Top_Xtr": 0.85,
+            "Bot_Xtr": 0.775
+          },
+          {
+            "alpha": 9.75,
+            "CL": 1.5125,
+            "CD": 0.02305,
+            "CDp": 0.01959,
+            "CM": -0.1195,
+            "Top_Xtr": 0.825,
+            "Bot_Xtr": 0.7875
+          },
+          {
+            "alpha": 10.0,
+            "CL": 1.5223,
+            "CD": 0.0233,
+            "CDp": 0.0198,
+            "CM": -0.12,
+            "Top_Xtr": 0.8,
+            "Bot_Xtr": 0.8
+          },
+          {
+            "alpha": 10.25,
+            "CL": 1.5298,
+            "CD": 0.02349,
+            "CDp": 0.01997,
+            "CM": -0.1205,
+            "Top_Xtr": 0.775,
+            "Bot_Xtr": 0.8125
+          },
+          {
+            "alpha": 10.5,
+            "CL": 1.5353,
+            "CD": 0.02363,
+            "CDp": 0.02009,
+            "CM": -0.121,
+            "Top_Xtr": 0.75,
+            "Bot_Xtr": 0.825
+          },
+          {
+            "alpha": 10.75,
+            "CL": 1.5394,
+            "CD": 0.02374,
+            "CDp": 0.02018,
+            "CM": -0.1215,
+            "Top_Xtr": 0.725,
+            "Bot_Xtr": 0.8375
+          },
+          {
+            "alpha": 11.0,
+            "CL": 1.5424,
+            "CD": 0.02382,
+            "CDp": 0.02025,
+            "CM": -0.122,
+            "Top_Xtr": 0.7,
+            "Bot_Xtr": 0.85
+          },
+          {
+            "alpha": 11.25,
+            "CL": 1.5445,
+            "CD": 0.02388,
+            "CDp": 0.02029,
+            "CM": -0.1225,
+            "Top_Xtr": 0.675,
+            "Bot_Xtr": 0.8625
+          },
+          {
+            "alpha": 11.5,
+            "CL": 1.5461,
+            "CD": 0.02392,
+            "CDp": 0.02033,
+            "CM": -0.123,
+            "Top_Xtr": 0.65,
+            "Bot_Xtr": 0.875
+          },
+          {
+            "alpha": 11.75,
+            "CL": 1.5472,
+            "CD": 0.02395,
+            "CDp": 0.02035,
+            "CM": -0.1235,
+            "Top_Xtr": 0.625,
+            "Bot_Xtr": 0.8875
+          },
+          {
+            "alpha": 12.0,
+            "CL": 1.548,
+            "CD": 0.02397,
+            "CDp": 0.02037,
+            "CM": -0.124,
+            "Top_Xtr": 0.6,
+            "Bot_Xtr": 0.9
+          },
+          {
+            "alpha": 12.25,
+            "CL": 1.5486,
+            "CD": 0.0242,
+            "CDp": 0.02057,
+            "CM": -0.1245,
+            "Top_Xtr": 0.575,
+            "Bot_Xtr": 0.9125
+          },
+          {
+            "alpha": 12.5,
+            "CL": 1.549,
+            "CD": 0.02465,
+            "CDp": 0.02095,
+            "CM": -0.125,
+            "Top_Xtr": 0.55,
+            "Bot_Xtr": 0.925
+          },
+          {
+            "alpha": 12.75,
+            "CL": 1.5493,
+            "CD": 0.02526,
+            "CDp": 0.02147,
+            "CM": -0.1255,
+            "Top_Xtr": 0.525,
+            "Bot_Xtr": 0.9375
+          },
+          {
+            "alpha": 13.0,
+            "CL": 1.5495,
+            "CD": 0.02601,
+            "CDp": 0.02211,
+            "CM": -0.126,
+            "Top_Xtr": 0.5,
+            "Bot_Xtr": 0.95
+          },
+          {
+            "alpha": 13.25,
+            "CL": 1.5496,
+            "CD": 0.02687,
+            "CDp": 0.02284,
+            "CM": -0.1265,
+            "Top_Xtr": 0.475,
+            "Bot_Xtr": 0.9625
+          },
+          {
+            "alpha": 13.5,
+            "CL": 1.5497,
+            "CD": 0.02784,
+            "CDp": 0.02366,
+            "CM": -0.127,
+            "Top_Xtr": 0.45,
+            "Bot_Xtr": 0.975
+          },
+          {
+            "alpha": 13.75,
+            "CL": 1.5498,
+            "CD": 0.02891,
+            "CDp": 0.02457,
+            "CM": -0.1275,
+            "Top_Xtr": 0.425,
+            "Bot_Xtr": 0.9875
+          },
+          {
+            "alpha": 14.0,
+            "CL": 1.5499,
+            "CD": 0.03008,
+            "CDp": 0.02557,
+            "CM": -0.128,
+            "Top_Xtr": 0.4,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 14.25,
+            "CL": 1.5499,
+            "CD": 0.03134,
+            "CDp": 0.02664,
+            "CM": -0.1285,
+            "Top_Xtr": 0.375,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 14.5,
+            "CL": 1.5499,
+            "CD": 0.03268,
+            "CDp": 0.02778,
+            "CM": -0.129,
+            "Top_Xtr": 0.35,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 14.75,
+            "CL": 1.55,
+            "CD": 0.03411,
+            "CDp": 0.02899,
+            "CM": -0.1295,
+            "Top_Xtr": 0.325,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 15.0,
+            "CL": 1.55,
+            "CD": 0.03562,
+            "CDp": 0.03028,
+            "CM": -0.13,
+            "Top_Xtr": 0.3,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 15.25,
+            "CL": 1.53,
+            "CD": 0.03668,
+            "CDp": 0.03118,
+            "CM": -0.1305,
+            "Top_Xtr": 0.275,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 15.5,
+            "CL": 1.51,
+            "CD": 0.03783,
+            "CDp": 0.03215,
+            "CM": -0.131,
+            "Top_Xtr": 0.25,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 15.75,
+            "CL": 1.49,
+            "CD": 0.03905,
+            "CDp": 0.0332,
+            "CM": -0.1315,
+            "Top_Xtr": 0.225,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 16.0,
+            "CL": 1.47,
+            "CD": 0.04036,
+            "CDp": 0.03431,
+            "CM": -0.132,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 16.25,
+            "CL": 1.45,
+            "CD": 0.04175,
+            "CDp": 0.03549,
+            "CM": -0.1325,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 16.5,
+            "CL": 1.43,
+            "CD": 0.04322,
+            "CDp": 0.03673,
+            "CM": -0.133,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 16.75,
+            "CL": 1.41,
+            "CD": 0.04475,
+            "CDp": 0.03804,
+            "CM": -0.1335,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 17.0,
+            "CL": 1.39,
+            "CD": 0.04637,
+            "CDp": 0.03941,
+            "CM": -0.134,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 17.25,
+            "CL": 1.37,
+            "CD": 0.04805,
+            "CDp": 0.04085,
+            "CM": -0.1345,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 17.5,
+            "CL": 1.35,
+            "CD": 0.04981,
+            "CDp": 0.04234,
+            "CM": -0.135,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 17.75,
+            "CL": 1.33,
+            "CD": 0.05164,
+            "CDp": 0.04389,
+            "CM": -0.1355,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 18.0,
+            "CL": 1.31,
+            "CD": 0.05354,
+            "CDp": 0.04551,
+            "CM": -0.136,
+            "Top_Xtr": 0.2,
+            "Bot_Xtr": 1.0
+          }
+        ],
+        "polar_summary": {
+          "alpha_min_deg": -12.0,
+          "alpha_max_deg": 18.0,
+          "CL_max": 1.55,
+          "alpha_at_CL_max_deg": 14.75,
+          "CL_min": -0.735,
+          "alpha_at_CL_min_deg": -12.0,
+          "zero_lift_alpha_deg": -5.0,
+          "CD_at_zero_lift": 0.01193,
+          "CM_at_zero_lift": -0.09
+        },
+        "polar_path": "/home/runner/work/H2-drone-sizing/H2-drone-sizing/data/airfoils/NACA6415_Re200000_XFOIL.csv",
+        "aero_source_mode": "polar_file",
+        "CLmax_used": 1.37,
+        "CLmax_source": "user_override"
+      },
+      "horizontal_tail": {
+        "polar_file": "data/airfoils/NACA0012_Re200000_XFOIL.csv",
+        "reynolds_number": 200000,
+        "thickness_fraction": 0.12,
+        "status": "user_supplied_analysis_data",
+        "note": "Uses the user-supplied XFOIL polar table directly. Values outside the table alpha range are clamped, not extrapolated.",
+        "code": "NACA0012",
+        "polar_rows": [
+          {
+            "alpha": -14.0,
+            "CL": -0.9628,
+            "CD": 0.07963,
+            "CDp": 0.07518,
+            "CM": -0.0278,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0399
+          },
+          {
+            "alpha": -13.75,
+            "CL": -0.9895,
+            "CD": 0.07225,
+            "CDp": 0.06762,
+            "CM": -0.0322,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0398
+          },
+          {
+            "alpha": -13.5,
+            "CL": -1.0148,
+            "CD": 0.06593,
+            "CDp": 0.0611,
+            "CM": -0.0354,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0397
+          },
+          {
+            "alpha": -13.25,
+            "CL": -1.0382,
+            "CD": 0.06063,
+            "CDp": 0.05557,
+            "CM": -0.0371,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0396
+          },
+          {
+            "alpha": -13.0,
+            "CL": -1.0594,
+            "CD": 0.05622,
+            "CDp": 0.0509,
+            "CM": -0.0373,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0396
+          },
+          {
+            "alpha": -12.75,
+            "CL": -1.0784,
+            "CD": 0.05255,
+            "CDp": 0.04697,
+            "CM": -0.0361,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0397
+          },
+          {
+            "alpha": -12.5,
+            "CL": -1.0955,
+            "CD": 0.04958,
+            "CDp": 0.04371,
+            "CM": -0.0335,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0399
+          },
+          {
+            "alpha": -12.0,
+            "CL": -1.1063,
+            "CD": 0.04365,
+            "CDp": 0.03734,
+            "CM": -0.0286,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.041
+          },
+          {
+            "alpha": -11.75,
+            "CL": -1.0964,
+            "CD": 0.04195,
+            "CDp": 0.03559,
+            "CM": -0.0273,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.042
+          },
+          {
+            "alpha": -11.5,
+            "CL": -1.0857,
+            "CD": 0.04034,
+            "CDp": 0.03389,
+            "CM": -0.0259,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.043
+          },
+          {
+            "alpha": -11.25,
+            "CL": -1.077,
+            "CD": 0.03842,
+            "CDp": 0.03176,
+            "CM": -0.0241,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0441
+          },
+          {
+            "alpha": -11.0,
+            "CL": -1.0679,
+            "CD": 0.03635,
+            "CDp": 0.02942,
+            "CM": -0.0222,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0451
+          },
+          {
+            "alpha": -10.75,
+            "CL": -1.0569,
+            "CD": 0.03444,
+            "CDp": 0.02717,
+            "CM": -0.0203,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0462
+          },
+          {
+            "alpha": -10.5,
+            "CL": -1.0443,
+            "CD": 0.03262,
+            "CDp": 0.02503,
+            "CM": -0.0186,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0474
+          },
+          {
+            "alpha": -10.25,
+            "CL": -1.0249,
+            "CD": 0.03076,
+            "CDp": 0.02323,
+            "CM": -0.018,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0492
+          },
+          {
+            "alpha": -10.0,
+            "CL": -1.0066,
+            "CD": 0.02966,
+            "CDp": 0.02206,
+            "CM": -0.0169,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0511
+          },
+          {
+            "alpha": -9.75,
+            "CL": -0.9881,
+            "CD": 0.02844,
+            "CDp": 0.02068,
+            "CM": -0.0156,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0532
+          },
+          {
+            "alpha": -9.5,
+            "CL": -0.9692,
+            "CD": 0.02734,
+            "CDp": 0.01932,
+            "CM": -0.0143,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.055
+          },
+          {
+            "alpha": -9.25,
+            "CL": -0.9491,
+            "CD": 0.02559,
+            "CDp": 0.01762,
+            "CM": -0.0135,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0576
+          },
+          {
+            "alpha": -9.0,
+            "CL": -0.929,
+            "CD": 0.02473,
+            "CDp": 0.01674,
+            "CM": -0.0124,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0604
+          },
+          {
+            "alpha": -8.75,
+            "CL": -0.9087,
+            "CD": 0.02387,
+            "CDp": 0.01574,
+            "CM": -0.0112,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0635
+          },
+          {
+            "alpha": -8.5,
+            "CL": -0.889,
+            "CD": 0.02252,
+            "CDp": 0.01438,
+            "CM": -0.0101,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0667
+          },
+          {
+            "alpha": -8.25,
+            "CL": -0.8689,
+            "CD": 0.02174,
+            "CDp": 0.01362,
+            "CM": -0.0089,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0707
+          },
+          {
+            "alpha": -8.0,
+            "CL": -0.8481,
+            "CD": 0.02113,
+            "CDp": 0.01286,
+            "CM": -0.0077,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0749
+          },
+          {
+            "alpha": -7.75,
+            "CL": -0.83,
+            "CD": 0.01996,
+            "CDp": 0.01181,
+            "CM": -0.0062,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0799
+          },
+          {
+            "alpha": -7.5,
+            "CL": -0.8096,
+            "CD": 0.01936,
+            "CDp": 0.01114,
+            "CM": -0.0049,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0858
+          },
+          {
+            "alpha": -7.25,
+            "CL": -0.7919,
+            "CD": 0.01844,
+            "CDp": 0.01031,
+            "CM": -0.0033,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0925
+          },
+          {
+            "alpha": -7.0,
+            "CL": -0.7726,
+            "CD": 0.01776,
+            "CDp": 0.00961,
+            "CM": -0.0018,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1005
+          },
+          {
+            "alpha": -6.75,
+            "CL": -0.7535,
+            "CD": 0.01712,
+            "CDp": 0.009,
+            "CM": -0.0003,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1104
+          },
+          {
+            "alpha": -6.5,
+            "CL": -0.7351,
+            "CD": 0.01641,
+            "CDp": 0.00837,
+            "CM": 0.0013,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1222
+          },
+          {
+            "alpha": -6.25,
+            "CL": -0.7162,
+            "CD": 0.01577,
+            "CDp": 0.00781,
+            "CM": 0.0028,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1373
+          },
+          {
+            "alpha": -6.0,
+            "CL": -0.6971,
+            "CD": 0.01517,
+            "CDp": 0.00729,
+            "CM": 0.0043,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1563
+          },
+          {
+            "alpha": -5.75,
+            "CL": -0.6785,
+            "CD": 0.01455,
+            "CDp": 0.00683,
+            "CM": 0.0058,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1796
+          },
+          {
+            "alpha": -5.5,
+            "CL": -0.6592,
+            "CD": 0.014,
+            "CDp": 0.00643,
+            "CM": 0.0073,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2077
+          },
+          {
+            "alpha": -5.25,
+            "CL": -0.6396,
+            "CD": 0.0135,
+            "CDp": 0.00609,
+            "CM": 0.0086,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2398
+          },
+          {
+            "alpha": -5.0,
+            "CL": -0.6195,
+            "CD": 0.01306,
+            "CDp": 0.0058,
+            "CM": 0.0099,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2743
+          },
+          {
+            "alpha": -4.75,
+            "CL": -0.599,
+            "CD": 0.01268,
+            "CDp": 0.00556,
+            "CM": 0.0111,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3101
+          },
+          {
+            "alpha": -4.5,
+            "CL": -0.5783,
+            "CD": 0.01234,
+            "CDp": 0.00537,
+            "CM": 0.0123,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3456
+          },
+          {
+            "alpha": -4.25,
+            "CL": -0.5572,
+            "CD": 0.01203,
+            "CDp": 0.00521,
+            "CM": 0.0134,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3809
+          },
+          {
+            "alpha": -4.0,
+            "CL": -0.5358,
+            "CD": 0.01176,
+            "CDp": 0.00508,
+            "CM": 0.0145,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.416
+          },
+          {
+            "alpha": -3.75,
+            "CL": -0.5139,
+            "CD": 0.01154,
+            "CDp": 0.00498,
+            "CM": 0.0155,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4509
+          },
+          {
+            "alpha": -3.5,
+            "CL": -0.4915,
+            "CD": 0.01134,
+            "CDp": 0.00492,
+            "CM": 0.0164,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4856
+          },
+          {
+            "alpha": -3.25,
+            "CL": -0.4689,
+            "CD": 0.01118,
+            "CDp": 0.00489,
+            "CM": 0.0172,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5202
+          },
+          {
+            "alpha": -3.0,
+            "CL": -0.4463,
+            "CD": 0.01104,
+            "CDp": 0.00489,
+            "CM": 0.018,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5545
+          },
+          {
+            "alpha": -2.75,
+            "CL": -0.4236,
+            "CD": 0.01094,
+            "CDp": 0.00493,
+            "CM": 0.0188,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5885
+          },
+          {
+            "alpha": -2.5,
+            "CL": -0.3942,
+            "CD": 0.01086,
+            "CDp": 0.00497,
+            "CM": 0.0183,
+            "Top_Xtr": 0.9979,
+            "Bot_Xtr": 0.6248
+          },
+          {
+            "alpha": -2.25,
+            "CL": -0.3513,
+            "CD": 0.01075,
+            "CDp": 0.00504,
+            "CM": 0.0152,
+            "Top_Xtr": 0.9915,
+            "Bot_Xtr": 0.6638
+          },
+          {
+            "alpha": -2.0,
+            "CL": -0.3085,
+            "CD": 0.01066,
+            "CDp": 0.00509,
+            "CM": 0.0122,
+            "Top_Xtr": 0.9843,
+            "Bot_Xtr": 0.7011
+          },
+          {
+            "alpha": -1.75,
+            "CL": -0.2684,
+            "CD": 0.01056,
+            "CDp": 0.00512,
+            "CM": 0.01,
+            "Top_Xtr": 0.9755,
+            "Bot_Xtr": 0.7357
+          },
+          {
+            "alpha": -1.5,
+            "CL": -0.2255,
+            "CD": 0.01048,
+            "CDp": 0.00517,
+            "CM": 0.0072,
+            "Top_Xtr": 0.9686,
+            "Bot_Xtr": 0.7684
+          },
+          {
+            "alpha": -1.25,
+            "CL": -0.1861,
+            "CD": 0.0104,
+            "CDp": 0.00519,
+            "CM": 0.0054,
+            "Top_Xtr": 0.9593,
+            "Bot_Xtr": 0.7978
+          },
+          {
+            "alpha": -1.0,
+            "CL": -0.1454,
+            "CD": 0.01034,
+            "CDp": 0.00519,
+            "CM": 0.0033,
+            "Top_Xtr": 0.9509,
+            "Bot_Xtr": 0.8255
+          },
+          {
+            "alpha": -0.75,
+            "CL": -0.1048,
+            "CD": 0.01028,
+            "CDp": 0.00521,
+            "CM": 0.0015,
+            "Top_Xtr": 0.9424,
+            "Bot_Xtr": 0.8482
+          },
+          {
+            "alpha": -0.5,
+            "CL": -0.07,
+            "CD": 0.01025,
+            "CDp": 0.00522,
+            "CM": 0.0009,
+            "Top_Xtr": 0.9304,
+            "Bot_Xtr": 0.8696
+          },
+          {
+            "alpha": -0.25,
+            "CL": -0.035,
+            "CD": 0.01022,
+            "CDp": 0.00521,
+            "CM": 0.0004,
+            "Top_Xtr": 0.9182,
+            "Bot_Xtr": 0.8886
+          },
+          {
+            "alpha": 0.0,
+            "CL": 0.0,
+            "CD": 0.0102,
+            "CDp": 0.0052,
+            "CM": 0.0,
+            "Top_Xtr": 0.9046,
+            "Bot_Xtr": 0.9047
+          },
+          {
+            "alpha": 0.25,
+            "CL": 0.035,
+            "CD": 0.01022,
+            "CDp": 0.00521,
+            "CM": -0.0004,
+            "Top_Xtr": 0.8886,
+            "Bot_Xtr": 0.9182
+          },
+          {
+            "alpha": 0.5,
+            "CL": 0.07,
+            "CD": 0.01025,
+            "CDp": 0.00522,
+            "CM": -0.0009,
+            "Top_Xtr": 0.8696,
+            "Bot_Xtr": 0.9304
+          },
+          {
+            "alpha": 0.75,
+            "CL": 0.1048,
+            "CD": 0.01028,
+            "CDp": 0.00521,
+            "CM": -0.0015,
+            "Top_Xtr": 0.8482,
+            "Bot_Xtr": 0.9424
+          },
+          {
+            "alpha": 1.0,
+            "CL": 0.1454,
+            "CD": 0.01034,
+            "CDp": 0.00519,
+            "CM": -0.0033,
+            "Top_Xtr": 0.8255,
+            "Bot_Xtr": 0.951
+          },
+          {
+            "alpha": 1.25,
+            "CL": 0.1861,
+            "CD": 0.0104,
+            "CDp": 0.00518,
+            "CM": -0.0054,
+            "Top_Xtr": 0.7978,
+            "Bot_Xtr": 0.9593
+          },
+          {
+            "alpha": 1.5,
+            "CL": 0.2255,
+            "CD": 0.01048,
+            "CDp": 0.00517,
+            "CM": -0.0072,
+            "Top_Xtr": 0.7684,
+            "Bot_Xtr": 0.9686
+          },
+          {
+            "alpha": 1.75,
+            "CL": 0.2684,
+            "CD": 0.01056,
+            "CDp": 0.00512,
+            "CM": -0.01,
+            "Top_Xtr": 0.7357,
+            "Bot_Xtr": 0.9756
+          },
+          {
+            "alpha": 2.0,
+            "CL": 0.3085,
+            "CD": 0.01066,
+            "CDp": 0.00509,
+            "CM": -0.0122,
+            "Top_Xtr": 0.7012,
+            "Bot_Xtr": 0.9843
+          },
+          {
+            "alpha": 2.25,
+            "CL": 0.3513,
+            "CD": 0.01075,
+            "CDp": 0.00504,
+            "CM": -0.0152,
+            "Top_Xtr": 0.6637,
+            "Bot_Xtr": 0.9915
+          },
+          {
+            "alpha": 2.5,
+            "CL": 0.3942,
+            "CD": 0.01085,
+            "CDp": 0.00497,
+            "CM": -0.0183,
+            "Top_Xtr": 0.6249,
+            "Bot_Xtr": 0.9979
+          },
+          {
+            "alpha": 2.75,
+            "CL": 0.4235,
+            "CD": 0.01094,
+            "CDp": 0.00492,
+            "CM": -0.0188,
+            "Top_Xtr": 0.5886,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.0,
+            "CL": 0.4462,
+            "CD": 0.01104,
+            "CDp": 0.00489,
+            "CM": -0.018,
+            "Top_Xtr": 0.5545,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.25,
+            "CL": 0.4689,
+            "CD": 0.01118,
+            "CDp": 0.00489,
+            "CM": -0.0172,
+            "Top_Xtr": 0.5202,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.5,
+            "CL": 0.4915,
+            "CD": 0.01134,
+            "CDp": 0.00492,
+            "CM": -0.0163,
+            "Top_Xtr": 0.4857,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.75,
+            "CL": 0.5138,
+            "CD": 0.01153,
+            "CDp": 0.00498,
+            "CM": -0.0155,
+            "Top_Xtr": 0.4509,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.0,
+            "CL": 0.5357,
+            "CD": 0.01176,
+            "CDp": 0.00507,
+            "CM": -0.0145,
+            "Top_Xtr": 0.416,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.25,
+            "CL": 0.5571,
+            "CD": 0.01203,
+            "CDp": 0.00521,
+            "CM": -0.0134,
+            "Top_Xtr": 0.381,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.5,
+            "CL": 0.5782,
+            "CD": 0.01234,
+            "CDp": 0.00536,
+            "CM": -0.0123,
+            "Top_Xtr": 0.3456,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.75,
+            "CL": 0.599,
+            "CD": 0.01268,
+            "CDp": 0.00556,
+            "CM": -0.0111,
+            "Top_Xtr": 0.3101,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.0,
+            "CL": 0.6195,
+            "CD": 0.01306,
+            "CDp": 0.0058,
+            "CM": -0.0099,
+            "Top_Xtr": 0.2744,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.25,
+            "CL": 0.6395,
+            "CD": 0.0135,
+            "CDp": 0.00609,
+            "CM": -0.0086,
+            "Top_Xtr": 0.2398,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.5,
+            "CL": 0.6591,
+            "CD": 0.014,
+            "CDp": 0.00643,
+            "CM": -0.0072,
+            "Top_Xtr": 0.2077,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.75,
+            "CL": 0.6784,
+            "CD": 0.01455,
+            "CDp": 0.00683,
+            "CM": -0.0058,
+            "Top_Xtr": 0.1796,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.0,
+            "CL": 0.6971,
+            "CD": 0.01516,
+            "CDp": 0.00729,
+            "CM": -0.0043,
+            "Top_Xtr": 0.1563,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.25,
+            "CL": 0.7161,
+            "CD": 0.01577,
+            "CDp": 0.00781,
+            "CM": -0.0028,
+            "Top_Xtr": 0.1374,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.5,
+            "CL": 0.7351,
+            "CD": 0.01641,
+            "CDp": 0.00837,
+            "CM": -0.0013,
+            "Top_Xtr": 0.1223,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.75,
+            "CL": 0.7535,
+            "CD": 0.01712,
+            "CDp": 0.009,
+            "CM": 0.0003,
+            "Top_Xtr": 0.1104,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.0,
+            "CL": 0.7725,
+            "CD": 0.01776,
+            "CDp": 0.00961,
+            "CM": 0.0018,
+            "Top_Xtr": 0.1005,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.25,
+            "CL": 0.7919,
+            "CD": 0.01844,
+            "CDp": 0.01031,
+            "CM": 0.0033,
+            "Top_Xtr": 0.0925,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.5,
+            "CL": 0.8096,
+            "CD": 0.01936,
+            "CDp": 0.01114,
+            "CM": 0.0049,
+            "Top_Xtr": 0.0858,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.75,
+            "CL": 0.83,
+            "CD": 0.01995,
+            "CDp": 0.01181,
+            "CM": 0.0062,
+            "Top_Xtr": 0.0799,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.0,
+            "CL": 0.8481,
+            "CD": 0.02112,
+            "CDp": 0.01285,
+            "CM": 0.0077,
+            "Top_Xtr": 0.0749,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.25,
+            "CL": 0.869,
+            "CD": 0.02173,
+            "CDp": 0.01362,
+            "CM": 0.0089,
+            "Top_Xtr": 0.0707,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.5,
+            "CL": 0.889,
+            "CD": 0.02251,
+            "CDp": 0.01438,
+            "CM": 0.0101,
+            "Top_Xtr": 0.0667,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.75,
+            "CL": 0.9087,
+            "CD": 0.02387,
+            "CDp": 0.01574,
+            "CM": 0.0112,
+            "Top_Xtr": 0.0635,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.0,
+            "CL": 0.9291,
+            "CD": 0.02472,
+            "CDp": 0.01674,
+            "CM": 0.0124,
+            "Top_Xtr": 0.0604,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.25,
+            "CL": 0.9492,
+            "CD": 0.02559,
+            "CDp": 0.01762,
+            "CM": 0.0135,
+            "Top_Xtr": 0.0575,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.5,
+            "CL": 0.9693,
+            "CD": 0.02734,
+            "CDp": 0.01932,
+            "CM": 0.0143,
+            "Top_Xtr": 0.055,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.75,
+            "CL": 0.9882,
+            "CD": 0.02844,
+            "CDp": 0.02068,
+            "CM": 0.0156,
+            "Top_Xtr": 0.0532,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.0,
+            "CL": 1.0067,
+            "CD": 0.02966,
+            "CDp": 0.02206,
+            "CM": 0.0168,
+            "Top_Xtr": 0.0511,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.25,
+            "CL": 1.0251,
+            "CD": 0.03077,
+            "CDp": 0.02323,
+            "CM": 0.0179,
+            "Top_Xtr": 0.0492,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.5,
+            "CL": 1.0445,
+            "CD": 0.03262,
+            "CDp": 0.02503,
+            "CM": 0.0185,
+            "Top_Xtr": 0.0474,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.75,
+            "CL": 1.0571,
+            "CD": 0.03445,
+            "CDp": 0.02718,
+            "CM": 0.0203,
+            "Top_Xtr": 0.0462,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.0,
+            "CL": 1.0681,
+            "CD": 0.03636,
+            "CDp": 0.02942,
+            "CM": 0.0222,
+            "Top_Xtr": 0.0451,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.25,
+            "CL": 1.0773,
+            "CD": 0.03842,
+            "CDp": 0.03177,
+            "CM": 0.0241,
+            "Top_Xtr": 0.0441,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.5,
+            "CL": 1.086,
+            "CD": 0.04035,
+            "CDp": 0.0339,
+            "CM": 0.0258,
+            "Top_Xtr": 0.043,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.75,
+            "CL": 1.0969,
+            "CD": 0.04194,
+            "CDp": 0.03558,
+            "CM": 0.0272,
+            "Top_Xtr": 0.0419,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.0,
+            "CL": 1.1068,
+            "CD": 0.04366,
+            "CDp": 0.03735,
+            "CM": 0.0286,
+            "Top_Xtr": 0.041,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.25,
+            "CL": 1.1101,
+            "CD": 0.04727,
+            "CDp": 0.04108,
+            "CM": 0.0298,
+            "Top_Xtr": 0.0401,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.5,
+            "CL": 1.0959,
+            "CD": 0.0496,
+            "CDp": 0.04372,
+            "CM": 0.0334,
+            "Top_Xtr": 0.0399,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.75,
+            "CL": 1.079,
+            "CD": 0.05258,
+            "CDp": 0.047,
+            "CM": 0.036,
+            "Top_Xtr": 0.0397,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.0,
+            "CL": 1.0599,
+            "CD": 0.05626,
+            "CDp": 0.05095,
+            "CM": 0.0372,
+            "Top_Xtr": 0.0396,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.25,
+            "CL": 1.0385,
+            "CD": 0.06069,
+            "CDp": 0.05564,
+            "CM": 0.0369,
+            "Top_Xtr": 0.0396,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.5,
+            "CL": 1.015,
+            "CD": 0.06603,
+            "CDp": 0.0612,
+            "CM": 0.0352,
+            "Top_Xtr": 0.0396,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.75,
+            "CL": 0.9898,
+            "CD": 0.07237,
+            "CDp": 0.06774,
+            "CM": 0.0319,
+            "Top_Xtr": 0.0398,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 14.0,
+            "CL": 0.9632,
+            "CD": 0.07976,
+            "CDp": 0.07532,
+            "CM": 0.0275,
+            "Top_Xtr": 0.0399,
+            "Bot_Xtr": 1.0
+          }
+        ],
+        "polar_summary": {
+          "alpha_min_deg": -14.0,
+          "alpha_max_deg": 14.0,
+          "CL_max": 1.1101,
+          "alpha_at_CL_max_deg": 12.25,
+          "CL_min": -1.1063,
+          "alpha_at_CL_min_deg": -12.0,
+          "zero_lift_alpha_deg": 0.0,
+          "CD_at_zero_lift": 0.0102,
+          "CM_at_zero_lift": 0.0
+        },
+        "polar_path": "/home/runner/work/H2-drone-sizing/H2-drone-sizing/data/airfoils/NACA0012_Re200000_XFOIL.csv",
+        "aero_source_mode": "polar_file",
+        "CLmax_used": 1.1101,
+        "CLmax_source": "polar_file"
+      },
+      "vertical_tail": {
+        "polar_file": "data/airfoils/NACA0012_Re200000_XFOIL.csv",
+        "reynolds_number": 200000,
+        "thickness_fraction": 0.12,
+        "status": "user_supplied_analysis_data",
+        "note": "Uses the user-supplied XFOIL polar table directly. Values outside the table alpha range are clamped, not extrapolated.",
+        "code": "NACA0012",
+        "polar_rows": [
+          {
+            "alpha": -14.0,
+            "CL": -0.9628,
+            "CD": 0.07963,
+            "CDp": 0.07518,
+            "CM": -0.0278,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0399
+          },
+          {
+            "alpha": -13.75,
+            "CL": -0.9895,
+            "CD": 0.07225,
+            "CDp": 0.06762,
+            "CM": -0.0322,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0398
+          },
+          {
+            "alpha": -13.5,
+            "CL": -1.0148,
+            "CD": 0.06593,
+            "CDp": 0.0611,
+            "CM": -0.0354,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0397
+          },
+          {
+            "alpha": -13.25,
+            "CL": -1.0382,
+            "CD": 0.06063,
+            "CDp": 0.05557,
+            "CM": -0.0371,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0396
+          },
+          {
+            "alpha": -13.0,
+            "CL": -1.0594,
+            "CD": 0.05622,
+            "CDp": 0.0509,
+            "CM": -0.0373,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0396
+          },
+          {
+            "alpha": -12.75,
+            "CL": -1.0784,
+            "CD": 0.05255,
+            "CDp": 0.04697,
+            "CM": -0.0361,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0397
+          },
+          {
+            "alpha": -12.5,
+            "CL": -1.0955,
+            "CD": 0.04958,
+            "CDp": 0.04371,
+            "CM": -0.0335,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0399
+          },
+          {
+            "alpha": -12.0,
+            "CL": -1.1063,
+            "CD": 0.04365,
+            "CDp": 0.03734,
+            "CM": -0.0286,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.041
+          },
+          {
+            "alpha": -11.75,
+            "CL": -1.0964,
+            "CD": 0.04195,
+            "CDp": 0.03559,
+            "CM": -0.0273,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.042
+          },
+          {
+            "alpha": -11.5,
+            "CL": -1.0857,
+            "CD": 0.04034,
+            "CDp": 0.03389,
+            "CM": -0.0259,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.043
+          },
+          {
+            "alpha": -11.25,
+            "CL": -1.077,
+            "CD": 0.03842,
+            "CDp": 0.03176,
+            "CM": -0.0241,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0441
+          },
+          {
+            "alpha": -11.0,
+            "CL": -1.0679,
+            "CD": 0.03635,
+            "CDp": 0.02942,
+            "CM": -0.0222,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0451
+          },
+          {
+            "alpha": -10.75,
+            "CL": -1.0569,
+            "CD": 0.03444,
+            "CDp": 0.02717,
+            "CM": -0.0203,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0462
+          },
+          {
+            "alpha": -10.5,
+            "CL": -1.0443,
+            "CD": 0.03262,
+            "CDp": 0.02503,
+            "CM": -0.0186,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0474
+          },
+          {
+            "alpha": -10.25,
+            "CL": -1.0249,
+            "CD": 0.03076,
+            "CDp": 0.02323,
+            "CM": -0.018,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0492
+          },
+          {
+            "alpha": -10.0,
+            "CL": -1.0066,
+            "CD": 0.02966,
+            "CDp": 0.02206,
+            "CM": -0.0169,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0511
+          },
+          {
+            "alpha": -9.75,
+            "CL": -0.9881,
+            "CD": 0.02844,
+            "CDp": 0.02068,
+            "CM": -0.0156,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0532
+          },
+          {
+            "alpha": -9.5,
+            "CL": -0.9692,
+            "CD": 0.02734,
+            "CDp": 0.01932,
+            "CM": -0.0143,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.055
+          },
+          {
+            "alpha": -9.25,
+            "CL": -0.9491,
+            "CD": 0.02559,
+            "CDp": 0.01762,
+            "CM": -0.0135,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0576
+          },
+          {
+            "alpha": -9.0,
+            "CL": -0.929,
+            "CD": 0.02473,
+            "CDp": 0.01674,
+            "CM": -0.0124,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0604
+          },
+          {
+            "alpha": -8.75,
+            "CL": -0.9087,
+            "CD": 0.02387,
+            "CDp": 0.01574,
+            "CM": -0.0112,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0635
+          },
+          {
+            "alpha": -8.5,
+            "CL": -0.889,
+            "CD": 0.02252,
+            "CDp": 0.01438,
+            "CM": -0.0101,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0667
+          },
+          {
+            "alpha": -8.25,
+            "CL": -0.8689,
+            "CD": 0.02174,
+            "CDp": 0.01362,
+            "CM": -0.0089,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0707
+          },
+          {
+            "alpha": -8.0,
+            "CL": -0.8481,
+            "CD": 0.02113,
+            "CDp": 0.01286,
+            "CM": -0.0077,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0749
+          },
+          {
+            "alpha": -7.75,
+            "CL": -0.83,
+            "CD": 0.01996,
+            "CDp": 0.01181,
+            "CM": -0.0062,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0799
+          },
+          {
+            "alpha": -7.5,
+            "CL": -0.8096,
+            "CD": 0.01936,
+            "CDp": 0.01114,
+            "CM": -0.0049,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0858
+          },
+          {
+            "alpha": -7.25,
+            "CL": -0.7919,
+            "CD": 0.01844,
+            "CDp": 0.01031,
+            "CM": -0.0033,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.0925
+          },
+          {
+            "alpha": -7.0,
+            "CL": -0.7726,
+            "CD": 0.01776,
+            "CDp": 0.00961,
+            "CM": -0.0018,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1005
+          },
+          {
+            "alpha": -6.75,
+            "CL": -0.7535,
+            "CD": 0.01712,
+            "CDp": 0.009,
+            "CM": -0.0003,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1104
+          },
+          {
+            "alpha": -6.5,
+            "CL": -0.7351,
+            "CD": 0.01641,
+            "CDp": 0.00837,
+            "CM": 0.0013,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1222
+          },
+          {
+            "alpha": -6.25,
+            "CL": -0.7162,
+            "CD": 0.01577,
+            "CDp": 0.00781,
+            "CM": 0.0028,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1373
+          },
+          {
+            "alpha": -6.0,
+            "CL": -0.6971,
+            "CD": 0.01517,
+            "CDp": 0.00729,
+            "CM": 0.0043,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1563
+          },
+          {
+            "alpha": -5.75,
+            "CL": -0.6785,
+            "CD": 0.01455,
+            "CDp": 0.00683,
+            "CM": 0.0058,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.1796
+          },
+          {
+            "alpha": -5.5,
+            "CL": -0.6592,
+            "CD": 0.014,
+            "CDp": 0.00643,
+            "CM": 0.0073,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2077
+          },
+          {
+            "alpha": -5.25,
+            "CL": -0.6396,
+            "CD": 0.0135,
+            "CDp": 0.00609,
+            "CM": 0.0086,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2398
+          },
+          {
+            "alpha": -5.0,
+            "CL": -0.6195,
+            "CD": 0.01306,
+            "CDp": 0.0058,
+            "CM": 0.0099,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.2743
+          },
+          {
+            "alpha": -4.75,
+            "CL": -0.599,
+            "CD": 0.01268,
+            "CDp": 0.00556,
+            "CM": 0.0111,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3101
+          },
+          {
+            "alpha": -4.5,
+            "CL": -0.5783,
+            "CD": 0.01234,
+            "CDp": 0.00537,
+            "CM": 0.0123,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3456
+          },
+          {
+            "alpha": -4.25,
+            "CL": -0.5572,
+            "CD": 0.01203,
+            "CDp": 0.00521,
+            "CM": 0.0134,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.3809
+          },
+          {
+            "alpha": -4.0,
+            "CL": -0.5358,
+            "CD": 0.01176,
+            "CDp": 0.00508,
+            "CM": 0.0145,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.416
+          },
+          {
+            "alpha": -3.75,
+            "CL": -0.5139,
+            "CD": 0.01154,
+            "CDp": 0.00498,
+            "CM": 0.0155,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4509
+          },
+          {
+            "alpha": -3.5,
+            "CL": -0.4915,
+            "CD": 0.01134,
+            "CDp": 0.00492,
+            "CM": 0.0164,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.4856
+          },
+          {
+            "alpha": -3.25,
+            "CL": -0.4689,
+            "CD": 0.01118,
+            "CDp": 0.00489,
+            "CM": 0.0172,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5202
+          },
+          {
+            "alpha": -3.0,
+            "CL": -0.4463,
+            "CD": 0.01104,
+            "CDp": 0.00489,
+            "CM": 0.018,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5545
+          },
+          {
+            "alpha": -2.75,
+            "CL": -0.4236,
+            "CD": 0.01094,
+            "CDp": 0.00493,
+            "CM": 0.0188,
+            "Top_Xtr": 1.0,
+            "Bot_Xtr": 0.5885
+          },
+          {
+            "alpha": -2.5,
+            "CL": -0.3942,
+            "CD": 0.01086,
+            "CDp": 0.00497,
+            "CM": 0.0183,
+            "Top_Xtr": 0.9979,
+            "Bot_Xtr": 0.6248
+          },
+          {
+            "alpha": -2.25,
+            "CL": -0.3513,
+            "CD": 0.01075,
+            "CDp": 0.00504,
+            "CM": 0.0152,
+            "Top_Xtr": 0.9915,
+            "Bot_Xtr": 0.6638
+          },
+          {
+            "alpha": -2.0,
+            "CL": -0.3085,
+            "CD": 0.01066,
+            "CDp": 0.00509,
+            "CM": 0.0122,
+            "Top_Xtr": 0.9843,
+            "Bot_Xtr": 0.7011
+          },
+          {
+            "alpha": -1.75,
+            "CL": -0.2684,
+            "CD": 0.01056,
+            "CDp": 0.00512,
+            "CM": 0.01,
+            "Top_Xtr": 0.9755,
+            "Bot_Xtr": 0.7357
+          },
+          {
+            "alpha": -1.5,
+            "CL": -0.2255,
+            "CD": 0.01048,
+            "CDp": 0.00517,
+            "CM": 0.0072,
+            "Top_Xtr": 0.9686,
+            "Bot_Xtr": 0.7684
+          },
+          {
+            "alpha": -1.25,
+            "CL": -0.1861,
+            "CD": 0.0104,
+            "CDp": 0.00519,
+            "CM": 0.0054,
+            "Top_Xtr": 0.9593,
+            "Bot_Xtr": 0.7978
+          },
+          {
+            "alpha": -1.0,
+            "CL": -0.1454,
+            "CD": 0.01034,
+            "CDp": 0.00519,
+            "CM": 0.0033,
+            "Top_Xtr": 0.9509,
+            "Bot_Xtr": 0.8255
+          },
+          {
+            "alpha": -0.75,
+            "CL": -0.1048,
+            "CD": 0.01028,
+            "CDp": 0.00521,
+            "CM": 0.0015,
+            "Top_Xtr": 0.9424,
+            "Bot_Xtr": 0.8482
+          },
+          {
+            "alpha": -0.5,
+            "CL": -0.07,
+            "CD": 0.01025,
+            "CDp": 0.00522,
+            "CM": 0.0009,
+            "Top_Xtr": 0.9304,
+            "Bot_Xtr": 0.8696
+          },
+          {
+            "alpha": -0.25,
+            "CL": -0.035,
+            "CD": 0.01022,
+            "CDp": 0.00521,
+            "CM": 0.0004,
+            "Top_Xtr": 0.9182,
+            "Bot_Xtr": 0.8886
+          },
+          {
+            "alpha": 0.0,
+            "CL": 0.0,
+            "CD": 0.0102,
+            "CDp": 0.0052,
+            "CM": 0.0,
+            "Top_Xtr": 0.9046,
+            "Bot_Xtr": 0.9047
+          },
+          {
+            "alpha": 0.25,
+            "CL": 0.035,
+            "CD": 0.01022,
+            "CDp": 0.00521,
+            "CM": -0.0004,
+            "Top_Xtr": 0.8886,
+            "Bot_Xtr": 0.9182
+          },
+          {
+            "alpha": 0.5,
+            "CL": 0.07,
+            "CD": 0.01025,
+            "CDp": 0.00522,
+            "CM": -0.0009,
+            "Top_Xtr": 0.8696,
+            "Bot_Xtr": 0.9304
+          },
+          {
+            "alpha": 0.75,
+            "CL": 0.1048,
+            "CD": 0.01028,
+            "CDp": 0.00521,
+            "CM": -0.0015,
+            "Top_Xtr": 0.8482,
+            "Bot_Xtr": 0.9424
+          },
+          {
+            "alpha": 1.0,
+            "CL": 0.1454,
+            "CD": 0.01034,
+            "CDp": 0.00519,
+            "CM": -0.0033,
+            "Top_Xtr": 0.8255,
+            "Bot_Xtr": 0.951
+          },
+          {
+            "alpha": 1.25,
+            "CL": 0.1861,
+            "CD": 0.0104,
+            "CDp": 0.00518,
+            "CM": -0.0054,
+            "Top_Xtr": 0.7978,
+            "Bot_Xtr": 0.9593
+          },
+          {
+            "alpha": 1.5,
+            "CL": 0.2255,
+            "CD": 0.01048,
+            "CDp": 0.00517,
+            "CM": -0.0072,
+            "Top_Xtr": 0.7684,
+            "Bot_Xtr": 0.9686
+          },
+          {
+            "alpha": 1.75,
+            "CL": 0.2684,
+            "CD": 0.01056,
+            "CDp": 0.00512,
+            "CM": -0.01,
+            "Top_Xtr": 0.7357,
+            "Bot_Xtr": 0.9756
+          },
+          {
+            "alpha": 2.0,
+            "CL": 0.3085,
+            "CD": 0.01066,
+            "CDp": 0.00509,
+            "CM": -0.0122,
+            "Top_Xtr": 0.7012,
+            "Bot_Xtr": 0.9843
+          },
+          {
+            "alpha": 2.25,
+            "CL": 0.3513,
+            "CD": 0.01075,
+            "CDp": 0.00504,
+            "CM": -0.0152,
+            "Top_Xtr": 0.6637,
+            "Bot_Xtr": 0.9915
+          },
+          {
+            "alpha": 2.5,
+            "CL": 0.3942,
+            "CD": 0.01085,
+            "CDp": 0.00497,
+            "CM": -0.0183,
+            "Top_Xtr": 0.6249,
+            "Bot_Xtr": 0.9979
+          },
+          {
+            "alpha": 2.75,
+            "CL": 0.4235,
+            "CD": 0.01094,
+            "CDp": 0.00492,
+            "CM": -0.0188,
+            "Top_Xtr": 0.5886,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.0,
+            "CL": 0.4462,
+            "CD": 0.01104,
+            "CDp": 0.00489,
+            "CM": -0.018,
+            "Top_Xtr": 0.5545,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.25,
+            "CL": 0.4689,
+            "CD": 0.01118,
+            "CDp": 0.00489,
+            "CM": -0.0172,
+            "Top_Xtr": 0.5202,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.5,
+            "CL": 0.4915,
+            "CD": 0.01134,
+            "CDp": 0.00492,
+            "CM": -0.0163,
+            "Top_Xtr": 0.4857,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 3.75,
+            "CL": 0.5138,
+            "CD": 0.01153,
+            "CDp": 0.00498,
+            "CM": -0.0155,
+            "Top_Xtr": 0.4509,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.0,
+            "CL": 0.5357,
+            "CD": 0.01176,
+            "CDp": 0.00507,
+            "CM": -0.0145,
+            "Top_Xtr": 0.416,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.25,
+            "CL": 0.5571,
+            "CD": 0.01203,
+            "CDp": 0.00521,
+            "CM": -0.0134,
+            "Top_Xtr": 0.381,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.5,
+            "CL": 0.5782,
+            "CD": 0.01234,
+            "CDp": 0.00536,
+            "CM": -0.0123,
+            "Top_Xtr": 0.3456,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 4.75,
+            "CL": 0.599,
+            "CD": 0.01268,
+            "CDp": 0.00556,
+            "CM": -0.0111,
+            "Top_Xtr": 0.3101,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.0,
+            "CL": 0.6195,
+            "CD": 0.01306,
+            "CDp": 0.0058,
+            "CM": -0.0099,
+            "Top_Xtr": 0.2744,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.25,
+            "CL": 0.6395,
+            "CD": 0.0135,
+            "CDp": 0.00609,
+            "CM": -0.0086,
+            "Top_Xtr": 0.2398,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.5,
+            "CL": 0.6591,
+            "CD": 0.014,
+            "CDp": 0.00643,
+            "CM": -0.0072,
+            "Top_Xtr": 0.2077,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 5.75,
+            "CL": 0.6784,
+            "CD": 0.01455,
+            "CDp": 0.00683,
+            "CM": -0.0058,
+            "Top_Xtr": 0.1796,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.0,
+            "CL": 0.6971,
+            "CD": 0.01516,
+            "CDp": 0.00729,
+            "CM": -0.0043,
+            "Top_Xtr": 0.1563,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.25,
+            "CL": 0.7161,
+            "CD": 0.01577,
+            "CDp": 0.00781,
+            "CM": -0.0028,
+            "Top_Xtr": 0.1374,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.5,
+            "CL": 0.7351,
+            "CD": 0.01641,
+            "CDp": 0.00837,
+            "CM": -0.0013,
+            "Top_Xtr": 0.1223,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 6.75,
+            "CL": 0.7535,
+            "CD": 0.01712,
+            "CDp": 0.009,
+            "CM": 0.0003,
+            "Top_Xtr": 0.1104,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.0,
+            "CL": 0.7725,
+            "CD": 0.01776,
+            "CDp": 0.00961,
+            "CM": 0.0018,
+            "Top_Xtr": 0.1005,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.25,
+            "CL": 0.7919,
+            "CD": 0.01844,
+            "CDp": 0.01031,
+            "CM": 0.0033,
+            "Top_Xtr": 0.0925,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.5,
+            "CL": 0.8096,
+            "CD": 0.01936,
+            "CDp": 0.01114,
+            "CM": 0.0049,
+            "Top_Xtr": 0.0858,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 7.75,
+            "CL": 0.83,
+            "CD": 0.01995,
+            "CDp": 0.01181,
+            "CM": 0.0062,
+            "Top_Xtr": 0.0799,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.0,
+            "CL": 0.8481,
+            "CD": 0.02112,
+            "CDp": 0.01285,
+            "CM": 0.0077,
+            "Top_Xtr": 0.0749,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.25,
+            "CL": 0.869,
+            "CD": 0.02173,
+            "CDp": 0.01362,
+            "CM": 0.0089,
+            "Top_Xtr": 0.0707,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.5,
+            "CL": 0.889,
+            "CD": 0.02251,
+            "CDp": 0.01438,
+            "CM": 0.0101,
+            "Top_Xtr": 0.0667,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 8.75,
+            "CL": 0.9087,
+            "CD": 0.02387,
+            "CDp": 0.01574,
+            "CM": 0.0112,
+            "Top_Xtr": 0.0635,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.0,
+            "CL": 0.9291,
+            "CD": 0.02472,
+            "CDp": 0.01674,
+            "CM": 0.0124,
+            "Top_Xtr": 0.0604,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.25,
+            "CL": 0.9492,
+            "CD": 0.02559,
+            "CDp": 0.01762,
+            "CM": 0.0135,
+            "Top_Xtr": 0.0575,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.5,
+            "CL": 0.9693,
+            "CD": 0.02734,
+            "CDp": 0.01932,
+            "CM": 0.0143,
+            "Top_Xtr": 0.055,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 9.75,
+            "CL": 0.9882,
+            "CD": 0.02844,
+            "CDp": 0.02068,
+            "CM": 0.0156,
+            "Top_Xtr": 0.0532,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.0,
+            "CL": 1.0067,
+            "CD": 0.02966,
+            "CDp": 0.02206,
+            "CM": 0.0168,
+            "Top_Xtr": 0.0511,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.25,
+            "CL": 1.0251,
+            "CD": 0.03077,
+            "CDp": 0.02323,
+            "CM": 0.0179,
+            "Top_Xtr": 0.0492,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.5,
+            "CL": 1.0445,
+            "CD": 0.03262,
+            "CDp": 0.02503,
+            "CM": 0.0185,
+            "Top_Xtr": 0.0474,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 10.75,
+            "CL": 1.0571,
+            "CD": 0.03445,
+            "CDp": 0.02718,
+            "CM": 0.0203,
+            "Top_Xtr": 0.0462,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.0,
+            "CL": 1.0681,
+            "CD": 0.03636,
+            "CDp": 0.02942,
+            "CM": 0.0222,
+            "Top_Xtr": 0.0451,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.25,
+            "CL": 1.0773,
+            "CD": 0.03842,
+            "CDp": 0.03177,
+            "CM": 0.0241,
+            "Top_Xtr": 0.0441,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.5,
+            "CL": 1.086,
+            "CD": 0.04035,
+            "CDp": 0.0339,
+            "CM": 0.0258,
+            "Top_Xtr": 0.043,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 11.75,
+            "CL": 1.0969,
+            "CD": 0.04194,
+            "CDp": 0.03558,
+            "CM": 0.0272,
+            "Top_Xtr": 0.0419,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.0,
+            "CL": 1.1068,
+            "CD": 0.04366,
+            "CDp": 0.03735,
+            "CM": 0.0286,
+            "Top_Xtr": 0.041,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.25,
+            "CL": 1.1101,
+            "CD": 0.04727,
+            "CDp": 0.04108,
+            "CM": 0.0298,
+            "Top_Xtr": 0.0401,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.5,
+            "CL": 1.0959,
+            "CD": 0.0496,
+            "CDp": 0.04372,
+            "CM": 0.0334,
+            "Top_Xtr": 0.0399,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 12.75,
+            "CL": 1.079,
+            "CD": 0.05258,
+            "CDp": 0.047,
+            "CM": 0.036,
+            "Top_Xtr": 0.0397,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.0,
+            "CL": 1.0599,
+            "CD": 0.05626,
+            "CDp": 0.05095,
+            "CM": 0.0372,
+            "Top_Xtr": 0.0396,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.25,
+            "CL": 1.0385,
+            "CD": 0.06069,
+            "CDp": 0.05564,
+            "CM": 0.0369,
+            "Top_Xtr": 0.0396,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.5,
+            "CL": 1.015,
+            "CD": 0.06603,
+            "CDp": 0.0612,
+            "CM": 0.0352,
+            "Top_Xtr": 0.0396,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 13.75,
+            "CL": 0.9898,
+            "CD": 0.07237,
+            "CDp": 0.06774,
+            "CM": 0.0319,
+            "Top_Xtr": 0.0398,
+            "Bot_Xtr": 1.0
+          },
+          {
+            "alpha": 14.0,
+            "CL": 0.9632,
+            "CD": 0.07976,
+            "CDp": 0.07532,
+            "CM": 0.0275,
+            "Top_Xtr": 0.0399,
+            "Bot_Xtr": 1.0
+          }
+        ],
+        "polar_summary": {
+          "alpha_min_deg": -14.0,
+          "alpha_max_deg": 14.0,
+          "CL_max": 1.1101,
+          "alpha_at_CL_max_deg": 12.25,
+          "CL_min": -1.1063,
+          "alpha_at_CL_min_deg": -12.0,
+          "zero_lift_alpha_deg": 0.0,
+          "CD_at_zero_lift": 0.0102,
+          "CM_at_zero_lift": 0.0
+        },
+        "polar_path": "/home/runner/work/H2-drone-sizing/H2-drone-sizing/data/airfoils/NACA0012_Re200000_XFOIL.csv",
+        "aero_source_mode": "polar_file",
+        "CLmax_used": 1.1101,
+        "CLmax_source": "polar_file"
+      }
+    },
+    "derived_geometry_v3": {
+      "fuselage_total_length_m": 0.8594000000000002,
+      "fuselage_max_diameter_m": 0.22137729577647663,
+      "main_wing_span_m": 3.6,
+      "main_wing_area_m2": 0.9,
+      "main_wing_mac_m": 0.2548,
+      "horizontal_tail_span_m": 0.9159221570593505,
+      "horizontal_tail_area_m2": 0.16972037570309764,
+      "vertical_tail_height_m": 0.5330190749553178,
+      "vertical_tail_area_total_m2": 0.12621891694941925,
+      "main_wing_CLmax_screen": 1.37,
+      "airfoils": {
+        "main_wing": {
+          "code": "NACA6415",
+          "mode": "polar_file",
+          "CLmax_used": 1.37,
+          "Re": 200000
+        },
+        "horizontal_tail": {
+          "code": "NACA0012",
+          "mode": "polar_file",
+          "Re": 200000
+        },
+        "vertical_tail": {
+          "code": "NACA0012",
+          "mode": "polar_file",
+          "Re": 200000
+        }
+      }
+    }
+  },
+  "mass_balance": {
+    "pre_structure_mtow_kg": 14.07179845872551,
+    "closed_mtow_kg": 14.569485348162148,
+    "mass_margin_to_ceiling_kg": 0.43051465183785176,
+    "cg_m": {
+      "x": 0.45540845927232104,
+      "y": 0.0,
+      "z": 0.03141269921562046
+    },
+    "neutral_point_x_m": 0.4913053183378593,
+    "static_margin": 0.1408824924079209,
+    "mass_groups_takeoff_kg": {
+      "airframe": 0.49035000000000006,
+      "avionics": 1.2097,
+      "energy": 5.34109,
+      "fuselage_structure": 0.9684361176000003,
+      "landing_gear": 0.44999999999999996,
+      "payload": 1.2,
+      "propulsion": 1.3783599999999998,
+      "tail_structure": 0.9039770028045965,
+      "wing_structure": 2.627572227757552
+    },
+    "components_takeoff_kg": {
+      "lift_motor_mount_1": 0.0543375,
+      "lift_motor_mount_2": 0.0543375,
+      "lift_motor_mount_3": 0.0543375,
+      "lift_motor_mount_4": 0.0543375,
+      "boom_forward_mount_left": 0.05775,
+      "boom_forward_mount_right": 0.05775,
+      "boom_tail_mount_left": 0.036750000000000005,
+      "boom_tail_mount_right": 0.036750000000000005,
+      "tail_crossmember": 0.084,
+      "payload": 1.2,
+      "buffer_battery": 1.65034,
+      "fuel_cell_system": 1.104132,
+      "hydrogen_cylinder": 1.6362,
+      "hydrogen_regulator": 0.31815,
+      "stored_hydrogen": 0.0619,
+      "lift_propulsion_1": 0.28684,
+      "lift_propulsion_2": 0.28684,
+      "lift_propulsion_3": 0.28684,
+      "lift_propulsion_4": 0.28684,
+      "cruise_propulsion": 0.23099999999999998,
+      "lift_ESC_1": 0.07350000000000001,
+      "lift_ESC_2": 0.07350000000000001,
+      "lift_ESC_3": 0.07350000000000001,
+      "lift_ESC_4": 0.07350000000000001,
+      "cruise_ESC": 0.05607000000000001,
+      "autopilot": 0.07372999999999999,
+      "gps": 0.026250000000000002,
+      "airspeed_sensor": 0.0231,
+      "rc_receiver": 0.0105,
+      "telemetry": 0.021,
+      "power_module": 0.0404,
+      "servos": 0.2625,
+      "misc_electronics": 0.084,
+      "camera": 0.029400000000000003,
+      "wiring_harness_pdb": 0.28875000000000006,
+      "h2_plumbing_mounts": 0.21000000000000002,
+      "wing_joiners_fasteners": 0.1575,
+      "fuel_cell_control_box": 0.360368,
+      "power_module_2": 0.0,
+      "fuselage_nose_shell": 0.11760000000000002,
+      "fuselage_center_a_shell": 0.21018375000000003,
+      "fuselage_center_b_shell": 0.3610950000000001,
+      "fuselage_tail_shell": 0.11760000000000002,
+      "fuselage_longeron_top": 0.0809786838,
+      "fuselage_longeron_bottom": 0.0809786838,
+      "main_wing_shell": 1.7010000000000003,
+      "main_wing_primary_spar": 0.5798076277575518,
+      "main_wing_secondary_spar": 0.18926460000000003,
+      "horizontal_tail_shell": 0.32077151007885457,
+      "horizontal_tail_primary_spar": 0.042827310733480804,
+      "horizontal_tail_secondary_spar": 0.008020730329368732,
+      "vertical_tail_left_shell": 0.1192768765172012,
+      "vertical_tail_right_shell": 0.1192768765172012,
+      "vertical_tail_left_primary_spar": 0.02492326817736835,
+      "vertical_tail_right_primary_spar": 0.02492326817736835,
+      "vertical_tail_left_secondary_spar": 0.0033076498696352243,
+      "vertical_tail_right_secondary_spar": 0.0033076498696352243,
+      "boom_tube_left": 0.11867093126724142,
+      "boom_tube_right": 0.11867093126724142,
+      "landing_leg_nose_tube": 0.004569854076322004,
+      "landing_leg_nose_sleeve": 0.00994798166274178,
+      "landing_leg_wing_left_tube": 0.011171297996370804,
+      "landing_leg_wing_left_sleeve": 0.02431847182883441,
+      "landing_leg_wing_right_tube": 0.011171297996370804,
+      "landing_leg_wing_right_sleeve": 0.02431847182883441,
+      "landing_gear_margin": 0.36450262461052574
+    }
+  },
+  "manufacturing_mass": {
+    "enabled": true,
+    "printed_shells": {
+      "fuselage_sections": [
+        {
+          "name": "nose",
+          "length_m": 0.14,
+          "mass": {
+            "mass_mode": "linear",
+            "specific_mass_kg_per_m": 0.8,
+            "hardcoded_mass_kg": null,
+            "status": "engineering_assumption",
+            "source": "Printed fuselage nose fairing ~1.2 kg/m2 skin equivalent (0.8 kg/m)"
+          }
+        },
+        {
+          "name": "center_a",
+          "length_m": 0.23550000000000001,
+          "mass": {
+            "mass_mode": "linear",
+            "specific_mass_kg_per_m": 0.85,
+            "hardcoded_mass_kg": null,
+            "status": "engineering_assumption",
+            "source": "Printed fuselage center_a fairing (0.85 kg/m)"
+          }
+        },
+        {
+          "name": "center_b",
+          "length_m": 0.3439000000000001,
+          "mass": {
+            "mass_mode": "linear",
+            "specific_mass_kg_per_m": 1,
+            "hardcoded_mass_kg": null,
+            "status": "engineering_assumption",
+            "source": "Printed fuselage center_b fairing (1.0 kg/m)"
+          }
+        },
+        {
+          "name": "tail",
+          "length_m": 0.14,
+          "mass": {
+            "mass_mode": "linear",
+            "specific_mass_kg_per_m": 0.8,
+            "hardcoded_mass_kg": null,
+            "status": "engineering_assumption",
+            "source": "Printed fuselage tail fairing (0.8 kg/m)"
+          }
+        }
+      ],
+      "main_wing_shell": {
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m": null,
+        "source": "Printed wing shell 1.8 kg/m2 planform (confirm with weighed print segment); 15% root thickness"
+      },
+      "horizontal_tail_shell": {
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m": null,
+        "source": "Printed HT shell 1.8 kg/m2 planform (confirm with weighed print segment)"
+      },
+      "vertical_tail_shell": {
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m": null,
+        "source": "Printed VT shells 1.8 kg/m2 total planform (confirm with weighed print segment)"
+      }
+    },
+    "ledger": [
+      {
+        "name": "fuselage_nose_shell",
+        "length_m": 0.14,
+        "count": 1,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.8,
+        "mass_kg": 0.11200000000000002,
+        "hardcoded": false,
+        "component_names": [
+          "fuselage_nose_shell"
+        ]
+      },
+      {
+        "name": "fuselage_center_a_shell",
+        "length_m": 0.23550000000000001,
+        "count": 1,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.85,
+        "mass_kg": 0.20017500000000002,
+        "hardcoded": false,
+        "component_names": [
+          "fuselage_center_a_shell"
+        ]
+      },
+      {
+        "name": "fuselage_center_b_shell",
+        "length_m": 0.3439000000000001,
+        "count": 1,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 1,
+        "mass_kg": 0.3439000000000001,
+        "hardcoded": false,
+        "component_names": [
+          "fuselage_center_b_shell"
+        ]
+      },
+      {
+        "name": "fuselage_tail_shell",
+        "length_m": 0.14,
+        "count": 1,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.8,
+        "mass_kg": 0.11200000000000002,
+        "hardcoded": false,
+        "component_names": [
+          "fuselage_tail_shell"
+        ]
+      },
+      {
+        "name": "fuselage_longerons",
+        "length_m": 0.8594000000000002,
+        "count": 2,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.08974,
+        "mass_kg": 0.15424511200000002,
+        "hardcoded": false,
+        "component_names": [
+          "fuselage_longeron_top",
+          "fuselage_longeron_bottom"
+        ]
+      },
+      {
+        "name": "main_wing_shell",
+        "length_m": 3.6,
+        "area_m2": 0.9,
+        "count": 1,
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m": null,
+        "specific_mass_kg_per_m2": 1.8,
+        "mass_kg": 1.62,
+        "hardcoded": false,
+        "component_names": [
+          "main_wing_shell"
+        ]
+      },
+      {
+        "name": "main_wing_primary_spar",
+        "length_m": 3.6,
+        "count": 1,
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.08784,
+        "mass_kg": 0.5521977407214779,
+        "hardcoded": false,
+        "component_names": [
+          "main_wing_primary_spar"
+        ]
+      },
+      {
+        "name": "main_wing_secondary_spar",
+        "length_m": 3.6,
+        "count": 1,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.05007,
+        "mass_kg": 0.18025200000000002,
+        "hardcoded": false,
+        "component_names": [
+          "main_wing_secondary_spar"
+        ]
+      },
+      {
+        "name": "horizontal_tail_shell",
+        "length_m": 0.9159221570593505,
+        "area_m2": 0.16972037570309764,
+        "count": 1,
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m": null,
+        "specific_mass_kg_per_m2": 1.8,
+        "mass_kg": 0.30549667626557575,
+        "hardcoded": false,
+        "component_names": [
+          "horizontal_tail_shell"
+        ]
+      },
+      {
+        "name": "horizontal_tail_primary_spar",
+        "length_m": 0.9159221570593505,
+        "count": 1,
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.01668,
+        "mass_kg": 0.04078791498426743,
+        "hardcoded": false,
+        "component_names": [
+          "horizontal_tail_primary_spar"
+        ]
+      },
+      {
+        "name": "horizontal_tail_secondary_spar",
+        "length_m": 0.9159221570593505,
+        "count": 1,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.00834,
+        "mass_kg": 0.0076387907898749835,
+        "hardcoded": false,
+        "component_names": [
+          "horizontal_tail_secondary_spar"
+        ]
+      },
+      {
+        "name": "vertical_tail_shells",
+        "length_m": 0.5330190749553178,
+        "area_m2": 0.12621891694941925,
+        "count": 2,
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m": null,
+        "specific_mass_kg_per_m2": 1.8,
+        "mass_kg": 0.22719405050895466,
+        "hardcoded": false,
+        "component_names": [
+          "vertical_tail_left_shell",
+          "vertical_tail_right_shell"
+        ]
+      },
+      {
+        "name": "vertical_tail_primary_spars",
+        "length_m": 0.5330190749553178,
+        "count": 2,
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.00984,
+        "mass_kg": 0.047472891766415906,
+        "hardcoded": false,
+        "component_names": [
+          "vertical_tail_left_primary_spar",
+          "vertical_tail_right_primary_spar"
+        ]
+      },
+      {
+        "name": "vertical_tail_secondary_spars",
+        "length_m": 0.5330190749553178,
+        "count": 2,
+        "mass_mode": "linear",
+        "specific_mass_kg_per_m": 0.00591,
+        "mass_kg": 0.006300285465971856,
+        "hardcoded": false,
+        "component_names": [
+          "vertical_tail_left_secondary_spar",
+          "vertical_tail_right_secondary_spar"
+        ]
+      },
+      {
+        "name": "boom_tubes",
+        "length_m": 0.9136600000000001,
+        "count": 2,
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.01592,
+        "mass_kg": 0.22603986908045984,
+        "hardcoded": false,
+        "component_names": [
+          "boom_tube_left",
+          "boom_tube_right"
+        ]
+      },
+      {
+        "name": "landing_leg_tubes",
+        "length_m": 0.307175,
+        "count": 3,
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.05,
+        "mass_kg": 0.02563090482767963,
+        "hardcoded": false,
+        "component_names": [
+          "landing_leg_nose_tube",
+          "landing_leg_wing_left_tube",
+          "landing_leg_wing_right_tube"
+        ]
+      },
+      {
+        "name": "landing_leg_sleeves",
+        "length_m": 0.307175,
+        "count": 3,
+        "mass_mode": "printed_annulus",
+        "specific_mass_kg_per_m": 0.07539822368615504,
+        "mass_kg": 0.05579516697181962,
+        "hardcoded": false,
+        "component_names": [
+          "landing_leg_nose_sleeve",
+          "landing_leg_wing_left_sleeve",
+          "landing_leg_wing_right_sleeve"
+        ]
+      },
+      {
+        "name": "landing_gear_margin",
+        "length_m": 0.0,
+        "count": 1,
+        "mass_mode": "hardcoded",
+        "specific_mass_kg_per_m": null,
+        "mass_kg": 0.3685739282005007,
+        "hardcoded": true,
+        "component_names": [
+          "landing_gear_margin"
+        ],
+        "note": "Floor 3% of mtow_ceiling (0.450 kg)"
+      }
+    ]
+  },
+  "packaging": {
+    "enabled": true,
+    "energy_bay_order": "fuel_cell_forward",
+    "energy_bay_order_mode": "hardcoded",
+    "stations_m": {
+      "fuel_cell": {
+        "x": 0.25525000000000003,
+        "z": -0.03310930732488546
+      },
+      "hydrogen_cylinder": {
+        "x": 0.5930000000000001,
+        "z": -0.03550930732488546
+      },
+      "battery": {
+        "x": 0.22150000000000003,
+        "z": 0.06229069267511454
+      },
+      "lift_row_center_x_m": 0.47574
+    },
+    "clearances_m": {
+      "fuselage_bottom_m": 0.003,
+      "fuselage_wall_m": 0.01,
+      "aft_tail_beyond_motor_m": 0.02,
+      "component_m": 0.003,
+      "bottom_to_top_m": 0.01,
+      "pdb_all_around_m": 0.02,
+      "cube_front_connector_m": 0.05,
+      "nose_bay_raise_m": 0.02,
+      "cylinder_to_top_inner_m": 0.005,
+      "component_axial_m": 0.01,
+      "longeron_boss_clearance_m": 0.01
+    }
+  },
+  "propulsion": {
+    "lift": {
+      "combo_name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
+      "prop_diameter_in": 22.0,
+      "max_thrust_per_motor_N": 71.02956594999999,
+      "structural_limit_thrust_per_motor_N": 79.553113864,
+      "zero_pitch_15kg_front_motor_N": 63.552926798560954,
+      "zero_pitch_15kg_rear_motor_N": 55.20938570143904,
+      "record": {
+        "name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
+        "role": "lift",
+        "motor_kv": 150,
+        "voltage_min_V": 36.0,
+        "voltage_max_V": 50.4,
+        "max_power_W": 1272.0,
+        "max_thrust_N": 71.02956594999999,
+        "prop_diameter_in": 22.0,
+        "prop_pitch_in": 6.6,
+        "motor_mass_kg": 0.239,
+        "prop_mass_kg": 0.045,
+        "motor_diameter_m": 0.0871,
+        "motor_length_m": 0.02705,
+        "peak_current_A": 26.5,
+        "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
+        "source_url": "https://www.ligpower.com/product/u8-lite-kv100-u-efficiency.html",
+        "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption"
+      }
+    },
+    "pusher": {
+      "combo_name": "Tmotor_MN501S_160kV_P18x10_12S",
+      "prop_diameter_in": 18.0,
+      "max_electrical_power_W": 1000.0,
+      "record": {
+        "name": "Tmotor_MN501S_160kV_P18x10_12S",
+        "motor_kv": 160,
+        "voltage_min_V": 36.0,
+        "voltage_max_V": 50.4,
+        "max_power_W": 1000.0,
+        "max_thrust_N": 42.0,
+        "prop_diameter_in": 18.0,
+        "prop_pitch_in": 10.0,
+        "motor_mass_kg": 0.175,
+        "prop_mass_kg": 0.045,
+        "motor_resistance_ohm": 0.05,
+        "no_load_current_A": 1.5,
+        "esc_efficiency": 0.97,
+        "status": "engineering_assumption_screening",
+        "source": "Screening pusher combo: MN501S-class 160 kV with 18x10 on 12S; replace with measured forward-flight map.",
+        "role": "pusher",
+        "motor_diameter_m": 0.0556,
+        "motor_length_m": 0.0339
+      }
+    }
+  },
+  "energy": {
+    "fuel_cell": {
+      "net_power_W": 800.0,
+      "module_mass_kg": 1.45,
+      "record": {
+        "name": "Intelligent Energy IE-SOAR 800 reference",
+        "rated_net_power_W": 800,
+        "module_mass_kg": 1.45
+      }
+    },
+    "hydrogen": {
+      "storage_name": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
+      "pressure_bar": 300.0,
+      "water_volume_L": 3.0,
+      "nominal_h2_mass_kg": 0.0619,
+      "cylinder_mass_kg": 1.62,
+      "regulator_mass_kg": 0.315,
+      "reference_net_energy_Wh": 1030.0,
+      "mission_energy_reserve_fraction": 0.15,
+      "usable_mission_energy_Wh": 875.5,
+      "cylinder_length_m": 0.425,
+      "cylinder_diameter_m": 0.115
+    },
+    "battery": {
+      "name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
+      "mass_kg": 1.634,
+      "capacity_Ah": 5.5,
+      "energy_Wh": 244.2,
+      "record": {
+        "name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
+        "voltage_V": 44.4,
+        "series_cells": 12,
+        "capacity_mAh": 5500,
+        "capacity_Ah": 5.5,
+        "mass_kg": 1.634,
+        "max_discharge_C": 30,
+        "continuous_discharge_current_A": 165.0,
+        "energy_Wh": 244.2,
+        "length_m": 0.163,
+        "width_m": 0.092,
+        "height_m": 0.051,
+        "packaging_arrangement": "two identical 6S packs side-by-side, connected in series",
+        "status": "derived_from_user_supplied_pack_data",
+        "source": "Derived from user-supplied batteries(2).py; two identical 6S packs in series"
+      }
+    },
+    "mission_ems": {
+      "feasible": true,
+      "bus_energy_demand_Wh": 757.9898755705507,
+      "fc_net_energy_used_Wh": 739.8402375353747,
+      "battery_net_energy_out_Wh": 18.149638035169826,
+      "h2_used_kg": 0.04446224340138516,
+      "h2_remaining_physical_kg": 0.017437756598614837,
+      "final_battery_soc": 0.9252849691764226,
+      "warnings": [
+        "battery_charge_voltage_limited"
+      ],
+      "failure_reasons": []
+    }
+  },
+  "performance": {
+    "cruise_drag_N": 13.122153219047883,
+    "cruise_bus_power_W": 366.3557512940312,
+    "landing_legs_CdA_m2": 0.0015,
+    "landing_legs_drag_N": 0.29159999999999997,
+    "forward_transition_duration_s": 15.999999999999748,
+    "reverse_transition_duration_s": 21.11999999999964,
+    "mission_energy_Wh": 757.989875570453,
+    "drag_breakdown": {
+      "mass_kg": 14.569485348162148,
+      "speed_mps": 18.0,
+      "lift_prop_diameter_in": 22.0,
+      "lift_prop_state": "stopped_aligned",
+      "dynamic_pressure_Pa": 194.39999999999998,
+      "non_lift_prop_parasite_drag_N": 7.923862458611901,
+      "cooling_drag_N": 0.25946568,
+      "landing_legs_drag_N": 0.29159999999999997,
+      "lift_prop_drag_N": 2.2356,
+      "induced_drag_N": 2.9626907604359816,
+      "total_drag_N": 13.122153219047883,
+      "lift_to_drag": 10.888292577025805,
+      "propulsive_power_W": 236.1987579428619,
+      "cruise_propulsion_electrical_W": 331.3557512940312,
+      "auxiliary_power_W": 35.0,
+      "total_cruise_bus_power_W": 366.3557512940312,
+      "lift_prop_CdA_total_m2": 0.0115,
+      "non_lift_prop_parasite_CdA_m2": 0.0407606093549995,
+      "cooling_openings_CdA_m2": 0.0013347,
+      "landing_legs_CdA_m2": 0.0015,
+      "induced_drag_factor_k": 0.025391907064205705,
+      "wing_area_m2": 0.9,
+      "wing_span_m": 3.6,
+      "wing_aspect_ratio": 14.4
+    },
+    "mission_stage_energy_Wh": {
+      "Preflight / ready": 0.6666666666666666,
+      "VTOL takeoff": 5.083956016837472,
+      "Vertical climb": 6.7955639012178715,
+      "Forward transition": 6.699816713862792,
+      "Wing-borne climb": 4.440660629908831,
+      "Cruise": 719.2662465155715,
+      "Reverse transition": 4.614855291871494,
+      "Vertical descent": 5.338153817679345,
+      "Landing hover": 5.08395601683701
+    }
+  },
+  "structures": {
+    "wing_spar_od_mm": 32.0,
+    "wing_spar_id_mm": 30.0,
+    "boom_od_mm": 26.000000000000004,
+    "boom_id_mm": 24.0,
+    "horizontal_tail_spar_od_mm": 10.0,
+    "vertical_tail_spar_od_mm": 10.0,
+    "landing_leg_od_mm": 8.0,
+    "landing_leg_id_mm": 6.0,
+    "motor_mount_limit_thrust_N": 79.553113864,
+    "carbon_fiber_tubes": {
+      "section_mode": "auto",
+      "note": "Primary load-carrying CFRP tubes are auto-sized by the structural solver on an even-mm COTS-style screening grid and fed back into mass/CG closure. Secondary spars and fuselage longerons remain user-defined below.",
+      "main_wing_secondary_spar": {
+        "od_mm": 10
+      },
+      "horizontal_tail_secondary_spar": {
+        "od_mm": 4
+      },
+      "vertical_tail_secondary_spar": {
+        "od_mm": 4
+      },
+      "fuselage_longerons": {
+        "od_mm": 8,
+        "boss_od_mm": 14
+      },
+      "resolved_primary_sections": {
+        "main_wing_primary_spar": {
+          "od_m": 0.032,
+          "id_m": 0.03
+        },
+        "boom_tubes": {
+          "od_m": 0.026000000000000002,
+          "id_m": 0.024
+        },
+        "horizontal_tail_primary_spar": {
+          "od_m": 0.01,
+          "id_m": 0.008
+        },
+        "vertical_tail_primary_spar": {
+          "od_m": 0.01,
+          "id_m": 0.008
+        },
+        "landing_legs": {
+          "od_m": 0.008,
+          "id_m": 0.006
+        }
+      }
+    },
+    "structural_closure_iterations": 2
+  },
+  "fuel_cell_cooling": {
+    "required_airflow_cfm": 100.97075994936881,
+    "estimated_airflow_cfm": 118.1962687388564,
+    "airflow_margin": 1.1705989813102844,
+    "geometry_pass": true,
+    "cooling_drag_N": 0.26487121500000005,
+    "detail": {
+      "enabled": true,
+      "architecture": "cross_fuselage",
+      "fan_flow_direction": "suction_through_stack_to_fan_side",
+      "fan_side": "right",
+      "inlet_side": "left",
+      "exhaust_side": "right",
+      "fuel_cell_net_power_W": 800.0,
+      "efficiency_screen": 0.5,
+      "waste_heat_nominal_W": 800.0,
+      "waste_heat_design_W": 880.0000000000001,
+      "allowable_air_temperature_rise_C": 15.0,
+      "required_air_mass_flow_kg_s": 0.05837479270315092,
+      "required_air_volume_flow_m3_s": 0.047652892002572174,
+      "required_airflow_cfm": 100.97075994936881,
+      "assumed_module_zero_external_pressure_airflow_cfm": 150.0,
+      "assumed_external_shutoff_pressure_Pa": 90.0,
+      "inlet_free_area_m2": 0.012240000000000001,
+      "exhaust_free_area_m2": 0.01404,
+      "minimum_flow_area_m2": 0.012240000000000001,
+      "recommended_minimum_free_area_m2": 0.009530578400514435,
+      "inlet_velocity_at_required_flow_mps": 3.893210130929099,
+      "exhaust_velocity_at_required_flow_mps": 3.39408062696383,
+      "total_external_loss_coefficient_K": 1.5,
+      "estimated_external_pressure_drop_at_required_flow_Pa": 13.925571957278994,
+      "estimated_operating_airflow_m3_s": 0.055782426834699986,
+      "estimated_operating_airflow_cfm": 118.1962687388564,
+      "airflow_margin_ratio": 1.1705989813102844,
+      "airflow_screen_pass": true,
+      "fuselage_width_m": 0.14900000000000002,
+      "fuselage_wall_keepout_m": 0.01,
+      "fuel_cell_width_m": 0.1084,
+      "inlet_side_plenum_gap_m": 0.010300000000000017,
+      "exhaust_side_plenum_gap_m": 0.010300000000000017,
+      "required_inlet_side_plenum_gap_m": 0.004,
+      "required_exhaust_side_plenum_gap_m": 0.01,
+      "minimum_fuselage_width_for_plenums_m": 0.1424,
+      "plenum_geometry_pass": true,
+      "inlet_panel_fits_fc_face": true,
+      "exhaust_panel_fits_fc_face": true,
+      "side_opening_geometry_pass": true,
+      "overall_geometry_pass": true,
+      "cooling_openings_CdA_m2": 0.0013347,
+      "cooling_drag_at_cruise_N": 0.26487121500000005,
+      "estimated_cruise_ram_pressure_Pa": 198.45000000000002,
+      "credited_cruise_ram_pressure_Pa": 0.0,
+      "inlet_geometry": {
+        "slot_count": 12,
+        "slot_length_x_m": 0.17,
+        "slot_width_z_m": 0.006,
+        "slot_gap_z_m": 0.003,
+        "panel_length_x_m": 0.17,
+        "panel_height_z_m": 0.10500000000000001,
+        "gross_area_m2": 0.01785,
+        "free_area_m2": 0.012240000000000001,
+        "open_fraction": 0.6857142857142857,
+        "type": "naca_style_flush_side_inlet",
+        "side": "left",
+        "center_x_m": 0.25525000000000003,
+        "center_z_m": -0.03310930732488546,
+        "recess_depth_y_m": 0.008,
+        "ramp_length_x_m": 0.17,
+        "ramp_angle_deg": 2.6942842898561006,
+        "sidewall_angle_deg": 7.0,
+        "lip_radius_m": 0.002,
+        "cruise_pressure_recovery_fraction_screen": 0.15
+      },
+      "exhaust_geometry": {
+        "slot_count": 12,
+        "slot_length_x_m": 0.18,
+        "slot_width_z_m": 0.0065,
+        "slot_gap_z_m": 0.003,
+        "panel_length_x_m": 0.18,
+        "panel_height_z_m": 0.111,
+        "gross_area_m2": 0.01998,
+        "free_area_m2": 0.01404,
+        "open_fraction": 0.7027027027027026,
+        "type": "flush_fan_exhaust_grille",
+        "side": "right",
+        "center_x_m": 0.25525000000000003,
+        "center_z_m": -0.03310930732488546,
+        "fan_shroud_depth_y_m": 0.01,
+        "louvre_angle_deg": 15.0,
+        "lip_radius_m": 0.002
+      },
+      "fan_geometry": {
+        "count": 2,
+        "diameter_m": 0.08,
+        "center_spacing_m": 0.086,
+        "total_span_x_m": 0.16599999999999998,
+        "assumed_module_airflow_no_external_duct_cfm": 150.0,
+        "assumed_external_shutoff_pressure_Pa": 90.0,
+        "fan_data_status": "engineering_assumption"
+      },
+      "evidence_status": "engineering_assumption",
+      "warning": "Supplier fan airflow/static-pressure data are not available in the supplied IE-SOAR documents; airflow PASS/FAIL therefore uses explicit engineering-assumption fan capacity and must be replaced by supplier or bench data."
+    }
+  },
+  "gates": [
+    {
+      "name": "mass_ceiling",
+      "status": "PASS",
+      "note": "Structurally closed mass 14.569 kg vs 15.0 kg ceiling."
+    },
+    {
+      "name": "packaging",
+      "status": "PASS",
+      "note": "0 packaging collision/containment failures remain."
+    },
+    {
+      "name": "fuel_cell_cooling_airflow_screen",
+      "status": "PASS",
+      "note": "Estimated fan/duct operating flow 118.2 CFM vs 101.0 CFM required by the configured thermal screen."
+    },
+    {
+      "name": "fuel_cell_cooling_geometry",
+      "status": "PASS",
+      "note": "Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps 10.3/10.3 mm vs 4.0/10.0 mm required."
+    },
+    {
+      "name": "fuel_cell_cooling_fan_curve",
+      "status": "NOT_EVALUATED",
+      "note": "IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data."
+    },
+    {
+      "name": "lift_prop_clearance",
+      "status": "PASS",
+      "note": "Collision-free lift-row geometry screen."
+    },
+    {
+      "name": "15kg_stall_margin",
+      "status": "PASS",
+      "note": "Wing area 0.900 m\u00b2 vs minimum 0.882 m\u00b2 screen."
+    },
+    {
+      "name": "cruise_power",
+      "status": "PASS",
+      "note": "366.4 W vs configured gate."
+    },
+    {
+      "name": "mission_ems",
+      "status": "PASS",
+      "note": "Dynamic mission profile through hybrid H2/battery EMS."
+    },
+    {
+      "name": "transition",
+      "status": "PASS",
+      "note": "Forward and reverse point-mass transition completion on closed mass."
+    },
+    {
+      "name": "current_longitudinal_stability",
+      "status": "PASS",
+      "note": "Closed-aircraft static margin 14.09% MAC."
+    },
+    {
+      "name": "payload_off_static_margin",
+      "status": "FAIL",
+      "note": "Payload-off static margin 1.69% MAC (CG x=0.4870 m) vs minimum 5.0% MAC."
+    },
+    {
+      "name": "current_layout_6dof",
+      "status": "FAIL",
+      "note": "Actual closed geometry/control 6-DOF gate set."
+    },
+    {
+      "name": "sixdof_linear_aero_validity",
+      "status": "PASS",
+      "note": "6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 5.4 deg."
+    },
+    {
+      "name": "stability_screen_6dof",
+      "status": "FAIL",
+      "note": "Explicit +12% SM reference screen."
+    },
+    {
+      "name": "15kg_zero_pitch_motor_thrust",
+      "status": "PASS",
+      "note": "Front/rear requirement 63.6/55.2 N vs available 71.0/81.7 N (rear recovery x1.15)."
+    },
+    {
+      "name": "recommended_structure_screen",
+      "status": "PASS",
+      "note": "Recommended structural member screens. Audit reference/current/legacy sections and the legacy partial-feedback mass gate are excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately."
+    },
+    {
+      "name": "structural_mass_geometry_consistency",
+      "status": "PASS",
+      "note": "All verified primary sections match mass/CAD geometry."
+    },
+    {
+      "name": "motor_mount",
+      "status": "NOT_EVALUATED",
+      "note": "Controlled mount CAD, fasteners and material allowables are still required."
+    },
+    {
+      "name": "selected_battery_database_record",
+      "status": "PASS",
+      "note": "Selected battery mass/envelope are present in the controlled hardware database; final release still requires supplier/measured validation."
+    },
+    {
+      "name": "certified_hydrogen_cylinder_mass",
+      "status": "PASS",
+      "note": "Certified cylinder mass is present."
+    }
+  ],
+  "hardware_selection": {
+    "mode": "auto",
+    "bus_nominal_voltage_V": 44.400000000000006,
+    "bus_max_voltage_V": 48.0,
+    "bus_voltage_ceiling_V": 48.0,
+    "requirements": {
+      "lift_thrust_per_motor_N": 59.575398750000005,
+      "minimum_pusher_power_W": 750.0,
+      "minimum_battery_capacity_Ah": 5.0,
+      "battery_screen_current_A": 143.97297297297297
+    },
+    "selected_lift_combo": {
+      "name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
+      "role": "lift",
+      "motor_kv": 150,
+      "voltage_min_V": 36.0,
+      "voltage_max_V": 50.4,
+      "max_power_W": 1272.0,
+      "max_thrust_N": 71.02956594999999,
+      "prop_diameter_in": 22.0,
+      "prop_pitch_in": 6.6,
+      "motor_mass_kg": 0.239,
+      "prop_mass_kg": 0.045,
+      "motor_diameter_m": 0.0871,
+      "motor_length_m": 0.02705,
+      "peak_current_A": 26.5,
+      "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
+      "source_url": "https://www.ligpower.com/product/u8-lite-kv100-u-efficiency.html",
+      "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption"
+    },
+    "selected_pusher_combo": {
+      "name": "Tmotor_MN501S_160kV_P18x10_12S",
+      "motor_kv": 160,
+      "voltage_min_V": 36.0,
+      "voltage_max_V": 50.4,
+      "max_power_W": 1000.0,
+      "max_thrust_N": 42.0,
+      "prop_diameter_in": 18.0,
+      "prop_pitch_in": 10.0,
+      "motor_mass_kg": 0.175,
+      "prop_mass_kg": 0.045,
+      "motor_resistance_ohm": 0.05,
+      "no_load_current_A": 1.5,
+      "esc_efficiency": 0.97,
+      "status": "engineering_assumption_screening",
+      "source": "Screening pusher combo: MN501S-class 160 kV with 18x10 on 12S; replace with measured forward-flight map.",
+      "role": "pusher",
+      "motor_diameter_m": 0.0556,
+      "motor_length_m": 0.0339
+    },
+    "selected_battery": {
+      "name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
+      "voltage_V": 44.4,
+      "series_cells": 12,
+      "capacity_mAh": 5500,
+      "capacity_Ah": 5.5,
+      "mass_kg": 1.634,
+      "max_discharge_C": 30,
+      "continuous_discharge_current_A": 165.0,
+      "energy_Wh": 244.2,
+      "length_m": 0.163,
+      "width_m": 0.092,
+      "height_m": 0.051,
+      "packaging_arrangement": "two identical 6S packs side-by-side, connected in series",
+      "status": "derived_from_user_supplied_pack_data",
+      "source": "Derived from user-supplied batteries(2).py; two identical 6S packs in series"
+    },
+    "notes": [
+      "AUTO selection is a database screening step. Final propulsion release requires measured thrust/power/thermal data at the selected voltage and propeller.",
+      "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power.",
+      "Aircraft bus ceiling is 48.0 V (fuel-cell max); hardware bus_max is capped accordingly (not 12S\u00d74.2=50.4 V)."
+    ]
+  }
+}
