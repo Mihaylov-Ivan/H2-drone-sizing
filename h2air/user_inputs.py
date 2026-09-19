@@ -544,6 +544,7 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["vertical_tail_span_bounds_m"] = [float(x) for x in vtail["span_bounds_m"]]
     d["vertical_tail_ac_x_m"] = float(vtail["aerodynamic_center_x_m"])
     nfin = int(vtail.get("count", 2))
+    d["vertical_tail_count"] = nfin
     lv = max(float(vtail["aerodynamic_center_x_m"]) - float(main["aerodynamic_center_x_m"]), 0.05)
     Vv = float(vtail.get("target_vertical_tail_volume_coefficient", 0.035))
     d["vertical_tail_target_volume_coefficient"] = Vv
