@@ -38,10 +38,22 @@ def test_default_primary_structure_is_solver_owned():
 
 def test_hardcoded_span_is_fixed_and_removed_from_optimizer(tmp_path):
     u=json.loads((ROOT/'config'/'user_inputs.json').read_text())
+    u['lifting_surfaces']['main_wing']['AutoSize Main Wing']=False
     u['lifting_surfaces']['main_wing']['span_mode']='hardcoded'
     u['lifting_surfaces']['main_wing']['hardcoded_span_m']=3.333
     c=load_model_config(_write(tmp_path,u))
     assert abs(c['design']['wing_span_m']-3.333)<1e-12
+    assert 'main_wing_span_m' not in default_space_for_config(c)
+
+
+def test_auto_size_main_wing_trigger_and_bounds():
+    c=load_model_config(ROOT/'config'/'user_inputs.json')
+    d=c['design']
+    assert d['auto_size_main_wing'] is True
+    assert d['main_wing_span_mode']=='auto'
+    assert d['main_wing_span_bounds_m']==[3.15,3.7]
+    assert d['main_wing_root_chord_bounds_m']==[0.27,0.35]
+    assert d['main_wing_taper_ratio_bounds']==[0.45,0.75]
     assert 'main_wing_span_m' not in default_space_for_config(c)
 
 
@@ -101,6 +113,7 @@ def test_user_inputs_from_design_values_locks_spans(tmp_path):
         'hydrogen_cylinder_x_m':0.53,
     })
     assert out['lifting_surfaces']['main_wing']['span_mode']=='hardcoded'
+    assert out['lifting_surfaces']['main_wing']['AutoSize Main Wing'] is False
     assert abs(out['lifting_surfaces']['main_wing']['hardcoded_span_m']-3.37)<1e-9
     assert abs(out['lifting_surfaces']['main_wing']['aerodynamic_center_x_m']-0.401)<1e-9
     assert abs(out['component_positions']['battery_x_m']-0.38)<1e-9
@@ -122,7 +135,7 @@ def test_v4_default_user_design_full_pipeline_runs(tmp_path):
     assert spec['schema'] == 'H2AIR-aircraft-specification-v1'
     assert spec['run']['design_status'] == r['summary']['design_status']
     assert abs(spec['mass_balance']['closed_mtow_kg'] - r['summary']['post_structure_mass_kg']) < 1e-9
-    assert abs(spec['geometry']['main_wing']['span_m'] - c['design']['wing_span_m']) < 1e-9
+    assert abs(spec['geometry']['main_wing']['span_m'] - r['main_wing_autosizing']['selected']['values']['main_wing_span_m']) < 1e-6
     assert 'components_takeoff_kg' in spec['mass_balance']
     assert 'gates' in spec
     assert (tmp_path/'run'/'user_inputs.json').exists()
