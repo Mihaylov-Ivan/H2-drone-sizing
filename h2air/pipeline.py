@@ -523,6 +523,359 @@ def _auto_size_main_wing(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[s
     return selected_cfg, result
 
 
+def _tail_design_overrides(
+    cfg: Mapping[str, Any],
+    values: Mapping[str, float],
+    *,
+    lock_ht: bool,
+    lock_vt: bool,
+) -> Dict[str, Any]:
+    """Apply optimized tail geometry without the legacy volume seed overwriting it."""
+    out = deepcopy(dict(cfg))
+    if lock_ht:
+        out["design"]["horizontal_tail_planform_locked"] = True
+    if lock_vt:
+        out["design"]["vertical_tail_planform_locked"] = True
+    return design_overrides(out, values)
+
+
+def _tail_planform_candidate_metrics(
+    base_cfg: Mapping[str, Any],
+    values: Mapping[str, float],
+    *,
+    lock_ht: bool,
+    lock_vt: bool,
+) -> Dict[str, Any]:
+    cfg = _tail_design_overrides(base_cfg, values, lock_ht=lock_ht, lock_vt=lock_vt)
+    d = cfg["design"]
+    base_comps = _components_with_power(cfg)
+    _, mass, structure, closure = _structural_closure(cfg, base_comps)
+    aero_cfg, _, six_cfg, _ = _sync_design(cfg, mass)
+
+    S = float(d["wing_area_m2"])
+    b = float(d["wing_span_m"])
+    mac = float(d["wing_mac_m"])
+    wing_ac = float(d["wing_ac_x_m"])
+
+    Sh = float(d["horizontal_tail_area_m2"])
+    bh = float(d["horizontal_tail_span_m"])
+    chr_ = float(d["horizontal_tail_root_chord_m"])
+    lamh = float(d["horizontal_tail_taper_ratio"])
+    xh = float(d["horizontal_tail_ac_x_m"])
+    ht_arm = max(xh - wing_ac, 1e-6)
+    Vh = Sh * ht_arm / max(S * mac, 1e-9)
+    ht_ar = bh * bh / max(Sh, 1e-9)
+    ht_tip = chr_ * lamh
+
+    nfin = max(int(d.get("vertical_tail_count", 2)), 1)
+    Sv_total = float(d["vertical_tail_area_total_m2"])
+    Sv_each = Sv_total / nfin
+    hv = float(d["vertical_tail_height_m"])
+    cvr = float(d["vertical_tail_root_chord_m"])
+    lamv = float(d["vertical_tail_taper_ratio"])
+    xv = float(d["vertical_tail_ac_x_m"])
+    vt_arm = max(xv - wing_ac, 1e-6)
+    Vv = Sv_total * vt_arm / max(S * b, 1e-9)
+    vt_ar = hv * hv / max(Sv_each, 1e-9)
+    vt_tip = cvr * lamv
+
+    sm = (float(d["neutral_point_station_x_m"]) - mass.takeoff.cg_m[0]) / max(mac, 1e-9)
+    min_sm = max(
+        float((six_cfg.get("gates") or {}).get("minimum_static_margin", 0.05)),
+        float((cfg.get("optimizer_settings") or {}).get(
+            "target_static_margin", d.get("stability_screen_static_margin", 0.12)
+        )),
+    )
+    ht_vmin = float(d.get("horizontal_tail_minimum_volume_coefficient", d.get("horizontal_tail_target_volume_coefficient", 0.44)))
+    vt_vmin = float(d.get("vertical_tail_minimum_volume_coefficient", d.get("vertical_tail_target_volume_coefficient", 0.0255)))
+    ht_ar_lo, ht_ar_hi = [float(x) for x in d.get("horizontal_tail_aspect_ratio_bounds", [3.5, 6.5])]
+    vt_ar_lo, vt_ar_hi = [float(x) for x in d.get("vertical_tail_aspect_ratio_bounds", [2.0, 4.5])]
+    ht_tip_min = float(d.get("horizontal_tail_minimum_tip_chord_m", 0.10))
+    vt_tip_min = float(d.get("vertical_tail_minimum_tip_chord_m", 0.075))
+
+    violations = []
+    if lock_ht and Vh + 1e-9 < ht_vmin:
+        violations.append("horizontal_tail_volume")
+    if lock_vt and Vv + 1e-9 < vt_vmin:
+        violations.append("vertical_tail_volume")
+    if lock_ht and not (ht_ar_lo - 1e-9 <= ht_ar <= ht_ar_hi + 1e-9):
+        violations.append("horizontal_tail_aspect_ratio")
+    if lock_vt and not (vt_ar_lo - 1e-9 <= vt_ar <= vt_ar_hi + 1e-9):
+        violations.append("vertical_tail_aspect_ratio")
+    if lock_ht and ht_tip + 1e-9 < ht_tip_min:
+        violations.append("horizontal_tail_tip_chord")
+    if lock_vt and vt_tip + 1e-9 < vt_tip_min:
+        violations.append("vertical_tail_tip_chord")
+    if sm + 1e-9 < min_sm:
+        violations.append("loaded_static_margin")
+    if mass.takeoff.total_mass_kg > float(d["mtow_ceiling_kg"]) + 1e-9:
+        violations.append("mass_ceiling")
+    if int(mass.summary.get("packaging_fail_count", 0)) != 0:
+        violations.append("packaging")
+    if not recommended_structure_screen_pass(structure["gates"]):
+        violations.append("recommended_structure")
+
+    # The current aircraft drag model does not resolve HT/VT profile drag
+    # independently. Use a transparent low-lift profile-drag proxy only as a
+    # secondary tie-breaker; closed MTOW remains the primary objective.
+    rho = float(aero_cfg["atmosphere"]["rho_kg_m3"])
+    V = float(d["cruise_speed_mps"])
+    q = 0.5 * rho * V * V
+    ht_cd0 = float(d.get("horizontal_tail_profile_cd0_screen", 0.010))
+    vt_cd0 = float(d.get("vertical_tail_profile_cd0_screen", 0.010))
+    tail_profile_drag_N = q * (Sh * ht_cd0 + Sv_total * vt_cd0)
+    eta_ref = max(float(aero_cfg["aircraft"].get("cruise_propulsive_efficiency_reference", 0.62)), 0.2)
+    tail_profile_bus_power_W = tail_profile_drag_N * V / eta_ref
+
+    pref_ht_ar = float(d.get("horizontal_tail_preferred_aspect_ratio", 4.5))
+    pref_vt_ar = float(d.get("vertical_tail_preferred_aspect_ratio", 2.5))
+    pref_ht_taper = float(d.get("horizontal_tail_preferred_taper_ratio", 0.60))
+    pref_vt_taper = float(d.get("vertical_tail_preferred_taper_ratio", 0.60))
+    shape_regularizer = (
+        0.020 * abs(ht_ar - pref_ht_ar)
+        + 0.015 * abs(vt_ar - pref_vt_ar)
+        + 0.010 * abs(lamh - pref_ht_taper)
+        + 0.010 * abs(lamv - pref_vt_taper)
+    )
+    objective = (
+        float(mass.takeoff.total_mass_kg)
+        + 0.0005 * tail_profile_bus_power_W
+        + shape_regularizer
+    )
+    score = objective + 1000.0 * len(violations)
+
+    return {
+        "values": {k: float(v) for k, v in values.items()},
+        "resolved_values": {
+            "horizontal_tail_span_m": bh,
+            "horizontal_tail_root_chord_m": chr_,
+            "horizontal_tail_taper_ratio": lamh,
+            "vertical_tail_height_m": hv,
+            "vertical_tail_root_chord_m": cvr,
+            "vertical_tail_taper_ratio": lamv,
+        },
+        "score": float(score),
+        "objective": float(objective),
+        "feasible": not violations,
+        "violations": violations,
+        "closed_mass_kg": float(mass.takeoff.total_mass_kg),
+        "cg_x_m": float(mass.takeoff.cg_m[0]),
+        "loaded_static_margin": float(sm),
+        "minimum_loaded_static_margin": float(min_sm),
+        "horizontal_tail_area_m2": Sh,
+        "horizontal_tail_volume_coefficient": float(Vh),
+        "horizontal_tail_aspect_ratio": float(ht_ar),
+        "horizontal_tail_tip_chord_m": float(ht_tip),
+        "vertical_tail_area_total_m2": Sv_total,
+        "vertical_tail_volume_coefficient": float(Vv),
+        "vertical_tail_aspect_ratio_each": float(vt_ar),
+        "vertical_tail_tip_chord_m": float(vt_tip),
+        "tail_profile_drag_proxy_N": float(tail_profile_drag_N),
+        "tail_profile_bus_power_proxy_W": float(tail_profile_bus_power_W),
+        "tail_structure_mass_kg": float((mass.mass_groups_takeoff_kg or {}).get("tail_structure", 0.0)),
+        "horizontal_tail_spar_od_mm": float(structure["summary"]["horizontal_tail_recommended_spar_od_mm"]),
+        "horizontal_tail_spar_id_mm": float(structure["summary"]["horizontal_tail_recommended_spar_id_mm"]),
+        "vertical_tail_spar_od_mm": float(structure["summary"]["vertical_tail_recommended_spar_od_mm"]),
+        "vertical_tail_spar_id_mm": float(structure["summary"]["vertical_tail_recommended_spar_id_mm"]),
+        "structural_closure_iterations": len(closure),
+    }
+
+
+def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    """Jointly optimize HT and VT span/height, root chord and taper.
+
+    The configured tail-volume coefficients are hard minimums. The optimizer
+    minimizes structurally closed MTOW first, with small transparent secondary
+    regularizers for low-lift profile drag and moderate tail AR/taper.
+    """
+    clean = deepcopy(dict(cfg))
+    d0 = clean["design"]
+    auto_ht = bool(d0.get("auto_size_horizontal_tail", False))
+    auto_vt = bool(d0.get("auto_size_vertical_tail", False))
+    if not (auto_ht or auto_vt):
+        return clean, {"enabled": False, "horizontal_tail": auto_ht, "vertical_tail": auto_vt, "mode": "hardcoded"}
+
+    S = float(d0["wing_area_m2"])
+    b = float(d0["wing_span_m"])
+    mac = float(d0["wing_mac_m"])
+    wing_ac = float(d0["wing_ac_x_m"])
+    ht_arm = max(float(d0["horizontal_tail_ac_x_m"]) - wing_ac, 1e-6)
+    vt_arm = max(float(d0["vertical_tail_ac_x_m"]) - wing_ac, 1e-6)
+    nfin = max(int(d0.get("vertical_tail_count", 2)), 1)
+
+    ht_vmin = float(d0.get("horizontal_tail_minimum_volume_coefficient", d0.get("horizontal_tail_target_volume_coefficient", 0.44)))
+    vt_vmin = float(d0.get("vertical_tail_minimum_volume_coefficient", d0.get("vertical_tail_target_volume_coefficient", 0.0255)))
+    Sh_req = ht_vmin * S * mac / ht_arm
+    Sv_total_req = vt_vmin * S * b / vt_arm
+    Sv_each_req = Sv_total_req / nfin
+
+    ht_span_lo, ht_span_hi = [float(x) for x in d0["horizontal_tail_span_bounds_m"]]
+    ht_chord_lo, ht_chord_hi = [float(x) for x in d0["horizontal_tail_root_chord_bounds_m"]]
+    ht_taper_lo, ht_taper_hi = [float(x) for x in d0["horizontal_tail_taper_ratio_bounds"]]
+    ht_ar_lo, ht_ar_hi = [float(x) for x in d0["horizontal_tail_aspect_ratio_bounds"]]
+    ht_tip_min = float(d0["horizontal_tail_minimum_tip_chord_m"])
+
+    vt_h_lo, vt_h_hi = [float(x) for x in d0["vertical_tail_span_bounds_m"]]
+    vt_chord_lo, vt_chord_hi = [float(x) for x in d0["vertical_tail_root_chord_bounds_m"]]
+    vt_taper_lo, vt_taper_hi = [float(x) for x in d0["vertical_tail_taper_ratio_bounds"]]
+    vt_ar_lo, vt_ar_hi = [float(x) for x in d0["vertical_tail_aspect_ratio_bounds"]]
+    vt_tip_min = float(d0["vertical_tail_minimum_tip_chord_m"])
+
+    n_global = max(
+        int(d0.get("horizontal_tail_autosize_samples", 36)) if auto_ht else 0,
+        int(d0.get("vertical_tail_autosize_samples", 36)) if auto_vt else 0,
+        12,
+    )
+    n_local = max(
+        int(d0.get("horizontal_tail_autosize_local_samples", 12)) if auto_ht else 0,
+        int(d0.get("vertical_tail_autosize_local_samples", 12)) if auto_vt else 0,
+        0,
+    )
+
+    def ht_from_span_taper(span: float, taper: float):
+        if not auto_ht:
+            return (
+                float(d0["horizontal_tail_span_m"]),
+                float(d0["horizontal_tail_root_chord_m"]),
+                float(d0["horizontal_tail_taper_ratio"]),
+            )
+        if not (ht_span_lo <= span <= ht_span_hi and ht_taper_lo <= taper <= ht_taper_hi):
+            return None
+        cr = 2.0 * Sh_req / max(span * (1.0 + taper), 1e-9)
+        tip = cr * taper
+        ar = span * span / max(Sh_req, 1e-9)
+        if not (ht_chord_lo <= cr <= ht_chord_hi):
+            return None
+        if tip + 1e-9 < ht_tip_min or not (ht_ar_lo <= ar <= ht_ar_hi):
+            return None
+        return float(span), float(cr), float(taper)
+
+    def vt_from_height_taper(height: float, taper: float):
+        if not auto_vt:
+            return (
+                float(d0["vertical_tail_height_m"]),
+                float(d0["vertical_tail_root_chord_m"]),
+                float(d0["vertical_tail_taper_ratio"]),
+            )
+        if not (vt_h_lo <= height <= vt_h_hi and vt_taper_lo <= taper <= vt_taper_hi):
+            return None
+        cr = 2.0 * Sv_each_req / max(height * (1.0 + taper), 1e-9)
+        tip = cr * taper
+        ar = height * height / max(Sv_each_req, 1e-9)
+        if not (vt_chord_lo <= cr <= vt_chord_hi):
+            return None
+        if tip + 1e-9 < vt_tip_min or not (vt_ar_lo <= ar <= vt_ar_hi):
+            return None
+        return float(height), float(cr), float(taper)
+
+    tuples = []
+    # Seed the existing planform and the preferred-AR/preferred-taper geometry.
+    ht_seed = ht_from_span_taper(float(d0["horizontal_tail_span_m"]), float(d0["horizontal_tail_taper_ratio"]))
+    vt_seed = vt_from_height_taper(float(d0["vertical_tail_height_m"]), float(d0["vertical_tail_taper_ratio"]))
+    if ht_seed is not None and vt_seed is not None:
+        tuples.append((*ht_seed, *vt_seed))
+
+    ht_pref_span = float(np.clip(
+        np.sqrt(float(d0.get("horizontal_tail_preferred_aspect_ratio", 4.5)) * Sh_req),
+        ht_span_lo, ht_span_hi,
+    ))
+    vt_pref_h = float(np.clip(
+        np.sqrt(float(d0.get("vertical_tail_preferred_aspect_ratio", 2.5)) * Sv_each_req),
+        vt_h_lo, vt_h_hi,
+    ))
+    ht_pref = ht_from_span_taper(ht_pref_span, float(d0.get("horizontal_tail_preferred_taper_ratio", 0.60)))
+    vt_pref = vt_from_height_taper(vt_pref_h, float(d0.get("vertical_tail_preferred_taper_ratio", 0.60)))
+    if ht_pref is not None and vt_pref is not None:
+        tuples.append((*ht_pref, *vt_pref))
+
+    rng = np.random.default_rng(20260920)
+    for _ in range(n_global):
+        hs = float(rng.uniform(ht_span_lo, ht_span_hi)) if auto_ht else float(d0["horizontal_tail_span_m"])
+        ht = float(rng.uniform(ht_taper_lo, ht_taper_hi)) if auto_ht else float(d0["horizontal_tail_taper_ratio"])
+        vh = float(rng.uniform(vt_h_lo, vt_h_hi)) if auto_vt else float(d0["vertical_tail_height_m"])
+        vt = float(rng.uniform(vt_taper_lo, vt_taper_hi)) if auto_vt else float(d0["vertical_tail_taper_ratio"])
+        hgeom = ht_from_span_taper(hs, ht)
+        vgeom = vt_from_height_taper(vh, vt)
+        if hgeom is not None and vgeom is not None:
+            tuples.append((*hgeom, *vgeom))
+
+    evaluated = []
+    seen = set()
+    def evaluate_tuple(tup):
+        hs,hc,ht,vh,vc,vt = tup
+        values = {}
+        if auto_ht:
+            values.update({
+                "horizontal_tail_span_m": hs,
+                "horizontal_tail_root_chord_m": hc,
+                "horizontal_tail_taper_ratio": ht,
+            })
+        if auto_vt:
+            values.update({
+                "vertical_tail_height_m": vh,
+                "vertical_tail_root_chord_m": vc,
+                "vertical_tail_taper_ratio": vt,
+            })
+        key = tuple(round(float(x), 6) for x in (hs,hc,ht,vh,vc,vt))
+        if key in seen:
+            return
+        seen.add(key)
+        try:
+            evaluated.append(_tail_planform_candidate_metrics(
+                clean, values, lock_ht=auto_ht, lock_vt=auto_vt
+            ))
+        except Exception:
+            return
+
+    for tup in tuples:
+        evaluate_tuple(tup)
+
+    ranked0 = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
+    parents = ranked0[:min(5, len(ranked0))]
+    for j in range(n_local):
+        if not parents:
+            break
+        p = parents[j % len(parents)]["resolved_values"]
+        hs = float(np.clip(p["horizontal_tail_span_m"] + rng.normal(0.0, 0.03*(ht_span_hi-ht_span_lo)), ht_span_lo, ht_span_hi)) if auto_ht else float(d0["horizontal_tail_span_m"])
+        ht = float(np.clip(p["horizontal_tail_taper_ratio"] + rng.normal(0.0, 0.04*(ht_taper_hi-ht_taper_lo)), ht_taper_lo, ht_taper_hi)) if auto_ht else float(d0["horizontal_tail_taper_ratio"])
+        vh = float(np.clip(p["vertical_tail_height_m"] + rng.normal(0.0, 0.03*(vt_h_hi-vt_h_lo)), vt_h_lo, vt_h_hi)) if auto_vt else float(d0["vertical_tail_height_m"])
+        vt = float(np.clip(p["vertical_tail_taper_ratio"] + rng.normal(0.0, 0.04*(vt_taper_hi-vt_taper_lo)), vt_taper_lo, vt_taper_hi)) if auto_vt else float(d0["vertical_tail_taper_ratio"])
+        hgeom = ht_from_span_taper(hs, ht)
+        vgeom = vt_from_height_taper(vh, vt)
+        if hgeom is not None and vgeom is not None:
+            evaluate_tuple((*hgeom, *vgeom))
+
+    if not evaluated:
+        raise RuntimeError("Tail planform autosizer found no candidates inside the configured bounds")
+
+    ranked = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
+    best = ranked[0]
+    if not best["feasible"]:
+        raise RuntimeError(f"Tail planform autosizer found no feasible candidate; best violations: {best['violations']}")
+
+    selected_cfg = _tail_design_overrides(clean, best["values"], lock_ht=auto_ht, lock_vt=auto_vt)
+    result = {
+        "enabled": True,
+        "mode": "coupled_ht_vt_span_root_chord_taper",
+        "horizontal_tail": auto_ht,
+        "vertical_tail": auto_vt,
+        "objective": "minimum_closed_mtow_with_secondary_profile_drag_and_moderate_shape_regularization",
+        "constraints": {
+            "horizontal_tail_minimum_volume_coefficient": ht_vmin,
+            "vertical_tail_minimum_volume_coefficient": vt_vmin,
+            "horizontal_tail_required_area_m2": Sh_req,
+            "vertical_tail_required_total_area_m2": Sv_total_req,
+            "loaded_static_margin_target": float((selected_cfg.get("optimizer_settings") or {}).get(
+                "target_static_margin", selected_cfg["design"].get("stability_screen_static_margin", 0.12)
+            )),
+        },
+        "evaluated_candidates": len(evaluated),
+        "feasible_candidates": sum(1 for x in evaluated if x["feasible"]),
+        "selected": deepcopy(best),
+    }
+    return selected_cfg, result
+
+
 def _sample_rows(samples): return [s.to_dict() for s in samples]
 
 def _csv(path:Path,rows:Sequence[Mapping[str,Any]]):
