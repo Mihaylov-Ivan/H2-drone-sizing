@@ -8,47 +8,48 @@
   "design": {
     "payload_mass_kg": 1.2,
     "mtow_target_low_kg": 12.0,
-    "mtow_target_high_kg": 14.0,
+    "mtow_target_high_kg": 15.0,
     "mtow_ceiling_kg": 15.0,
-    "cruise_speed_mps": 20.0,
-    "wing_area_m2": 0.879451488,
-    "wing_span_m": 3.3742,
-    "wing_mac_m": 0.2660699999999999,
-    "wing_CLmax": 1.185,
+    "cruise_speed_mps": 18.0,
+    "wing_area_m2": 0.9,
+    "wing_span_m": 3.6,
+    "wing_mac_m": 0.2548,
+    "wing_CLmax": 1.37,
     "lift_propeller_diameter_in": 22.0,
-    "cruise_lift_propeller_state": "folded",
+    "cruise_lift_propeller_state": "stopped_aligned",
     "lift_motor_available_thrust_per_motor_N": 71.02956594999999,
     "lift_motor_structural_limit_thrust_per_motor_N": 79.553113864,
-    "pusher_propeller_diameter_in": 15.0,
-    "pusher_max_electrical_power_W": 1121.0,
-    "neutral_point_station_x_m": 0.4253206802603421,
+    "pusher_propeller_diameter_in": 18.0,
+    "pusher_max_electrical_power_W": 1000.0,
+    "neutral_point_station_x_m": 0.4913053183378593,
     "stability_screen_static_margin": 0.12,
     "mission_duration_min": 120.0,
     "integration_note": "Primary aircraft-level source of truth. Integrated-v2 resolves geometry, packaging, stability and lift-row variables across all subsystems.",
-    "wing_ac_x_m": 0.386844,
-    "horizontal_tail_area_m2": 0.16098864,
-    "horizontal_tail_ac_x_m": 1.048942,
-    "lift_row_center_x_m": 0.385884,
+    "wing_ac_x_m": 0.455714,
+    "horizontal_tail_area_m2": 0.16972037570309764,
+    "horizontal_tail_ac_x_m": 1.050226,
+    "lift_row_center_x_m": 0.47574,
     "battery_x_m": 0.22150000000000003,
-    "battery_z_m": 0.06029069267511453,
+    "battery_z_m": 0.06229069267511454,
     "fuel_cell_x_m": 0.25525000000000003,
-    "fuel_cell_z_m": -0.028109307324885473,
+    "fuel_cell_z_m": -0.03310930732488546,
     "hydrogen_cylinder_x_m": 0.5930000000000001,
-    "hydrogen_cylinder_z_m": -0.030509307324885472,
+    "hydrogen_cylinder_z_m": -0.03550930732488546,
     "neutral_point_model": "calibrated_tail_volume",
     "fuselage_diameter_mode": "auto",
     "fuselage_midbody_length_mode": "auto",
     "fuselage_minimum_diameter_m": 0.18,
-    "fuselage_diameter_margin_m": 0.0,
+    "fuselage_diameter_margin_m": 0.007,
     "fuselage_cross_section": "rectangular_filleted",
     "fuselage_fillet_radius_m": 0.02,
     "fuselage_length_m": 0.8594000000000002,
-    "fuselage_width_m": 0.135,
+    "fuselage_width_m": 0.14900000000000002,
     "fuselage_height_m": 0.22801861464977094,
     "fuselage_max_diameter_m": 0.22801861464977094,
-    "main_wing_root_chord_m": 0.3258,
-    "main_wing_taper_ratio": 0.6,
-    "main_wing_naca_code": "NACA4412",
+    "transition_CLmax_increment": 0.08,
+    "main_wing_root_chord_m": 0.31,
+    "main_wing_taper_ratio": 0.6129032258064516,
+    "main_wing_naca_code": "NACA6415",
     "main_wing_twist_root_deg": 0.0,
     "main_wing_twist_tip_deg": -2.0,
     "main_wing_sweep_deg": 0.0,
@@ -57,33 +58,33 @@
     "main_wing_span_mode": "hardcoded",
     "main_wing_span_bounds_m": [
       3.15,
-      3.6
+      3.7
     ],
-    "main_wing_span_m": 3.3742,
+    "main_wing_span_m": 3.6,
     "horizontal_tail_root_chord_m": 0.218,
     "horizontal_tail_taper_ratio": 0.7,
     "horizontal_tail_naca_code": "NACA0012",
-    "horizontal_tail_span_mode": "hardcoded",
+    "horizontal_tail_span_mode": "auto",
     "horizontal_tail_span_bounds_m": [
-      0.8,
-      1.3
+      0.75,
+      1.35
     ],
-    "horizontal_tail_span_m": 0.8688,
+    "horizontal_tail_span_m": 0.9159221570593505,
     "horizontal_tail_mac_m": 0.18722352941176468,
     "vertical_tail_root_chord_m": 0.148,
     "vertical_tail_taper_ratio": 0.6,
     "vertical_tail_naca_code": "NACA0012",
-    "vertical_tail_span_mode": "hardcoded",
+    "vertical_tail_span_mode": "auto",
     "vertical_tail_span_bounds_m": [
-      0.3,
-      0.6
+      0.28,
+      0.55
     ],
-    "vertical_tail_ac_x_m": 1.021592,
-    "vertical_tail_height_m": 0.3,
-    "vertical_tail_area_each_m2": 0.035519999999999996,
-    "vertical_tail_area_total_m2": 0.07103999999999999,
+    "vertical_tail_ac_x_m": 1.110291,
+    "vertical_tail_height_m": 0.5330190749553178,
+    "vertical_tail_area_each_m2": 0.06310945847470963,
+    "vertical_tail_area_total_m2": 0.12621891694941925,
     "energy_bay_order": "fuel_cell_forward",
-    "energy_bay_order_mode": "auto",
+    "energy_bay_order_mode": "hardcoded",
     "energy_bay_order_code": 0.0,
     "cb_battery_order": "battery_forward",
     "fuselage_wall_clearance_m": 0.01,
@@ -91,7 +92,7 @@
     "component_axial_clearance_m": 0.01,
     "energy_bay_axial_clearance_m": 0.01,
     "selected_lift_combo_name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
-    "selected_pusher_combo_name": "Tmotor_MN501S_240kV_P15x5_12S",
+    "selected_pusher_combo_name": "Tmotor_MN501S_160kV_P18x10_12S",
     "selected_battery_name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
     "fuel_cell_cooling_openings_CdA_m2": 0.0013347,
     "fuselage_section_lengths_m": {
@@ -107,10 +108,10 @@
       "tail": 0.22801861464977094
     },
     "fuselage_section_widths_m": {
-      "nose": 0.135,
-      "center_a": 0.135,
-      "center_b": 0.135,
-      "tail": 0.135
+      "nose": 0.14900000000000002,
+      "center_a": 0.14900000000000002,
+      "center_b": 0.14900000000000002,
+      "tail": 0.14900000000000002
     },
     "fuselage_section_heights_m": {
       "nose": 0.22801861464977094,
@@ -120,25 +121,29 @@
     },
     "fuel_cell_control_box_x_m": 0.4141,
     "fuel_cell_control_box_y_m": 0.0,
-    "fuel_cell_control_box_z_m": 0.05736569267511453,
+    "fuel_cell_control_box_z_m": 0.059365692675114545,
     "fuel_cell_stack_mass_kg": 1.0932,
     "fuel_cell_control_box_mass_kg": 0.3568,
     "battery_y_m": 0.0,
     "cube_orange_x_m": 0.08275,
-    "cube_orange_z_m": 0.03049069267511453,
+    "cube_orange_z_m": 0.03249069267511454,
     "payload_x_m": 0.10350000000000001,
-    "payload_z_m": -0.02800930732488547,
+    "payload_z_m": -0.03300930732488546,
     "nose_section_end_x_m": 0.14,
     "packaging_control_box_site": "h2_top",
     "packaging_battery_site": "fc_top",
     "pdb_x_m": 0.5652,
     "pdb_y_m": 0.0,
-    "pdb_z_m": 0.06354069267511453,
+    "pdb_z_m": 0.05854069267511454,
     "pdb2_x_m": 0.6552000000000001,
     "pdb2_y_m": 0.0,
-    "pdb2_z_m": 0.06354069267511453,
-    "main_wing_z_m": 0.09686430732488546,
-    "horizontal_tail_z_m": 0.09686430732488546
+    "pdb2_z_m": 0.05854069267511454,
+    "main_wing_z_m": 0.08600930732488546,
+    "horizontal_tail_z_m": 0.08600930732488546,
+    "rear_thrust_recovery_factor": 1.15,
+    "lift_prop_mount_side": "under",
+    "landing_legs_CdA_m2": 0.0015,
+    "boom_outer_diameter_m": 0.026000000000000002
   },
   "power_system": {
     "model_version": "H2AIR-phase2-hybrid-power-1.0",
@@ -150,7 +155,7 @@
     "fuel_cell": {
       "name": "Intelligent Energy IE-SOAR 800 reference",
       "enabled": true,
-      "rated_net_power_W": 800.0,
+      "rated_net_power_W": 800,
       "rating_basis": "net_module_output",
       "output_voltage_min_V": 24.0,
       "output_voltage_max_V": 48.0,
@@ -176,14 +181,14 @@
     },
     "hydrogen": {
       "storage_name": "AMS Composites 3 CF, 3.0 L / 300 bar Type III",
-      "pressure_bar": 300.0,
-      "water_volume_L": 3.0,
+      "pressure_bar": 300,
+      "water_volume_L": 3,
       "nominal_h2_mass_kg": 0.0619,
       "regulator_mass_kg": 0.315,
       "cylinder_mass_kg": 1.62,
-      "reference_load_W": 400.0,
+      "reference_load_W": 400,
       "reference_endurance_h": 2.575,
-      "reference_net_energy_Wh": 1030.0,
+      "reference_net_energy_Wh": 1030,
       "mission_energy_reserve_fraction": 0.15,
       "physical_usable_fraction": 1.0,
       "minimum_residual_h2_kg": null,
@@ -232,11 +237,11 @@
         ],
         [
           1.0,
-          4.2
+          4.0
         ]
       ],
       "minimum_loaded_cell_voltage_V": 3.3,
-      "maximum_charge_cell_voltage_V": 4.2,
+      "maximum_charge_cell_voltage_V": 4.0,
       "continuous_discharge_current_A": 165.0,
       "peak_discharge_current_A": null,
       "peak_duration_s": 10.0,
@@ -259,15 +264,16 @@
       "safe_landing_h2_operational_energy_fraction": 0.05,
       "allow_battery_charge_from_fc": true,
       "enforce_landing_reserve_at_end": true,
-      "allow_planned_battery_endurance_extension": false
+      "allow_planned_battery_endurance_extension": true
     },
     "requirements": {
       "application_peak_screening_W": 5000.0,
       "supplier_conditional_hybrid_peak_W": 7500.0,
-      "representative_cruise_power_gate_W": 550.0,
+      "representative_cruise_power_gate_W": 600.0,
       "minimum_mission_endurance_min": 60.0,
       "target_mission_endurance_min": 120.0
-    }
+    },
+    "aircraft_bus_voltage_ceiling_V": 48.0
   },
   "geometry_mass": {
     "geometry_model": {
@@ -286,46 +292,46 @@
           ],
           "dimensions_m": [
             0.8594000000000002,
-            0.135,
+            0.14900000000000002,
             0.22801861464977094
           ]
         },
-        "wing_area_m2": 0.879451488,
-        "wing_span_m": 3.3742,
-        "wing_MAC_m": 0.2660699999999999,
-        "wing_mean_geometric_chord_m": 0.26064,
-        "wing_ac_x_m": 0.386844,
-        "reference_neutral_point_x_m": 0.4253206802603421,
+        "wing_area_m2": 0.9,
+        "wing_span_m": 3.6,
+        "wing_MAC_m": 0.2548,
+        "wing_mean_geometric_chord_m": 0.25,
+        "wing_ac_x_m": 0.455714,
+        "reference_neutral_point_x_m": 0.4913053183378593,
         "horizontal_tail_le_x_m": 0.976,
-        "horizontal_tail_span_m": 0.8688,
-        "vertical_fin_height_m": 0.3,
+        "horizontal_tail_span_m": 0.9159221570593505,
+        "vertical_fin_height_m": 0.5330190749553178,
         "boom_center_y_m": [
-          -0.3669,
-          0.3669
+          -0.3739,
+          0.3739
         ],
-        "boom_outer_diameter_m": 0.035,
-        "boom_x_start_m": 0.09648400000000001,
+        "boom_outer_diameter_m": 0.026000000000000002,
+        "boom_x_start_m": 0.18634,
         "boom_x_end_m": 1.1,
         "lift_prop_centers_m": [
           [
-            0.09648400000000001,
-            -0.3669,
-            0.12788930732488546
+            0.18634,
+            -0.3739,
+            0.056284307324885464
           ],
           [
-            0.09648400000000001,
-            0.3669,
-            0.12788930732488546
+            0.18634,
+            0.3739,
+            0.056284307324885464
           ],
           [
-            0.675284,
-            -0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            -0.3739,
+            0.056284307324885464
           ],
           [
-            0.675284,
-            0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            0.3739,
+            0.056284307324885464
           ]
         ],
         "lift_prop_diameter_m": 0.5588,
@@ -338,7 +344,7 @@
             0.0,
             0.0
           ],
-          "diameter_m": 0.381,
+          "diameter_m": 0.4572,
           "diameter_status": "legacy_placeholder"
         },
         "pusher_required_radial_clearance_m": 0.02,
@@ -352,18 +358,66 @@
           0.0
         ],
         "fuselage_top_z_m": 0.11400930732488547,
-        "fuselage_longeron_top_z_m": 0.11075930732488547,
-        "fuselage_longeron_bottom_z_m": -0.11075930732488547,
-        "fuselage_longeron_z_m": 0.11075930732488547,
+        "fuselage_longeron_top_z_m": 0.11000930732488547,
+        "fuselage_longeron_bottom_z_m": -0.11000930732488547,
+        "fuselage_longeron_z_m": 0.11000930732488547,
         "fuselage_longeron_y_abs_m": 0.0,
-        "fuselage_longeron_boss_od_m": 0.0125,
-        "wing_upper_z_m": 0.11086430732488546,
-        "wing_lower_z_m": 0.08286430732488546,
-        "wing_z_flush_m": 0.10000930732488547,
-        "wing_drop_from_flush_m": 0.003145000000000009,
-        "boom_z_m": 0.09686430732488546,
-        "lift_prop_disk_z_m": 0.14141430732488547,
-        "lift_prop_wing_clearance_m": 0.030550000000000008
+        "fuselage_longeron_boss_od_m": 0.014,
+        "wing_primary_spar_layout_od_m": 0.032,
+        "wing_upper_z_m": 0.10925930732488545,
+        "wing_lower_z_m": 0.06275930732488547,
+        "wing_z_flush_m": 0.09075930732488546,
+        "wing_drop_from_flush_m": 0.004750000000000004,
+        "boom_z_m": 0.08600930732488546,
+        "lift_prop_disk_z_m": 0.04275930732488546,
+        "lift_prop_wing_clearance_m": 0.020000000000000004,
+        "lift_prop_mount_side": "under",
+        "landing_legs": {
+          "enabled": true,
+          "count": 3,
+          "layout": "nose_plus_wing",
+          "landing_load_factor": 3.0,
+          "side_load_fraction": 0.28,
+          "sleeve_wall_m": 0.002,
+          "printed_density_kg_m3": 1200.0,
+          "ground_z_m": -0.24311569267511454,
+          "prop_tip_z_m": -0.22311569267511452,
+          "prop_ground_clearance_m": 0.02,
+          "sizing_length_m": 0.305875,
+          "legs": [
+            {
+              "name": "nose",
+              "x_m": 0.07,
+              "y_m": 0.0,
+              "mount_z_m": -0.11400930732488547,
+              "foot_z_m": -0.24311569267511454,
+              "length_m": 0.12910638535022906,
+              "cg_z_m": -0.1785625
+            },
+            {
+              "name": "wing_left",
+              "x_m": 0.45571399999999995,
+              "y_m": -0.3739,
+              "mount_z_m": 0.06275930732488547,
+              "foot_z_m": -0.24311569267511454,
+              "length_m": 0.305875,
+              "cg_z_m": -0.09017819267511454
+            },
+            {
+              "name": "wing_right",
+              "x_m": 0.45571399999999995,
+              "y_m": 0.3739,
+              "mount_z_m": 0.06275930732488547,
+              "foot_z_m": -0.24311569267511454,
+              "length_m": 0.305875,
+              "cg_z_m": -0.09017819267511454
+            }
+          ],
+          "tube_od_m": 0.008,
+          "sleeve_od_m": 0.012,
+          "drag_CdA_m2": 0.0015
+        },
+        "landing_ground_z_m": -0.24311569267511454
       },
       "packaging": {
         "component_clearance_m": 0.01,
@@ -377,7 +431,7 @@
             ],
             "dimensions_m": [
               0.8594000000000002,
-              0.135,
+              0.14900000000000002,
               0.22801861464977094
             ],
             "wall_clearance_m": 0.01,
@@ -409,31 +463,31 @@
         {
           "name": "wing_structure",
           "group": "airframe",
-          "mass_takeoff_kg": 3.6278067453728706,
+          "mass_takeoff_kg": 3.7125709779179807,
           "position_m": [
-            0.439844,
+            0.508714,
             0.0,
             0.1
           ],
           "shape": "box",
           "dimensions_m": {
-            "length_x": 0.2660699999999999,
-            "width_y": 3.3742,
+            "length_x": 0.2548,
+            "width_y": 3.6,
             "height_z": 0.028
           },
           "status": "engineering_assumption",
           "source": "Current H2AIR results.txt",
           "note": "Lumped wing structural inertia envelope. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized. Integrated-v2: baseline wing-structure lump scales linearly with wing area; primary spar is independently sized.",
-          "mass_end_kg": 3.6278067453728706
+          "mass_end_kg": 3.7125709779179807
         },
         {
           "name": "lift_motor_mount_1",
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.09648400000000001,
-            -0.3669,
-            0.12788930732488546
+            0.18634,
+            -0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -443,9 +497,9 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.09648400000000001,
-            0.3669,
-            0.12788930732488546
+            0.18634,
+            0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -455,9 +509,9 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.675284,
-            -0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            -0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -467,9 +521,9 @@
           "group": "airframe",
           "mass_takeoff_kg": 0.05175,
           "position_m": [
-            0.675284,
-            0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current H2AIR wing motor-mount mass split"
@@ -592,9 +646,9 @@
         {
           "name": "horizontal_tail_structure",
           "group": "airframe",
-          "mass_takeoff_kg": 0.16464747272727273,
+          "mass_takeoff_kg": 0.17357765696907715,
           "position_m": [
-            1.048942,
+            1.050226,
             0.0,
             0.03
           ],
@@ -606,7 +660,7 @@
           },
           "status": "engineering_assumption",
           "source": "Current H2AIR tail result",
-          "mass_end_kg": 0.16464747272727273
+          "mass_end_kg": 0.17357765696907715
         },
         {
           "name": "vertical_tail_left",
@@ -653,7 +707,7 @@
           "position_m": [
             0.10350000000000001,
             0.0,
-            -0.02800930732488547
+            -0.03300930732488546
           ],
           "shape": "box",
           "dimensions_m": {
@@ -674,7 +728,7 @@
           "position_m": [
             0.22150000000000003,
             0.0,
-            0.06029069267511453
+            0.06229069267511454
           ],
           "shape": "box",
           "dimensions_m": {
@@ -696,7 +750,7 @@
           "position_m": [
             0.25525000000000003,
             0.0,
-            -0.028109307324885473
+            -0.03310930732488546
           ],
           "shape": "box",
           "dimensions_m": {
@@ -718,7 +772,7 @@
           "position_m": [
             0.5930000000000001,
             0.0,
-            -0.030509307324885472
+            -0.03550930732488546
           ],
           "shape": "cylinder_x",
           "dimensions_m": {
@@ -737,7 +791,7 @@
           "position_m": [
             0.24525000000000002,
             0.0,
-            -0.028109307324885473
+            -0.03310930732488546
           ],
           "shape": "point",
           "dimensions_m": {},
@@ -753,7 +807,7 @@
           "position_m": [
             0.5930000000000001,
             0.0,
-            -0.030509307324885472
+            -0.03550930732488546
           ],
           "shape": "point",
           "dimensions_m": {},
@@ -766,9 +820,9 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.09648400000000001,
-            -0.3669,
-            0.12788930732488546
+            0.18634,
+            -0.3739,
+            0.056284307324885464
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -784,9 +838,9 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.09648400000000001,
-            0.3669,
-            0.12788930732488546
+            0.18634,
+            0.3739,
+            0.056284307324885464
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -802,9 +856,9 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.675284,
-            -0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            -0.3739,
+            0.056284307324885464
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -820,9 +874,9 @@
           "group": "propulsion",
           "mass_takeoff_kg": 0.284,
           "position_m": [
-            0.675284,
-            0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            0.3739,
+            0.056284307324885464
           ],
           "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption",
           "source": "T-MOTOR/LIGPOWER U8 Lite official product/test table; P22x6.6 at 12S",
@@ -836,15 +890,15 @@
         {
           "name": "cruise_propulsion",
           "group": "propulsion",
-          "mass_takeoff_kg": 0.191,
+          "mass_takeoff_kg": 0.21999999999999997,
           "position_m": [
             0.8963500000000002,
             0.0,
             0.0
           ],
-          "status": "supplier_confirmed_motor_and_bench_data_prop_mass_from_user_database",
-          "source": "T-MOTOR MN501-S KV240 official product/test table; P15x5 at 12S",
-          "mass_end_kg": 0.191,
+          "status": "engineering_assumption_screening",
+          "source": "Screening pusher combo: MN501S-class 160 kV with 18x10 on 12S; replace with measured forward-flight map.",
+          "mass_end_kg": 0.21999999999999997,
           "shape": "cylinder_x",
           "dimensions_m": {
             "length": 0.0339,
@@ -854,11 +908,11 @@
         {
           "name": "lift_ESC_1",
           "group": "avionics",
-          "mass_takeoff_kg": 0.0366,
+          "mass_takeoff_kg": 0.07,
           "position_m": [
-            0.09648400000000001,
-            -0.3669,
-            0.12788930732488546
+            0.18634,
+            -0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -866,11 +920,11 @@
         {
           "name": "lift_ESC_2",
           "group": "avionics",
-          "mass_takeoff_kg": 0.0366,
+          "mass_takeoff_kg": 0.07,
           "position_m": [
-            0.09648400000000001,
-            0.3669,
-            0.12788930732488546
+            0.18634,
+            0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -878,11 +932,11 @@
         {
           "name": "lift_ESC_3",
           "group": "avionics",
-          "mass_takeoff_kg": 0.0366,
+          "mass_takeoff_kg": 0.07,
           "position_m": [
-            0.675284,
-            -0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            -0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -890,11 +944,11 @@
         {
           "name": "lift_ESC_4",
           "group": "avionics",
-          "mass_takeoff_kg": 0.0366,
+          "mass_takeoff_kg": 0.07,
           "position_m": [
-            0.675284,
-            0.3669,
-            0.12788930732488546
+            0.7651399999999999,
+            0.3739,
+            0.056284307324885464
           ],
           "status": "calculated",
           "source": "Current ESC mass split"
@@ -919,7 +973,7 @@
           "position_m": [
             0.08275,
             0.0,
-            0.03049069267511453
+            0.03249069267511454
           ],
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
@@ -992,7 +1046,7 @@
           "position_m": [
             0.5652,
             0.0,
-            0.06354069267511453
+            0.05854069267511454
           ],
           "package_zone": "central_pod",
           "status": "supplier_confirmed",
@@ -1009,7 +1063,7 @@
         {
           "name": "servos",
           "group": "avionics",
-          "mass_takeoff_kg": 0.06,
+          "mass_takeoff_kg": 0.25,
           "position_m": [
             0.88,
             0.0,
@@ -1021,7 +1075,7 @@
         {
           "name": "misc_electronics",
           "group": "avionics",
-          "mass_takeoff_kg": 0.1656,
+          "mass_takeoff_kg": 0.08,
           "position_m": [
             0.575,
             0.0,
@@ -1029,7 +1083,7 @@
           ],
           "package_zone": "central_pod",
           "status": "engineering_assumption",
-          "source": "Current H2AIR lumped allowance"
+          "source": "user_inputs.component_mass_overrides.misc_electronics"
         },
         {
           "name": "camera",
@@ -1045,6 +1099,44 @@
           "source": "Current H2AIR avionics model"
         },
         {
+          "name": "wiring_harness_pdb",
+          "group": "avionics",
+          "mass_takeoff_kg": 0.275,
+          "position_m": [
+            0.5,
+            0.0,
+            0.0
+          ],
+          "package_zone": "central_pod",
+          "status": "engineering_assumption",
+          "source": "Screening wiring/PDB harness allowance (mid pod)"
+        },
+        {
+          "name": "h2_plumbing_mounts",
+          "group": "energy",
+          "mass_takeoff_kg": 0.2,
+          "position_m": [
+            0.52,
+            0.0,
+            -0.02
+          ],
+          "package_zone": "central_pod",
+          "status": "engineering_assumption",
+          "source": "H2 plumbing/mounts near cylinder (screening)"
+        },
+        {
+          "name": "wing_joiners_fasteners",
+          "group": "wing_structure",
+          "mass_takeoff_kg": 0.15,
+          "position_m": [
+            0.405,
+            0.0,
+            0.1
+          ],
+          "status": "engineering_assumption",
+          "source": "user_inputs.component_mass_overrides.wing_joiners_fasteners"
+        },
+        {
           "name": "fuel_cell_control_box",
           "group": "energy",
           "mass_takeoff_kg": 0.3568,
@@ -1052,7 +1144,7 @@
           "position_m": [
             0.4141,
             0.0,
-            0.05736569267511453
+            0.059365692675114545
           ],
           "shape": "box",
           "dimensions_m": {
@@ -1074,7 +1166,7 @@
           "position_m": [
             0.6552000000000001,
             0.0,
-            0.06354069267511453
+            0.05854069267511454
           ],
           "shape": "box",
           "dimensions_m": {
@@ -1106,19 +1198,21 @@
       "mtow_target_low_kg": 12.0,
       "mtow_target_high_kg": 14.0,
       "mtow_ceiling_kg": 15.0,
-      "wing_area_m2": 0.879451488,
-      "wing_span_m": 3.3742,
-      "wing_MAC_m": 0.2660699999999999,
+      "wing_area_m2": 0.9,
+      "wing_span_m": 3.6,
+      "wing_MAC_m": 0.2548,
       "wing_CLmax": 1.185,
       "cruise_speed_mps": 20.0,
       "continuous_auxiliary_power_W": 35.0,
-      "cruise_propulsive_efficiency_reference": 0.72,
+      "cruise_propulsive_efficiency_reference": 0.66,
       "cruise_power_target_low_W": 400.0,
       "cruise_power_target_high_W": 435.0,
       "cruise_power_gate_W": 550.0,
       "minimum_transition_stall_ratio": 1.3,
       "stall_model": "direct_CLmax",
-      "cooling_openings_CdA_m2": 0.0013347
+      "transition_CLmax_increment": 0.08,
+      "cooling_openings_CdA_m2": 0.0013347,
+      "landing_legs_CdA_m2": 0.0015
     },
     "reference_calibration": {
       "reference_mass_kg": 10.893,
@@ -1129,7 +1223,7 @@
       "reference_stopped_lift_prop_drag_N": 8.83,
       "reference_lift_prop_diameter_in": 18.0,
       "reference_lift_prop_state": "stopped_random",
-      "reference_cruise_propulsive_efficiency": 0.72,
+      "reference_cruise_propulsive_efficiency": 0.66,
       "reference_cruise_electrical_power_W": 525.147,
       "reference_wing_stall_speed_mps": 14.75,
       "reference_main_wing_drag_N": 3.374,
@@ -1169,19 +1263,22 @@
       "current_placeholder_max_thrust_per_motor_N": 55.0,
       "current_placeholder_max_power_per_motor_W": 1600.0,
       "current_placeholder_data_status": "legacy_placeholder",
-      "supplier_conditional_hybrid_peak_W": 7500.0
+      "supplier_conditional_hybrid_peak_W": 7500.0,
+      "blade_CdA_total_m2": 0.0085,
+      "motor_mount_CdA_total_m2": 0.003
     },
     "lift_layout": {
-      "current_front_x_m": 0.09648400000000001,
-      "current_rear_x_m": 0.675284,
-      "common_midpoint_x_m": 0.385884,
+      "current_front_x_m": 0.18634,
+      "current_rear_x_m": 0.7651399999999999,
+      "common_midpoint_x_m": 0.47574,
       "minimum_front_x_m": 0.0,
       "maximum_rear_x_m": 0.8594000000000002,
-      "y_abs_m": 0.3669,
-      "z_m": 0.12788930732488546,
+      "y_abs_m": 0.3739,
+      "z_m": 0.056284307324885464,
       "required_disk_edge_clearance_m": 0.02,
-      "central_pod_width_m": 0.135,
-      "required_disk_to_pod_clearance_m": 0.02
+      "central_pod_width_m": 0.14900000000000002,
+      "required_disk_to_pod_clearance_m": 0.02,
+      "lift_prop_mount_side": "under"
     },
     "pusher_screen": {
       "diameter_candidates_in": [
@@ -1312,8 +1409,8 @@
     },
     "reference_case": {
       "mass_kg": 11.0777,
-      "wing_area_m2": 0.879451488,
-      "wing_span_m": 3.3742,
+      "wing_area_m2": 0.9,
+      "wing_span_m": 3.6,
       "lift_prop_diameter_in": 18.0,
       "pusher_prop_diameter_in": 18.0,
       "cruise_lift_prop_state": "folded",
@@ -1324,21 +1421,1113 @@
     },
     "aerodynamics": {
       "CL_alpha_per_rad": 4.8,
-      "zero_lift_alpha_deg": -2.0,
-      "CL_min": -0.6,
-      "CL_max": 1.185,
+      "zero_lift_alpha_deg": -5.0,
+      "CL_min": -0.735,
+      "CL_max": 1.55,
       "post_stall_CL_fraction": 0.75,
       "active_lift_prop_drag_factor_relative_windmilling": 0.7,
       "folding_start_thrust_fraction": 0.08,
       "folding_delay_s": 1.0,
       "transition_folded_projected_area_factor": 0.05,
-      "evidence_status": "engineering_assumption_except_Phase4_calibration"
+      "evidence_status": "engineering_assumption_except_Phase4_calibration",
+      "transition_CLmax_increment": 0.08,
+      "polar_rows": [
+        {
+          "alpha": -12.0,
+          "CL": -0.735,
+          "CD": 0.02635,
+          "CDp": 0.0224,
+          "CM": -0.076,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.75,
+          "CL": -0.7087,
+          "CD": 0.02561,
+          "CDp": 0.02177,
+          "CM": -0.0765,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.5,
+          "CL": -0.6825,
+          "CD": 0.02489,
+          "CDp": 0.02116,
+          "CM": -0.077,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.25,
+          "CL": -0.6562,
+          "CD": 0.02419,
+          "CDp": 0.02056,
+          "CM": -0.0775,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.0,
+          "CL": -0.63,
+          "CD": 0.0235,
+          "CDp": 0.01997,
+          "CM": -0.078,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.75,
+          "CL": -0.6038,
+          "CD": 0.02282,
+          "CDp": 0.0194,
+          "CM": -0.0785,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.5,
+          "CL": -0.5775,
+          "CD": 0.02217,
+          "CDp": 0.01884,
+          "CM": -0.079,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.25,
+          "CL": -0.5513,
+          "CD": 0.02153,
+          "CDp": 0.0183,
+          "CM": -0.0795,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.0,
+          "CL": -0.525,
+          "CD": 0.02091,
+          "CDp": 0.01777,
+          "CM": -0.08,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.75,
+          "CL": -0.4987,
+          "CD": 0.0203,
+          "CDp": 0.01726,
+          "CM": -0.0805,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.5,
+          "CL": -0.4725,
+          "CD": 0.01971,
+          "CDp": 0.01676,
+          "CM": -0.081,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.25,
+          "CL": -0.4462,
+          "CD": 0.01914,
+          "CDp": 0.01627,
+          "CM": -0.0815,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.0,
+          "CL": -0.42,
+          "CD": 0.01858,
+          "CDp": 0.0158,
+          "CM": -0.082,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.75,
+          "CL": -0.3937,
+          "CD": 0.01804,
+          "CDp": 0.01534,
+          "CM": -0.0825,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.5,
+          "CL": -0.3675,
+          "CD": 0.01752,
+          "CDp": 0.01489,
+          "CM": -0.083,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.25,
+          "CL": -0.3412,
+          "CD": 0.01701,
+          "CDp": 0.01446,
+          "CM": -0.0835,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.0,
+          "CL": -0.315,
+          "CD": 0.01652,
+          "CDp": 0.01404,
+          "CM": -0.084,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.75,
+          "CL": -0.2888,
+          "CD": 0.01605,
+          "CDp": 0.01364,
+          "CM": -0.0845,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.5,
+          "CL": -0.2625,
+          "CD": 0.01559,
+          "CDp": 0.01325,
+          "CM": -0.085,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.25,
+          "CL": -0.2362,
+          "CD": 0.01515,
+          "CDp": 0.01288,
+          "CM": -0.0855,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.0,
+          "CL": -0.21,
+          "CD": 0.01473,
+          "CDp": 0.01252,
+          "CM": -0.086,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.75,
+          "CL": -0.1837,
+          "CD": 0.01432,
+          "CDp": 0.01217,
+          "CM": -0.0865,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.5,
+          "CL": -0.1575,
+          "CD": 0.01393,
+          "CDp": 0.01184,
+          "CM": -0.087,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.25,
+          "CL": -0.1313,
+          "CD": 0.01355,
+          "CDp": 0.01152,
+          "CM": -0.0875,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.0,
+          "CL": -0.105,
+          "CD": 0.0132,
+          "CDp": 0.01122,
+          "CM": -0.088,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.75,
+          "CL": -0.0788,
+          "CD": 0.01285,
+          "CDp": 0.01093,
+          "CM": -0.0885,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.5,
+          "CL": -0.0525,
+          "CD": 0.01253,
+          "CDp": 0.01065,
+          "CM": -0.089,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.25,
+          "CL": -0.0262,
+          "CD": 0.01222,
+          "CDp": 0.01039,
+          "CM": -0.0895,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.0,
+          "CL": 0.0,
+          "CD": 0.01193,
+          "CDp": 0.01014,
+          "CM": -0.09,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -4.75,
+          "CL": 0.0262,
+          "CD": 0.01165,
+          "CDp": 0.00991,
+          "CM": -0.0905,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.0625
+        },
+        {
+          "alpha": -4.5,
+          "CL": 0.0525,
+          "CD": 0.0114,
+          "CDp": 0.00969,
+          "CM": -0.091,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.075
+        },
+        {
+          "alpha": -4.25,
+          "CL": 0.0788,
+          "CD": 0.01115,
+          "CDp": 0.00948,
+          "CM": -0.0915,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.0875
+        },
+        {
+          "alpha": -4.0,
+          "CL": 0.105,
+          "CD": 0.01093,
+          "CDp": 0.00929,
+          "CM": -0.092,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1
+        },
+        {
+          "alpha": -3.75,
+          "CL": 0.1313,
+          "CD": 0.01072,
+          "CDp": 0.00911,
+          "CM": -0.0925,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1125
+        },
+        {
+          "alpha": -3.5,
+          "CL": 0.1575,
+          "CD": 0.01053,
+          "CDp": 0.00895,
+          "CM": -0.093,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.125
+        },
+        {
+          "alpha": -3.25,
+          "CL": 0.1837,
+          "CD": 0.01035,
+          "CDp": 0.0088,
+          "CM": -0.0935,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1375
+        },
+        {
+          "alpha": -3.0,
+          "CL": 0.21,
+          "CD": 0.01019,
+          "CDp": 0.00866,
+          "CM": -0.094,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.15
+        },
+        {
+          "alpha": -2.75,
+          "CL": 0.2362,
+          "CD": 0.01005,
+          "CDp": 0.00854,
+          "CM": -0.0945,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1625
+        },
+        {
+          "alpha": -2.5,
+          "CL": 0.2625,
+          "CD": 0.00992,
+          "CDp": 0.00843,
+          "CM": -0.095,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.175
+        },
+        {
+          "alpha": -2.25,
+          "CL": 0.2888,
+          "CD": 0.00981,
+          "CDp": 0.00834,
+          "CM": -0.0955,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1875
+        },
+        {
+          "alpha": -2.0,
+          "CL": 0.315,
+          "CD": 0.00972,
+          "CDp": 0.00826,
+          "CM": -0.096,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2
+        },
+        {
+          "alpha": -1.75,
+          "CL": 0.3412,
+          "CD": 0.00964,
+          "CDp": 0.0082,
+          "CM": -0.0965,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2125
+        },
+        {
+          "alpha": -1.5,
+          "CL": 0.3675,
+          "CD": 0.00958,
+          "CDp": 0.00814,
+          "CM": -0.097,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.225
+        },
+        {
+          "alpha": -1.25,
+          "CL": 0.3937,
+          "CD": 0.00954,
+          "CDp": 0.00811,
+          "CM": -0.0975,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2375
+        },
+        {
+          "alpha": -1.0,
+          "CL": 0.42,
+          "CD": 0.00951,
+          "CDp": 0.00808,
+          "CM": -0.098,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.25
+        },
+        {
+          "alpha": -0.75,
+          "CL": 0.4462,
+          "CD": 0.0095,
+          "CDp": 0.00808,
+          "CM": -0.0985,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2625
+        },
+        {
+          "alpha": -0.5,
+          "CL": 0.4725,
+          "CD": 0.00951,
+          "CDp": 0.00808,
+          "CM": -0.099,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.275
+        },
+        {
+          "alpha": -0.25,
+          "CL": 0.4987,
+          "CD": 0.00953,
+          "CDp": 0.0081,
+          "CM": -0.0995,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2875
+        },
+        {
+          "alpha": 0.0,
+          "CL": 0.525,
+          "CD": 0.00957,
+          "CDp": 0.00813,
+          "CM": -0.1,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3
+        },
+        {
+          "alpha": 0.25,
+          "CL": 0.5513,
+          "CD": 0.00962,
+          "CDp": 0.00818,
+          "CM": -0.1005,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3125
+        },
+        {
+          "alpha": 0.5,
+          "CL": 0.5775,
+          "CD": 0.0097,
+          "CDp": 0.00824,
+          "CM": -0.101,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.325
+        },
+        {
+          "alpha": 0.75,
+          "CL": 0.6038,
+          "CD": 0.00978,
+          "CDp": 0.00832,
+          "CM": -0.1015,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3375
+        },
+        {
+          "alpha": 1.0,
+          "CL": 0.63,
+          "CD": 0.00989,
+          "CDp": 0.00841,
+          "CM": -0.102,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.35
+        },
+        {
+          "alpha": 1.25,
+          "CL": 0.6562,
+          "CD": 0.01001,
+          "CDp": 0.00851,
+          "CM": -0.1025,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3625
+        },
+        {
+          "alpha": 1.5,
+          "CL": 0.6825,
+          "CD": 0.01015,
+          "CDp": 0.00863,
+          "CM": -0.103,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.375
+        },
+        {
+          "alpha": 1.75,
+          "CL": 0.7087,
+          "CD": 0.0103,
+          "CDp": 0.00876,
+          "CM": -0.1035,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3875
+        },
+        {
+          "alpha": 2.0,
+          "CL": 0.735,
+          "CD": 0.01047,
+          "CDp": 0.0089,
+          "CM": -0.104,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4
+        },
+        {
+          "alpha": 2.25,
+          "CL": 0.7612,
+          "CD": 0.01066,
+          "CDp": 0.00906,
+          "CM": -0.1045,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4125
+        },
+        {
+          "alpha": 2.5,
+          "CL": 0.7875,
+          "CD": 0.01087,
+          "CDp": 0.00924,
+          "CM": -0.105,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.425
+        },
+        {
+          "alpha": 2.75,
+          "CL": 0.8137,
+          "CD": 0.01109,
+          "CDp": 0.00942,
+          "CM": -0.1055,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4375
+        },
+        {
+          "alpha": 3.0,
+          "CL": 0.84,
+          "CD": 0.01133,
+          "CDp": 0.00963,
+          "CM": -0.106,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.45
+        },
+        {
+          "alpha": 3.25,
+          "CL": 0.8662,
+          "CD": 0.01158,
+          "CDp": 0.00984,
+          "CM": -0.1065,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4625
+        },
+        {
+          "alpha": 3.5,
+          "CL": 0.8925,
+          "CD": 0.01185,
+          "CDp": 0.01007,
+          "CM": -0.107,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.475
+        },
+        {
+          "alpha": 3.75,
+          "CL": 0.9187,
+          "CD": 0.01214,
+          "CDp": 0.01032,
+          "CM": -0.1075,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4875
+        },
+        {
+          "alpha": 4.0,
+          "CL": 0.945,
+          "CD": 0.01244,
+          "CDp": 0.01057,
+          "CM": -0.108,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5
+        },
+        {
+          "alpha": 4.25,
+          "CL": 0.9712,
+          "CD": 0.01276,
+          "CDp": 0.01085,
+          "CM": -0.1085,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5125
+        },
+        {
+          "alpha": 4.5,
+          "CL": 0.9975,
+          "CD": 0.0131,
+          "CDp": 0.01113,
+          "CM": -0.109,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.525
+        },
+        {
+          "alpha": 4.75,
+          "CL": 1.0237,
+          "CD": 0.01345,
+          "CDp": 0.01143,
+          "CM": -0.1095,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5375
+        },
+        {
+          "alpha": 5.0,
+          "CL": 1.05,
+          "CD": 0.01382,
+          "CDp": 0.01175,
+          "CM": -0.11,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.55
+        },
+        {
+          "alpha": 5.25,
+          "CL": 1.0762,
+          "CD": 0.01421,
+          "CDp": 0.01208,
+          "CM": -0.1105,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5625
+        },
+        {
+          "alpha": 5.5,
+          "CL": 1.1025,
+          "CD": 0.01461,
+          "CDp": 0.01242,
+          "CM": -0.111,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.575
+        },
+        {
+          "alpha": 5.75,
+          "CL": 1.1287,
+          "CD": 0.01503,
+          "CDp": 0.01277,
+          "CM": -0.1115,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5875
+        },
+        {
+          "alpha": 6.0,
+          "CL": 1.155,
+          "CD": 0.01546,
+          "CDp": 0.01314,
+          "CM": -0.112,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6
+        },
+        {
+          "alpha": 6.25,
+          "CL": 1.1812,
+          "CD": 0.01592,
+          "CDp": 0.01353,
+          "CM": -0.1125,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6125
+        },
+        {
+          "alpha": 6.5,
+          "CL": 1.2075,
+          "CD": 0.01639,
+          "CDp": 0.01393,
+          "CM": -0.113,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.625
+        },
+        {
+          "alpha": 6.75,
+          "CL": 1.2337,
+          "CD": 0.01687,
+          "CDp": 0.01434,
+          "CM": -0.1135,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6375
+        },
+        {
+          "alpha": 7.0,
+          "CL": 1.26,
+          "CD": 0.01737,
+          "CDp": 0.01477,
+          "CM": -0.114,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.65
+        },
+        {
+          "alpha": 7.25,
+          "CL": 1.2862,
+          "CD": 0.01789,
+          "CDp": 0.01521,
+          "CM": -0.1145,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6625
+        },
+        {
+          "alpha": 7.5,
+          "CL": 1.3125,
+          "CD": 0.01843,
+          "CDp": 0.01566,
+          "CM": -0.115,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.675
+        },
+        {
+          "alpha": 7.75,
+          "CL": 1.3387,
+          "CD": 0.01898,
+          "CDp": 0.01613,
+          "CM": -0.1155,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6875
+        },
+        {
+          "alpha": 8.0,
+          "CL": 1.365,
+          "CD": 0.01955,
+          "CDp": 0.01661,
+          "CM": -0.116,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.7
+        },
+        {
+          "alpha": 8.25,
+          "CL": 1.3912,
+          "CD": 0.02013,
+          "CDp": 0.01711,
+          "CM": -0.1165,
+          "Top_Xtr": 0.975,
+          "Bot_Xtr": 0.7125
+        },
+        {
+          "alpha": 8.5,
+          "CL": 1.4173,
+          "CD": 0.02073,
+          "CDp": 0.01762,
+          "CM": -0.117,
+          "Top_Xtr": 0.95,
+          "Bot_Xtr": 0.725
+        },
+        {
+          "alpha": 8.75,
+          "CL": 1.4422,
+          "CD": 0.02131,
+          "CDp": 0.01812,
+          "CM": -0.1175,
+          "Top_Xtr": 0.925,
+          "Bot_Xtr": 0.7375
+        },
+        {
+          "alpha": 9.0,
+          "CL": 1.4646,
+          "CD": 0.02185,
+          "CDp": 0.01858,
+          "CM": -0.118,
+          "Top_Xtr": 0.9,
+          "Bot_Xtr": 0.75
+        },
+        {
+          "alpha": 9.25,
+          "CL": 1.4839,
+          "CD": 0.02233,
+          "CDp": 0.01898,
+          "CM": -0.1185,
+          "Top_Xtr": 0.875,
+          "Bot_Xtr": 0.7625
+        },
+        {
+          "alpha": 9.5,
+          "CL": 1.4999,
+          "CD": 0.02273,
+          "CDp": 0.01932,
+          "CM": -0.119,
+          "Top_Xtr": 0.85,
+          "Bot_Xtr": 0.775
+        },
+        {
+          "alpha": 9.75,
+          "CL": 1.5125,
+          "CD": 0.02305,
+          "CDp": 0.01959,
+          "CM": -0.1195,
+          "Top_Xtr": 0.825,
+          "Bot_Xtr": 0.7875
+        },
+        {
+          "alpha": 10.0,
+          "CL": 1.5223,
+          "CD": 0.0233,
+          "CDp": 0.0198,
+          "CM": -0.12,
+          "Top_Xtr": 0.8,
+          "Bot_Xtr": 0.8
+        },
+        {
+          "alpha": 10.25,
+          "CL": 1.5298,
+          "CD": 0.02349,
+          "CDp": 0.01997,
+          "CM": -0.1205,
+          "Top_Xtr": 0.775,
+          "Bot_Xtr": 0.8125
+        },
+        {
+          "alpha": 10.5,
+          "CL": 1.5353,
+          "CD": 0.02363,
+          "CDp": 0.02009,
+          "CM": -0.121,
+          "Top_Xtr": 0.75,
+          "Bot_Xtr": 0.825
+        },
+        {
+          "alpha": 10.75,
+          "CL": 1.5394,
+          "CD": 0.02374,
+          "CDp": 0.02018,
+          "CM": -0.1215,
+          "Top_Xtr": 0.725,
+          "Bot_Xtr": 0.8375
+        },
+        {
+          "alpha": 11.0,
+          "CL": 1.5424,
+          "CD": 0.02382,
+          "CDp": 0.02025,
+          "CM": -0.122,
+          "Top_Xtr": 0.7,
+          "Bot_Xtr": 0.85
+        },
+        {
+          "alpha": 11.25,
+          "CL": 1.5445,
+          "CD": 0.02388,
+          "CDp": 0.02029,
+          "CM": -0.1225,
+          "Top_Xtr": 0.675,
+          "Bot_Xtr": 0.8625
+        },
+        {
+          "alpha": 11.5,
+          "CL": 1.5461,
+          "CD": 0.02392,
+          "CDp": 0.02033,
+          "CM": -0.123,
+          "Top_Xtr": 0.65,
+          "Bot_Xtr": 0.875
+        },
+        {
+          "alpha": 11.75,
+          "CL": 1.5472,
+          "CD": 0.02395,
+          "CDp": 0.02035,
+          "CM": -0.1235,
+          "Top_Xtr": 0.625,
+          "Bot_Xtr": 0.8875
+        },
+        {
+          "alpha": 12.0,
+          "CL": 1.548,
+          "CD": 0.02397,
+          "CDp": 0.02037,
+          "CM": -0.124,
+          "Top_Xtr": 0.6,
+          "Bot_Xtr": 0.9
+        },
+        {
+          "alpha": 12.25,
+          "CL": 1.5486,
+          "CD": 0.0242,
+          "CDp": 0.02057,
+          "CM": -0.1245,
+          "Top_Xtr": 0.575,
+          "Bot_Xtr": 0.9125
+        },
+        {
+          "alpha": 12.5,
+          "CL": 1.549,
+          "CD": 0.02465,
+          "CDp": 0.02095,
+          "CM": -0.125,
+          "Top_Xtr": 0.55,
+          "Bot_Xtr": 0.925
+        },
+        {
+          "alpha": 12.75,
+          "CL": 1.5493,
+          "CD": 0.02526,
+          "CDp": 0.02147,
+          "CM": -0.1255,
+          "Top_Xtr": 0.525,
+          "Bot_Xtr": 0.9375
+        },
+        {
+          "alpha": 13.0,
+          "CL": 1.5495,
+          "CD": 0.02601,
+          "CDp": 0.02211,
+          "CM": -0.126,
+          "Top_Xtr": 0.5,
+          "Bot_Xtr": 0.95
+        },
+        {
+          "alpha": 13.25,
+          "CL": 1.5496,
+          "CD": 0.02687,
+          "CDp": 0.02284,
+          "CM": -0.1265,
+          "Top_Xtr": 0.475,
+          "Bot_Xtr": 0.9625
+        },
+        {
+          "alpha": 13.5,
+          "CL": 1.5497,
+          "CD": 0.02784,
+          "CDp": 0.02366,
+          "CM": -0.127,
+          "Top_Xtr": 0.45,
+          "Bot_Xtr": 0.975
+        },
+        {
+          "alpha": 13.75,
+          "CL": 1.5498,
+          "CD": 0.02891,
+          "CDp": 0.02457,
+          "CM": -0.1275,
+          "Top_Xtr": 0.425,
+          "Bot_Xtr": 0.9875
+        },
+        {
+          "alpha": 14.0,
+          "CL": 1.5499,
+          "CD": 0.03008,
+          "CDp": 0.02557,
+          "CM": -0.128,
+          "Top_Xtr": 0.4,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.25,
+          "CL": 1.5499,
+          "CD": 0.03134,
+          "CDp": 0.02664,
+          "CM": -0.1285,
+          "Top_Xtr": 0.375,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.5,
+          "CL": 1.5499,
+          "CD": 0.03268,
+          "CDp": 0.02778,
+          "CM": -0.129,
+          "Top_Xtr": 0.35,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.75,
+          "CL": 1.55,
+          "CD": 0.03411,
+          "CDp": 0.02899,
+          "CM": -0.1295,
+          "Top_Xtr": 0.325,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.0,
+          "CL": 1.55,
+          "CD": 0.03562,
+          "CDp": 0.03028,
+          "CM": -0.13,
+          "Top_Xtr": 0.3,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.25,
+          "CL": 1.53,
+          "CD": 0.03668,
+          "CDp": 0.03118,
+          "CM": -0.1305,
+          "Top_Xtr": 0.275,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.5,
+          "CL": 1.51,
+          "CD": 0.03783,
+          "CDp": 0.03215,
+          "CM": -0.131,
+          "Top_Xtr": 0.25,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.75,
+          "CL": 1.49,
+          "CD": 0.03905,
+          "CDp": 0.0332,
+          "CM": -0.1315,
+          "Top_Xtr": 0.225,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.0,
+          "CL": 1.47,
+          "CD": 0.04036,
+          "CDp": 0.03431,
+          "CM": -0.132,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.25,
+          "CL": 1.45,
+          "CD": 0.04175,
+          "CDp": 0.03549,
+          "CM": -0.1325,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.5,
+          "CL": 1.43,
+          "CD": 0.04322,
+          "CDp": 0.03673,
+          "CM": -0.133,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.75,
+          "CL": 1.41,
+          "CD": 0.04475,
+          "CDp": 0.03804,
+          "CM": -0.1335,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.0,
+          "CL": 1.39,
+          "CD": 0.04637,
+          "CDp": 0.03941,
+          "CM": -0.134,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.25,
+          "CL": 1.37,
+          "CD": 0.04805,
+          "CDp": 0.04085,
+          "CM": -0.1345,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.5,
+          "CL": 1.35,
+          "CD": 0.04981,
+          "CDp": 0.04234,
+          "CM": -0.135,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.75,
+          "CL": 1.33,
+          "CD": 0.05164,
+          "CDp": 0.04389,
+          "CM": -0.1355,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 18.0,
+          "CL": 1.31,
+          "CD": 0.05354,
+          "CDp": 0.04551,
+          "CM": -0.136,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        }
+      ]
     },
     "propulsion": {
       "lift_motor_thrust_time_constant_s": 0.18,
       "lift_effective_efficiency": 0.62,
       "pusher_motor_time_constant_s": 0.12,
-      "pusher_max_electrical_power_W": 1121.0,
+      "pusher_max_electrical_power_W": 1000.0,
       "pusher_max_rpm": 8000.0,
       "pusher_min_rpm": 1500.0,
       "pusher_rpm_step": 25.0,
@@ -1395,6 +2584,8 @@
       "vtol_takeoff_duration_s": 10.0,
       "vertical_climb_duration_s": 10.0,
       "wingborne_climb_duration_s": 20.0,
+      "wingborne_climb_height_m": 40.0,
+      "wingborne_climb_rate_mps": 2.0,
       "wingborne_climb_bus_power_W": 900.0,
       "vertical_descent_duration_s": 15.0,
       "vertical_descent_hover_power_factor": 0.7,
@@ -1421,12 +2612,12 @@
     },
     "aircraft": {
       "mass_kg": 11.0777,
-      "wing_area_m2": 0.879451488,
-      "wing_span_m": 3.3742,
-      "wing_mac_m": 0.2660699999999999,
+      "wing_area_m2": 0.9,
+      "wing_span_m": 3.6,
+      "wing_mac_m": 0.2548,
       "cg_station_x_m": 0.4496127355,
       "cg_z_up_m": 0.0395143938,
-      "neutral_point_station_x_m": 0.4253206802603421,
+      "neutral_point_station_x_m": 0.4913053183378593,
       "inertia_tensor_kgm2": [
         [
           2.2780978456,
@@ -1446,24 +2637,24 @@
       ],
       "lift_motor_stations_m": [
         [
-          0.09648400000000001,
-          -0.3669,
-          0.12788930732488546
+          0.18634,
+          -0.3739,
+          0.056284307324885464
         ],
         [
-          0.09648400000000001,
-          0.3669,
-          0.12788930732488546
+          0.18634,
+          0.3739,
+          0.056284307324885464
         ],
         [
-          0.675284,
-          -0.3669,
-          0.12788930732488546
+          0.7651399999999999,
+          -0.3739,
+          0.056284307324885464
         ],
         [
-          0.675284,
-          0.3669,
-          0.12788930732488546
+          0.7651399999999999,
+          0.3739,
+          0.056284307324885464
         ]
       ],
       "lift_motor_rotation_sign": [
@@ -1477,8 +2668,8 @@
         0.0,
         0.0
       ],
-      "horizontal_tail_area_m2": 0.16098864,
-      "horizontal_tail_ac_station_x_m": 1.048942,
+      "horizontal_tail_area_m2": 0.16972037570309764,
+      "horizontal_tail_ac_station_x_m": 1.050226,
       "vertical_tail_total_area_m2": 0.1504,
       "vertical_tail_ac_station_x_m": 1.05
     },
@@ -1486,12 +2677,12 @@
       "rho_kg_m3": 1.225,
       "speed_of_sound_mps": 343.0,
       "CL_alpha_per_rad": 4.8,
-      "zero_lift_alpha_deg": -2.0,
-      "CL_max": 1.185,
-      "CL_min": -0.6,
+      "zero_lift_alpha_deg": -5.0,
+      "CL_max": 1.55,
+      "CL_min": -0.735,
       "CD0_folded": 0.0438,
       "oswald_efficiency": 0.78,
-      "Cm0": 0.02,
+      "Cm0": -0.09,
       "Cm_alpha_mode": "derive_from_static_margin",
       "Cm_q": -9.0,
       "Cm_de": -1.1,
@@ -1509,7 +2700,1098 @@
       "Cn_r": -0.2,
       "Cn_da": 0.015,
       "Cn_dr": -0.11,
-      "derivative_status": "engineering_assumption_except_CLalpha_CLmax_and_geometry_derived_static_margin"
+      "derivative_status": "engineering_assumption_except_CLalpha_CLmax_and_geometry_derived_static_margin",
+      "polar_rows": [
+        {
+          "alpha": -12.0,
+          "CL": -0.735,
+          "CD": 0.02635,
+          "CDp": 0.0224,
+          "CM": -0.076,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.75,
+          "CL": -0.7087,
+          "CD": 0.02561,
+          "CDp": 0.02177,
+          "CM": -0.0765,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.5,
+          "CL": -0.6825,
+          "CD": 0.02489,
+          "CDp": 0.02116,
+          "CM": -0.077,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.25,
+          "CL": -0.6562,
+          "CD": 0.02419,
+          "CDp": 0.02056,
+          "CM": -0.0775,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.0,
+          "CL": -0.63,
+          "CD": 0.0235,
+          "CDp": 0.01997,
+          "CM": -0.078,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.75,
+          "CL": -0.6038,
+          "CD": 0.02282,
+          "CDp": 0.0194,
+          "CM": -0.0785,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.5,
+          "CL": -0.5775,
+          "CD": 0.02217,
+          "CDp": 0.01884,
+          "CM": -0.079,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.25,
+          "CL": -0.5513,
+          "CD": 0.02153,
+          "CDp": 0.0183,
+          "CM": -0.0795,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.0,
+          "CL": -0.525,
+          "CD": 0.02091,
+          "CDp": 0.01777,
+          "CM": -0.08,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.75,
+          "CL": -0.4987,
+          "CD": 0.0203,
+          "CDp": 0.01726,
+          "CM": -0.0805,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.5,
+          "CL": -0.4725,
+          "CD": 0.01971,
+          "CDp": 0.01676,
+          "CM": -0.081,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.25,
+          "CL": -0.4462,
+          "CD": 0.01914,
+          "CDp": 0.01627,
+          "CM": -0.0815,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.0,
+          "CL": -0.42,
+          "CD": 0.01858,
+          "CDp": 0.0158,
+          "CM": -0.082,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.75,
+          "CL": -0.3937,
+          "CD": 0.01804,
+          "CDp": 0.01534,
+          "CM": -0.0825,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.5,
+          "CL": -0.3675,
+          "CD": 0.01752,
+          "CDp": 0.01489,
+          "CM": -0.083,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.25,
+          "CL": -0.3412,
+          "CD": 0.01701,
+          "CDp": 0.01446,
+          "CM": -0.0835,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.0,
+          "CL": -0.315,
+          "CD": 0.01652,
+          "CDp": 0.01404,
+          "CM": -0.084,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.75,
+          "CL": -0.2888,
+          "CD": 0.01605,
+          "CDp": 0.01364,
+          "CM": -0.0845,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.5,
+          "CL": -0.2625,
+          "CD": 0.01559,
+          "CDp": 0.01325,
+          "CM": -0.085,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.25,
+          "CL": -0.2362,
+          "CD": 0.01515,
+          "CDp": 0.01288,
+          "CM": -0.0855,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.0,
+          "CL": -0.21,
+          "CD": 0.01473,
+          "CDp": 0.01252,
+          "CM": -0.086,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.75,
+          "CL": -0.1837,
+          "CD": 0.01432,
+          "CDp": 0.01217,
+          "CM": -0.0865,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.5,
+          "CL": -0.1575,
+          "CD": 0.01393,
+          "CDp": 0.01184,
+          "CM": -0.087,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.25,
+          "CL": -0.1313,
+          "CD": 0.01355,
+          "CDp": 0.01152,
+          "CM": -0.0875,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.0,
+          "CL": -0.105,
+          "CD": 0.0132,
+          "CDp": 0.01122,
+          "CM": -0.088,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.75,
+          "CL": -0.0788,
+          "CD": 0.01285,
+          "CDp": 0.01093,
+          "CM": -0.0885,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.5,
+          "CL": -0.0525,
+          "CD": 0.01253,
+          "CDp": 0.01065,
+          "CM": -0.089,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.25,
+          "CL": -0.0262,
+          "CD": 0.01222,
+          "CDp": 0.01039,
+          "CM": -0.0895,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.0,
+          "CL": 0.0,
+          "CD": 0.01193,
+          "CDp": 0.01014,
+          "CM": -0.09,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -4.75,
+          "CL": 0.0262,
+          "CD": 0.01165,
+          "CDp": 0.00991,
+          "CM": -0.0905,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.0625
+        },
+        {
+          "alpha": -4.5,
+          "CL": 0.0525,
+          "CD": 0.0114,
+          "CDp": 0.00969,
+          "CM": -0.091,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.075
+        },
+        {
+          "alpha": -4.25,
+          "CL": 0.0788,
+          "CD": 0.01115,
+          "CDp": 0.00948,
+          "CM": -0.0915,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.0875
+        },
+        {
+          "alpha": -4.0,
+          "CL": 0.105,
+          "CD": 0.01093,
+          "CDp": 0.00929,
+          "CM": -0.092,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1
+        },
+        {
+          "alpha": -3.75,
+          "CL": 0.1313,
+          "CD": 0.01072,
+          "CDp": 0.00911,
+          "CM": -0.0925,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1125
+        },
+        {
+          "alpha": -3.5,
+          "CL": 0.1575,
+          "CD": 0.01053,
+          "CDp": 0.00895,
+          "CM": -0.093,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.125
+        },
+        {
+          "alpha": -3.25,
+          "CL": 0.1837,
+          "CD": 0.01035,
+          "CDp": 0.0088,
+          "CM": -0.0935,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1375
+        },
+        {
+          "alpha": -3.0,
+          "CL": 0.21,
+          "CD": 0.01019,
+          "CDp": 0.00866,
+          "CM": -0.094,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.15
+        },
+        {
+          "alpha": -2.75,
+          "CL": 0.2362,
+          "CD": 0.01005,
+          "CDp": 0.00854,
+          "CM": -0.0945,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1625
+        },
+        {
+          "alpha": -2.5,
+          "CL": 0.2625,
+          "CD": 0.00992,
+          "CDp": 0.00843,
+          "CM": -0.095,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.175
+        },
+        {
+          "alpha": -2.25,
+          "CL": 0.2888,
+          "CD": 0.00981,
+          "CDp": 0.00834,
+          "CM": -0.0955,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1875
+        },
+        {
+          "alpha": -2.0,
+          "CL": 0.315,
+          "CD": 0.00972,
+          "CDp": 0.00826,
+          "CM": -0.096,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2
+        },
+        {
+          "alpha": -1.75,
+          "CL": 0.3412,
+          "CD": 0.00964,
+          "CDp": 0.0082,
+          "CM": -0.0965,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2125
+        },
+        {
+          "alpha": -1.5,
+          "CL": 0.3675,
+          "CD": 0.00958,
+          "CDp": 0.00814,
+          "CM": -0.097,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.225
+        },
+        {
+          "alpha": -1.25,
+          "CL": 0.3937,
+          "CD": 0.00954,
+          "CDp": 0.00811,
+          "CM": -0.0975,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2375
+        },
+        {
+          "alpha": -1.0,
+          "CL": 0.42,
+          "CD": 0.00951,
+          "CDp": 0.00808,
+          "CM": -0.098,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.25
+        },
+        {
+          "alpha": -0.75,
+          "CL": 0.4462,
+          "CD": 0.0095,
+          "CDp": 0.00808,
+          "CM": -0.0985,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2625
+        },
+        {
+          "alpha": -0.5,
+          "CL": 0.4725,
+          "CD": 0.00951,
+          "CDp": 0.00808,
+          "CM": -0.099,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.275
+        },
+        {
+          "alpha": -0.25,
+          "CL": 0.4987,
+          "CD": 0.00953,
+          "CDp": 0.0081,
+          "CM": -0.0995,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2875
+        },
+        {
+          "alpha": 0.0,
+          "CL": 0.525,
+          "CD": 0.00957,
+          "CDp": 0.00813,
+          "CM": -0.1,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3
+        },
+        {
+          "alpha": 0.25,
+          "CL": 0.5513,
+          "CD": 0.00962,
+          "CDp": 0.00818,
+          "CM": -0.1005,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3125
+        },
+        {
+          "alpha": 0.5,
+          "CL": 0.5775,
+          "CD": 0.0097,
+          "CDp": 0.00824,
+          "CM": -0.101,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.325
+        },
+        {
+          "alpha": 0.75,
+          "CL": 0.6038,
+          "CD": 0.00978,
+          "CDp": 0.00832,
+          "CM": -0.1015,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3375
+        },
+        {
+          "alpha": 1.0,
+          "CL": 0.63,
+          "CD": 0.00989,
+          "CDp": 0.00841,
+          "CM": -0.102,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.35
+        },
+        {
+          "alpha": 1.25,
+          "CL": 0.6562,
+          "CD": 0.01001,
+          "CDp": 0.00851,
+          "CM": -0.1025,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3625
+        },
+        {
+          "alpha": 1.5,
+          "CL": 0.6825,
+          "CD": 0.01015,
+          "CDp": 0.00863,
+          "CM": -0.103,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.375
+        },
+        {
+          "alpha": 1.75,
+          "CL": 0.7087,
+          "CD": 0.0103,
+          "CDp": 0.00876,
+          "CM": -0.1035,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3875
+        },
+        {
+          "alpha": 2.0,
+          "CL": 0.735,
+          "CD": 0.01047,
+          "CDp": 0.0089,
+          "CM": -0.104,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4
+        },
+        {
+          "alpha": 2.25,
+          "CL": 0.7612,
+          "CD": 0.01066,
+          "CDp": 0.00906,
+          "CM": -0.1045,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4125
+        },
+        {
+          "alpha": 2.5,
+          "CL": 0.7875,
+          "CD": 0.01087,
+          "CDp": 0.00924,
+          "CM": -0.105,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.425
+        },
+        {
+          "alpha": 2.75,
+          "CL": 0.8137,
+          "CD": 0.01109,
+          "CDp": 0.00942,
+          "CM": -0.1055,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4375
+        },
+        {
+          "alpha": 3.0,
+          "CL": 0.84,
+          "CD": 0.01133,
+          "CDp": 0.00963,
+          "CM": -0.106,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.45
+        },
+        {
+          "alpha": 3.25,
+          "CL": 0.8662,
+          "CD": 0.01158,
+          "CDp": 0.00984,
+          "CM": -0.1065,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4625
+        },
+        {
+          "alpha": 3.5,
+          "CL": 0.8925,
+          "CD": 0.01185,
+          "CDp": 0.01007,
+          "CM": -0.107,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.475
+        },
+        {
+          "alpha": 3.75,
+          "CL": 0.9187,
+          "CD": 0.01214,
+          "CDp": 0.01032,
+          "CM": -0.1075,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4875
+        },
+        {
+          "alpha": 4.0,
+          "CL": 0.945,
+          "CD": 0.01244,
+          "CDp": 0.01057,
+          "CM": -0.108,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5
+        },
+        {
+          "alpha": 4.25,
+          "CL": 0.9712,
+          "CD": 0.01276,
+          "CDp": 0.01085,
+          "CM": -0.1085,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5125
+        },
+        {
+          "alpha": 4.5,
+          "CL": 0.9975,
+          "CD": 0.0131,
+          "CDp": 0.01113,
+          "CM": -0.109,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.525
+        },
+        {
+          "alpha": 4.75,
+          "CL": 1.0237,
+          "CD": 0.01345,
+          "CDp": 0.01143,
+          "CM": -0.1095,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5375
+        },
+        {
+          "alpha": 5.0,
+          "CL": 1.05,
+          "CD": 0.01382,
+          "CDp": 0.01175,
+          "CM": -0.11,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.55
+        },
+        {
+          "alpha": 5.25,
+          "CL": 1.0762,
+          "CD": 0.01421,
+          "CDp": 0.01208,
+          "CM": -0.1105,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5625
+        },
+        {
+          "alpha": 5.5,
+          "CL": 1.1025,
+          "CD": 0.01461,
+          "CDp": 0.01242,
+          "CM": -0.111,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.575
+        },
+        {
+          "alpha": 5.75,
+          "CL": 1.1287,
+          "CD": 0.01503,
+          "CDp": 0.01277,
+          "CM": -0.1115,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5875
+        },
+        {
+          "alpha": 6.0,
+          "CL": 1.155,
+          "CD": 0.01546,
+          "CDp": 0.01314,
+          "CM": -0.112,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6
+        },
+        {
+          "alpha": 6.25,
+          "CL": 1.1812,
+          "CD": 0.01592,
+          "CDp": 0.01353,
+          "CM": -0.1125,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6125
+        },
+        {
+          "alpha": 6.5,
+          "CL": 1.2075,
+          "CD": 0.01639,
+          "CDp": 0.01393,
+          "CM": -0.113,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.625
+        },
+        {
+          "alpha": 6.75,
+          "CL": 1.2337,
+          "CD": 0.01687,
+          "CDp": 0.01434,
+          "CM": -0.1135,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6375
+        },
+        {
+          "alpha": 7.0,
+          "CL": 1.26,
+          "CD": 0.01737,
+          "CDp": 0.01477,
+          "CM": -0.114,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.65
+        },
+        {
+          "alpha": 7.25,
+          "CL": 1.2862,
+          "CD": 0.01789,
+          "CDp": 0.01521,
+          "CM": -0.1145,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6625
+        },
+        {
+          "alpha": 7.5,
+          "CL": 1.3125,
+          "CD": 0.01843,
+          "CDp": 0.01566,
+          "CM": -0.115,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.675
+        },
+        {
+          "alpha": 7.75,
+          "CL": 1.3387,
+          "CD": 0.01898,
+          "CDp": 0.01613,
+          "CM": -0.1155,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6875
+        },
+        {
+          "alpha": 8.0,
+          "CL": 1.365,
+          "CD": 0.01955,
+          "CDp": 0.01661,
+          "CM": -0.116,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.7
+        },
+        {
+          "alpha": 8.25,
+          "CL": 1.3912,
+          "CD": 0.02013,
+          "CDp": 0.01711,
+          "CM": -0.1165,
+          "Top_Xtr": 0.975,
+          "Bot_Xtr": 0.7125
+        },
+        {
+          "alpha": 8.5,
+          "CL": 1.4173,
+          "CD": 0.02073,
+          "CDp": 0.01762,
+          "CM": -0.117,
+          "Top_Xtr": 0.95,
+          "Bot_Xtr": 0.725
+        },
+        {
+          "alpha": 8.75,
+          "CL": 1.4422,
+          "CD": 0.02131,
+          "CDp": 0.01812,
+          "CM": -0.1175,
+          "Top_Xtr": 0.925,
+          "Bot_Xtr": 0.7375
+        },
+        {
+          "alpha": 9.0,
+          "CL": 1.4646,
+          "CD": 0.02185,
+          "CDp": 0.01858,
+          "CM": -0.118,
+          "Top_Xtr": 0.9,
+          "Bot_Xtr": 0.75
+        },
+        {
+          "alpha": 9.25,
+          "CL": 1.4839,
+          "CD": 0.02233,
+          "CDp": 0.01898,
+          "CM": -0.1185,
+          "Top_Xtr": 0.875,
+          "Bot_Xtr": 0.7625
+        },
+        {
+          "alpha": 9.5,
+          "CL": 1.4999,
+          "CD": 0.02273,
+          "CDp": 0.01932,
+          "CM": -0.119,
+          "Top_Xtr": 0.85,
+          "Bot_Xtr": 0.775
+        },
+        {
+          "alpha": 9.75,
+          "CL": 1.5125,
+          "CD": 0.02305,
+          "CDp": 0.01959,
+          "CM": -0.1195,
+          "Top_Xtr": 0.825,
+          "Bot_Xtr": 0.7875
+        },
+        {
+          "alpha": 10.0,
+          "CL": 1.5223,
+          "CD": 0.0233,
+          "CDp": 0.0198,
+          "CM": -0.12,
+          "Top_Xtr": 0.8,
+          "Bot_Xtr": 0.8
+        },
+        {
+          "alpha": 10.25,
+          "CL": 1.5298,
+          "CD": 0.02349,
+          "CDp": 0.01997,
+          "CM": -0.1205,
+          "Top_Xtr": 0.775,
+          "Bot_Xtr": 0.8125
+        },
+        {
+          "alpha": 10.5,
+          "CL": 1.5353,
+          "CD": 0.02363,
+          "CDp": 0.02009,
+          "CM": -0.121,
+          "Top_Xtr": 0.75,
+          "Bot_Xtr": 0.825
+        },
+        {
+          "alpha": 10.75,
+          "CL": 1.5394,
+          "CD": 0.02374,
+          "CDp": 0.02018,
+          "CM": -0.1215,
+          "Top_Xtr": 0.725,
+          "Bot_Xtr": 0.8375
+        },
+        {
+          "alpha": 11.0,
+          "CL": 1.5424,
+          "CD": 0.02382,
+          "CDp": 0.02025,
+          "CM": -0.122,
+          "Top_Xtr": 0.7,
+          "Bot_Xtr": 0.85
+        },
+        {
+          "alpha": 11.25,
+          "CL": 1.5445,
+          "CD": 0.02388,
+          "CDp": 0.02029,
+          "CM": -0.1225,
+          "Top_Xtr": 0.675,
+          "Bot_Xtr": 0.8625
+        },
+        {
+          "alpha": 11.5,
+          "CL": 1.5461,
+          "CD": 0.02392,
+          "CDp": 0.02033,
+          "CM": -0.123,
+          "Top_Xtr": 0.65,
+          "Bot_Xtr": 0.875
+        },
+        {
+          "alpha": 11.75,
+          "CL": 1.5472,
+          "CD": 0.02395,
+          "CDp": 0.02035,
+          "CM": -0.1235,
+          "Top_Xtr": 0.625,
+          "Bot_Xtr": 0.8875
+        },
+        {
+          "alpha": 12.0,
+          "CL": 1.548,
+          "CD": 0.02397,
+          "CDp": 0.02037,
+          "CM": -0.124,
+          "Top_Xtr": 0.6,
+          "Bot_Xtr": 0.9
+        },
+        {
+          "alpha": 12.25,
+          "CL": 1.5486,
+          "CD": 0.0242,
+          "CDp": 0.02057,
+          "CM": -0.1245,
+          "Top_Xtr": 0.575,
+          "Bot_Xtr": 0.9125
+        },
+        {
+          "alpha": 12.5,
+          "CL": 1.549,
+          "CD": 0.02465,
+          "CDp": 0.02095,
+          "CM": -0.125,
+          "Top_Xtr": 0.55,
+          "Bot_Xtr": 0.925
+        },
+        {
+          "alpha": 12.75,
+          "CL": 1.5493,
+          "CD": 0.02526,
+          "CDp": 0.02147,
+          "CM": -0.1255,
+          "Top_Xtr": 0.525,
+          "Bot_Xtr": 0.9375
+        },
+        {
+          "alpha": 13.0,
+          "CL": 1.5495,
+          "CD": 0.02601,
+          "CDp": 0.02211,
+          "CM": -0.126,
+          "Top_Xtr": 0.5,
+          "Bot_Xtr": 0.95
+        },
+        {
+          "alpha": 13.25,
+          "CL": 1.5496,
+          "CD": 0.02687,
+          "CDp": 0.02284,
+          "CM": -0.1265,
+          "Top_Xtr": 0.475,
+          "Bot_Xtr": 0.9625
+        },
+        {
+          "alpha": 13.5,
+          "CL": 1.5497,
+          "CD": 0.02784,
+          "CDp": 0.02366,
+          "CM": -0.127,
+          "Top_Xtr": 0.45,
+          "Bot_Xtr": 0.975
+        },
+        {
+          "alpha": 13.75,
+          "CL": 1.5498,
+          "CD": 0.02891,
+          "CDp": 0.02457,
+          "CM": -0.1275,
+          "Top_Xtr": 0.425,
+          "Bot_Xtr": 0.9875
+        },
+        {
+          "alpha": 14.0,
+          "CL": 1.5499,
+          "CD": 0.03008,
+          "CDp": 0.02557,
+          "CM": -0.128,
+          "Top_Xtr": 0.4,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.25,
+          "CL": 1.5499,
+          "CD": 0.03134,
+          "CDp": 0.02664,
+          "CM": -0.1285,
+          "Top_Xtr": 0.375,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.5,
+          "CL": 1.5499,
+          "CD": 0.03268,
+          "CDp": 0.02778,
+          "CM": -0.129,
+          "Top_Xtr": 0.35,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.75,
+          "CL": 1.55,
+          "CD": 0.03411,
+          "CDp": 0.02899,
+          "CM": -0.1295,
+          "Top_Xtr": 0.325,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.0,
+          "CL": 1.55,
+          "CD": 0.03562,
+          "CDp": 0.03028,
+          "CM": -0.13,
+          "Top_Xtr": 0.3,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.25,
+          "CL": 1.53,
+          "CD": 0.03668,
+          "CDp": 0.03118,
+          "CM": -0.1305,
+          "Top_Xtr": 0.275,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.5,
+          "CL": 1.51,
+          "CD": 0.03783,
+          "CDp": 0.03215,
+          "CM": -0.131,
+          "Top_Xtr": 0.25,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.75,
+          "CL": 1.49,
+          "CD": 0.03905,
+          "CDp": 0.0332,
+          "CM": -0.1315,
+          "Top_Xtr": 0.225,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.0,
+          "CL": 1.47,
+          "CD": 0.04036,
+          "CDp": 0.03431,
+          "CM": -0.132,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.25,
+          "CL": 1.45,
+          "CD": 0.04175,
+          "CDp": 0.03549,
+          "CM": -0.1325,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.5,
+          "CL": 1.43,
+          "CD": 0.04322,
+          "CDp": 0.03673,
+          "CM": -0.133,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.75,
+          "CL": 1.41,
+          "CD": 0.04475,
+          "CDp": 0.03804,
+          "CM": -0.1335,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.0,
+          "CL": 1.39,
+          "CD": 0.04637,
+          "CDp": 0.03941,
+          "CM": -0.134,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.25,
+          "CL": 1.37,
+          "CD": 0.04805,
+          "CDp": 0.04085,
+          "CM": -0.1345,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.5,
+          "CL": 1.35,
+          "CD": 0.04981,
+          "CDp": 0.04234,
+          "CM": -0.135,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.75,
+          "CL": 1.33,
+          "CD": 0.05164,
+          "CDp": 0.04389,
+          "CM": -0.1355,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 18.0,
+          "CL": 1.31,
+          "CD": 0.05354,
+          "CDp": 0.04551,
+          "CM": -0.136,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        }
+      ]
     },
     "control_surfaces": {
       "elevator_limit_deg": 25.0,
@@ -1531,8 +3813,8 @@
       "status": "design_screen_not_selected_hardware"
     },
     "pusher": {
-      "propeller_diameter_in": 15.0,
-      "max_electrical_power_W": 1121.0,
+      "propeller_diameter_in": 18.0,
+      "max_electrical_power_W": 1000.0,
       "max_rpm": 8000.0,
       "rpm_time_constant_s": 0.12,
       "status": "generic_prop_map_screen"
@@ -1540,8 +3822,8 @@
     "controller": {
       "roll_kp_rad_s2_per_rad": 7.0,
       "roll_kd_rad_s2_per_rad_s": 4.0,
-      "pitch_kp_rad_s2_per_rad": 16.0,
-      "pitch_kd_rad_s2_per_rad_s": 7.0,
+      "pitch_kp_rad_s2_per_rad": 42.0,
+      "pitch_kd_rad_s2_per_rad_s": 15.0,
       "yaw_kp_rad_s2_per_rad": 5.0,
       "yaw_kd_rad_s2_per_rad_s": 3.2,
       "altitude_kp_mps2_per_m": 0.65,
@@ -1592,9 +3874,9 @@
       "reference_mass_kg": 11.0777,
       "design_mass_ceiling_kg": 15.0,
       "cg_station_x_m": 0.4496127355,
-      "reference_wing_span_m": 3.3742,
-      "design_wing_span_m": 3.3742,
-      "horizontal_tail_area_m2": 0.16098864,
+      "reference_wing_span_m": 3.6,
+      "design_wing_span_m": 3.6,
+      "horizontal_tail_area_m2": 0.16972037570309764,
       "vertical_tail_total_area_m2": 0.1504
     },
     "materials": {
@@ -1602,7 +3884,7 @@
         "name": "CFRP equivalent tube screen",
         "E_Pa": 300000000000.0,
         "poisson": 0.3,
-        "density_kg_m3": 1800.0,
+        "density_kg_m3": 1575.0,
         "bending_allow_MPa": 1000.0,
         "shear_allow_MPa": 120.0,
         "status": "engineering_assumption_from_current_design_inputs_allowable_after_SF"
@@ -1610,10 +3892,10 @@
     },
     "rotor_system": {
       "row_x_m": [
-        0.09648400000000001,
-        0.675284
+        0.18634,
+        0.7651399999999999
       ],
-      "motor_y_m": 0.3669,
+      "motor_y_m": 0.3739,
       "phase4_equal_share_design_thrust_N": 59.38,
       "phase6_reference_hover_thrusts_N": [
         32.89,
@@ -1627,14 +3909,14 @@
     },
     "structure": {
       "wing_primary_spar_x_m": 0.387,
-      "design_wing_semispan_m": 1.6871,
-      "current_wing_spar_od_m": 0.01329,
-      "current_wing_spar_id_m": 0.00997,
+      "design_wing_semispan_m": 1.8,
+      "reference_wing_spar_od_m": 0.01329,
+      "reference_wing_spar_id_m": 0.00997,
       "wing_spar_id_over_od": 0.75,
       "wing_tip_deflection_limit_fraction": 0.03,
       "wing_root_slope_limit_deg": 3.0,
       "current_total_wing_spar_mass_kg": 0.471,
-      "wing_structure_station_x_m": 0.439844,
+      "wing_structure_station_x_m": 0.508714,
       "boom_x_start_m": 0.34,
       "boom_length_m": 0.76,
       "n_booms": 2,
@@ -1651,8 +3933,8 @@
       "legacy_reported_boom_tube_mass_total_kg": 0.0242,
       "boom_mass_station_x_m": 0.72,
       "motor_mount_lever_m": 0.05,
-      "horizontal_tail_semispan_m": 0.4344,
-      "vertical_tail_height_m": 0.3,
+      "horizontal_tail_semispan_m": 0.45796107852967527,
+      "vertical_tail_height_m": 0.5330190749553178,
       "current_tail_spar_reference_od_m": 0.00433,
       "current_tail_spar_reference_id_m": 0.00325,
       "current_horizontal_tail_spar_mass_total_kg": 0.027,
@@ -1660,15 +3942,27 @@
       "tail_spar_reference_area_mm2": 6.45,
       "tail_deflection_limit_fraction": 0.05,
       "tail_root_slope_limit_deg": 3.0,
-      "tail_structure_station_x_m": 1.048942,
+      "tail_structure_station_x_m": 1.050226,
       "pod_reference_bending_moment_Nm": 136.2,
       "pod_reference_bending_stress_MPa": 1.0,
       "pod_reference_shear_stress_MPa": 0.53,
       "pod_printed_bending_allow_MPa": 14.5,
-      "pod_printed_shear_allow_MPa": 4.62
+      "pod_printed_shear_allow_MPa": 4.62,
+      "landing_leg_enabled": true,
+      "landing_leg_length_m": 0.305875,
+      "landing_leg_count": 3,
+      "landing_leg_side_load_fraction": 0.28,
+      "landing_leg_deflection_limit_fraction": 0.05,
+      "landing_leg_slope_limit_deg": 3.0,
+      "landing_leg_id_over_od": 0.75,
+      "landing_leg_min_od_m": 0.008,
+      "landing_leg_max_od_m": 0.03,
+      "landing_leg_step_m": 0.00025,
+      "recommended_sections_mode": "auto"
     },
     "load_cases": {
       "maneuver_load_factor": 3.0,
+      "landing_load_factor": 3.0,
       "rho_kg_m3": 1.225,
       "dive_speed_mps": 50.0,
       "horizontal_tail_design_CL_abs": 1.0,
@@ -1732,28 +4026,29 @@
       "wing_mac_shape_factor": 1.0270662460567823,
       "lift_row_separation_m": 0.5788,
       "resolved_lift_rows_x_m": [
-        0.09648400000000001,
-        0.675284
+        0.18634,
+        0.7651399999999999
       ],
       "high_wing_boom_through_wing": true,
       "boom_mounted_lift_motors": true,
-      "boom_y_abs_m": 0.3669,
-      "boom_y_input_m": 0.3669,
-      "boom_z_m": 0.09686430732488546,
+      "boom_y_abs_m": 0.3739,
+      "boom_y_input_m": 0.3739,
+      "boom_z_m": 0.09075930732488546,
       "boom_widened_for_pod_clearance": false,
-      "main_wing_z_m": 0.09686430732488546,
-      "main_wing_z_flush_m": 0.10000930732488547,
-      "main_wing_drop_from_flush_m": 0.003145000000000009,
+      "main_wing_z_m": 0.09075930732488546,
+      "main_wing_z_flush_m": 0.09075930732488546,
+      "main_wing_drop_from_flush_m": 0.0,
+      "wing_primary_spar_layout_od_m": 0.01329,
       "fuselage_top_z_m": 0.11400930732488547,
       "fuselage_longeron_layout": "top_bottom",
-      "fuselage_longeron_top_z_m": 0.11075930732488547,
-      "fuselage_longeron_bottom_z_m": -0.11075930732488547,
-      "fuselage_longeron_z_m": 0.11075930732488547,
-      "fuselage_longeron_boss_od_m": 0.0125,
-      "lift_motor_z_m": 0.12788930732488546,
-      "lift_prop_disk_z_m": 0.14141430732488547,
-      "lift_prop_wing_clearance_m": 0.030550000000000008,
-      "horizontal_tail_z_m": 0.09686430732488546,
+      "fuselage_longeron_top_z_m": 0.11000930732488547,
+      "fuselage_longeron_bottom_z_m": -0.11000930732488547,
+      "fuselage_longeron_z_m": 0.11000930732488547,
+      "fuselage_longeron_boss_od_m": 0.014,
+      "lift_motor_z_m": 0.05973430732488546,
+      "lift_prop_disk_z_m": 0.04620930732488546,
+      "lift_prop_wing_clearance_m": 0.021300000000000013,
+      "horizontal_tail_z_m": 0.09075930732488546,
       "horizontal_tail_span_widened_to_boom": false,
       "pusher_fuselage_mount": true,
       "pusher_station_m": [
@@ -1762,7 +4057,7 @@
         0.0
       ],
       "pusher_fuselage_axial_clearance_m": 0.02,
-      "evidence_note": "Neutral-point and geometry mass scaling are screening relations calibrated to the accessible baseline. High-wing layout: fuselage longerons are top+bottom on the centreline; wing Z is auto-set so the TOP longeron boss sits just above the mid-wing primary spar (wing top flush-or-below the fuselage crown); twin booms pass through the wing; HT shares the wing waterline; lift motors sit on the boom tubes with prop-disk clearance above the wing; boom/HT spacing widens only if disk-to-pod clearance requires it. Cruise pusher mounts on the fuselage aft bulkhead. Replace with AVL/CFD/CAD/test correlations before design freeze."
+      "evidence_note": "Neutral-point and geometry mass scaling are screening relations calibrated to the accessible baseline. High-wing layout: fuselage longerons are top+bottom on the centreline; wing Z is auto-set so the TOP longeron boss sits just above the mid-wing primary spar (wing top flush-or-below the fuselage crown); twin booms pass through the wing; HT shares the wing waterline; lift motors sit on the boom tubes under the boom/wing with prop-disk clearance; boom/HT spacing widens only if disk-to-pod clearance requires it. Cruise pusher mounts on the fuselage aft bulkhead. Replace with AVL/CFD/CAD/test correlations before design freeze."
     },
     "fuselage_midbody": {
       "midbody_length_mode": "auto",
@@ -1781,7 +4076,7 @@
       "energy_bay_order": "fuel_cell_forward",
       "fuselage_length_m": 0.8594000000000002,
       "fuselage_od_m": 0.22801861464977094,
-      "fuselage_width_m": 0.135,
+      "fuselage_width_m": 0.14900000000000002,
       "fuselage_height_m": 0.22801861464977094,
       "fuselage_cross_section": "rectangular_filleted",
       "fuselage_fillet_radius_m": 0.02,
@@ -1792,17 +4087,17 @@
       "component_axial_clearance_m": 0.01,
       "energy_bay_axial_clearance_m": 0.01,
       "longeron_boss_clearance_m": 0.01,
-      "cabin_z_floor_m": -0.08800930732488547,
-      "cabin_z_ceil_m": 0.09450930732488547,
+      "cabin_z_floor_m": -0.09300930732488547,
+      "cabin_z_ceil_m": 0.09300930732488547,
       "z_lifts_m": {
         "fc": 0.0,
         "h2": 0.0,
         "nose": 0.0,
         "top": 0.0
       },
-      "cylinder_top_gap_m": 0.06751861464977094,
+      "cylinder_top_gap_m": 0.07101861464977093,
       "cylinder_top_gap_required_m": 0.0635,
-      "bottom_to_top_clearance_m": 0.003,
+      "bottom_to_top_clearance_m": 0.01,
       "nose_section_end_x_m": 0.14,
       "fuel_cell_module_mass_kg": 1.45,
       "fuel_cell_stack_mass_kg": 1.0932,
@@ -1810,7 +4105,7 @@
       "control_box_site": "h2_top",
       "battery_site": "fc_top",
       "cb_battery_order": "battery_forward",
-      "layout_od_need_m": 0.02646251297771908,
+      "layout_od_need_m": 0.027812512977719077,
       "cube_front_connector_bay_m": [
         0.01,
         0.035500000000000004
@@ -1825,9 +4120,9 @@
           "length": 0.053,
           "width": 0.08,
           "height": 0.08,
-          "z": -0.02800930732488547,
-          "radial_m": 0.07890035413615532,
-          "half_extent_m": 0.06800930732488547
+          "z": -0.03300930732488546,
+          "radial_m": 0.08324877750489537,
+          "half_extent_m": 0.07300930732488546
         },
         {
           "name": "autopilot",
@@ -1836,9 +4131,9 @@
           "length": 0.0945,
           "width": 0.0443,
           "height": 0.031,
-          "z": 0.03049069267511453,
-          "radial_m": 0.05104670716840444,
-          "half_extent_m": 0.04599069267511453
+          "z": 0.03249069267511454,
+          "radial_m": 0.052855738415400956,
+          "half_extent_m": 0.04799069267511454
         },
         {
           "name": "fuel_cell_system",
@@ -1847,9 +4142,9 @@
           "length": 0.2305,
           "width": 0.1084,
           "height": 0.1198,
-          "z": -0.028109307324885473,
-          "radial_m": 0.10335994473588954,
-          "half_extent_m": 0.08800930732488547
+          "z": -0.03310930732488546,
+          "radial_m": 0.10764929748519027,
+          "half_extent_m": 0.09300930732488547
         },
         {
           "name": "hydrogen_cylinder",
@@ -1858,9 +4153,9 @@
           "length": 0.425,
           "width": 0.115,
           "height": 0.115,
-          "z": -0.030509307324885472,
-          "radial_m": 0.10512796096094579,
-          "half_extent_m": 0.08800930732488547
+          "z": -0.03550930732488546,
+          "radial_m": 0.1093479823730415,
+          "half_extent_m": 0.09300930732488547
         },
         {
           "name": "fuel_cell_control_box",
@@ -1869,9 +4164,9 @@
           "length": 0.2022,
           "width": 0.107,
           "height": 0.04515,
-          "z": 0.05736569267511453,
-          "radial_m": 0.09619129038211885,
-          "half_extent_m": 0.07994069267511453
+          "z": 0.059365692675114545,
+          "radial_m": 0.09785973184143501,
+          "half_extent_m": 0.08194069267511454
         },
         {
           "name": "buffer_battery",
@@ -1880,9 +4175,9 @@
           "length": 0.163,
           "width": 0.092,
           "height": 0.051,
-          "z": 0.06029069267511453,
-          "radial_m": 0.0973449687948789,
-          "half_extent_m": 0.08579069267511452
+          "z": 0.06229069267511454,
+          "radial_m": 0.09911208665130812,
+          "half_extent_m": 0.08779069267511454
         },
         {
           "name": "power_module",
@@ -1891,9 +4186,9 @@
           "length": 0.08,
           "width": 0.06,
           "height": 0.0235,
-          "z": 0.06354069267511453,
-          "radial_m": 0.08104744538539474,
-          "half_extent_m": 0.07529069267511453
+          "z": 0.05854069267511454,
+          "radial_m": 0.07642500557243945,
+          "half_extent_m": 0.07029069267511454
         },
         {
           "name": "power_module_2",
@@ -1902,51 +4197,51 @@
           "length": 0.08,
           "width": 0.06,
           "height": 0.0235,
-          "z": 0.06354069267511453,
-          "radial_m": 0.08104744538539474,
-          "half_extent_m": 0.07529069267511453
+          "z": 0.05854069267511454,
+          "radial_m": 0.07642500557243945,
+          "half_extent_m": 0.07029069267511454
         }
       ],
       "stations_m": {
         "hydrogen_cylinder": [
           0.5930000000000001,
           0.0,
-          -0.030509307324885472
+          -0.03550930732488546
         ],
         "fuel_cell_system": [
           0.25525000000000003,
           0.0,
-          -0.028109307324885473
+          -0.03310930732488546
         ],
         "fuel_cell_control_box": [
           0.4141,
           0.0,
-          0.05736569267511453
+          0.059365692675114545
         ],
         "buffer_battery": [
           0.22150000000000003,
           0.0,
-          0.06029069267511453
+          0.06229069267511454
         ],
         "autopilot_cube_orange": [
           0.08275,
           0.0,
-          0.03049069267511453
+          0.03249069267511454
         ],
         "payload": [
           0.10350000000000001,
           0.0,
-          -0.02800930732488547
+          -0.03300930732488546
         ],
         "power_module": [
           0.5652,
           0.0,
-          0.06354069267511453
+          0.05854069267511454
         ],
         "power_module_2": [
           0.6552000000000001,
           0.0,
-          0.06354069267511453
+          0.05854069267511454
         ]
       },
       "fuselage_diameter_mode": "auto",
@@ -1957,27 +4252,27 @@
         "tail": 0.22801861464977094
       },
       "fuselage_section_od_needs_m": {
-        "nose": 0.18,
-        "center_a": 0.19601861464977094,
-        "center_b": 0.19601861464977094,
-        "tail": 0.19601861464977094
+        "nose": 0.18001861464977092,
+        "center_a": 0.22001861464977093,
+        "center_b": 0.22001861464977093,
+        "tail": 0.22001861464977093
       },
       "fuselage_section_wh_needs_m": {
         "nose": {
-          "width_m": 0.1,
-          "height_m": 0.18
+          "width_m": 0.114,
+          "height_m": 0.18001861464977092
         },
         "center_a": {
-          "width_m": 0.1284,
-          "height_m": 0.19601861464977094
+          "width_m": 0.1424,
+          "height_m": 0.22001861464977093
         },
         "center_b": {
-          "width_m": 0.135,
-          "height_m": 0.19601861464977094
+          "width_m": 0.14900000000000002,
+          "height_m": 0.22001861464977093
         },
         "tail": {
-          "width_m": 0.135,
-          "height_m": 0.19601861464977094
+          "width_m": 0.14900000000000002,
+          "height_m": 0.22001861464977093
         }
       },
       "fuselage_midbody": {
@@ -1996,17 +4291,1121 @@
   },
   "airfoil_model": {
     "main_wing": {
-      "CLmax_screen": 1.185,
-      "alpha0_deg_screen": -4.0,
-      "Cm0_screen": -0.09,
-      "status": "project_calibrated_placeholder",
-      "note": "Temporarily set equal to the current H2AIR CLmax=1.185 to preserve model continuity. Replace with Reynolds-specific XFOIL/CFD/test polar before design freeze.",
-      "polar_file": null,
-      "code": "NACA4412",
-      "polar_rows": null,
-      "aero_source_mode": "screening_fallback",
-      "CLmax_used": 1.185,
-      "CLmax_source": "screening_fallback"
+      "polar_file": "data/airfoils/NACA6415_Re200000_XFOIL.csv",
+      "reynolds_number": 200000,
+      "thickness_fraction": 0.15,
+      "CLmax_screen": 1.37,
+      "alpha0_deg_screen": -5.0,
+      "Cm0_screen": -0.1,
+      "status": "engineering_assumption_xfoil_screen",
+      "note": "Screening polar approximating NACA 6415 at Re 2e5 (alpha0~-5, CLmax~1.55 in polar; CLmax_screen 1.37 for area sizing). Replace with measured/XFOIL at flight Reynolds before design freeze.",
+      "code": "NACA6415",
+      "polar_rows": [
+        {
+          "alpha": -12.0,
+          "CL": -0.735,
+          "CD": 0.02635,
+          "CDp": 0.0224,
+          "CM": -0.076,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.75,
+          "CL": -0.7087,
+          "CD": 0.02561,
+          "CDp": 0.02177,
+          "CM": -0.0765,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.5,
+          "CL": -0.6825,
+          "CD": 0.02489,
+          "CDp": 0.02116,
+          "CM": -0.077,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.25,
+          "CL": -0.6562,
+          "CD": 0.02419,
+          "CDp": 0.02056,
+          "CM": -0.0775,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -11.0,
+          "CL": -0.63,
+          "CD": 0.0235,
+          "CDp": 0.01997,
+          "CM": -0.078,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.75,
+          "CL": -0.6038,
+          "CD": 0.02282,
+          "CDp": 0.0194,
+          "CM": -0.0785,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.5,
+          "CL": -0.5775,
+          "CD": 0.02217,
+          "CDp": 0.01884,
+          "CM": -0.079,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.25,
+          "CL": -0.5513,
+          "CD": 0.02153,
+          "CDp": 0.0183,
+          "CM": -0.0795,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -10.0,
+          "CL": -0.525,
+          "CD": 0.02091,
+          "CDp": 0.01777,
+          "CM": -0.08,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.75,
+          "CL": -0.4987,
+          "CD": 0.0203,
+          "CDp": 0.01726,
+          "CM": -0.0805,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.5,
+          "CL": -0.4725,
+          "CD": 0.01971,
+          "CDp": 0.01676,
+          "CM": -0.081,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.25,
+          "CL": -0.4462,
+          "CD": 0.01914,
+          "CDp": 0.01627,
+          "CM": -0.0815,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -9.0,
+          "CL": -0.42,
+          "CD": 0.01858,
+          "CDp": 0.0158,
+          "CM": -0.082,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.75,
+          "CL": -0.3937,
+          "CD": 0.01804,
+          "CDp": 0.01534,
+          "CM": -0.0825,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.5,
+          "CL": -0.3675,
+          "CD": 0.01752,
+          "CDp": 0.01489,
+          "CM": -0.083,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.25,
+          "CL": -0.3412,
+          "CD": 0.01701,
+          "CDp": 0.01446,
+          "CM": -0.0835,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -8.0,
+          "CL": -0.315,
+          "CD": 0.01652,
+          "CDp": 0.01404,
+          "CM": -0.084,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.75,
+          "CL": -0.2888,
+          "CD": 0.01605,
+          "CDp": 0.01364,
+          "CM": -0.0845,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.5,
+          "CL": -0.2625,
+          "CD": 0.01559,
+          "CDp": 0.01325,
+          "CM": -0.085,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.25,
+          "CL": -0.2362,
+          "CD": 0.01515,
+          "CDp": 0.01288,
+          "CM": -0.0855,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -7.0,
+          "CL": -0.21,
+          "CD": 0.01473,
+          "CDp": 0.01252,
+          "CM": -0.086,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.75,
+          "CL": -0.1837,
+          "CD": 0.01432,
+          "CDp": 0.01217,
+          "CM": -0.0865,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.5,
+          "CL": -0.1575,
+          "CD": 0.01393,
+          "CDp": 0.01184,
+          "CM": -0.087,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.25,
+          "CL": -0.1313,
+          "CD": 0.01355,
+          "CDp": 0.01152,
+          "CM": -0.0875,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -6.0,
+          "CL": -0.105,
+          "CD": 0.0132,
+          "CDp": 0.01122,
+          "CM": -0.088,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.75,
+          "CL": -0.0788,
+          "CD": 0.01285,
+          "CDp": 0.01093,
+          "CM": -0.0885,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.5,
+          "CL": -0.0525,
+          "CD": 0.01253,
+          "CDp": 0.01065,
+          "CM": -0.089,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.25,
+          "CL": -0.0262,
+          "CD": 0.01222,
+          "CDp": 0.01039,
+          "CM": -0.0895,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -5.0,
+          "CL": 0.0,
+          "CD": 0.01193,
+          "CDp": 0.01014,
+          "CM": -0.09,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.05
+        },
+        {
+          "alpha": -4.75,
+          "CL": 0.0262,
+          "CD": 0.01165,
+          "CDp": 0.00991,
+          "CM": -0.0905,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.0625
+        },
+        {
+          "alpha": -4.5,
+          "CL": 0.0525,
+          "CD": 0.0114,
+          "CDp": 0.00969,
+          "CM": -0.091,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.075
+        },
+        {
+          "alpha": -4.25,
+          "CL": 0.0788,
+          "CD": 0.01115,
+          "CDp": 0.00948,
+          "CM": -0.0915,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.0875
+        },
+        {
+          "alpha": -4.0,
+          "CL": 0.105,
+          "CD": 0.01093,
+          "CDp": 0.00929,
+          "CM": -0.092,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1
+        },
+        {
+          "alpha": -3.75,
+          "CL": 0.1313,
+          "CD": 0.01072,
+          "CDp": 0.00911,
+          "CM": -0.0925,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1125
+        },
+        {
+          "alpha": -3.5,
+          "CL": 0.1575,
+          "CD": 0.01053,
+          "CDp": 0.00895,
+          "CM": -0.093,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.125
+        },
+        {
+          "alpha": -3.25,
+          "CL": 0.1837,
+          "CD": 0.01035,
+          "CDp": 0.0088,
+          "CM": -0.0935,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1375
+        },
+        {
+          "alpha": -3.0,
+          "CL": 0.21,
+          "CD": 0.01019,
+          "CDp": 0.00866,
+          "CM": -0.094,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.15
+        },
+        {
+          "alpha": -2.75,
+          "CL": 0.2362,
+          "CD": 0.01005,
+          "CDp": 0.00854,
+          "CM": -0.0945,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1625
+        },
+        {
+          "alpha": -2.5,
+          "CL": 0.2625,
+          "CD": 0.00992,
+          "CDp": 0.00843,
+          "CM": -0.095,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.175
+        },
+        {
+          "alpha": -2.25,
+          "CL": 0.2888,
+          "CD": 0.00981,
+          "CDp": 0.00834,
+          "CM": -0.0955,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.1875
+        },
+        {
+          "alpha": -2.0,
+          "CL": 0.315,
+          "CD": 0.00972,
+          "CDp": 0.00826,
+          "CM": -0.096,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2
+        },
+        {
+          "alpha": -1.75,
+          "CL": 0.3412,
+          "CD": 0.00964,
+          "CDp": 0.0082,
+          "CM": -0.0965,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2125
+        },
+        {
+          "alpha": -1.5,
+          "CL": 0.3675,
+          "CD": 0.00958,
+          "CDp": 0.00814,
+          "CM": -0.097,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.225
+        },
+        {
+          "alpha": -1.25,
+          "CL": 0.3937,
+          "CD": 0.00954,
+          "CDp": 0.00811,
+          "CM": -0.0975,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2375
+        },
+        {
+          "alpha": -1.0,
+          "CL": 0.42,
+          "CD": 0.00951,
+          "CDp": 0.00808,
+          "CM": -0.098,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.25
+        },
+        {
+          "alpha": -0.75,
+          "CL": 0.4462,
+          "CD": 0.0095,
+          "CDp": 0.00808,
+          "CM": -0.0985,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2625
+        },
+        {
+          "alpha": -0.5,
+          "CL": 0.4725,
+          "CD": 0.00951,
+          "CDp": 0.00808,
+          "CM": -0.099,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.275
+        },
+        {
+          "alpha": -0.25,
+          "CL": 0.4987,
+          "CD": 0.00953,
+          "CDp": 0.0081,
+          "CM": -0.0995,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.2875
+        },
+        {
+          "alpha": 0.0,
+          "CL": 0.525,
+          "CD": 0.00957,
+          "CDp": 0.00813,
+          "CM": -0.1,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3
+        },
+        {
+          "alpha": 0.25,
+          "CL": 0.5513,
+          "CD": 0.00962,
+          "CDp": 0.00818,
+          "CM": -0.1005,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3125
+        },
+        {
+          "alpha": 0.5,
+          "CL": 0.5775,
+          "CD": 0.0097,
+          "CDp": 0.00824,
+          "CM": -0.101,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.325
+        },
+        {
+          "alpha": 0.75,
+          "CL": 0.6038,
+          "CD": 0.00978,
+          "CDp": 0.00832,
+          "CM": -0.1015,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3375
+        },
+        {
+          "alpha": 1.0,
+          "CL": 0.63,
+          "CD": 0.00989,
+          "CDp": 0.00841,
+          "CM": -0.102,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.35
+        },
+        {
+          "alpha": 1.25,
+          "CL": 0.6562,
+          "CD": 0.01001,
+          "CDp": 0.00851,
+          "CM": -0.1025,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3625
+        },
+        {
+          "alpha": 1.5,
+          "CL": 0.6825,
+          "CD": 0.01015,
+          "CDp": 0.00863,
+          "CM": -0.103,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.375
+        },
+        {
+          "alpha": 1.75,
+          "CL": 0.7087,
+          "CD": 0.0103,
+          "CDp": 0.00876,
+          "CM": -0.1035,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.3875
+        },
+        {
+          "alpha": 2.0,
+          "CL": 0.735,
+          "CD": 0.01047,
+          "CDp": 0.0089,
+          "CM": -0.104,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4
+        },
+        {
+          "alpha": 2.25,
+          "CL": 0.7612,
+          "CD": 0.01066,
+          "CDp": 0.00906,
+          "CM": -0.1045,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4125
+        },
+        {
+          "alpha": 2.5,
+          "CL": 0.7875,
+          "CD": 0.01087,
+          "CDp": 0.00924,
+          "CM": -0.105,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.425
+        },
+        {
+          "alpha": 2.75,
+          "CL": 0.8137,
+          "CD": 0.01109,
+          "CDp": 0.00942,
+          "CM": -0.1055,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4375
+        },
+        {
+          "alpha": 3.0,
+          "CL": 0.84,
+          "CD": 0.01133,
+          "CDp": 0.00963,
+          "CM": -0.106,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.45
+        },
+        {
+          "alpha": 3.25,
+          "CL": 0.8662,
+          "CD": 0.01158,
+          "CDp": 0.00984,
+          "CM": -0.1065,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4625
+        },
+        {
+          "alpha": 3.5,
+          "CL": 0.8925,
+          "CD": 0.01185,
+          "CDp": 0.01007,
+          "CM": -0.107,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.475
+        },
+        {
+          "alpha": 3.75,
+          "CL": 0.9187,
+          "CD": 0.01214,
+          "CDp": 0.01032,
+          "CM": -0.1075,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.4875
+        },
+        {
+          "alpha": 4.0,
+          "CL": 0.945,
+          "CD": 0.01244,
+          "CDp": 0.01057,
+          "CM": -0.108,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5
+        },
+        {
+          "alpha": 4.25,
+          "CL": 0.9712,
+          "CD": 0.01276,
+          "CDp": 0.01085,
+          "CM": -0.1085,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5125
+        },
+        {
+          "alpha": 4.5,
+          "CL": 0.9975,
+          "CD": 0.0131,
+          "CDp": 0.01113,
+          "CM": -0.109,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.525
+        },
+        {
+          "alpha": 4.75,
+          "CL": 1.0237,
+          "CD": 0.01345,
+          "CDp": 0.01143,
+          "CM": -0.1095,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5375
+        },
+        {
+          "alpha": 5.0,
+          "CL": 1.05,
+          "CD": 0.01382,
+          "CDp": 0.01175,
+          "CM": -0.11,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.55
+        },
+        {
+          "alpha": 5.25,
+          "CL": 1.0762,
+          "CD": 0.01421,
+          "CDp": 0.01208,
+          "CM": -0.1105,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5625
+        },
+        {
+          "alpha": 5.5,
+          "CL": 1.1025,
+          "CD": 0.01461,
+          "CDp": 0.01242,
+          "CM": -0.111,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.575
+        },
+        {
+          "alpha": 5.75,
+          "CL": 1.1287,
+          "CD": 0.01503,
+          "CDp": 0.01277,
+          "CM": -0.1115,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.5875
+        },
+        {
+          "alpha": 6.0,
+          "CL": 1.155,
+          "CD": 0.01546,
+          "CDp": 0.01314,
+          "CM": -0.112,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6
+        },
+        {
+          "alpha": 6.25,
+          "CL": 1.1812,
+          "CD": 0.01592,
+          "CDp": 0.01353,
+          "CM": -0.1125,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6125
+        },
+        {
+          "alpha": 6.5,
+          "CL": 1.2075,
+          "CD": 0.01639,
+          "CDp": 0.01393,
+          "CM": -0.113,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.625
+        },
+        {
+          "alpha": 6.75,
+          "CL": 1.2337,
+          "CD": 0.01687,
+          "CDp": 0.01434,
+          "CM": -0.1135,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6375
+        },
+        {
+          "alpha": 7.0,
+          "CL": 1.26,
+          "CD": 0.01737,
+          "CDp": 0.01477,
+          "CM": -0.114,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.65
+        },
+        {
+          "alpha": 7.25,
+          "CL": 1.2862,
+          "CD": 0.01789,
+          "CDp": 0.01521,
+          "CM": -0.1145,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6625
+        },
+        {
+          "alpha": 7.5,
+          "CL": 1.3125,
+          "CD": 0.01843,
+          "CDp": 0.01566,
+          "CM": -0.115,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.675
+        },
+        {
+          "alpha": 7.75,
+          "CL": 1.3387,
+          "CD": 0.01898,
+          "CDp": 0.01613,
+          "CM": -0.1155,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.6875
+        },
+        {
+          "alpha": 8.0,
+          "CL": 1.365,
+          "CD": 0.01955,
+          "CDp": 0.01661,
+          "CM": -0.116,
+          "Top_Xtr": 1.0,
+          "Bot_Xtr": 0.7
+        },
+        {
+          "alpha": 8.25,
+          "CL": 1.3912,
+          "CD": 0.02013,
+          "CDp": 0.01711,
+          "CM": -0.1165,
+          "Top_Xtr": 0.975,
+          "Bot_Xtr": 0.7125
+        },
+        {
+          "alpha": 8.5,
+          "CL": 1.4173,
+          "CD": 0.02073,
+          "CDp": 0.01762,
+          "CM": -0.117,
+          "Top_Xtr": 0.95,
+          "Bot_Xtr": 0.725
+        },
+        {
+          "alpha": 8.75,
+          "CL": 1.4422,
+          "CD": 0.02131,
+          "CDp": 0.01812,
+          "CM": -0.1175,
+          "Top_Xtr": 0.925,
+          "Bot_Xtr": 0.7375
+        },
+        {
+          "alpha": 9.0,
+          "CL": 1.4646,
+          "CD": 0.02185,
+          "CDp": 0.01858,
+          "CM": -0.118,
+          "Top_Xtr": 0.9,
+          "Bot_Xtr": 0.75
+        },
+        {
+          "alpha": 9.25,
+          "CL": 1.4839,
+          "CD": 0.02233,
+          "CDp": 0.01898,
+          "CM": -0.1185,
+          "Top_Xtr": 0.875,
+          "Bot_Xtr": 0.7625
+        },
+        {
+          "alpha": 9.5,
+          "CL": 1.4999,
+          "CD": 0.02273,
+          "CDp": 0.01932,
+          "CM": -0.119,
+          "Top_Xtr": 0.85,
+          "Bot_Xtr": 0.775
+        },
+        {
+          "alpha": 9.75,
+          "CL": 1.5125,
+          "CD": 0.02305,
+          "CDp": 0.01959,
+          "CM": -0.1195,
+          "Top_Xtr": 0.825,
+          "Bot_Xtr": 0.7875
+        },
+        {
+          "alpha": 10.0,
+          "CL": 1.5223,
+          "CD": 0.0233,
+          "CDp": 0.0198,
+          "CM": -0.12,
+          "Top_Xtr": 0.8,
+          "Bot_Xtr": 0.8
+        },
+        {
+          "alpha": 10.25,
+          "CL": 1.5298,
+          "CD": 0.02349,
+          "CDp": 0.01997,
+          "CM": -0.1205,
+          "Top_Xtr": 0.775,
+          "Bot_Xtr": 0.8125
+        },
+        {
+          "alpha": 10.5,
+          "CL": 1.5353,
+          "CD": 0.02363,
+          "CDp": 0.02009,
+          "CM": -0.121,
+          "Top_Xtr": 0.75,
+          "Bot_Xtr": 0.825
+        },
+        {
+          "alpha": 10.75,
+          "CL": 1.5394,
+          "CD": 0.02374,
+          "CDp": 0.02018,
+          "CM": -0.1215,
+          "Top_Xtr": 0.725,
+          "Bot_Xtr": 0.8375
+        },
+        {
+          "alpha": 11.0,
+          "CL": 1.5424,
+          "CD": 0.02382,
+          "CDp": 0.02025,
+          "CM": -0.122,
+          "Top_Xtr": 0.7,
+          "Bot_Xtr": 0.85
+        },
+        {
+          "alpha": 11.25,
+          "CL": 1.5445,
+          "CD": 0.02388,
+          "CDp": 0.02029,
+          "CM": -0.1225,
+          "Top_Xtr": 0.675,
+          "Bot_Xtr": 0.8625
+        },
+        {
+          "alpha": 11.5,
+          "CL": 1.5461,
+          "CD": 0.02392,
+          "CDp": 0.02033,
+          "CM": -0.123,
+          "Top_Xtr": 0.65,
+          "Bot_Xtr": 0.875
+        },
+        {
+          "alpha": 11.75,
+          "CL": 1.5472,
+          "CD": 0.02395,
+          "CDp": 0.02035,
+          "CM": -0.1235,
+          "Top_Xtr": 0.625,
+          "Bot_Xtr": 0.8875
+        },
+        {
+          "alpha": 12.0,
+          "CL": 1.548,
+          "CD": 0.02397,
+          "CDp": 0.02037,
+          "CM": -0.124,
+          "Top_Xtr": 0.6,
+          "Bot_Xtr": 0.9
+        },
+        {
+          "alpha": 12.25,
+          "CL": 1.5486,
+          "CD": 0.0242,
+          "CDp": 0.02057,
+          "CM": -0.1245,
+          "Top_Xtr": 0.575,
+          "Bot_Xtr": 0.9125
+        },
+        {
+          "alpha": 12.5,
+          "CL": 1.549,
+          "CD": 0.02465,
+          "CDp": 0.02095,
+          "CM": -0.125,
+          "Top_Xtr": 0.55,
+          "Bot_Xtr": 0.925
+        },
+        {
+          "alpha": 12.75,
+          "CL": 1.5493,
+          "CD": 0.02526,
+          "CDp": 0.02147,
+          "CM": -0.1255,
+          "Top_Xtr": 0.525,
+          "Bot_Xtr": 0.9375
+        },
+        {
+          "alpha": 13.0,
+          "CL": 1.5495,
+          "CD": 0.02601,
+          "CDp": 0.02211,
+          "CM": -0.126,
+          "Top_Xtr": 0.5,
+          "Bot_Xtr": 0.95
+        },
+        {
+          "alpha": 13.25,
+          "CL": 1.5496,
+          "CD": 0.02687,
+          "CDp": 0.02284,
+          "CM": -0.1265,
+          "Top_Xtr": 0.475,
+          "Bot_Xtr": 0.9625
+        },
+        {
+          "alpha": 13.5,
+          "CL": 1.5497,
+          "CD": 0.02784,
+          "CDp": 0.02366,
+          "CM": -0.127,
+          "Top_Xtr": 0.45,
+          "Bot_Xtr": 0.975
+        },
+        {
+          "alpha": 13.75,
+          "CL": 1.5498,
+          "CD": 0.02891,
+          "CDp": 0.02457,
+          "CM": -0.1275,
+          "Top_Xtr": 0.425,
+          "Bot_Xtr": 0.9875
+        },
+        {
+          "alpha": 14.0,
+          "CL": 1.5499,
+          "CD": 0.03008,
+          "CDp": 0.02557,
+          "CM": -0.128,
+          "Top_Xtr": 0.4,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.25,
+          "CL": 1.5499,
+          "CD": 0.03134,
+          "CDp": 0.02664,
+          "CM": -0.1285,
+          "Top_Xtr": 0.375,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.5,
+          "CL": 1.5499,
+          "CD": 0.03268,
+          "CDp": 0.02778,
+          "CM": -0.129,
+          "Top_Xtr": 0.35,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 14.75,
+          "CL": 1.55,
+          "CD": 0.03411,
+          "CDp": 0.02899,
+          "CM": -0.1295,
+          "Top_Xtr": 0.325,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.0,
+          "CL": 1.55,
+          "CD": 0.03562,
+          "CDp": 0.03028,
+          "CM": -0.13,
+          "Top_Xtr": 0.3,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.25,
+          "CL": 1.53,
+          "CD": 0.03668,
+          "CDp": 0.03118,
+          "CM": -0.1305,
+          "Top_Xtr": 0.275,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.5,
+          "CL": 1.51,
+          "CD": 0.03783,
+          "CDp": 0.03215,
+          "CM": -0.131,
+          "Top_Xtr": 0.25,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 15.75,
+          "CL": 1.49,
+          "CD": 0.03905,
+          "CDp": 0.0332,
+          "CM": -0.1315,
+          "Top_Xtr": 0.225,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.0,
+          "CL": 1.47,
+          "CD": 0.04036,
+          "CDp": 0.03431,
+          "CM": -0.132,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.25,
+          "CL": 1.45,
+          "CD": 0.04175,
+          "CDp": 0.03549,
+          "CM": -0.1325,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.5,
+          "CL": 1.43,
+          "CD": 0.04322,
+          "CDp": 0.03673,
+          "CM": -0.133,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 16.75,
+          "CL": 1.41,
+          "CD": 0.04475,
+          "CDp": 0.03804,
+          "CM": -0.1335,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.0,
+          "CL": 1.39,
+          "CD": 0.04637,
+          "CDp": 0.03941,
+          "CM": -0.134,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.25,
+          "CL": 1.37,
+          "CD": 0.04805,
+          "CDp": 0.04085,
+          "CM": -0.1345,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.5,
+          "CL": 1.35,
+          "CD": 0.04981,
+          "CDp": 0.04234,
+          "CM": -0.135,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 17.75,
+          "CL": 1.33,
+          "CD": 0.05164,
+          "CDp": 0.04389,
+          "CM": -0.1355,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        },
+        {
+          "alpha": 18.0,
+          "CL": 1.31,
+          "CD": 0.05354,
+          "CDp": 0.04551,
+          "CM": -0.136,
+          "Top_Xtr": 0.2,
+          "Bot_Xtr": 1.0
+        }
+      ],
+      "polar_summary": {
+        "alpha_min_deg": -12.0,
+        "alpha_max_deg": 18.0,
+        "CL_max": 1.55,
+        "alpha_at_CL_max_deg": 14.75,
+        "CL_min": -0.735,
+        "alpha_at_CL_min_deg": -12.0,
+        "zero_lift_alpha_deg": -5.0,
+        "CD_at_zero_lift": 0.01193,
+        "CM_at_zero_lift": -0.09
+      },
+      "polar_path": "/home/runner/work/H2-drone-sizing/H2-drone-sizing/data/airfoils/NACA6415_Re200000_XFOIL.csv",
+      "aero_source_mode": "polar_file",
+      "CLmax_used": 1.37,
+      "CLmax_source": "user_override"
     },
     "horizontal_tail": {
       "polar_file": "data/airfoils/NACA0012_Re200000_XFOIL.csv",
@@ -3036,7 +6435,7 @@
         "CD_at_zero_lift": 0.0102,
         "CM_at_zero_lift": 0.0
       },
-      "polar_path": "/mnt/data/model2_work/data/airfoils/NACA0012_Re200000_XFOIL.csv",
+      "polar_path": "/home/runner/work/H2-drone-sizing/H2-drone-sizing/data/airfoils/NACA0012_Re200000_XFOIL.csv",
       "aero_source_mode": "polar_file",
       "CLmax_used": 1.1101,
       "CLmax_source": "polar_file"
@@ -4069,7 +7468,7 @@
         "CD_at_zero_lift": 0.0102,
         "CM_at_zero_lift": 0.0
       },
-      "polar_path": "/mnt/data/model2_work/data/airfoils/NACA0012_Re200000_XFOIL.csv",
+      "polar_path": "/home/runner/work/H2-drone-sizing/H2-drone-sizing/data/airfoils/NACA0012_Re200000_XFOIL.csv",
       "aero_source_mode": "polar_file",
       "CLmax_used": 1.1101,
       "CLmax_source": "polar_file"
@@ -4078,15 +7477,15 @@
   "packaging_layout": {
     "enabled": true,
     "energy_bay_order": "fuel_cell_forward",
-    "energy_bay_order_mode": "auto",
+    "energy_bay_order_mode": "hardcoded",
     "cb_battery_order": "battery_forward",
     "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (X order of CB/battery on the shared top shelf). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB+battery sit on top in X tandem (first flush with forward energy host front; second axial behind); dual PDBs min-OD searched.",
     "clearances_m": {
-      "fuselage_bottom_m": 0.016,
+      "fuselage_bottom_m": 0.003,
       "fuselage_wall_m": 0.01,
       "aft_tail_beyond_motor_m": 0.02,
       "component_m": 0.003,
-      "bottom_to_top_m": 0.003,
+      "bottom_to_top_m": 0.01,
       "pdb_all_around_m": 0.02,
       "cube_front_connector_m": 0.05,
       "nose_bay_raise_m": 0.02,
@@ -4141,12 +7540,13 @@
   "hardware_selection_result": {
     "mode": "auto",
     "bus_nominal_voltage_V": 44.400000000000006,
-    "bus_max_voltage_V": 50.400000000000006,
+    "bus_max_voltage_V": 48.0,
+    "bus_voltage_ceiling_V": 48.0,
     "requirements": {
       "lift_thrust_per_motor_N": 59.575398750000005,
       "minimum_pusher_power_W": 750.0,
       "minimum_battery_capacity_Ah": 5.0,
-      "battery_screen_current_A": 146.83445945945945
+      "battery_screen_current_A": 143.97297297297297
     },
     "selected_lift_combo": {
       "name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
@@ -4168,23 +7568,24 @@
       "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption"
     },
     "selected_pusher_combo": {
-      "name": "Tmotor_MN501S_240kV_P15x5_12S",
-      "motor_kv": 240,
+      "name": "Tmotor_MN501S_160kV_P18x10_12S",
+      "motor_kv": 160,
       "voltage_min_V": 36.0,
       "voltage_max_V": 50.4,
-      "max_power_W": 1121.0,
-      "max_thrust_N": 45.698989,
-      "prop_diameter_in": 15.0,
-      "prop_pitch_in": 5.0,
-      "motor_mass_kg": 0.17,
-      "prop_mass_kg": 0.021,
-      "status": "supplier_confirmed_motor_and_bench_data_prop_mass_from_user_database",
-      "source": "T-MOTOR MN501-S KV240 official product/test table; P15x5 at 12S",
+      "max_power_W": 1000.0,
+      "max_thrust_N": 42.0,
+      "prop_diameter_in": 18.0,
+      "prop_pitch_in": 10.0,
+      "motor_mass_kg": 0.175,
+      "prop_mass_kg": 0.045,
+      "motor_resistance_ohm": 0.05,
+      "no_load_current_A": 1.5,
+      "esc_efficiency": 0.97,
+      "status": "engineering_assumption_screening",
+      "source": "Screening pusher combo: MN501S-class 160 kV with 18x10 on 12S; replace with measured forward-flight map.",
       "role": "pusher",
       "motor_diameter_m": 0.0556,
-      "motor_length_m": 0.0339,
-      "peak_current_A": 25.0,
-      "source_url": "https://store.tmotor.com/product/mn501-s-kv240-motor-navigator-type.html"
+      "motor_length_m": 0.0339
     },
     "selected_battery": {
       "name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",
@@ -4205,7 +7606,8 @@
     },
     "notes": [
       "AUTO selection is a database screening step. Final propulsion release requires measured thrust/power/thermal data at the selected voltage and propeller.",
-      "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power."
+      "Battery current screen conservatively assumes simultaneous maximum lift + pusher database power.",
+      "Aircraft bus ceiling is 48.0 V (fuel-cell max); hardware bus_max is capped accordingly (not 12S\u00d74.2=50.4 V)."
     ]
   },
   "fuel_cell_cooling": {
@@ -4216,14 +7618,14 @@
     "inlet_side": "left",
     "exhaust_side": "right",
     "design_basis": "hover_and_ground_fan_only_no_ram_credit",
-    "target_max_opening_air_velocity_mps": 5.0,
+    "target_max_opening_air_velocity_mps": 5,
     "thermal_screen": {
-      "fuel_cell_net_power_W": 800.0,
+      "fuel_cell_net_power_W": 800,
       "fuel_cell_efficiency_screen": 0.5,
       "waste_heat_margin_factor": 1.1,
-      "allowable_air_temperature_rise_C": 15.0,
+      "allowable_air_temperature_rise_C": 15,
       "air_density_kg_m3": 1.225,
-      "air_specific_heat_J_kgK": 1005.0,
+      "air_specific_heat_J_kgK": 1005,
       "status": "engineering_assumption",
       "source": "IE-SOAR is supplier-confirmed air-cooled; 50% efficiency is a screening assumption within the 46-52% family brochure range, not an 800W efficiency map."
     },
@@ -4231,8 +7633,8 @@
       "count": 2,
       "diameter_m": 0.08,
       "center_spacing_m": 0.086,
-      "assumed_module_airflow_no_external_duct_cfm": 150.0,
-      "assumed_external_shutoff_pressure_Pa": 90.0,
+      "assumed_module_airflow_no_external_duct_cfm": 150,
+      "assumed_external_shutoff_pressure_Pa": 90,
       "status": "engineering_assumption",
       "source": "Preliminary two-fan integration assumption from module imagery. Replace with Intelligent Energy fan/system airflow and allowed external pressure-drop data or bench test."
     },
@@ -4250,10 +7652,10 @@
       "slot_gap_z_m": 0.003,
       "recess_depth_y_m": 0.008,
       "ramp_length_x_m": 0.17,
-      "sidewall_angle_deg": 7.0,
+      "sidewall_angle_deg": 7,
       "lip_radius_m": 0.002,
-      "center_x_offset_from_fc_m": 0.0,
-      "center_z_offset_from_fc_m": 0.0,
+      "center_x_offset_from_fc_m": 0,
+      "center_z_offset_from_fc_m": 0,
       "external_drag_coefficient_screen": 0.03,
       "cruise_pressure_recovery_fraction_screen": 0.15,
       "note": "NACA-style shallow side inlet used as a fan-suction opening in hover. The cooling gate does not credit ram-air recovery."
@@ -4266,10 +7668,10 @@
       "slot_width_z_m": 0.0065,
       "slot_gap_z_m": 0.003,
       "fan_shroud_depth_y_m": 0.01,
-      "louvre_angle_deg": 15.0,
+      "louvre_angle_deg": 15,
       "lip_radius_m": 0.002,
-      "center_x_offset_from_fc_m": 0.0,
-      "center_z_offset_from_fc_m": 0.0,
+      "center_x_offset_from_fc_m": 0,
+      "center_z_offset_from_fc_m": 0,
       "external_drag_coefficient_screen": 0.04,
       "note": "Fan-side direct exhaust. Louvre angle is a CAD starting value intended to discourage hot-air recirculation."
     },
@@ -4294,20 +7696,20 @@
     "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search. When packaging energy_bay_order_mode is auto, energy_bay_order_code (0=FC forward, 1=H2 forward) is swept.",
     "design_space": {
       "wing_ac_x_m": [
-        0.3,
-        0.46
+        0.28,
+        0.48
       ],
       "horizontal_tail_ac_x_m": [
-        1.0,
-        1.1
+        0.98,
+        1.15
       ],
       "vertical_tail_ac_x_m": [
-        1.0,
-        1.1
+        0.98,
+        1.15
       ],
       "lift_row_center_x_m": [
-        0.3,
-        0.46
+        0.28,
+        0.48
       ]
     }
   },
@@ -4319,40 +7721,43 @@
       "mass_mode": "linear",
       "specific_mass_kg_per_m": 0.08974,
       "hardcoded_mass_kg": null,
-      "tube_od_m": 0.0065,
-      "boss_od_m": 0.0125,
+      "tube_od_m": 0.008,
+      "boss_od_m": 0.014,
       "spar_stack_gap_m": 0.001,
       "status": "engineering_assumption",
-      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; wing Z uses TOP longeron boss only.",
+      "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; boss_od_m is the full-length 3D-printed sleeve/bedding OD around each tube (cabin keepout uses this). Wing Z references the TOP longeron sleeve.",
       "stations_yz_m": [
         [
           0.0,
-          0.11075930732488547
+          0.11000930732488547
         ],
         [
           0.0,
-          -0.11075930732488547
+          -0.11000930732488547
         ]
       ]
     },
     "main_wing": {
-      "z_m": 0.09686430732488546,
-      "thickness_m": 0.028,
+      "z_m": 0.08600930732488546,
+      "thickness_m": 0.0465,
       "shell": {
-        "mass_mode": "linear",
-        "specific_mass_kg_per_m": 0.937,
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m2": 1.8,
+        "specific_mass_kg_per_m": null,
         "hardcoded_mass_kg": null,
         "status": "engineering_assumption",
-        "source": "Calibrated from current wing lump; replace with measured printed wing kg/m"
+        "source": "Printed wing shell 1.8 kg/m2 planform (confirm with weighed print segment); 15% root thickness"
       },
       "primary_spar": {
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.08784,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.01329,
+        "reference_tube_od_m": 0.01329,
         "chord_fraction": 0.25,
         "status": "engineering_assumption",
-        "source": "Reference kg/m at current spar section; auto structural sizing scales this value by section area"
+        "source": "kg/m calibrated at reference_tube_od_m (mass-scaling section only \u2014 not the recommended design spar OD); structural sizing scales mass by section area",
+        "design_tube_od_m": 0.032,
+        "design_tube_id_m": 0.03
       },
       "secondary_spar": {
         "mass_mode": "linear",
@@ -4361,28 +7766,31 @@
         "tube_od_m": 0.01,
         "chord_fraction": 0.65,
         "status": "engineering_assumption",
-        "source": "Secondary spar placeholder; replace with selected CFRP tube kg/m"
+        "source": "COTS secondary spar OD (even mm); replace kg/m with supplier data"
       },
       "shell_cg_chord_fraction": 0.45
     },
     "horizontal_tail": {
-      "z_m": 0.09686430732488546,
-      "thickness_m": 0.022,
+      "z_m": 0.08600930732488546,
+      "thickness_m": 0.02616,
       "shell": {
-        "mass_mode": "linear",
-        "specific_mass_kg_per_m": 0.1646,
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m2": 1.8,
+        "specific_mass_kg_per_m": null,
         "hardcoded_mass_kg": null,
         "status": "engineering_assumption",
-        "source": "Calibrated from current tail lump; replace with measured printed tail kg/m"
+        "source": "Printed HT shell 1.8 kg/m2 planform (confirm with weighed print segment)"
       },
       "primary_spar": {
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.01668,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.00433,
+        "reference_tube_od_m": 0.00433,
         "chord_fraction": 0.25,
         "status": "engineering_assumption",
-        "source": "Reference kg/m; structural sizing scales by tube area"
+        "source": "kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section",
+        "design_tube_od_m": 0.01,
+        "design_tube_id_m": 0.008
       },
       "secondary_spar": {
         "mass_mode": "linear",
@@ -4396,21 +7804,24 @@
     },
     "vertical_tail": {
       "count": 2,
-      "thickness_m": 0.012,
+      "thickness_m": 0.01776,
       "shell": {
-        "mass_mode": "linear",
-        "specific_mass_kg_per_m": 0.0565,
+        "mass_mode": "areal",
+        "specific_mass_kg_per_m2": 1.8,
+        "specific_mass_kg_per_m": null,
         "hardcoded_mass_kg": null,
         "status": "engineering_assumption",
-        "source": "Calibrated from current twin-fin lump; replace with measured printed fin kg/m"
+        "source": "Printed VT shells 1.8 kg/m2 total planform (confirm with weighed print segment)"
       },
       "primary_spar": {
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.00984,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.00433,
+        "reference_tube_od_m": 0.00433,
         "status": "engineering_assumption",
-        "source": "Reference kg/m; structural sizing scales by tube area"
+        "source": "kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section",
+        "design_tube_od_m": 0.01,
+        "design_tube_id_m": 0.008
       },
       "secondary_spar": {
         "mass_mode": "linear",
@@ -4425,9 +7836,85 @@
       "mass_mode": "structural_linear",
       "specific_mass_kg_per_m": 0.01592,
       "hardcoded_mass_kg": null,
-      "tube_od_m": 0.035,
+      "reference_tube_od_m": 0.035,
       "status": "engineering_assumption",
-      "source": "Legacy kg/m reference; structural sizing scales by tube area; replace with supplier tube kg/m"
+      "source": "kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m",
+      "design_tube_od_m": 0.026000000000000002,
+      "design_tube_id_m": 0.024
+    },
+    "landing_legs": {
+      "enabled": true,
+      "layout": "nose_plus_wing",
+      "landing_load_factor": 3,
+      "side_load_fraction": 0.28,
+      "sleeve_wall_m": 0.002,
+      "printed_density_kg_m3": 1200,
+      "drag_coefficient_screen": 0.15,
+      "drag_CdA_m2": 0.0015,
+      "prop_ground_clearance_m": 0.02,
+      "minimum_leg_length_m": 0.06,
+      "minimum_mass_fraction_of_mtow": 0.03,
+      "deflection_limit_fraction": 0.05,
+      "slope_limit_deg": 3,
+      "status": "engineering_assumption",
+      "source": "Tripod landing gear with streamlined sleeve fairings: Cd 0.15, total CdA 0.0015 m2 (was Cd 0.5 / ~0.0044 m2). CFRP tubes sized for 3g landing; mass floored at 3% of mtow_ceiling.",
+      "tube": {
+        "mass_mode": "structural_linear",
+        "specific_mass_kg_per_m": 0.05,
+        "hardcoded_mass_kg": null,
+        "reference_tube_od_m": 0.012,
+        "id_over_od": 0.75,
+        "status": "engineering_assumption",
+        "source": "Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS",
+        "design_tube_od_m": 0.008,
+        "design_tube_id_m": 0.006
+      },
+      "resolved": {
+        "enabled": true,
+        "count": 3,
+        "layout": "nose_plus_wing",
+        "landing_load_factor": 3.0,
+        "side_load_fraction": 0.28,
+        "sleeve_wall_m": 0.002,
+        "printed_density_kg_m3": 1200.0,
+        "ground_z_m": -0.24311569267511454,
+        "prop_tip_z_m": -0.22311569267511452,
+        "prop_ground_clearance_m": 0.02,
+        "sizing_length_m": 0.305875,
+        "legs": [
+          {
+            "name": "nose",
+            "x_m": 0.07,
+            "y_m": 0.0,
+            "mount_z_m": -0.11400930732488547,
+            "foot_z_m": -0.24311569267511454,
+            "length_m": 0.12910638535022906,
+            "cg_z_m": -0.1785625
+          },
+          {
+            "name": "wing_left",
+            "x_m": 0.45571399999999995,
+            "y_m": -0.3739,
+            "mount_z_m": 0.06275930732488547,
+            "foot_z_m": -0.24311569267511454,
+            "length_m": 0.305875,
+            "cg_z_m": -0.09017819267511454
+          },
+          {
+            "name": "wing_right",
+            "x_m": 0.45571399999999995,
+            "y_m": 0.3739,
+            "mount_z_m": 0.06275930732488547,
+            "foot_z_m": -0.24311569267511454,
+            "length_m": 0.305875,
+            "cg_z_m": -0.09017819267511454
+          }
+        ],
+        "tube_od_m": 0.008,
+        "sleeve_od_m": 0.012,
+        "drag_CdA_m2": 0.0015,
+        "drag_coefficient_screen": 0.15
+      }
     },
     "fuselage_total_length_m": 0.8594000000000002,
     "fuselage_sections": [
@@ -4437,12 +7924,12 @@
         "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 0.8,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Printed fuselage nose fairing ~1.2 kg/m2 skin equivalent (0.8 kg/m)"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       },
       {
@@ -4451,12 +7938,12 @@
         "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 0.85,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Printed fuselage center_a fairing (0.85 kg/m)"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       },
       {
@@ -4465,12 +7952,12 @@
         "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 1,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Printed fuselage center_b fairing (1.0 kg/m)"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       },
       {
@@ -4479,37 +7966,76 @@
         "diameter_m": 0.22801861464977094,
         "mass": {
           "mass_mode": "linear",
-          "specific_mass_kg_per_m": 1.0973,
+          "specific_mass_kg_per_m": 0.8,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+          "source": "Printed fuselage tail fairing (0.8 kg/m)"
         },
-        "width_m": 0.135,
+        "width_m": 0.14900000000000002,
         "height_m": 0.22801861464977094
       }
     ]
   },
+  "carbon_fiber_tubes": {
+    "section_mode": "auto",
+    "note": "Primary load-carrying CFRP tubes are auto-sized by the structural solver on an even-mm COTS-style screening grid and fed back into mass/CG closure. Secondary spars and fuselage longerons remain user-defined below.",
+    "main_wing_secondary_spar": {
+      "od_mm": 10
+    },
+    "horizontal_tail_secondary_spar": {
+      "od_mm": 4
+    },
+    "vertical_tail_secondary_spar": {
+      "od_mm": 4
+    },
+    "fuselage_longerons": {
+      "od_mm": 8,
+      "boss_od_mm": 14
+    },
+    "resolved_primary_sections": {
+      "main_wing_primary_spar": {
+        "od_m": 0.032,
+        "id_m": 0.03
+      },
+      "boom_tubes": {
+        "od_m": 0.026000000000000002,
+        "id_m": 0.024
+      },
+      "horizontal_tail_primary_spar": {
+        "od_m": 0.01,
+        "id_m": 0.008
+      },
+      "vertical_tail_primary_spar": {
+        "od_m": 0.01,
+        "id_m": 0.008
+      },
+      "landing_legs": {
+        "od_m": 0.008,
+        "id_m": 0.006
+      }
+    }
+  },
   "user_input_snapshot": {
     "schema": "H2AIR-user-inputs-v4",
-    "notes": "Ready-to-use design from study 'design_sweep' (nominal_mass_optimized). Copy over config/user_inputs.json to adopt. Selected spans are hardcoded.",
+    "notes": "15 kg ceiling screening: areal printed shells (1.8 kg/m2 wing/tails), lighter fuselage fairing kg/m, stepped spar, under-boom props, NACA6415, cruise 18 m/s, span 3.6 m / 0.90 m2, streamlined landing legs + lift-motor fairings.",
     "mission": {
       "payload_mass_kg": 1.2,
-      "mtow_target_low_kg": 12.0,
-      "mtow_target_high_kg": 14.0,
-      "mtow_ceiling_kg": 15.0,
-      "cruise_speed_mps": 20.0,
-      "mission_duration_min": 120.0,
+      "mtow_target_low_kg": 12,
+      "mtow_target_high_kg": 15,
+      "mtow_ceiling_kg": 15,
+      "cruise_speed_mps": 18,
+      "mission_duration_min": 120,
       "target_static_margin": 0.12
     },
     "fuselage": {
       "overall_reference_length_m": 1.25,
       "diameter_mode": "auto",
       "minimum_diameter_m": 0.18,
-      "diameter_margin_m": 0.0,
+      "diameter_margin_m": 0.007,
       "cross_section": "rectangular_filleted",
       "fillet_radius_m": 0.02,
       "midbody_length_mode": "auto",
-      "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H).",
+      "note": "cross_section rectangular_filleted: rounded-rectangle midbody with independent width (Y) and height (Z) from packed AABB + wall keepout. diameter_margin_m adds per-side pad so cooling plenums clear the IE-SOAR cross-fuselage gap screen with a centred fuel cell. square_filleted forces W=H. Nose/tail fair from that base to circular tips. diameter_m seed is max(W,H). Fuselage shell kg/m is a light fairing (~1.2 kg/m2 skin) because longerons/frames carry load.",
       "sections": [
         {
           "name": "nose",
@@ -4517,12 +8043,12 @@
           "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
-            "specific_mass_kg_per_m": 1.0973,
+            "specific_mass_kg_per_m": 0.8,
             "hardcoded_mass_kg": null,
             "status": "engineering_assumption",
-            "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+            "source": "Printed fuselage nose fairing ~1.2 kg/m2 skin equivalent (0.8 kg/m)"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         },
         {
@@ -4531,12 +8057,12 @@
           "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
-            "specific_mass_kg_per_m": 1.0973,
+            "specific_mass_kg_per_m": 0.85,
             "hardcoded_mass_kg": null,
             "status": "engineering_assumption",
-            "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+            "source": "Printed fuselage center_a fairing (0.85 kg/m)"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         },
         {
@@ -4545,12 +8071,12 @@
           "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
-            "specific_mass_kg_per_m": 1.0973,
+            "specific_mass_kg_per_m": 1,
             "hardcoded_mass_kg": null,
             "status": "engineering_assumption",
-            "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+            "source": "Printed fuselage center_b fairing (1.0 kg/m)"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         },
         {
@@ -4559,51 +8085,53 @@
           "diameter_m": 0.22801861464977094,
           "mass": {
             "mass_mode": "linear",
-            "specific_mass_kg_per_m": 1.0973,
+            "specific_mass_kg_per_m": 0.8,
             "hardcoded_mass_kg": null,
             "status": "engineering_assumption",
-            "source": "Calibrated to current 0.78 m pod mass; replace with measured 3D-printed part kg/m"
+            "source": "Printed fuselage tail fairing (0.8 kg/m)"
           },
-          "width_m": 0.135,
+          "width_m": 0.14900000000000002,
           "height_m": 0.22801861464977094
         }
       ]
     },
     "lifting_surfaces": {
       "main_wing": {
-        "root_chord_m": 0.3258,
-        "taper_ratio": 0.6,
-        "naca_code": "NACA4412",
-        "CLmax_override": null,
-        "twist_root_deg": 0.0,
-        "twist_tip_deg": -2.0,
-        "sweep_deg": 0.0,
-        "dihedral_deg": 0.0,
-        "aerodynamic_center_x_m": 0.386844,
+        "root_chord_m": 0.31,
+        "taper_ratio": 0.6129032258064516,
+        "naca_code": "NACA6415",
+        "CLmax_override": 1.37,
+        "transition_CLmax_increment": 0.08,
+        "twist_root_deg": 0,
+        "twist_tip_deg": -2,
+        "sweep_deg": 0,
+        "dihedral_deg": 0,
+        "aerodynamic_center_x_m": 0.455714,
         "span_mode": "hardcoded",
         "span_bounds_m": [
           3.15,
-          3.6
+          3.7
         ],
-        "hardcoded_span_m": 3.3742,
+        "hardcoded_span_m": 3.6,
         "minimum_transition_speed_over_stall": 1.3,
         "auto_area_margin_factor": 1.1,
-        "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+        "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback",
+        "note": "Span 3.6 m, tip chord 0.19 m (taper 0.6129), area 0.90 m2, AR 14.4; 15% NACA6415 section."
       },
       "horizontal_tail": {
         "root_chord_m": 0.218,
         "taper_ratio": 0.7,
         "naca_code": "NACA0012",
-        "twist_root_deg": 0.0,
-        "twist_tip_deg": 0.0,
-        "sweep_deg": 0.0,
-        "aerodynamic_center_x_m": 1.048942,
-        "span_mode": "hardcoded",
+        "twist_root_deg": 0,
+        "twist_tip_deg": 0,
+        "sweep_deg": 0,
+        "aerodynamic_center_x_m": 1.050226,
+        "span_mode": "auto",
         "span_bounds_m": [
-          0.8,
-          1.3
+          0.75,
+          1.35
         ],
-        "hardcoded_span_m": 0.8688,
+        "hardcoded_span_m": 0.828897,
         "target_tail_volume_coefficient": 0.44,
         "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
       },
@@ -4612,26 +8140,34 @@
         "root_chord_m": 0.148,
         "taper_ratio": 0.6,
         "naca_code": "NACA0012",
-        "aerodynamic_center_x_m": 1.021592,
-        "span_mode": "hardcoded",
+        "aerodynamic_center_x_m": 1.110291,
+        "span_mode": "auto",
         "span_bounds_m": [
-          0.3,
-          0.6
+          0.28,
+          0.55
         ],
-        "hardcoded_span_m": 0.3,
+        "hardcoded_span_m": 0.327641,
         "target_vertical_tail_volume_coefficient": 0.0255,
         "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
       }
     },
     "propulsion": {
-      "cruise_lift_propeller_state": "folded"
+      "cruise_lift_propeller_state": "stopped_aligned",
+      "blade_CdA_total_m2": 0.0085,
+      "motor_mount_CdA_total_m2": 0.003,
+      "note": "Lift-prop cruise CdA split with printed teardrop motor fairings: blade 0.0085 + motor/mount 0.0030 = 0.0115 m2 total (was ~0.0165)."
+    },
+    "component_mass_overrides": {
+      "wing_joiners_fasteners": 0.15,
+      "misc_electronics": 0.08,
+      "note": "Dedupe: spar joiners are separate carbon joiners; harness is wiring_harness_pdb."
     },
     "component_positions": {
-      "lift_row_center_x_m": 0.385884,
+      "lift_row_center_x_m": 0.47574,
       "battery_x_m": 0.330287,
       "battery_z_m": 0.0631,
       "fuel_cell_x_m": 0.15285,
-      "fuel_cell_z_m": 0.0,
+      "fuel_cell_z_m": 0,
       "hydrogen_cylinder_x_m": 0.526502,
       "hydrogen_cylinder_z_m": -0.02828,
       "note": "With packaging_layout.enabled, battery/FC/H2 xyz are overwritten by rule-based placement; lift_row_center_x_m remains user-controlled."
@@ -4639,15 +8175,15 @@
     "packaging_layout": {
       "enabled": true,
       "energy_bay_order": "fuel_cell_forward",
-      "energy_bay_order_mode": "auto",
+      "energy_bay_order_mode": "hardcoded",
       "cb_battery_order": "battery_forward",
       "note": "energy_bay_order: fuel_cell_forward | hydrogen_forward (mode auto sweeps both). cb_battery_order: battery_forward | control_box_forward (X order of CB/battery on the shared top shelf). component_axial_m is the X gap between non-nose components (also sizes FC\u2013H\u2082 gap when midbody_length_mode is auto). Payload+Cube in nose; CB+battery sit on top in X tandem (first flush with forward energy host front; second axial behind); dual PDBs min-OD searched.",
       "clearances_m": {
-        "fuselage_bottom_m": 0.016,
+        "fuselage_bottom_m": 0.003,
         "fuselage_wall_m": 0.01,
         "aft_tail_beyond_motor_m": 0.02,
         "component_m": 0.003,
-        "bottom_to_top_m": 0.003,
+        "bottom_to_top_m": 0.01,
         "pdb_all_around_m": 0.02,
         "cube_front_connector_m": 0.05,
         "nose_bay_raise_m": 0.02,
@@ -4701,7 +8237,7 @@
     },
     "hardware": {
       "fuel_cell": {
-        "rated_net_power_W": 800.0,
+        "rated_net_power_W": 800,
         "module_mass_kg": 1.45
       },
       "hydrogen": {
@@ -4710,8 +8246,8 @@
         "design_standard": "ISO 11119-2",
         "certification": "TPED, DOT",
         "cylinder_type": 3,
-        "pressure_bar": 300.0,
-        "water_volume_L": 3.0,
+        "pressure_bar": 300,
+        "water_volume_L": 3,
         "cylinder_length_m": 0.425,
         "cylinder_diameter_m": 0.115,
         "cylinder_mass_kg": 1.62,
@@ -4719,9 +8255,9 @@
         "h2_mass_fraction_wt_pct": 3.7,
         "thread": "M18 x 1.5",
         "regulator_mass_kg": 0.315,
-        "reference_load_W": 400.0,
+        "reference_load_W": 400,
         "reference_endurance_h": 2.575,
-        "reference_net_energy_Wh": 1030.0,
+        "reference_net_energy_Wh": 1030,
         "mission_energy_reserve_fraction": 0.15,
         "note": "AMS Composites 3 CF datasheet row: 3.0 L, 115 mm OD, 425 mm length, 1620 g, 300 bar, 61.9 g H2, 1030 Wh."
       }
@@ -4734,30 +8270,31 @@
         "mass_mode": "linear",
         "specific_mass_kg_per_m": 0.08974,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.0065,
-        "boss_od_m": 0.0125,
+        "tube_od_m": 0.008,
+        "boss_od_m": 0.014,
         "spar_stack_gap_m": 0.001,
         "status": "engineering_assumption",
-        "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; wing Z uses TOP longeron boss only."
+        "source": "Calibrated placeholder; replace with measured CFRP tube kg/m. Top+bottom centreline longerons; boss_od_m is the full-length 3D-printed sleeve/bedding OD around each tube (cabin keepout uses this). Wing Z references the TOP longeron sleeve."
       },
       "main_wing": {
         "z_m": 0.1,
-        "thickness_m": 0.028,
+        "thickness_m": 0.0465,
         "shell": {
-          "mass_mode": "linear",
-          "specific_mass_kg_per_m": 0.937,
+          "mass_mode": "areal",
+          "specific_mass_kg_per_m2": 1.8,
+          "specific_mass_kg_per_m": null,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated from current wing lump; replace with measured printed wing kg/m"
+          "source": "Printed wing shell 1.8 kg/m2 planform (confirm with weighed print segment); 15% root thickness"
         },
         "primary_spar": {
           "mass_mode": "structural_linear",
           "specific_mass_kg_per_m": 0.08784,
           "hardcoded_mass_kg": null,
-          "tube_od_m": 0.01329,
+          "reference_tube_od_m": 0.01329,
           "chord_fraction": 0.25,
           "status": "engineering_assumption",
-          "source": "Reference kg/m at current spar section; auto structural sizing scales this value by section area"
+          "source": "kg/m calibrated at reference_tube_od_m (mass-scaling section only \u2014 not the recommended design spar OD); structural sizing scales mass by section area"
         },
         "secondary_spar": {
           "mass_mode": "linear",
@@ -4766,28 +8303,29 @@
           "tube_od_m": 0.01,
           "chord_fraction": 0.65,
           "status": "engineering_assumption",
-          "source": "Secondary spar placeholder; replace with selected CFRP tube kg/m"
+          "source": "COTS secondary spar OD (even mm); replace kg/m with supplier data"
         },
         "shell_cg_chord_fraction": 0.45
       },
       "horizontal_tail": {
         "z_m": 0.1,
-        "thickness_m": 0.022,
+        "thickness_m": 0.02616,
         "shell": {
-          "mass_mode": "linear",
-          "specific_mass_kg_per_m": 0.1646,
+          "mass_mode": "areal",
+          "specific_mass_kg_per_m2": 1.8,
+          "specific_mass_kg_per_m": null,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated from current tail lump; replace with measured printed tail kg/m"
+          "source": "Printed HT shell 1.8 kg/m2 planform (confirm with weighed print segment)"
         },
         "primary_spar": {
           "mass_mode": "structural_linear",
           "specific_mass_kg_per_m": 0.01668,
           "hardcoded_mass_kg": null,
-          "tube_od_m": 0.00433,
+          "reference_tube_od_m": 0.00433,
           "chord_fraction": 0.25,
           "status": "engineering_assumption",
-          "source": "Reference kg/m; structural sizing scales by tube area"
+          "source": "kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section"
         },
         "secondary_spar": {
           "mass_mode": "linear",
@@ -4801,21 +8339,22 @@
       },
       "vertical_tail": {
         "count": 2,
-        "thickness_m": 0.012,
+        "thickness_m": 0.01776,
         "shell": {
-          "mass_mode": "linear",
-          "specific_mass_kg_per_m": 0.0565,
+          "mass_mode": "areal",
+          "specific_mass_kg_per_m2": 1.8,
+          "specific_mass_kg_per_m": null,
           "hardcoded_mass_kg": null,
           "status": "engineering_assumption",
-          "source": "Calibrated from current twin-fin lump; replace with measured printed fin kg/m"
+          "source": "Printed VT shells 1.8 kg/m2 total planform (confirm with weighed print segment)"
         },
         "primary_spar": {
           "mass_mode": "structural_linear",
           "specific_mass_kg_per_m": 0.00984,
           "hardcoded_mass_kg": null,
-          "tube_od_m": 0.00433,
+          "reference_tube_od_m": 0.00433,
           "status": "engineering_assumption",
-          "source": "Reference kg/m; structural sizing scales by tube area"
+          "source": "kg/m at reference_tube_od_m; structural sizing scales by tube area vs recommended section"
         },
         "secondary_spar": {
           "mass_mode": "linear",
@@ -4830,9 +8369,52 @@
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.01592,
         "hardcoded_mass_kg": null,
-        "tube_od_m": 0.035,
+        "reference_tube_od_m": 0.035,
         "status": "engineering_assumption",
-        "source": "Legacy kg/m reference; structural sizing scales by tube area; replace with supplier tube kg/m"
+        "source": "kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m"
+      },
+      "landing_legs": {
+        "enabled": true,
+        "layout": "nose_plus_wing",
+        "landing_load_factor": 3,
+        "side_load_fraction": 0.28,
+        "sleeve_wall_m": 0.002,
+        "printed_density_kg_m3": 1200,
+        "drag_coefficient_screen": 0.15,
+        "drag_CdA_m2": 0.0015,
+        "prop_ground_clearance_m": 0.02,
+        "minimum_leg_length_m": 0.06,
+        "minimum_mass_fraction_of_mtow": 0.03,
+        "deflection_limit_fraction": 0.05,
+        "slope_limit_deg": 3,
+        "status": "engineering_assumption",
+        "source": "Tripod landing gear with streamlined sleeve fairings: Cd 0.15, total CdA 0.0015 m2 (was Cd 0.5 / ~0.0044 m2). CFRP tubes sized for 3g landing; mass floored at 3% of mtow_ceiling.",
+        "tube": {
+          "mass_mode": "structural_linear",
+          "specific_mass_kg_per_m": 0.05,
+          "hardcoded_mass_kg": null,
+          "reference_tube_od_m": 0.012,
+          "id_over_od": 0.75,
+          "status": "engineering_assumption",
+          "source": "Placeholder CFRP leg kg/m at reference_tube_od_m; structural sizing scales by section area and locks to even-mm COTS"
+        }
+      }
+    },
+    "carbon_fiber_tubes": {
+      "section_mode": "auto",
+      "note": "Primary load-carrying CFRP tubes are auto-sized by the structural solver on an even-mm COTS-style screening grid and fed back into mass/CG closure. Secondary spars and fuselage longerons remain user-defined below.",
+      "main_wing_secondary_spar": {
+        "od_mm": 10
+      },
+      "horizontal_tail_secondary_spar": {
+        "od_mm": 4
+      },
+      "vertical_tail_secondary_spar": {
+        "od_mm": 4
+      },
+      "fuselage_longerons": {
+        "od_mm": 8,
+        "boss_od_mm": 14
       }
     },
     "optimizer": {
@@ -4841,20 +8423,20 @@
       "note": "LHS + local-refinement + robust uncertainty selection. target_static_margin is the screening objective aim (SM centering term). Spans from span_bounds when auto. With packaging_layout.enabled, battery/FC/H2 stations are rule-owned and omitted from the search. When packaging energy_bay_order_mode is auto, energy_bay_order_code (0=FC forward, 1=H2 forward) is swept.",
       "design_space": {
         "wing_ac_x_m": [
-          0.3,
-          0.46
+          0.28,
+          0.48
         ],
         "horizontal_tail_ac_x_m": [
-          1.0,
-          1.1
+          0.98,
+          1.15
         ],
         "vertical_tail_ac_x_m": [
-          1.0,
-          1.1
+          0.98,
+          1.15
         ],
         "lift_row_center_x_m": [
-          0.3,
-          0.46
+          0.28,
+          0.48
         ]
       }
     },
@@ -4862,20 +8444,21 @@
       "mode": "auto",
       "hardcoded": {
         "lift_combo_name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
-        "pusher_combo_name": "Tmotor_MN501S_240kV_P15x5_12S",
+        "pusher_combo_name": "Tmotor_MN501S_160kV_P18x10_12S",
         "battery_name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh"
       },
       "auto_criteria": {
         "series_cells": 12,
         "nominal_cell_voltage_V": 3.7,
-        "maximum_cell_voltage_V": 4.2,
+        "maximum_cell_voltage_V": 4,
+        "bus_voltage_ceiling_V": 48,
         "number_of_lift_motors": 4,
         "lift_total_thrust_factor_at_mtow_ceiling": 1.5,
         "lift_climb_thrust_factor": 1.08,
-        "minimum_lift_prop_diameter_in": 18.0,
-        "maximum_lift_prop_diameter_in": 24.0,
-        "minimum_pusher_power_W": 750.0,
-        "minimum_battery_capacity_Ah": 5.0,
+        "minimum_lift_prop_diameter_in": 18,
+        "maximum_lift_prop_diameter_in": 24,
+        "minimum_pusher_power_W": 750,
+        "minimum_battery_capacity_Ah": 5,
         "battery_current_margin": 1.05
       }
     },
@@ -4886,19 +8469,19 @@
         "general_print_tolerance": 0.3,
         "transition_fit_clearance": 0.24,
         "carbon_tube_fit_clearance": 0.5,
-        "component_keepout_clearance": 3.0,
-        "prop_disk_edge_clearance": 20.0,
+        "component_keepout_clearance": 3,
+        "prop_disk_edge_clearance": 20,
         "bolt_pocket_diameter_clearance": 1.7
       },
       "fasteners": {
         "default_motor_mount_fastener": "M4",
-        "bolt_M3_OD": 3.0,
+        "bolt_M3_OD": 3,
         "bolt_M3_clearance_hole_OD": 3.2,
         "bolt_M3_head_OD": 6.5,
-        "bolt_M4_OD": 4.0,
+        "bolt_M4_OD": 4,
         "bolt_M4_clearance_hole_OD": 4.2,
         "bolt_M4_head_OD": 8.22,
-        "bolt_M5_OD": 5.0,
+        "bolt_M5_OD": 5,
         "bolt_M5_clearance_hole_OD": 5.2,
         "bolt_M5_head_OD": 9.72
       },
@@ -4916,14 +8499,14 @@
       "inlet_side": "left",
       "exhaust_side": "right",
       "design_basis": "hover_and_ground_fan_only_no_ram_credit",
-      "target_max_opening_air_velocity_mps": 5.0,
+      "target_max_opening_air_velocity_mps": 5,
       "thermal_screen": {
-        "fuel_cell_net_power_W": 800.0,
+        "fuel_cell_net_power_W": 800,
         "fuel_cell_efficiency_screen": 0.5,
         "waste_heat_margin_factor": 1.1,
-        "allowable_air_temperature_rise_C": 15.0,
+        "allowable_air_temperature_rise_C": 15,
         "air_density_kg_m3": 1.225,
-        "air_specific_heat_J_kgK": 1005.0,
+        "air_specific_heat_J_kgK": 1005,
         "status": "engineering_assumption",
         "source": "IE-SOAR is supplier-confirmed air-cooled; 50% efficiency is a screening assumption within the 46-52% family brochure range, not an 800W efficiency map."
       },
@@ -4931,8 +8514,8 @@
         "count": 2,
         "diameter_m": 0.08,
         "center_spacing_m": 0.086,
-        "assumed_module_airflow_no_external_duct_cfm": 150.0,
-        "assumed_external_shutoff_pressure_Pa": 90.0,
+        "assumed_module_airflow_no_external_duct_cfm": 150,
+        "assumed_external_shutoff_pressure_Pa": 90,
         "status": "engineering_assumption",
         "source": "Preliminary two-fan integration assumption from module imagery. Replace with Intelligent Energy fan/system airflow and allowed external pressure-drop data or bench test."
       },
@@ -4950,10 +8533,10 @@
         "slot_gap_z_m": 0.003,
         "recess_depth_y_m": 0.008,
         "ramp_length_x_m": 0.17,
-        "sidewall_angle_deg": 7.0,
+        "sidewall_angle_deg": 7,
         "lip_radius_m": 0.002,
-        "center_x_offset_from_fc_m": 0.0,
-        "center_z_offset_from_fc_m": 0.0,
+        "center_x_offset_from_fc_m": 0,
+        "center_z_offset_from_fc_m": 0,
         "external_drag_coefficient_screen": 0.03,
         "cruise_pressure_recovery_fraction_screen": 0.15,
         "note": "NACA-style shallow side inlet used as a fan-suction opening in hover. The cooling gate does not credit ram-air recovery."
@@ -4966,10 +8549,10 @@
         "slot_width_z_m": 0.0065,
         "slot_gap_z_m": 0.003,
         "fan_shroud_depth_y_m": 0.01,
-        "louvre_angle_deg": 15.0,
+        "louvre_angle_deg": 15,
         "lip_radius_m": 0.002,
-        "center_x_offset_from_fc_m": 0.0,
-        "center_z_offset_from_fc_m": 0.0,
+        "center_x_offset_from_fc_m": 0,
+        "center_z_offset_from_fc_m": 0,
         "external_drag_coefficient_screen": 0.04,
         "note": "Fan-side direct exhaust. Louvre angle is a CAD starting value intended to discourage hot-air recirculation."
       },
@@ -4991,21 +8574,21 @@
   },
   "derived_geometry_v3": {
     "fuselage_total_length_m": 0.8594000000000002,
-    "fuselage_max_diameter_m": 0.245,
-    "main_wing_span_m": 3.3742,
-    "main_wing_area_m2": 0.879451488,
-    "main_wing_mac_m": 0.2660699999999999,
-    "horizontal_tail_span_m": 0.8688,
-    "horizontal_tail_area_m2": 0.16098864,
-    "vertical_tail_height_m": 0.3,
-    "vertical_tail_area_total_m2": 0.07103999999999999,
-    "main_wing_CLmax_screen": 1.185,
+    "fuselage_max_diameter_m": 0.22137729577647663,
+    "main_wing_span_m": 3.6,
+    "main_wing_area_m2": 0.9,
+    "main_wing_mac_m": 0.2548,
+    "horizontal_tail_span_m": 0.9159221570593505,
+    "horizontal_tail_area_m2": 0.16972037570309764,
+    "vertical_tail_height_m": 0.5330190749553178,
+    "vertical_tail_area_total_m2": 0.12621891694941925,
+    "main_wing_CLmax_screen": 1.37,
     "airfoils": {
       "main_wing": {
-        "code": "NACA4412",
-        "mode": "screening_fallback",
-        "CLmax_used": 1.185,
-        "Re": null
+        "code": "NACA6415",
+        "mode": "polar_file",
+        "CLmax_used": 1.37,
+        "Re": 200000
       },
       "horizontal_tail": {
         "code": "NACA0012",

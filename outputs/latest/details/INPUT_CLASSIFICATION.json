@@ -5,10 +5,12 @@
     "fuselage",
     "lifting_surfaces",
     "propulsion",
+    "component_mass_overrides",
     "component_positions",
     "hardware",
     "hardware_selection",
     "manufacturing_mass_model",
+    "carbon_fiber_tubes",
     "cad_export",
     "optimizer",
     "packaging_layout",
@@ -29,7 +31,9 @@
     "aerodynamic drag/cruise power",
     "VTOL thrust/power requirements",
     "mission energy, hydrogen use and battery SOC",
-    "structural sizing feedback and converged MTOW"
+    "structural sizing feedback and converged MTOW",
+    "landing-leg CFRP tubes sized for 3g landing with 2 mm printed sleeves",
+    "COTS carbon-tube OD/ID when carbon_fiber_tubes.section_mode=hardcoded"
   ],
-  "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity."
+  "hardcode_rule": "Any span/mass entry with mode='hardcoded' is treated as fixed and is excluded from automatic sizing for that quantity. carbon_fiber_tubes.section_mode='hardcoded' locks recommended structural tube OD/ID to even-mm COTS sizes. Optional carbon_fiber_tubes.landing_legs locks landing-leg tubes; otherwise they are auto-sized from the 3g landing screen and rounded to even-mm COTS."
 }
