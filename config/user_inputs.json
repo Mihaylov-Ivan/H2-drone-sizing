@@ -146,7 +146,10 @@
       "minimum_tail_volume_coefficient": 0.44,
       "autosize_samples": 36,
       "autosize_local_samples": 12,
-      "note": "AutoSize Horizontal Tail=true: jointly optimize span, root chord and taper at the current wing geometry. The configured tail-volume coefficient is treated as a hard minimum; loaded static margin and structural/mass constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly."
+      "note": "AutoSize Horizontal Tail=true: jointly optimize span, root chord and taper at the current wing geometry. The configured tail-volume coefficient is treated as a hard minimum; loaded static margin and structural/mass constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+      "preferred_aspect_ratio": 4.5,
+      "preferred_taper_ratio": 0.6,
+      "profile_cd0_screen": 0.01
     },
     "vertical_tail": {
       "count": 2,
@@ -179,7 +182,10 @@
       "minimum_vertical_tail_volume_coefficient": 0.0255,
       "autosize_samples": 36,
       "autosize_local_samples": 12,
-      "note": "AutoSize Vertical Tail=true: jointly optimize fin height, root chord and taper for the twin-fin layout. The configured vertical-tail-volume coefficient is treated as a hard minimum; structural and geometric constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly."
+      "note": "AutoSize Vertical Tail=true: jointly optimize fin height, root chord and taper for the twin-fin layout. The configured vertical-tail-volume coefficient is treated as a hard minimum; structural and geometric constraints also apply. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+      "preferred_aspect_ratio": 2.5,
+      "preferred_taper_ratio": 0.6,
+      "profile_cd0_screen": 0.01
     }
   },
   "propulsion": {
