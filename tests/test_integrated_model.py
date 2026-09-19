@@ -33,6 +33,25 @@ def test_main_wing_autosizing_uses_live_M2_and_joint_planform(integrated_result)
     assert a['selected']['wing_area_m2'] + 1e-9 >= a['selected']['required_area_with_margin_m2']
 
 
+def test_tail_planform_autosizing_joint_geometry(integrated_result):
+    r,_=integrated_result
+    a=r['tail_planform_autosizing']
+    assert a['enabled'] is True
+    assert a['horizontal_tail'] is True
+    assert a['vertical_tail'] is True
+    assert a['mode']=='coupled_ht_vt_span_root_chord_taper'
+    assert a['evaluated_candidates'] >= 2
+    assert a['feasible_candidates'] >= 1
+    sel=a['selected']
+    assert sel['feasible'] is True
+    vals=sel['resolved_values']
+    assert {'horizontal_tail_span_m','horizontal_tail_root_chord_m','horizontal_tail_taper_ratio',
+            'vertical_tail_height_m','vertical_tail_root_chord_m','vertical_tail_taper_ratio'} <= set(vals)
+    assert sel['horizontal_tail_volume_coefficient'] + 1e-9 >= a['constraints']['horizontal_tail_minimum_volume_coefficient']
+    assert sel['vertical_tail_volume_coefficient'] + 1e-9 >= a['constraints']['vertical_tail_minimum_volume_coefficient']
+    assert sel['loaded_static_margin'] + 1e-9 >= a['constraints']['loaded_static_margin_target']
+
+
 def test_inspection_flight_envelope_and_gust_stall_gates(integrated_result):
     r,_=integrated_result
     env=r['flight_envelope']
