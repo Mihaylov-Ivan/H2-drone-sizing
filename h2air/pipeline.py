@@ -602,21 +602,23 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     sm_payload_off=(float(d["neutral_point_station_x_m"])-mass_payload_off.takeoff.cg_m[0])/float(d["wing_mac_m"])
     min_sm=float(six_cfg["gates"]["minimum_static_margin"])
 
+    # Defaults preserve legacy/internal configs that predate the user-facing
+    # inspection flight-envelope block.
     flight_envelope=evaluate_vn_envelope(
         mass_kg=mass_final.takeoff.total_mass_kg,
         rho_kg_m3=float(aero_cfg["atmosphere"]["rho_kg_m3"]),
         wing_area_m2=float(d["wing_area_m2"]),
         speed_mps=V,
         cl_max=float(d["wing_CLmax"]),
-        cl_min=float(d["wing_CLmin"]),
-        positive_limit_g=float(d["operational_positive_manoeuvre_load_factor_g"]),
-        negative_limit_g=float(d["operational_negative_manoeuvre_load_factor_g"]),
-        max_cl_utilization=float(d["maximum_manoeuvre_clmax_utilization"]),
-        maximum_bank_deg=float(d["operational_maximum_bank_deg"]),
+        cl_min=float(d.get("wing_CLmin", six_cfg["aerodynamics"].get("stall_screen_CLmin", six_cfg["aerodynamics"].get("CL_min", -0.6)))),
+        positive_limit_g=float(d.get("operational_positive_manoeuvre_load_factor_g", 1.5)),
+        negative_limit_g=float(d.get("operational_negative_manoeuvre_load_factor_g", -0.5)),
+        max_cl_utilization=float(d.get("maximum_manoeuvre_clmax_utilization", 0.90)),
+        maximum_bank_deg=float(d.get("operational_maximum_bank_deg", 45.0)),
     )
     current_gust_cases=control_cases["current_layout"]["inspection_gust_cases"]
     max_gust_cl_util=max(float(x["maximum_clmax_utilization"]) for x in current_gust_cases.values())
-    gust_cl_limit=float(d["maximum_gust_clmax_utilization"])
+    gust_cl_limit=float(d.get("maximum_gust_clmax_utilization", 0.95))
 
     gates=[]
     def gate(name,status,note):gates.append({"name":name,"status":status,"note":note})
@@ -627,7 +629,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("fuel_cell_cooling_fan_curve","NOT_EVALUATED","IE-SOAR fan/system airflow and allowable external pressure-drop data are not present in the supplied documentation; current airflow capacity is an engineering assumption to be replaced by supplier or bench data.")
     gate("lift_prop_clearance","PASS" if layout.proposed_layout_pass else "FAIL","Collision-free lift-row geometry screen.")
     gate("15kg_stall_margin","PASS" if float(d["wing_area_m2"])+1e-9>=float(wing_ceiling["minimum_wing_area_m2"]) else "FAIL",f"Wing area {float(d['wing_area_m2']):.3f} m² vs minimum {float(wing_ceiling['minimum_wing_area_m2']):.3f} m² screen.")
-    gate("inspection_bank_load","PASS" if flight_envelope["bank_within_positive_limit"] else "FAIL",f"{float(d['operational_maximum_bank_deg']):.0f} deg bank requires {flight_envelope['bank_load_factor_g']:.2f} g vs +{flight_envelope['positive_operational_limit_g']:.2f} g operational limit.")
+    gate("inspection_bank_load","PASS" if flight_envelope["bank_within_positive_limit"] else "FAIL",f"{float(d.get('operational_maximum_bank_deg',45.0)):.0f} deg bank requires {flight_envelope['bank_load_factor_g']:.2f} g vs +{flight_envelope['positive_operational_limit_g']:.2f} g operational limit.")
     gate("positive_manoeuvre_stall_margin","PASS" if flight_envelope["positive_manoeuvre_stall_pass"] else "FAIL",f"+{flight_envelope['positive_operational_limit_g']:.2f} g at {V:.1f} m/s uses {100*flight_envelope['positive_manoeuvre_cl_utilization']:.1f}% of CLmax; limit {100*flight_envelope['maximum_cl_utilization']:.0f}%. Minimum speed with margin {flight_envelope['minimum_speed_for_positive_limit_with_margin_mps']:.2f} m/s.")
     gate("negative_manoeuvre_stall_margin","PASS" if flight_envelope["negative_manoeuvre_stall_pass"] else "FAIL",f"{flight_envelope['negative_operational_limit_g']:.2f} g at {V:.1f} m/s uses {100*flight_envelope['negative_manoeuvre_cl_utilization']:.1f}% of |CLmin|; limit {100*flight_envelope['maximum_cl_utilization']:.0f}%.")
     gate("inspection_gust_stall_margin","PASS" if max_gust_cl_util<=gust_cl_limit+1e-9 else "FAIL",f"Worst 6-DOF inspection gust reaches {100*max_gust_cl_util:.1f}% of conservative stall-screen CLmax vs {100*gust_cl_limit:.0f}% limit across lateral, vertical +/- and combined cases.")
