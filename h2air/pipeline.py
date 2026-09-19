@@ -341,7 +341,9 @@ def _auto_size_main_wing(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[s
     max_outer = max(int(d0.get("main_wing_autosize_max_iterations", 4)), 1)
     min_tip = float(d0.get("main_wing_minimum_tip_chord_m", 0.15))
 
-    rng = np.random.default_rng(20260919)
+    # Reuse the same normalized search cloud at every outer M2 iteration.
+    # Only the live-M2 area floor moves. This avoids apparent geometry
+    # "non-convergence" caused solely by drawing a different random cloud.
     history = []
     best = None
     previous_values = None
@@ -354,6 +356,7 @@ def _auto_size_main_wing(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[s
         return float(req0["minimum_wing_area_m2"]) * float(d0.get("main_wing_auto_area_margin_factor", 1.10))
 
     for outer in range(1, max_outer + 1):
+        rng = np.random.default_rng(20260919)
         Sreq = required_area_for_mass(sizing_mass)
         candidate_tuples = []
         current_span = float((best or {}).get("values", {}).get("main_wing_span_m", d0["main_wing_span_m"]))
@@ -456,7 +459,11 @@ def _auto_size_main_wing(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[s
         "seed_mass_kg": float(seed_mass.takeoff.total_mass_kg),
         "selected": deepcopy(best),
         "history": history,
-        "converged": bool(history and history[-1]["mass_residual_kg"] <= 0.005),
+        "converged": bool(
+            history
+            and history[-1]["mass_residual_kg"] <= 0.005
+            and history[-1]["geometry_residual"] <= 0.002
+        ),
     }
     return selected_cfg, result
 
