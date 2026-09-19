@@ -600,7 +600,13 @@ def evaluate_gates(cfg: Mapping[str, Any], structural: Mapping[str, Any], feedba
             'CFRP tube screen for 3g landing with side-load bending on the longest leg.',
         )
     add('motor_mount_strength','NOT_EVALUATED',structural['motor_mount']['required_limit_bending_Nm'],'controlled mount geometry + material allowables required')
-    add('mass_ceiling_after_partial_structural_feedback','PASS' if feedback['screening_updated_mass_kg']<=float(cfg['aircraft']['design_mass_ceiling_kg']) else 'FAIL',feedback['screening_updated_mass_kg'],float(cfg['aircraft']['design_mass_ceiling_kg']))
+    add(
+        'mass_ceiling_after_partial_structural_feedback',
+        'NOT_EVALUATED',
+        feedback['screening_updated_mass_kg'],
+        float(cfg['aircraft']['design_mass_ceiling_kg']),
+        'Legacy partial-feedback audit only. The integrated structural closure now updates the real component ledger and is the authoritative MTOW gate.',
+    )
     return gates
 
 
@@ -628,7 +634,9 @@ def build_phase7_result(cfg: Mapping[str, Any]) -> Dict[str, Any]:
             'reference_35x31_boom_tip_deflection_mm':structural['booms']['reference_35x31_geometry']['check']['tip_deflection_mm'],
             'legacy_strength_only_boom_tip_deflection_mm':structural['booms']['legacy_strength_only']['check']['tip_deflection_mm'],
             'horizontal_tail_recommended_spar_od_mm':structural['tails']['horizontal_recommended_screen']['section']['od_m']*1000,
+            'horizontal_tail_recommended_spar_id_mm':structural['tails']['horizontal_recommended_screen']['section']['id_m']*1000,
             'vertical_tail_recommended_spar_od_mm':structural['tails']['vertical_recommended_screen']['section']['od_m']*1000,
+            'vertical_tail_recommended_spar_id_mm':structural['tails']['vertical_recommended_screen']['section']['id_m']*1000,
             'required_motor_mount_limit_thrust_N':structural['motor_mount']['required_limit_thrust_N'],
             'required_motor_mount_limit_bending_Nm':structural['motor_mount']['required_limit_bending_Nm'],
             'landing_legs_enabled': bool((structural.get('landing_legs') or {}).get('enabled')),
