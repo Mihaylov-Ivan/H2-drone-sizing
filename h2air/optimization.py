@@ -78,7 +78,9 @@ def default_space_for_config(cfg: Mapping[str, Any]) -> Dict[str, Tuple[float,fl
         pl = cfg.get("packaging_layout") or {}
         if str(pl.get("energy_bay_order_mode", d.get("energy_bay_order_mode", "hardcoded"))).lower() == "auto":
             space["energy_bay_order_code"] = (0.0, 1.0)
-    if str(d.get("main_wing_span_mode","auto")).lower()=="auto":
+    # Dedicated AutoSize Main Wing owns span/root-chord/taper as a coupled
+    # inner fixed point. Do not let the outer design-study sweep span separately.
+    if str(d.get("main_wing_span_mode","auto")).lower()=="auto" and not bool(d.get("auto_size_main_wing", False)):
         space["main_wing_span_m"] = tuple(float(x) for x in d["main_wing_span_bounds_m"])
     if str(d.get("horizontal_tail_span_mode","auto")).lower()=="auto":
         space["horizontal_tail_span_m"] = tuple(float(x) for x in d["horizontal_tail_span_bounds_m"])
