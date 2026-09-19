@@ -39,17 +39,42 @@ def test_tail_planform_autosizing_joint_geometry(integrated_result):
     assert a['enabled'] is True
     assert a['horizontal_tail'] is True
     assert a['vertical_tail'] is True
-    assert a['mode']=='coupled_ht_vt_span_root_chord_taper'
+    assert a['mode']=='performance_constrained_ht_vt_span_root_chord_taper'
+    assert a['tail_volume_role']=='calibration_reference_and_output_not_hard_constraint'
+    assert abs(a['control_safety_factor']-1.10)<1e-12
     assert a['evaluated_candidates'] >= 2
-    assert a['feasible_candidates'] >= 1
+    assert a['preliminary_feasible_candidates'] >= 1
+    assert a['dynamic_validation_candidates'] >= 1
+    assert a['dynamic_feasible_candidates'] >= 1
     sel=a['selected']
     assert sel['feasible'] is True
+    assert sel['dynamic_validation']['evaluated'] is True
+    assert sel['dynamic_validation']['pass'] is True
     vals=sel['resolved_values']
     assert {'horizontal_tail_span_m','horizontal_tail_root_chord_m','horizontal_tail_taper_ratio',
             'vertical_tail_height_m','vertical_tail_root_chord_m','vertical_tail_taper_ratio'} <= set(vals)
-    assert sel['horizontal_tail_volume_coefficient'] + 1e-9 >= a['constraints']['horizontal_tail_minimum_volume_coefficient']
-    assert sel['vertical_tail_volume_coefficient'] + 1e-9 >= a['constraints']['vertical_tail_minimum_volume_coefficient']
     assert sel['loaded_static_margin'] + 1e-9 >= a['constraints']['loaded_static_margin_target']
+    # Vh/Vv are now outcomes, not hard floors.
+    assert sel['horizontal_tail_volume_coefficient'] > 0
+    assert sel['vertical_tail_volume_coefficient'] > 0
+    assert sel['horizontal_tail_reference_volume_coefficient']==a['constraints']['horizontal_tail_reference_volume_coefficient']
+    assert sel['vertical_tail_reference_volume_coefficient']==a['constraints']['vertical_tail_reference_volume_coefficient']
+
+
+def test_tail_control_authority_has_surface_only_safety_margin(integrated_result):
+    r,_=integrated_result
+    s=r['tail_control_authority']
+    assert s['surface_only_fixed_wing'] is True
+    assert abs(s['safety_factor']-1.10)<1e-12
+    assert s['pass'] is True
+    assert all(x['pass'] for x in s['checks'])
+    assert {'lateral','vertical_up','combined_lateral_up'} <= set(s['cases'])
+    assert next(g for g in r['gates'] if g['name']=='tail_control_authority')['status']=='PASS'
+    scaling=s['tail_effectiveness_scaling']
+    assert scaling['horizontal_tail_volume_coefficient'] > 0
+    assert scaling['vertical_tail_volume_coefficient'] > 0
+    assert scaling['horizontal_effectiveness_scale'] > 0
+    assert scaling['vertical_effectiveness_scale'] > 0
 
 
 def test_inspection_flight_envelope_and_gust_stall_gates(integrated_result):
