@@ -564,6 +564,10 @@ def apply_structural_mass_updates(cfg: Mapping[str, Any], components: Sequence[C
         bod, bid = float(brec["od_m"]), float(brec["id_m"])
         br["design_tube_od_m"] = bod
         br["design_tube_id_m"] = bid
+        # Keep CAD/layout geometry synchronized with the section actually
+        # selected by the structural solver.
+        gm["boom_outer_diameter_m"] = bod
+        d["boom_outer_diameter_m"] = bod
         dens = _cfrp_density(cfg, br)
         for n in ("boom_tube_left", "boom_tube_right"):
             _set_component_mass(by, n, carbon_tube_mass_kg(bod, bid, Lb, 1, dens), diameter=bod, length=Lb, apply_growth=True)
@@ -640,5 +644,26 @@ def apply_structural_mass_updates(cfg: Mapping[str, Any], components: Sequence[C
                             include_in_collision_check=False,
                         ))
                         by = {c.name: c for c in out}
+
+    # Publish the structural sections actually used by the closed mass model.
+    # This prevents carbon_fiber_tubes user-input references from being mistaken
+    # for the resolved CAD/BOM sizes when section_mode='auto'.
+    cft = cfg.get("carbon_fiber_tubes")
+    if isinstance(cft, dict):
+        checks = structure.get("structural_checks", {})
+        resolved = {}
+        if checks.get("wing", {}).get("recommended_screen", {}).get("section"):
+            resolved["main_wing_primary_spar"] = deepcopy(checks["wing"]["recommended_screen"]["section"])
+        if checks.get("booms", {}).get("recommended_screen", {}).get("section"):
+            resolved["boom_tubes"] = deepcopy(checks["booms"]["recommended_screen"]["section"])
+        tails = checks.get("tails", {})
+        if tails.get("horizontal_recommended_screen", {}).get("section"):
+            resolved["horizontal_tail_primary_spar"] = deepcopy(tails["horizontal_recommended_screen"]["section"])
+        if tails.get("vertical_recommended_screen", {}).get("section"):
+            resolved["vertical_tail_primary_spar"] = deepcopy(tails["vertical_recommended_screen"]["section"])
+        land = checks.get("landing_legs", {})
+        if land.get("enabled") and land.get("recommended_screen", {}).get("section"):
+            resolved["landing_legs"] = deepcopy(land["recommended_screen"]["section"])
+        cft["resolved_primary_sections"] = resolved
 
     return out
