@@ -572,44 +572,96 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
 
     d["wing_ac_x_m"] = float(main["aerodynamic_center_x_m"])
 
-    # Horizontal tail: AUTO uses a user-defined tail-volume target as a robust
-    # starting size. The MDO optimizer can then vary span within the bounds.
+    # Horizontal tail: the tail-volume relation provides the robust seed/minimum
+    # area. A dedicated AutoSize Horizontal Tail pass may later optimize span,
+    # root chord and taper simultaneously while preserving that aerodynamic floor.
+    ht_auto_raw = htail.get("AutoSize Horizontal Tail", htail.get("auto_size_horizontal_tail"))
+    if ht_auto_raw is None:
+        auto_size_ht = str(htail.get("span_mode", "auto")).lower() == "auto"
+    elif isinstance(ht_auto_raw, bool):
+        auto_size_ht = ht_auto_raw
+    else:
+        raise ValueError("horizontal_tail 'AutoSize Horizontal Tail' must be true or false")
+    d["auto_size_horizontal_tail"] = bool(auto_size_ht)
+    d["horizontal_tail_span_mode"] = "auto" if auto_size_ht else "hardcoded"
     d["horizontal_tail_root_chord_m"] = float(htail["root_chord_m"])
     d["horizontal_tail_taper_ratio"] = float(htail["taper_ratio"])
     d["horizontal_tail_naca_code"] = str(htail["naca_code"])
-    d["horizontal_tail_span_mode"] = str(htail.get("span_mode", "auto"))
     d["horizontal_tail_span_bounds_m"] = [float(x) for x in htail["span_bounds_m"]]
+    d["horizontal_tail_root_chord_bounds_m"] = [float(x) for x in htail.get("root_chord_bounds_m", [0.16, 0.32])]
+    d["horizontal_tail_taper_ratio_bounds"] = [float(x) for x in htail.get("taper_ratio_bounds", [0.45, 0.85])]
+    d["horizontal_tail_aspect_ratio_bounds"] = [float(x) for x in htail.get("aspect_ratio_bounds", [3.5, 6.5])]
+    d["horizontal_tail_minimum_tip_chord_m"] = float(htail.get("minimum_tip_chord_m", 0.10))
+    d["horizontal_tail_preferred_aspect_ratio"] = float(htail.get("preferred_aspect_ratio", 4.5))
+    d["horizontal_tail_preferred_taper_ratio"] = float(htail.get("preferred_taper_ratio", 0.60))
+    d["horizontal_tail_profile_cd0_screen"] = float(htail.get("profile_cd0_screen", 0.010))
+    d["horizontal_tail_autosize_samples"] = int(htail.get("autosize_samples", 36))
+    d["horizontal_tail_autosize_local_samples"] = int(htail.get("autosize_local_samples", 12))
     d["horizontal_tail_ac_x_m"] = float(htail["aerodynamic_center_x_m"])
     tail_arm = max(float(htail["aerodynamic_center_x_m"]) - float(main["aerodynamic_center_x_m"]), 0.05)
     Vh = float(htail.get("target_tail_volume_coefficient", 0.50))
     d["horizontal_tail_target_volume_coefficient"] = Vh
+    d["horizontal_tail_minimum_volume_coefficient"] = float(htail.get("minimum_tail_volume_coefficient", Vh))
     Sh_auto = Vh * Smain * d["wing_mac_m"] / tail_arm
     bh_auto = 2.0 * Sh_auto / (float(htail["root_chord_m"]) * (1.0 + float(htail["taper_ratio"])))
-    bh = _surface_span(htail, auto_value=bh_auto)
+    bh = _surface_span(htail, auto_value=bh_auto) if auto_size_ht else float(htail["hardcoded_span_m"])
     Sh = trapezoid_area(bh, float(htail["root_chord_m"]), float(htail["taper_ratio"]))
     d["horizontal_tail_span_m"] = bh
     d["horizontal_tail_area_m2"] = Sh
     d["horizontal_tail_mac_m"] = trapezoid_mac(float(htail["root_chord_m"]), float(htail["taper_ratio"]))
+    d["horizontal_tail_thickness_ratio"] = float(htail.get("thickness_ratio", 0.12))
 
-    # Vertical-tail AUTO sizing uses a two-fin vertical-tail-volume screen.
+    # Vertical tail: same pattern for the two-fin vertical-tail-volume floor.
+    vt_auto_raw = vtail.get("AutoSize Vertical Tail", vtail.get("auto_size_vertical_tail"))
+    if vt_auto_raw is None:
+        auto_size_vt = str(vtail.get("span_mode", "auto")).lower() == "auto"
+    elif isinstance(vt_auto_raw, bool):
+        auto_size_vt = vt_auto_raw
+    else:
+        raise ValueError("vertical_tail 'AutoSize Vertical Tail' must be true or false")
+    d["auto_size_vertical_tail"] = bool(auto_size_vt)
+    d["vertical_tail_span_mode"] = "auto" if auto_size_vt else "hardcoded"
     d["vertical_tail_root_chord_m"] = float(vtail["root_chord_m"])
     d["vertical_tail_taper_ratio"] = float(vtail["taper_ratio"])
     d["vertical_tail_naca_code"] = str(vtail["naca_code"])
-    d["vertical_tail_span_mode"] = str(vtail.get("span_mode", "auto"))
     d["vertical_tail_span_bounds_m"] = [float(x) for x in vtail["span_bounds_m"]]
+    d["vertical_tail_root_chord_bounds_m"] = [float(x) for x in vtail.get("root_chord_bounds_m", [0.12, 0.26])]
+    d["vertical_tail_taper_ratio_bounds"] = [float(x) for x in vtail.get("taper_ratio_bounds", [0.40, 0.80])]
+    d["vertical_tail_aspect_ratio_bounds"] = [float(x) for x in vtail.get("aspect_ratio_bounds", [2.0, 4.5])]
+    d["vertical_tail_minimum_tip_chord_m"] = float(vtail.get("minimum_tip_chord_m", 0.075))
+    d["vertical_tail_preferred_aspect_ratio"] = float(vtail.get("preferred_aspect_ratio", 2.5))
+    d["vertical_tail_preferred_taper_ratio"] = float(vtail.get("preferred_taper_ratio", 0.60))
+    d["vertical_tail_profile_cd0_screen"] = float(vtail.get("profile_cd0_screen", 0.010))
+    d["vertical_tail_autosize_samples"] = int(vtail.get("autosize_samples", 36))
+    d["vertical_tail_autosize_local_samples"] = int(vtail.get("autosize_local_samples", 12))
     d["vertical_tail_ac_x_m"] = float(vtail["aerodynamic_center_x_m"])
     nfin = int(vtail.get("count", 2))
     d["vertical_tail_count"] = nfin
     lv = max(float(vtail["aerodynamic_center_x_m"]) - float(main["aerodynamic_center_x_m"]), 0.05)
     Vv = float(vtail.get("target_vertical_tail_volume_coefficient", 0.035))
     d["vertical_tail_target_volume_coefficient"] = Vv
+    d["vertical_tail_minimum_volume_coefficient"] = float(vtail.get("minimum_vertical_tail_volume_coefficient", Vv))
     Sv_total_auto = Vv * Smain * bmain / lv
     h_auto = 2.0 * (Sv_total_auto / nfin) / (float(vtail["root_chord_m"]) * (1.0 + float(vtail["taper_ratio"])))
-    hv = _surface_span(vtail, auto_value=h_auto)
+    hv = _surface_span(vtail, auto_value=h_auto) if auto_size_vt else float(vtail["hardcoded_span_m"])
     Sv_each = trapezoid_area(hv, float(vtail["root_chord_m"]), float(vtail["taper_ratio"]))
     d["vertical_tail_height_m"] = hv
     d["vertical_tail_area_each_m2"] = Sv_each
     d["vertical_tail_area_total_m2"] = Sv_each * nfin
+    d["vertical_tail_thickness_ratio"] = float(vtail.get("thickness_ratio", 0.12))
+
+    for label, bounds in (
+        ("horizontal_tail span", d["horizontal_tail_span_bounds_m"]),
+        ("horizontal_tail root chord", d["horizontal_tail_root_chord_bounds_m"]),
+        ("horizontal_tail taper", d["horizontal_tail_taper_ratio_bounds"]),
+        ("horizontal_tail aspect ratio", d["horizontal_tail_aspect_ratio_bounds"]),
+        ("vertical_tail height", d["vertical_tail_span_bounds_m"]),
+        ("vertical_tail root chord", d["vertical_tail_root_chord_bounds_m"]),
+        ("vertical_tail taper", d["vertical_tail_taper_ratio_bounds"]),
+        ("vertical_tail aspect ratio", d["vertical_tail_aspect_ratio_bounds"]),
+    ):
+        if len(bounds) != 2 or not (float(bounds[0]) < float(bounds[1])):
+            raise ValueError(f"{label} bounds must be [min, max] with min < max")
 
     # -------- Propulsion and placement user inputs --------
     prop = u["propulsion"]
@@ -860,11 +912,21 @@ def user_inputs_from_design_values(
     if "main_wing_taper_ratio" in vals:
         main["taper_ratio"] = _round(vals["main_wing_taper_ratio"])
     if "horizontal_tail_span_m" in vals:
+        htail["AutoSize Horizontal Tail"] = False
         htail["span_mode"] = "hardcoded"
         htail["hardcoded_span_m"] = _round(vals["horizontal_tail_span_m"])
+    if "horizontal_tail_root_chord_m" in vals:
+        htail["root_chord_m"] = _round(vals["horizontal_tail_root_chord_m"])
+    if "horizontal_tail_taper_ratio" in vals:
+        htail["taper_ratio"] = _round(vals["horizontal_tail_taper_ratio"])
     if "vertical_tail_height_m" in vals:
+        vtail["AutoSize Vertical Tail"] = False
         vtail["span_mode"] = "hardcoded"
         vtail["hardcoded_span_m"] = _round(vals["vertical_tail_height_m"])
+    if "vertical_tail_root_chord_m" in vals:
+        vtail["root_chord_m"] = _round(vals["vertical_tail_root_chord_m"])
+    if "vertical_tail_taper_ratio" in vals:
+        vtail["taper_ratio"] = _round(vals["vertical_tail_taper_ratio"])
 
     for key in (
         "lift_row_center_x_m",
@@ -912,8 +974,8 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
             "AUTO motor/prop/battery database selection when enabled",
             "clean CAD parameter export (geometry/clearance/hardware/cooling only)",
             "fuel-cell waste heat, required airflow, duct pressure loss and cooling-airflow margin",
-            "horizontal-tail span/area in AUTO mode",
-            "vertical-tail height/area in AUTO mode",
+            "horizontal-tail span/root-chord/taper/area from AutoSize Horizontal Tail",
+            "vertical-tail height/root-chord/taper/area from AutoSize Vertical Tail",
             "component masses in LINEAR mode from kg/m x length",
             "CG and inertia tensor",
             "neutral point and static margin",

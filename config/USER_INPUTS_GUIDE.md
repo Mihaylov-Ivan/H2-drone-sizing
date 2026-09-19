@@ -22,7 +22,11 @@ AutoSize Main Wing includes the +1.5 g accelerated-stall requirement using the c
 - Main wing: `"AutoSize Main Wing": true` jointly optimizes **span + root chord + taper ratio** inside the normal integrated run. The stall/transition area calculation uses the **current structurally closed iteration mass M2**, not the fixed 15 kg ceiling. The 15 kg value remains the hard final mass constraint and the structural design/load-case mass.
 - Main wing: `"AutoSize Main Wing": false` uses `hardcoded_span_m`, `root_chord_m` and `taper_ratio` exactly.
 - Main-wing search bounds are `span_bounds_m`, `root_chord_bounds_m` and `taper_ratio_bounds`; `minimum_tip_chord_m` prevents an impractically narrow tip. `auto_area_margin_factor` is applied to the live-M2 stall/transition area requirement.
-- Horizontal/vertical tails retain `span_mode: "auto"` / `"hardcoded"`. When the main wing is autosized, AUTO tail spans are recomputed from their configured tail-volume targets for each candidate.
+- Horizontal tail: `"AutoSize Horizontal Tail": true` jointly optimizes **span + root chord + taper ratio** after the main-wing pass. The configured horizontal-tail volume coefficient is treated as a hard minimum, loaded static margin is constrained to the configured target, structural closure/mass are evaluated for each candidate, and aspect-ratio/tip-chord bounds prevent unrealistic compact tails.
+- Vertical tail: `"AutoSize Vertical Tail": true` jointly optimizes **fin height + root chord + taper ratio** for the twin-fin layout. The configured vertical-tail volume coefficient is a hard minimum, with per-fin aspect-ratio/tip-chord and structural/mass constraints.
+- Setting either tail autosize trigger to `false` uses that surface's `hardcoded_span_m`, `root_chord_m` and `taper_ratio` exactly.
+- Tail search bounds are controlled by `span_bounds_m`, `root_chord_bounds_m`, `taper_ratio_bounds`, `aspect_ratio_bounds` and `minimum_tip_chord_m`. `preferred_aspect_ratio` and `preferred_taper_ratio` are weak secondary regularizers only; structurally closed MTOW is the primary objective.
+- The tail optimizer uses a transparent low-lift profile-drag proxy only as a secondary tie-breaker because the current cruise-drag model does not yet resolve HT/VT profile drag independently. Final 6-DOF and structural gates still run on the selected geometry.
 - `mass_mode: "linear"` — mass = `specific_mass_kg_per_m × geometric length × count`.
 - `mass_mode: "structural_linear"` — same measured kg/m basis, but the primary structural member mass is scaled if the structure solver selects a different tube section. Enter the calibration OD as `reference_tube_od_m` (not the recommended design OD). Legacy `tube_od_m` on these members is still accepted and renamed on load.
 - `mass_mode: "hardcoded"` — `hardcoded_mass_kg` is fixed and structural/geometry sizing does not change that member's mass.
@@ -30,13 +34,13 @@ AutoSize Main Wing includes the +1.5 g accelerated-stall requirement using the c
 
 ## User-defined versus calculated
 
-User-defined examples: payload, mission duration, fuselage section lengths/diameters, main-wing autosize trigger and bounds, hardcoded/seed root chords and taper ratios, NACA codes, twist/sweep/dihedral, propeller sizes, hardware data (including H₂ cylinder length/diameter/mass from `hardware.hydrogen`), component positions, kg/m values and hardcode switches.
+User-defined examples: payload, mission duration, fuselage section lengths/diameters, main-wing/HT/VT autosize triggers and bounds, hardcoded/seed root chords and taper ratios, NACA codes, twist/sweep/dihedral, propeller sizes, hardware data (including H₂ cylinder length/diameter/mass from `hardware.hydrogen`), component positions, kg/m values and hardcode switches.
 
 ## Hydrogen cylinder
 
 `hardware.hydrogen` is the source of truth for the selected tank (AMS 3 CF by default): `cylinder_length_m`, `cylinder_diameter_m`, `cylinder_mass_kg`, `water_volume_L`, `pressure_bar`, `nominal_h2_mass_kg`, `reference_net_energy_Wh`, etc. Those length/diameter values are written into the `hydrogen_cylinder` packaging envelope before layout/sizing runs.
 
-Auto-calculated examples: fuselage total length, lifting-surface spans in AUTO mode, wing/tail areas and MACs, detailed structural component masses from kg/m, CG/inertias, neutral point/static margin, drag/cruise power, VTOL requirements, transitions, mission energy, H2 use, battery SOC, primary structural sizing and converged MTOW.
+Auto-calculated examples: fuselage total length, main-wing/HT/VT optimized span/chord/taper in AUTO mode, wing/tail areas and MACs, detailed structural component masses from kg/m, CG/inertias, neutral point/static margin, drag/cruise power, VTOL requirements, transitions, mission energy, H2 use, battery SOC, primary structural sizing and converged MTOW.
 
 The complete resolved/internal configuration is written after each run as `resolved_configuration.json`. Do not edit that file and feed it back as your normal working input unless you intentionally want an expert/internal run.
 

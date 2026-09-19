@@ -77,6 +77,48 @@ def test_auto_size_main_wing_trigger_and_bounds():
     assert 'main_wing_span_m' not in default_space_for_config(c)
 
 
+def test_auto_size_tail_triggers_and_bounds():
+    c=load_model_config(ROOT/'config'/'user_inputs.json')
+    d=c['design']
+    assert d['auto_size_horizontal_tail'] is True
+    assert d['auto_size_vertical_tail'] is True
+    assert d['horizontal_tail_span_mode']=='auto'
+    assert d['vertical_tail_span_mode']=='auto'
+    assert d['horizontal_tail_root_chord_bounds_m']==[0.18,0.32]
+    assert d['horizontal_tail_taper_ratio_bounds']==[0.45,0.85]
+    assert d['vertical_tail_root_chord_bounds_m']==[0.12,0.26]
+    assert d['vertical_tail_taper_ratio_bounds']==[0.4,0.8]
+    space=default_space_for_config(c)
+    assert 'horizontal_tail_span_m' not in space
+    assert 'vertical_tail_height_m' not in space
+
+
+def test_hardcoded_tail_planforms_are_preserved(tmp_path):
+    u=json.loads((ROOT/'config'/'user_inputs.json').read_text())
+    ht=u['lifting_surfaces']['horizontal_tail']
+    vt=u['lifting_surfaces']['vertical_tail']
+    ht['AutoSize Horizontal Tail']=False
+    ht['span_mode']='hardcoded'
+    ht['hardcoded_span_m']=0.91
+    ht['root_chord_m']=0.245
+    ht['taper_ratio']=0.58
+    vt['AutoSize Vertical Tail']=False
+    vt['span_mode']='hardcoded'
+    vt['hardcoded_span_m']=0.39
+    vt['root_chord_m']=0.205
+    vt['taper_ratio']=0.52
+    c=load_model_config(_write(tmp_path,u))
+    d=c['design']
+    assert d['auto_size_horizontal_tail'] is False
+    assert d['auto_size_vertical_tail'] is False
+    assert abs(d['horizontal_tail_span_m']-0.91)<1e-12
+    assert abs(d['horizontal_tail_root_chord_m']-0.245)<1e-12
+    assert abs(d['horizontal_tail_taper_ratio']-0.58)<1e-12
+    assert abs(d['vertical_tail_height_m']-0.39)<1e-12
+    assert abs(d['vertical_tail_root_chord_m']-0.205)<1e-12
+    assert abs(d['vertical_tail_taper_ratio']-0.52)<1e-12
+
+
 def test_linear_mass_uses_kg_per_m():
     c=load_model_config(ROOT/'config'/'user_inputs.json')
     comps=_components_with_power(c);by={x.name:x for x in comps}
@@ -128,7 +170,9 @@ def test_user_inputs_from_design_values_locks_spans(tmp_path):
     out=user_inputs_from_design_values(base,{
         'wing_ac_x_m':0.401,'main_wing_span_m':3.37,
         'horizontal_tail_ac_x_m':1.04,'horizontal_tail_span_m':0.87,
+        'horizontal_tail_root_chord_m':0.24,'horizontal_tail_taper_ratio':0.62,
         'vertical_tail_ac_x_m':1.02,'vertical_tail_height_m':0.3,
+        'vertical_tail_root_chord_m':0.19,'vertical_tail_taper_ratio':0.55,
         'lift_row_center_x_m':0.43,'battery_x_m':0.38,'fuel_cell_x_m':0.15,
         'hydrogen_cylinder_x_m':0.53,
     })
@@ -136,6 +180,12 @@ def test_user_inputs_from_design_values_locks_spans(tmp_path):
     assert out['lifting_surfaces']['main_wing']['AutoSize Main Wing'] is False
     assert abs(out['lifting_surfaces']['main_wing']['hardcoded_span_m']-3.37)<1e-9
     assert abs(out['lifting_surfaces']['main_wing']['aerodynamic_center_x_m']-0.401)<1e-9
+    assert out['lifting_surfaces']['horizontal_tail']['AutoSize Horizontal Tail'] is False
+    assert out['lifting_surfaces']['vertical_tail']['AutoSize Vertical Tail'] is False
+    assert abs(out['lifting_surfaces']['horizontal_tail']['root_chord_m']-0.24)<1e-9
+    assert abs(out['lifting_surfaces']['horizontal_tail']['taper_ratio']-0.62)<1e-9
+    assert abs(out['lifting_surfaces']['vertical_tail']['root_chord_m']-0.19)<1e-9
+    assert abs(out['lifting_surfaces']['vertical_tail']['taper_ratio']-0.55)<1e-9
     assert abs(out['component_positions']['battery_x_m']-0.38)<1e-9
     path=tmp_path/'u.json'
     path.write_text(json.dumps(out))

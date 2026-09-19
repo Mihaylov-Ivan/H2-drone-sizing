@@ -250,7 +250,7 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         # When AutoSize Main Wing changes planform, keep any AUTO tail-volume
         # surfaces coupled to that new wing. Hardcoded tail spans remain fixed.
         chr_ = float(d["horizontal_tail_root_chord_m"]); lamh = float(d["horizontal_tail_taper_ratio"])
-        if bool(d.get("auto_size_main_wing", False)) and str(d.get("horizontal_tail_span_mode", "hardcoded")).lower() == "auto":
+        if bool(d.get("auto_size_main_wing", False)) and str(d.get("horizontal_tail_span_mode", "hardcoded")).lower() == "auto" and not bool(d.get("horizontal_tail_planform_locked", False)):
             xh0 = float(d["horizontal_tail_ac_x_m"])
             arm_h = max(xh0 - float(d["wing_ac_x_m"]), 0.05)
             Vh = float(d.get("horizontal_tail_target_volume_coefficient", 0.50))
@@ -263,7 +263,7 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         d["horizontal_tail_mac_m"] = (2.0/3.0) * chr_ * (1.0 + lamh + lamh*lamh) / (1.0 + lamh)
 
         cvr=float(d["vertical_tail_root_chord_m"]); lamv=float(d["vertical_tail_taper_ratio"])
-        if bool(d.get("auto_size_main_wing", False)) and str(d.get("vertical_tail_span_mode", "hardcoded")).lower() == "auto":
+        if bool(d.get("auto_size_main_wing", False)) and str(d.get("vertical_tail_span_mode", "hardcoded")).lower() == "auto" and not bool(d.get("vertical_tail_planform_locked", False)):
             xv0 = float(d["vertical_tail_ac_x_m"])
             arm_v = max(xv0 - float(d["wing_ac_x_m"]), 0.05)
             Vv = float(d.get("vertical_tail_target_volume_coefficient", 0.035))
@@ -279,7 +279,10 @@ def resolve_design_couplings(raw_cfg: Mapping[str, Any]) -> Dict[str, Any]:
         # Root chord changes must propagate to physical wing thickness so CAD,
         # high-wing stacking and landing/prop clearance use the selected planform.
         tc = float(d.get("main_wing_thickness_ratio", 0.15))
-        cfg.setdefault("manufacturing_mass_model", {}).setdefault("main_wing", {})["thickness_m"] = tc * cr
+        mm_cfg = cfg.setdefault("manufacturing_mass_model", {})
+        mm_cfg.setdefault("main_wing", {})["thickness_m"] = tc * cr
+        mm_cfg.setdefault("horizontal_tail", {})["thickness_m"] = float(d.get("horizontal_tail_thickness_ratio", 0.12)) * chr_
+        mm_cfg.setdefault("vertical_tail", {})["thickness_m"] = float(d.get("vertical_tail_thickness_ratio", 0.12)) * cvr
     else:
         S = float(d["wing_area_m2"]); b = float(d["wing_span_m"])
         if S <= 0 or b <= 0:
@@ -595,7 +598,8 @@ def design_overrides(cfg: Mapping[str, Any], values: Mapping[str, float]) -> Dic
                 "wing_ac_x_m", "horizontal_tail_area_m2", "horizontal_tail_ac_x_m",
                 "vertical_tail_ac_x_m",
                 "main_wing_span_m", "main_wing_root_chord_m", "main_wing_taper_ratio",
-                "horizontal_tail_span_m", "vertical_tail_height_m",
+                "horizontal_tail_span_m", "horizontal_tail_root_chord_m", "horizontal_tail_taper_ratio",
+                "vertical_tail_height_m", "vertical_tail_root_chord_m", "vertical_tail_taper_ratio",
                 "lift_row_center_x_m", "battery_x_m", "battery_z_m", "fuel_cell_x_m",
                 "fuel_cell_z_m", "hydrogen_cylinder_x_m", "hydrogen_cylinder_z_m",
                 "energy_bay_order_code",
