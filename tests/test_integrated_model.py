@@ -47,7 +47,12 @@ def test_inspection_flight_envelope_and_gust_stall_gates(integrated_result):
     assert names['inspection_gust_stall_margin']['status']=='PASS'
     gusts=r['sixdof_control']['current_layout']['inspection_gust_cases']
     assert {'lateral','vertical_up','vertical_down','combined_lateral_up'} <= set(gusts)
+    sharp=r['flight_envelope']['vertical_gust_screen']
+    assert sharp['model']=='sharp_edge_no_alleviation'
+    assert sharp['pass'] is True
+    assert sharp['required_wing_area_m2'] <= r['main_wing_autosizing']['selected']['wing_area_m2'] + 1e-9
     assert max(v['maximum_clmax_utilization'] for v in gusts.values()) <= r['summary']['worst_gust_cl_utilization'] + 1e-12
+    assert sharp['clmax_utilization'] <= r['summary']['worst_gust_cl_utilization'] + 1e-12
 
 
 def test_autosized_sections_are_applied_to_mass_and_cad(integrated_result):
