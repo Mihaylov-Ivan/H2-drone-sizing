@@ -1,0 +1,23 @@
+name: Auto wing sizing experiment
+
+on:
+  push:
+    branches:
+      - experiment/auto-wing-sizing
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run model with automatic main-wing span sizing
+        run: python run_model.py --config config/user_inputs.json --output auto_wing_result --no-histories
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auto-wing-result
+          path: auto_wing_result
+          if-no-files-found: error
