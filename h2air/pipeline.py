@@ -5,7 +5,7 @@ from typing import Any, Dict, Mapping, Sequence
 import csv, hashlib, json, platform
 import numpy as np
 
-from .design_coupling import apply_high_wing_spar_stack, resolve_design_couplings
+from .design_coupling import apply_high_wing_spar_stack, resolve_design_couplings, design_overrides
 from .config import hybrid_config_from_mapping
 from .hybrid_power import HybridPowerSystem, reference_sources
 from .mass_properties import component_from_mapping, build_mass_geometry_result, apply_growth_margins
@@ -203,8 +203,10 @@ def _structural_closure(cfg, base_comps, *, max_iterations=8, mass_tol_kg=2e-4, 
         m=_mass_result(cfg,comps); a,_,_,st=_sync_design(cfg,m)
         layout=lift_layout(a,float(d["lift_propeller_diameter_in"])); rows=[layout.proposed_front_x_m,layout.proposed_rear_x_m]
         lift15=lift_system_sizing(a,mass_kg=float(d["mtow_ceiling_kg"]),prop_diameter_in=float(d["lift_propeller_diameter_in"]))
-        wing15=minimum_wing_area_for_stall_margin(a,mass_kg=float(d["mtow_ceiling_kg"]),speed_mps=float(d["cruise_speed_mps"]))
-        st["aircraft"].update({"reference_mass_kg":m.takeoff.total_mass_kg,"cg_station_x_m":m.takeoff.cg_m[0],"design_mass_ceiling_kg":float(d["mtow_ceiling_kg"]),"reference_wing_span_m":float(d["wing_span_m"]),"design_wing_span_m":max(float(d["wing_span_m"]),float(wing15["screened_span_preserving_AR_m"])),"horizontal_tail_area_m2":float(d.get("horizontal_tail_area_m2",st["aircraft"].get("horizontal_tail_area_m2",0.1276)))})
+        # Structural loads retain the 15 kg certification/screening mass, but
+        # the member geometry is the ACTUAL current wing. The previous code
+        # mixed a 15 kg stall-derived surrogate span into structural geometry.
+        st["aircraft"].update({"reference_mass_kg":m.takeoff.total_mass_kg,"cg_station_x_m":m.takeoff.cg_m[0],"design_mass_ceiling_kg":float(d["mtow_ceiling_kg"]),"reference_wing_span_m":float(d["wing_span_m"]),"design_wing_span_m":float(d["wing_span_m"]),"horizontal_tail_area_m2":float(d.get("horizontal_tail_area_m2",st["aircraft"].get("horizontal_tail_area_m2",0.1276)))})
         y=float(a["lift_layout"]["y_abs_m"])
         st["rotor_system"].update({"row_x_m":rows,"motor_y_m":y,"phase4_equal_share_design_thrust_N":lift15.design_thrust_per_motor_N,"candidate_motor_max_thrust_N":float(d["lift_motor_structural_limit_thrust_per_motor_N"])})
         f,r=_zero_pitch_pair(m.takeoff.total_mass_kg*G,rows[0],rows[1],m.takeoff.cg_m[0]); st["rotor_system"]["phase6_reference_hover_thrusts_N"]=[f,f,r,r]
@@ -214,6 +216,257 @@ def _structural_closure(cfg, base_comps, *, max_iterations=8, mass_tol_kg=2e-4, 
         comps=nxt
         if history[-1]["mass_residual_kg"]<=mass_tol_kg and history[-1]["cg_residual_m"]<=cg_tol_m: break
     return comps,_mass_result(cfg,comps),structure,history
+
+def _main_wing_candidate_metrics(
+    base_cfg: Mapping[str, Any],
+    *,
+    span_m: float,
+    root_chord_m: float,
+    taper_ratio: float,
+    sizing_mass_kg: float,
+) -> Dict[str, Any]:
+    """Evaluate one coupled main-wing planform at a fixed outer-iteration mass.
+
+    The stall/transition sizing requirement is computed from sizing_mass_kg
+    (the current M2 fixed-point mass), not the 15 kg design ceiling.
+    Structural load cases still use the configured 15 kg ceiling on the actual
+    candidate geometry.
+    """
+    values = {
+        "main_wing_span_m": float(span_m),
+        "main_wing_root_chord_m": float(root_chord_m),
+        "main_wing_taper_ratio": float(taper_ratio),
+    }
+    cfg = design_overrides(base_cfg, values)
+    d = cfg["design"]
+    base_comps = _components_with_power(cfg)
+    comps, mass, structure, closure = _structural_closure(cfg, base_comps)
+    aero_cfg, _, six_cfg, _ = _sync_design(cfg, mass)
+
+    V = float(d["cruise_speed_mps"])
+    D = float(d["lift_propeller_diameter_in"])
+    state = str(d["cruise_lift_propeller_state"])
+    drag = cruise_drag(
+        aero_cfg,
+        mass_kg=mass.takeoff.total_mass_kg,
+        speed_mps=V,
+        lift_prop_diameter_in=D,
+        lift_prop_state=state,
+        wing_area_m2=float(d["wing_area_m2"]),
+        wing_span_m=float(d["wing_span_m"]),
+    )
+    req = minimum_wing_area_for_stall_margin(
+        aero_cfg, mass_kg=float(sizing_mass_kg), speed_mps=V
+    )
+    margin = float(d.get("main_wing_auto_area_margin_factor", 1.10))
+    required_area = float(req["minimum_wing_area_m2"]) * margin
+    area = float(d["wing_area_m2"])
+    tip = float(d["main_wing_root_chord_m"]) * float(d["main_wing_taper_ratio"])
+    ar = float(d["wing_span_m"]) ** 2 / max(area, 1e-9)
+    sm = (float(d["neutral_point_station_x_m"]) - mass.takeoff.cg_m[0]) / max(float(d["wing_mac_m"]), 1e-9)
+
+    structural_pass = recommended_structure_screen_pass(structure["gates"])
+    packaging_pass = int(mass.summary.get("packaging_fail_count", 0)) == 0
+    min_sm = float((six_cfg.get("gates") or {}).get("minimum_static_margin", 0.05))
+    ceiling = float(d["mtow_ceiling_kg"])
+    min_tip = float(d.get("main_wing_minimum_tip_chord_m", 0.15))
+
+    violations = []
+    if area + 1e-9 < required_area:
+        violations.append("current_iteration_stall_area")
+    if tip + 1e-9 < min_tip:
+        violations.append("minimum_tip_chord")
+    if mass.takeoff.total_mass_kg > ceiling + 1e-9:
+        violations.append("mass_ceiling")
+    if sm < min_sm:
+        violations.append("loaded_static_margin")
+    if not structural_pass:
+        violations.append("recommended_structure")
+    if not packaging_pass:
+        violations.append("packaging")
+
+    target_sm = float((cfg.get("optimizer_settings") or {}).get(
+        "target_static_margin", d.get("stability_screen_static_margin", 0.12)
+    ))
+    objective = (
+        float(mass.takeoff.total_mass_kg)
+        + 0.0020 * max(float(drag.total_cruise_bus_power_W) - 300.0, 0.0)
+        + 2.0 * abs(sm - target_sm)
+    )
+    penalty = 1000.0 * len(violations)
+    if area < required_area:
+        penalty += 500.0 * ((required_area - area) / max(required_area, 1e-9)) ** 2
+    if mass.takeoff.total_mass_kg > ceiling:
+        penalty += 500.0 * (mass.takeoff.total_mass_kg - ceiling) ** 2
+
+    return {
+        "values": values,
+        "score": float(objective + penalty),
+        "objective": float(objective),
+        "feasible": not violations,
+        "violations": violations,
+        "sizing_mass_kg": float(sizing_mass_kg),
+        "required_area_with_margin_m2": required_area,
+        "wing_area_m2": area,
+        "aspect_ratio": ar,
+        "tip_chord_m": tip,
+        "closed_mass_kg": float(mass.takeoff.total_mass_kg),
+        "cg_x_m": float(mass.takeoff.cg_m[0]),
+        "static_margin": float(sm),
+        "cruise_drag_N": float(drag.total_drag_N),
+        "cruise_bus_power_W": float(drag.total_cruise_bus_power_W),
+        "wing_spar_od_mm": float(structure["summary"]["recommended_wing_spar_od_mm"]),
+        "wing_spar_id_mm": float(structure["summary"]["recommended_wing_spar_id_mm"]),
+        "structural_closure_iterations": len(closure),
+    }
+
+
+def _auto_size_main_wing(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    """Jointly optimize span, root chord and taper in an outer mass fixed point."""
+    clean = deepcopy(dict(cfg))
+    d0 = clean["design"]
+    if not bool(d0.get("auto_size_main_wing", False)):
+        return clean, {"enabled": False, "mode": "hardcoded"}
+
+    seed_cfg = resolve_design_couplings(clean)
+    seed_base = _components_with_power(seed_cfg)
+    _, seed_mass, _, _ = _structural_closure(seed_cfg, seed_base)
+    sizing_mass = float(seed_mass.takeoff.total_mass_kg)
+
+    span_lo, span_hi = [float(x) for x in d0["main_wing_span_bounds_m"]]
+    chord_lo, chord_hi = [float(x) for x in d0["main_wing_root_chord_bounds_m"]]
+    taper_lo, taper_hi = [float(x) for x in d0["main_wing_taper_ratio_bounds"]]
+    n_global = max(int(d0.get("main_wing_autosize_samples", 28)), 8)
+    n_local = max(int(d0.get("main_wing_autosize_local_samples", 12)), 0)
+    max_outer = max(int(d0.get("main_wing_autosize_max_iterations", 4)), 1)
+    min_tip = float(d0.get("main_wing_minimum_tip_chord_m", 0.15))
+
+    # Reuse the same normalized search cloud at every outer M2 iteration.
+    # Only the live-M2 area floor moves. This avoids apparent geometry
+    # "non-convergence" caused solely by drawing a different random cloud.
+    history = []
+    best = None
+    previous_values = None
+
+    def required_area_for_mass(mass_kg: float) -> float:
+        probe_a,_,_,_ = _sync_design(clean)
+        req0 = minimum_wing_area_for_stall_margin(
+            probe_a, mass_kg=mass_kg, speed_mps=float(d0["cruise_speed_mps"])
+        )
+        return float(req0["minimum_wing_area_m2"]) * float(d0.get("main_wing_auto_area_margin_factor", 1.10))
+
+    for outer in range(1, max_outer + 1):
+        rng = np.random.default_rng(20260919)
+        Sreq = required_area_for_mass(sizing_mass)
+        candidate_tuples = []
+        current_span = float((best or {}).get("values", {}).get("main_wing_span_m", d0["main_wing_span_m"]))
+        current_chord = float((best or {}).get("values", {}).get("main_wing_root_chord_m", d0["main_wing_root_chord_m"]))
+        current_taper = float((best or {}).get("values", {}).get("main_wing_taper_ratio", d0["main_wing_taper_ratio"]))
+        if span_lo <= current_span <= span_hi and chord_lo <= current_chord <= chord_hi and taper_lo <= current_taper <= taper_hi:
+            candidate_tuples.append((current_span, current_chord, current_taper))
+
+        def sampled_tuple(span: float, taper: float, fraction: float):
+            cr_req_area = 2.0 * Sreq / max(span * (1.0 + taper), 1e-9)
+            cr_req_tip = min_tip / max(taper, 1e-9)
+            lo = max(chord_lo, cr_req_area, cr_req_tip)
+            if lo > chord_hi:
+                return None
+            cr = lo + float(fraction) * (chord_hi - lo)
+            return float(span), float(cr), float(taper)
+
+        for _ in range(n_global):
+            span = float(rng.uniform(span_lo, span_hi))
+            taper = float(rng.uniform(taper_lo, taper_hi))
+            vals = sampled_tuple(span, taper, float(rng.random()))
+            if vals is not None:
+                candidate_tuples.append(vals)
+
+        evaluated = []
+        seen = set()
+        for span, cr, taper in candidate_tuples:
+            key = (round(span, 6), round(cr, 6), round(taper, 6))
+            if key in seen:
+                continue
+            seen.add(key)
+            evaluated.append(_main_wing_candidate_metrics(
+                clean, span_m=span, root_chord_m=cr, taper_ratio=taper,
+                sizing_mass_kg=sizing_mass,
+            ))
+
+        ranked0 = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
+        parents = ranked0[:min(4, len(ranked0))]
+        widths = (span_hi-span_lo, chord_hi-chord_lo, taper_hi-taper_lo)
+        for j in range(n_local):
+            if not parents:
+                break
+            parent = parents[j % len(parents)]["values"]
+            span = float(np.clip(parent["main_wing_span_m"] + rng.normal(0.0, 0.04*widths[0]), span_lo, span_hi))
+            taper = float(np.clip(parent["main_wing_taper_ratio"] + rng.normal(0.0, 0.04*widths[2]), taper_lo, taper_hi))
+            vals = sampled_tuple(span, taper, float(np.clip(0.25 + rng.normal(0.0, 0.20), 0.0, 1.0)))
+            if vals is None:
+                continue
+            span, cr, taper = vals
+            evaluated.append(_main_wing_candidate_metrics(
+                clean, span_m=span, root_chord_m=cr, taper_ratio=taper,
+                sizing_mass_kg=sizing_mass,
+            ))
+
+        if not evaluated:
+            raise RuntimeError("AutoSize Main Wing found no candidate inside the configured planform bounds")
+
+        ranked = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
+        best = ranked[0]
+        vals = best["values"]
+        new_mass = float(best["closed_mass_kg"])
+        geom_delta = 0.0
+        if previous_values is not None:
+            geom_delta = max(
+                abs(float(vals["main_wing_span_m"]) - float(previous_values["main_wing_span_m"])),
+                abs(float(vals["main_wing_root_chord_m"]) - float(previous_values["main_wing_root_chord_m"])),
+                abs(float(vals["main_wing_taper_ratio"]) - float(previous_values["main_wing_taper_ratio"])),
+            )
+        history.append({
+            "iteration": outer,
+            "input_M2_kg": sizing_mass,
+            "selected_M2_kg": new_mass,
+            "mass_residual_kg": abs(new_mass - sizing_mass),
+            "geometry_residual": geom_delta,
+            "selected": deepcopy(best),
+            "evaluated_candidates": len(evaluated),
+            "feasible_candidates": sum(1 for x in evaluated if x["feasible"]),
+        })
+        if previous_values is not None and abs(new_mass - sizing_mass) <= 0.005 and geom_delta <= 0.002:
+            sizing_mass = new_mass
+            break
+        sizing_mass = new_mass
+        previous_values = deepcopy(vals)
+
+    if best is None:
+        raise RuntimeError("AutoSize Main Wing failed to produce a selected planform")
+
+    selected_cfg = design_overrides(clean, best["values"])
+    selected_cfg["design"]["main_wing_autosize_sizing_mass_kg"] = sizing_mass
+    result = {
+        "enabled": True,
+        "mode": "coupled_span_root_chord_taper",
+        "mass_basis": "current_iteration_M2",
+        "mtow_ceiling_role": "hard_constraint_and_structural_load_case_only",
+        "bounds": {
+            "span_m": [span_lo, span_hi],
+            "root_chord_m": [chord_lo, chord_hi],
+            "taper_ratio": [taper_lo, taper_hi],
+        },
+        "seed_mass_kg": float(seed_mass.takeoff.total_mass_kg),
+        "selected": deepcopy(best),
+        "history": history,
+        "converged": bool(
+            history
+            and history[-1]["mass_residual_kg"] <= 0.005
+            and history[-1]["geometry_residual"] <= 0.002
+        ),
+    }
+    return selected_cfg, result
+
 
 def _sample_rows(samples): return [s.to_dict() for s in samples]
 
@@ -229,6 +482,11 @@ def _csv(path:Path,rows:Sequence[Mapping[str,Any]]):
 def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:bool=True)->Dict[str,Any]:
     cfg=resolve_design_couplings(raw_cfg)
     out=Path(output_dir); out.mkdir(parents=True,exist_ok=True)
+
+    # Optional user-triggered coupled main-wing planform sizing.
+    main_wing_autosizing = {"enabled": False, "mode": "hardcoded"}
+    if bool(cfg["design"].get("auto_size_main_wing", False)):
+        cfg, main_wing_autosizing = _auto_size_main_wing(cfg)
     d=cfg["design"]
 
     # 1. Base ledger and actual structural mass/CG fixed-point closure.
@@ -284,7 +542,9 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
         case["gate_evaluation"]=evaluate_control_case(six_cfg,case,label=label);control_cases[label]=case;control_hist[label]=(fwd,rev,gust)
 
     # 5. Final structure report using the closed mass and actual rotor allocator.
-    design_span=max(float(d["wing_span_m"]),float(wing_ceiling["screened_span_preserving_AR_m"]))
+    # Use the actual selected wing geometry. 15 kg remains the structural load
+    # mass, but must not silently enlarge the beam length via a stall surrogate.
+    design_span=float(d["wing_span_m"])
     struct_cfg["aircraft"].update({"reference_mass_kg":mass_final.takeoff.total_mass_kg,"cg_station_x_m":mass_final.takeoff.cg_m[0],"design_mass_ceiling_kg":float(d["mtow_ceiling_kg"]),"reference_wing_span_m":float(d["wing_span_m"]),"design_wing_span_m":design_span,"horizontal_tail_area_m2":float(d.get("horizontal_tail_area_m2",struct_cfg["aircraft"].get("horizontal_tail_area_m2",0.1276)))})
     struct_cfg["rotor_system"].update({"row_x_m":rows_x,"motor_y_m":y,"phase4_equal_share_design_thrust_N":lift_ceiling.design_thrust_per_motor_N,"candidate_motor_max_thrust_N":float(d["lift_motor_structural_limit_thrust_per_motor_N"])})
     hover_thrusts,_=current_model.rotor_allocate(current_model.m*G,np.zeros(3));struct_cfg["rotor_system"]["phase6_reference_hover_thrusts_N"]=hover_thrusts.tolist();structure=build_structural_result(struct_cfg)
@@ -354,7 +614,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     cruise_bus_W=float(drag.total_cruise_bus_power_W)
     endurance_at_cruise_h=(usable_h2_Wh/cruise_bus_W) if cruise_bus_W>1e-9 else float("nan")
 
-    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"payload_off_static_margin":sm_payload_off,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"endurance_at_cruise_h":endurance_at_cruise_h,"usable_h2_Wh":usable_h2_Wh,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"horizontal_tail_spar_od_mm":structure["summary"]["horizontal_tail_recommended_spar_od_mm"],"horizontal_tail_spar_id_mm":structure["summary"]["horizontal_tail_recommended_spar_id_mm"],"vertical_tail_spar_od_mm":structure["summary"]["vertical_tail_recommended_spar_od_mm"],"vertical_tail_spar_id_mm":structure["summary"]["vertical_tail_recommended_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"rear_thrust_recovery_factor":rear_recovery,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
+    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"payload_off_static_margin":sm_payload_off,"post_structure_static_margin_if_np_fixed":post_static_margin,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"endurance_at_cruise_h":endurance_at_cruise_h,"usable_h2_Wh":usable_h2_Wh,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"horizontal_tail_spar_od_mm":structure["summary"]["horizontal_tail_recommended_spar_od_mm"],"horizontal_tail_spar_id_mm":structure["summary"]["horizontal_tail_recommended_spar_id_mm"],"vertical_tail_spar_od_mm":structure["summary"]["vertical_tail_recommended_spar_od_mm"],"vertical_tail_spar_id_mm":structure["summary"]["vertical_tail_recommended_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"rear_thrust_recovery_factor":rear_recovery,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"main_wing_autosizing":main_wing_autosizing,"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
 
     # Top-level: summary + configs. Supporting artifacts live under details/.
     details = out / "details"
@@ -395,6 +655,12 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
             "mission_energy_Wh": mission["total_profile_energy_Wh"],
             "h2_used_kg": ems.summary.get("h2_used_kg"),
             "final_battery_soc": ems.summary.get("final_battery_soc"),
+            "main_wing_autosizing": main_wing_autosizing,
+            "main_wing_span_m": float(d["wing_span_m"]),
+            "main_wing_root_chord_m": float(d["main_wing_root_chord_m"]),
+            "main_wing_taper_ratio": float(d["main_wing_taper_ratio"]),
+            "main_wing_area_m2": float(d["wing_area_m2"]),
+            "main_wing_mac_m": float(d["wing_mac_m"]),
             "wing_spar_od_mm": structure["summary"]["recommended_wing_spar_od_mm"],
             "boom_od_mm": structure["summary"]["recommended_boom_od_mm"],
             "front_motor_15kg_N": front_each,

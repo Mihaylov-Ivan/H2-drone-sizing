@@ -19,6 +19,20 @@ def test_v4_default_run_closes(integrated_result):
     assert not (out/'model_results.json').exists()
     assert 'endurance_at_cruise_h' in r['summary']
 
+def test_main_wing_autosizing_uses_live_M2_and_joint_planform(integrated_result):
+    r,_=integrated_result
+    a=r['main_wing_autosizing']
+    assert a['enabled'] is True
+    assert a['mode']=='coupled_span_root_chord_taper'
+    assert a['mass_basis']=='current_iteration_M2'
+    assert a['history']
+    assert a['converged'] is True
+    assert abs(float(a['history'][0]['input_M2_kg'])-15.0) > 0.05
+    vals=a['selected']['values']
+    assert set(vals)=={'main_wing_span_m','main_wing_root_chord_m','main_wing_taper_ratio'}
+    assert a['selected']['wing_area_m2'] + 1e-9 >= a['selected']['required_area_with_margin_m2']
+
+
 def test_autosized_sections_are_applied_to_mass_and_cad(integrated_result):
     r,_=integrated_result
     gate=next(g for g in r['gates'] if g['name']=='structural_mass_geometry_consistency')

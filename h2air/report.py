@@ -139,6 +139,12 @@ def write_markdown_report(
         ),
         "",
         "### Main wing",
+        (
+            f"- AutoSize Main Wing: **ON** — coupled span/root-chord/taper optimization using current iteration M2 "
+            f"(final sizing mass **{_f(_get(r, 'main_wing_autosizing', 'selected', 'sizing_mass_kg', default=None), 3)} kg**)"
+            if bool(_get(r, "main_wing_autosizing", "enabled", default=False))
+            else "- AutoSize Main Wing: **OFF** — hardcoded span/root chord/taper"
+        ),
         f"- Span / area / AR: **{_f(b, 3)} m / {_f(S, 3)} m² / {_f(ar, 2)}**",
         f"- Root / tip / MAC: **{_f(cr, 3)} / {_f(_tip_chord(cr, lam), 3)} / {_f(mac, 3)} m** (taper {_f(lam, 2)})",
         f"- Airfoil: **{d.get('main_wing_naca_code', _get(airfoils, 'main_wing', 'code', default='—'))}**"
