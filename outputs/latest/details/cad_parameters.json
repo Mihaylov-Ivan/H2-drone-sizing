@@ -298,37 +298,37 @@
     },
     {
       "name": "horizontal_tail_span",
-      "value": 1117.7329322499763,
+      "value": 965.4126607604868,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_half_span",
-      "value": 558.8664661249882,
+      "value": 482.7063303802434,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_root_chord",
-      "value": 218.0,
+      "value": 268.1701835445797,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_tip_chord",
-      "value": 152.6,
+      "value": 160.9021101267478,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_mac",
-      "value": 187.22352941176467,
+      "value": 219.00564989474003,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_le_x",
-      "value": 1003.420117647059,
+      "value": 995.4745875263151,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -346,13 +346,13 @@
     },
     {
       "name": "horizontal_tail_thickness",
-      "value": 26.16,
+      "value": 32.18042202534956,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_taper_ratio",
-      "value": 0.7,
+      "value": 0.6,
       "unit": "unitless",
       "comment": "H2AIR CAD export"
     },
@@ -388,25 +388,25 @@
     },
     {
       "name": "vertical_tail_height",
-      "value": 539.4389142995057,
+      "value": 399.5921904049848,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_root_chord",
-      "value": 148.0,
+      "value": 199.7960952024924,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_tip_chord",
-      "value": 88.79999999999998,
+      "value": 119.87765712149545,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_le_x",
-      "value": 1080.0743333333335,
+      "value": 1069.499297229491,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -418,7 +418,7 @@
     },
     {
       "name": "vertical_tail_thickness",
-      "value": 17.76,
+      "value": 23.975531424299092,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -1402,13 +1402,13 @@
     },
     {
       "name": "horizontal_tail_rib_count",
-      "value": 9,
+      "value": 8,
       "unit": "unitless",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_rib_count_each",
-      "value": 6,
+      "value": 5,
       "unit": "unitless",
       "comment": "H2AIR CAD export"
     }

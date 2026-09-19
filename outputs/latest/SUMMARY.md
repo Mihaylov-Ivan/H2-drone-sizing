@@ -4,7 +4,7 @@
 
 ## Aircraft at a glance
 
-A **14.735 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **18.0 m/s** for **120 min** with **1.2 kg** payload.
+A **14.710 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main wing, **0.86 m x 228 mm** central pod, twin booms, **4x lift props** and a rear pusher. Design cruise **18.0 m/s** for **120 min** with **1.2 kg** payload.
 
 ## Configuration / look
 
@@ -22,8 +22,10 @@ A **14.735 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main win
 - Vertical station (structure CG height): **z = 0.087 m**
 
 ### Empennage
-- Horizontal tail: span **1.118 m**, area **0.207 m²**, root/tip **0.218/0.153 m**, **NACA0012**, AC **x = 1.0502 m**, z = **0.087 m**
-- Vertical tails: **twin fins**, height **0.539 m** each, total area **0.128 m²**, root/tip **0.148/0.089 m**, **NACA0012**, AC **x = 1.1103 m**
+- AutoSize Horizontal Tail: **ON** — coupled span/root-chord/taper optimization (AR **4.50**, Vh **0.440**)
+- AutoSize Vertical Tail: **ON** — coupled height/root-chord/taper optimization (per-fin AR **2.50**, Vv **0.0255**)
+- Horizontal tail: span **0.965 m**, area **0.207 m²**, root/tip **0.268/0.161 m**, **NACA0012**, AC **x = 1.0502 m**, z = **0.087 m**
+- Vertical tails: **twin fins**, height **0.400 m** each, total area **0.128 m²**, root/tip **0.200/0.120 m**, **NACA0012**, AC **x = 1.1103 m**
 
 ### Booms & lift layout
 - Twin boom spacing (centre-to-centre): **0.748 m**
@@ -48,15 +50,15 @@ A **14.735 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main win
 
 ## Mass & balance
 
-- Closed MTOW: **14.735 kg** (pre-structure **14.250 kg**; margin to ceiling **0.265 kg**)
-- CG: **(0.4610, 0.0000, 0.0316) m**
-- Neutral point / static margin: **x_NP = 0.4960 m**, **12.15% MAC**
+- Closed MTOW: **14.710 kg** (pre-structure **14.242 kg**; margin to ceiling **0.290 kg**)
+- CG: **(0.4599, 0.0000, 0.0298) m**
+- Neutral point / static margin: **x_NP = 0.4960 m**, **12.51% MAC**
 
 ### Mass breakdown (takeoff)
 - payload: **1.200 kg**
 - wing structure: **2.677 kg**
 - fuselage structure: **0.968 kg**
-- tail structure: **1.020 kg**
+- tail structure: **0.995 kg**
 - landing gear: **0.450 kg**
 - energy: **5.341 kg**
 - propulsion: **1.378 kg**
@@ -70,7 +72,7 @@ A **14.735 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main win
 - Battery: **SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh** (1.634 kg, **244.2 Wh**, 5.5 Ah)
 - Fuel cell: **800 W** net, module **1.45 kg** (stack 1.093 kg + control 0.357 kg)
 - Hydrogen store: **3.0 L** / **300 bar**, nominal H2 **62 g**, cylinder **1.62 kg**
-- 15 kg zero-pitch motor need: front/rear **62.4 / 56.4 N**
+- 15 kg zero-pitch motor need: front/rear **62.6 / 56.1 N**
 
 ### Fuel-cell cooling integration
 - Architecture: **cross_fuselage**, fan direction **suction_through_stack_to_fan_side**
@@ -83,14 +85,14 @@ A **14.735 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main win
 
 ## Performance / mission
 
-- Cruise drag / bus power: **13.66 N / 431.0 W** (lift props **stopped_aligned**)
+- Cruise drag / bus power: **13.65 N / 430.6 W** (lift props **stopped_aligned**)
 - Inspection manoeuvre envelope: **+1.50 / -0.50 g**, maximum planned bank **45 deg** (1.41 g)
-- Accelerated-stall margin at cruise: +g case uses **84.0% of CLmax**, -g case **52.2% of |CLmin|**
-- Gust stall screen: sharp-edge vertical case uses **94.9% of CLmax** (no alleviation credit); 6-DOF gust cases peak at **54.8%**; configured lateral/vertical gusts **5.0 / ±2.0 m/s** for **2.0 s**
+- Accelerated-stall margin at cruise: +g case uses **83.8% of CLmax**, -g case **52.1% of |CLmin|**
+- Gust stall screen: sharp-edge vertical case uses **94.8% of CLmax** (no alleviation credit); 6-DOF gust cases peak at **54.7%**; configured lateral/vertical gusts **5.0 / ±2.0 m/s** for **2.0 s**
 - Endurance at cruise (usable H₂ / cruise bus): **2.03 h** (876 Wh usable)
 - Landing-leg parasite: **0.292 N** (CdA **15.00 cm²**, sleeve cylinder screen)
-- Forward / reverse transition: **19.42 s / 20.66 s**
-- Mission energy (120 min): **886.9 Wh**
+- Forward / reverse transition: **19.34 s / 20.66 s**
+- Mission energy (120 min): **886.0 Wh**
 - H2 used / final battery SOC: **52.1 g / 91.9%**
 
 ## Structures (recommended screen)
@@ -104,7 +106,7 @@ A **14.735 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main win
 
 ## Integrated gates
 
-- **PASS** — mass_ceiling: Structurally closed mass 14.735 kg vs 15.0 kg ceiling.
+- **PASS** — mass_ceiling: Structurally closed mass 14.710 kg vs 15.0 kg ceiling.
 - **PASS** — packaging: 0 packaging collision/containment failures remain.
 - **PASS** — fuel_cell_cooling_airflow_screen: Estimated fan/duct operating flow 118.2 CFM vs 101.0 CFM required by the configured thermal screen.
 - **PASS** — fuel_cell_cooling_geometry: Inlet/exhaust panel + plenum geometry screen; inlet/exhaust side gaps 10.3/10.3 mm vs 4.0/10.0 mm required.
@@ -112,18 +114,18 @@ A **14.735 kg** hydrogen hybrid VTOL / fixed-wing UAV with a **3.38 m** main win
 - **PASS** — lift_prop_clearance: Collision-free lift-row geometry screen.
 - **PASS** — 15kg_stall_margin: Wing area 0.969 m² vs minimum 0.882 m² screen.
 - **PASS** — inspection_bank_load: 45 deg bank requires 1.41 g vs +1.50 g operational limit.
-- **PASS** — positive_manoeuvre_stall_margin: +1.50 g at 18.0 m/s uses 84.0% of CLmax; limit 90%. Minimum speed with margin 17.39 m/s.
-- **PASS** — negative_manoeuvre_stall_margin: -0.50 g at 18.0 m/s uses 52.2% of |CLmin|; limit 90%.
-- **PASS** — inspection_gust_stall_margin: Conservative sharp-edge +2.0 m/s vertical gust reaches 94.9% of CLmax (no alleviation credit); 6-DOF gust trajectories peak at 54.8%; hard limit 95%.
-- **PASS** — cruise_power: 431.0 W vs configured gate.
+- **PASS** — positive_manoeuvre_stall_margin: +1.50 g at 18.0 m/s uses 83.8% of CLmax; limit 90%. Minimum speed with margin 17.37 m/s.
+- **PASS** — negative_manoeuvre_stall_margin: -0.50 g at 18.0 m/s uses 52.1% of |CLmin|; limit 90%.
+- **PASS** — inspection_gust_stall_margin: Conservative sharp-edge +2.0 m/s vertical gust reaches 94.8% of CLmax (no alleviation credit); 6-DOF gust trajectories peak at 54.7%; hard limit 95%.
+- **PASS** — cruise_power: 430.6 W vs configured gate.
 - **PASS** — mission_ems: Dynamic mission profile through hybrid H2/battery EMS.
 - **PASS** — transition: Forward and reverse point-mass transition completion on closed mass.
-- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 12.15% MAC.
-- **FAIL** — payload_off_static_margin: Payload-off static margin 1.17% MAC (CG x=0.4927 m) vs minimum 5.0% MAC.
+- **PASS** — current_longitudinal_stability: Closed-aircraft static margin 12.51% MAC.
+- **FAIL** — payload_off_static_margin: Payload-off static margin 1.55% MAC (CG x=0.4916 m) vs minimum 5.0% MAC.
 - **FAIL** — current_layout_6dof: Actual closed geometry/control 6-DOF gate set.
-- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 10.8 deg.
+- **PASS** — sixdof_linear_aero_validity: 6-DOF coefficient model uses linear aerodynamic derivatives outside the CL clamp; high-alpha results require nonlinear AVL/CFD/wind-tunnel/flight correlation. Maximum |alpha| above 10 m/s = 10.9 deg.
 - **FAIL** — stability_screen_6dof: Explicit +12% SM reference screen.
-- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 62.4/56.4 N vs available 71.0/81.7 N (rear recovery x1.15).
+- **PASS** — 15kg_zero_pitch_motor_thrust: Front/rear requirement 62.6/56.1 N vs available 71.0/81.7 N (rear recovery x1.15).
 - **PASS** — recommended_structure_screen: Recommended structural member screens. Audit reference/current/legacy sections and the legacy partial-feedback mass gate are excluded because integrated-v2 already closes structural mass explicitly and checks the actual closed MTOW separately.
 - **PASS** — structural_mass_geometry_consistency: All verified primary sections match mass/CAD geometry.
 - **NOT_EVALUATED** — motor_mount: Controlled mount CAD, fasteners and material allowables are still required.
