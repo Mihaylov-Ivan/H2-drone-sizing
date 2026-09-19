@@ -623,7 +623,6 @@
   },
   "tail_autosizing": {
     "control_safety_factor": 1.1,
-    "dynamic_validation_candidates": 14,
-    "note": "A 10% control safety factor tightens trim, surface-headroom and fixed-wing cruise gust limits during tail optimization. Tail volume coefficients are calibration references only; selected Vh/Vv are outputs."
+    "note": "A 10% control safety factor tightens trim and elevator/rudder reserve limits during tail optimization. Tail volume coefficients are calibration references only; selected Vh/Vv are outputs. Normal-run 6-DOF remains an independent validation layer."
   }
 }
