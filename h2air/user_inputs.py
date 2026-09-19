@@ -592,6 +592,9 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["horizontal_tail_taper_ratio_bounds"] = [float(x) for x in htail.get("taper_ratio_bounds", [0.45, 0.85])]
     d["horizontal_tail_aspect_ratio_bounds"] = [float(x) for x in htail.get("aspect_ratio_bounds", [3.5, 6.5])]
     d["horizontal_tail_minimum_tip_chord_m"] = float(htail.get("minimum_tip_chord_m", 0.10))
+    d["horizontal_tail_preferred_aspect_ratio"] = float(htail.get("preferred_aspect_ratio", 4.5))
+    d["horizontal_tail_preferred_taper_ratio"] = float(htail.get("preferred_taper_ratio", 0.60))
+    d["horizontal_tail_profile_cd0_screen"] = float(htail.get("profile_cd0_screen", 0.010))
     d["horizontal_tail_autosize_samples"] = int(htail.get("autosize_samples", 36))
     d["horizontal_tail_autosize_local_samples"] = int(htail.get("autosize_local_samples", 12))
     d["horizontal_tail_ac_x_m"] = float(htail["aerodynamic_center_x_m"])
@@ -626,6 +629,9 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["vertical_tail_taper_ratio_bounds"] = [float(x) for x in vtail.get("taper_ratio_bounds", [0.40, 0.80])]
     d["vertical_tail_aspect_ratio_bounds"] = [float(x) for x in vtail.get("aspect_ratio_bounds", [2.0, 4.5])]
     d["vertical_tail_minimum_tip_chord_m"] = float(vtail.get("minimum_tip_chord_m", 0.075))
+    d["vertical_tail_preferred_aspect_ratio"] = float(vtail.get("preferred_aspect_ratio", 2.5))
+    d["vertical_tail_preferred_taper_ratio"] = float(vtail.get("preferred_taper_ratio", 0.60))
+    d["vertical_tail_profile_cd0_screen"] = float(vtail.get("profile_cd0_screen", 0.010))
     d["vertical_tail_autosize_samples"] = int(vtail.get("autosize_samples", 36))
     d["vertical_tail_autosize_local_samples"] = int(vtail.get("autosize_local_samples", 12))
     d["vertical_tail_ac_x_m"] = float(vtail["aerodynamic_center_x_m"])
