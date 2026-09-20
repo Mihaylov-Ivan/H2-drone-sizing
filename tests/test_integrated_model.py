@@ -73,6 +73,26 @@ def test_tail_control_authority_has_quasi_steady_safety_margin(integrated_result
     assert s['worst_abs_elevator_deg'] <= s['limits']['gust_elevator_deg'] + 1e-9
 
 
+def test_automated_avl_derivatives_are_active(integrated_result):
+    r,_=integrated_result
+    a=r['aerodynamic_derivatives']
+    assert a['mode']=='avl'
+    assert a['status']=='AVL_automated_geometry_derived'
+    assert a['AVL']['status']=='PASS'
+    assert not a['AVL']['missing_required']
+    active=a['active']
+    for key in ('CL_alpha_per_rad','Cl_da','Cm_de','Cn_beta','Cn_dr'):
+        assert active[key] is not None
+    assert active['Cl_da'] > 0
+    assert active['Cm_de'] < 0
+    assert active['Cn_beta'] > 0
+    assert active['Cn_dr'] < 0
+    assert next(g for g in r['gates'] if g['name']=='AVL_derivatives')['status']=='PASS'
+    sel=r['tail_planform_autosizing']['selected']
+    assert sel['aero_derivative_source']=='AVL_automated_geometry_derived'
+    assert sel['avl_result']['status']=='PASS'
+
+
 def test_inspection_flight_envelope_and_gust_stall_gates(integrated_result):
     r,_=integrated_result
     env=r['flight_envelope']
