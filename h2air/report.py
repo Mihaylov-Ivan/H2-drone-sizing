@@ -187,6 +187,21 @@ def write_markdown_report(
         f"root/tip **{_f(cvr, 3)}/{_f(_tip_chord(cvr, lamv), 3)} m**, "
         f"**{d.get('vertical_tail_naca_code', '—')}**, AC **x = {_f(d.get('vertical_tail_ac_x_m'), 4)} m**",
         "",
+        "### Aerodynamic stability/control derivatives",
+        f"- Derivative model: **{str(_get(r,'aerodynamic_derivatives','status',default='screening')).replace('_',' ')}** "
+        f"(mode **{_get(r,'aerodynamic_derivatives','mode',default='approximate')}**)",
+        (
+            f"- AVL: **{_get(r,'aerodynamic_derivatives','AVL','status',default='—')}**, "
+            f"neutral point **x = {_f(_get(r,'aerodynamic_derivatives','AVL','derivatives','neutral_point_station_x_m',default=None),4)} m**, "
+            f"CLa **{_f(_get(r,'aerodynamic_derivatives','active','CL_alpha_per_rad',default=None),3)} /rad**, "
+            f"Cmde **{_f(_get(r,'aerodynamic_derivatives','active','Cm_de',default=None),3)} /rad**, "
+            f"Cnb **{_f(_get(r,'aerodynamic_derivatives','active','Cn_beta',default=None),3)} /rad**, "
+            f"Cndr **{_f(_get(r,'aerodynamic_derivatives','active','Cn_dr',default=None),3)} /rad**"
+            if _get(r,'aerodynamic_derivatives','mode',default='approximate') == 'avl'
+            else "- AVL not selected; internal screening derivatives active"
+        ),
+        "- AVL scope: inviscid lifting-surface stability/control derivatives; stall, viscous drag, propeller interaction and separated flow remain separate model/screening calculations.",
+        "",
         "### Booms & lift layout",
         (
             f"- Twin boom spacing (centre-to-centre): **{_f(boom_span, 3)} m**"
@@ -266,7 +281,7 @@ def write_markdown_report(
             else ""
         ),
         f"- Fuselage wall keepout: **{_f(1000 * float(pkg_env.get('wall_clearance_m') or 0), 1)} mm** "
-        f"(circular cross-section; packaging gate fails on radial protrusion)",
+        f"({d.get('fuselage_cross_section', 'unknown')} cross-section; enforced by the packaging containment/collision screen)",
         "",
         "## Mass & balance",
         "",
@@ -353,7 +368,8 @@ def write_markdown_report(
             f"with **{_f(_get(r,'tail_control_authority','safety_factor',default=None),2)}x** safety factor; "
             f"trim elevator **{_f(_get(r,'tail_control_authority','trim_elevator_deg',default=None),1)} deg**, "
             f"worst vertical-gust elevator **{_f(_get(r,'tail_control_authority','worst_abs_elevator_deg',default=None),1)} deg**, "
-            f"lateral-gust rudder **{_f(_get(r,'tail_control_authority','required_rudder_deg',default=None),1)} deg**"
+            f"directional Cnβ **{_f(_get(r,'tail_control_authority','derivatives','Cn_beta_per_rad',default=None),3)} /rad**, "
+            f"Cnr **{_f(_get(r,'aerodynamic_derivatives','active','Cn_r',default=None),3)} /rad**"
             if _get(r,'tail_control_authority',default=None) is not None else ""
         ),
         (
