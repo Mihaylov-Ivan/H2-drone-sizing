@@ -27,6 +27,7 @@ from .flight_envelope import (
     required_area_for_positive_manoeuvre,
     required_area_for_vertical_gust,
 )
+from .avl_integration import evaluate_avl_derivatives
 
 G=9.80665
 
@@ -123,6 +124,37 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
         "vertical_effectiveness_scale":vt_scale,
         "status":"calibrated_screening_assumption",
     }
+
+    # Optional automated AVL replacement for the screening stability/control
+    # derivatives.  This is called from every coupled geometry state that passes
+    # through _sync_design, including main-wing and tail autosizing candidates.
+    avl_result={"status":"NOT_USED","mode":"approximate"}
+    if mass_result is not None:
+        avl_result=evaluate_avl_derivatives(cfg,mass_result)
+        if avl_result.get("status")=="PASS":
+            avld=avl_result["derivatives"]
+            for key in (
+                "CL_alpha_per_rad","CY_beta","CY_p","CY_r",
+                "Cl_beta","Cl_p","Cl_r","Cl_da","Cl_dr",
+                "Cm_q","Cm_de",
+                "Cn_beta","Cn_p","Cn_r","Cn_da","Cn_dr",
+                "CY_dr",
+            ):
+                if key in avld:
+                    ad6[key]=float(avld[key])
+            if avld.get("neutral_point_station_x_m") is not None:
+                xnp=float(avld["neutral_point_station_x_m"])
+                d["neutral_point_station_x_m"]=xnp
+                s6["aircraft"]["neutral_point_station_x_m"]=xnp
+            ad6["derivative_status"]="AVL_automated_geometry_derived"
+            ad6["avl_result"]=deepcopy(avl_result)
+            ad6["tail_effectiveness_scaling"]["status"]="superseded_by_AVL"
+        else:
+            ad6["avl_result"]=deepcopy(avl_result)
+            ad6["derivative_status"]="engineering_assumption_AVL_fallback"
+        if isinstance(cfg,dict):
+            rt=cfg.setdefault("_runtime",{})
+            rt["avl_derivatives"]=deepcopy(avl_result)
 
     s6["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
     t["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
