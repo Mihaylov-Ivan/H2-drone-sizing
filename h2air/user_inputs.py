@@ -1021,6 +1021,20 @@ def user_inputs_from_design_values(
     if "vertical_tail_taper_ratio" in vals:
         vtail["taper_ratio"] = _round(vals["vertical_tail_taper_ratio"])
 
+    control = u.setdefault("tail_autosizing", {}).setdefault("control_surfaces", {})
+    if "elevator_span_fraction" in vals:
+        control["AutoSize Elevator"] = False
+        control["elevator_span_fraction"] = _round(vals["elevator_span_fraction"])
+    if "elevator_chord_fraction" in vals:
+        control["AutoSize Elevator"] = False
+        control["elevator_chord_fraction"] = _round(vals["elevator_chord_fraction"])
+    if "rudder_height_fraction" in vals:
+        control["AutoSize Rudder"] = False
+        control["rudder_height_fraction"] = _round(vals["rudder_height_fraction"])
+    if "rudder_chord_fraction" in vals:
+        control["AutoSize Rudder"] = False
+        control["rudder_chord_fraction"] = _round(vals["rudder_chord_fraction"])
+
     for key in (
         "lift_row_center_x_m",
         "battery_x_m", "battery_z_m",
@@ -1058,7 +1072,7 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
         "user_editable_groups": [
             "mission", "fuselage", "lifting_surfaces", "propulsion", "component_mass_overrides",
             "component_positions", "hardware", "hardware_selection", "manufacturing_mass_model", "carbon_fiber_tubes", "cad_export", "optimizer",
-            "packaging_layout", "fuel_cell_cooling",
+            "packaging_layout", "fuel_cell_cooling", "flight_envelope", "tail_autosizing", "aerodynamic_derivatives",
         ],
         "auto_calculated_examples": [
             "fuselage total length from section lengths",
@@ -1069,6 +1083,7 @@ def input_classification(cfg: Mapping[str, Any]) -> Dict[str, Any]:
             "fuel-cell waste heat, required airflow, duct pressure loss and cooling-airflow margin",
             "horizontal-tail span/root-chord/taper/area from AutoSize Horizontal Tail",
             "vertical-tail height/root-chord/taper/area from AutoSize Vertical Tail",
+            "elevator span/chord fractions and rudder height/chord fractions from AVL-coupled control-surface autosizing",
             "component masses in LINEAR mode from kg/m x length",
             "CG and inertia tensor",
             "neutral point and static margin",
