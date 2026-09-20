@@ -1,5 +1,5 @@
 {
-  "mode": "auto",
+  "mode": "hardcoded",
   "bus_nominal_voltage_V": 44.400000000000006,
   "bus_max_voltage_V": 48.0,
   "bus_voltage_ceiling_V": 48.0,
@@ -7,7 +7,7 @@
     "lift_thrust_per_motor_N": 59.575398750000005,
     "minimum_pusher_power_W": 750.0,
     "minimum_battery_capacity_Ah": 5.0,
-    "battery_screen_current_A": 143.97297297297297
+    "battery_screen_current_A": 146.83445945945945
   },
   "selected_lift_combo": {
     "name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
@@ -29,24 +29,23 @@
     "status": "supplier_confirmed_motor_and_bench_data_prop_mass_assumption"
   },
   "selected_pusher_combo": {
-    "name": "Tmotor_MN501S_160kV_P18x10_12S",
-    "motor_kv": 160,
+    "name": "Tmotor_MN501S_240kV_P15x5_12S",
+    "motor_kv": 240,
     "voltage_min_V": 36.0,
     "voltage_max_V": 50.4,
-    "max_power_W": 1000.0,
-    "max_thrust_N": 42.0,
-    "prop_diameter_in": 18.0,
-    "prop_pitch_in": 10.0,
-    "motor_mass_kg": 0.175,
-    "prop_mass_kg": 0.045,
-    "motor_resistance_ohm": 0.05,
-    "no_load_current_A": 1.5,
-    "esc_efficiency": 0.97,
-    "status": "engineering_assumption_screening",
-    "source": "Screening pusher combo: MN501S-class 160 kV with 18x10 on 12S; replace with measured forward-flight map.",
+    "max_power_W": 1121.0,
+    "max_thrust_N": 45.698989,
+    "prop_diameter_in": 15.0,
+    "prop_pitch_in": 5.0,
+    "motor_mass_kg": 0.17,
+    "prop_mass_kg": 0.021,
+    "status": "supplier_confirmed_motor_and_bench_data_prop_mass_from_user_database",
+    "source": "T-MOTOR MN501-S KV240 official product/test table; P15x5 at 12S",
     "role": "pusher",
     "motor_diameter_m": 0.0556,
-    "motor_length_m": 0.0339
+    "motor_length_m": 0.0339,
+    "peak_current_A": 25.0,
+    "source_url": "https://store.tmotor.com/product/mn501-s-kv240-motor-navigator-type.html"
   },
   "selected_battery": {
     "name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh",

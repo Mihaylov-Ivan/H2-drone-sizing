@@ -6,11 +6,123 @@ from h2air.structures import (
     check_tube_member,
     evaluate_structure,
 )
-from h2air.landing_legs import sleeve_od_m, sleeve_mass_kg, landing_legs_cda_m2
+from h2air.landing_legs import (
+    sleeve_od_m,
+    sleeve_mass_kg,
+    landing_legs_cda_m2,
+    horizontal_prop_blade_half_height_m,
+    resolve_landing_leg_layout,
+)
 from h2air.aero_propulsion import cruise_drag
 
 
+def test_landing_legs_disabled_omits_layout_and_drag():
+    cfg = {
+        "design": {
+            "fuselage_height_m": 0.22,
+            "wing_mac_m": 0.26,
+            "wing_ac_x_m": 0.39,
+            "lift_propeller_diameter_in": 22.0,
+            "mtow_ceiling_kg": 15.0,
+        },
+        "geometry_mass": {
+            "geometry_model": {
+                "geometry": {
+                    "wing_lower_z_m": 0.07,
+                    "boom_center_y_m": [-0.37, 0.37],
+                    "lift_prop_centers_m": [
+                        [0.1, -0.37, 0.12], [0.1, 0.37, 0.12],
+                        [0.7, -0.37, 0.12], [0.7, 0.37, 0.12],
+                    ],
+                }
+            }
+        },
+        "aero_propulsion": {"aircraft": {}, "lift_layout": {"z_m": 0.12}},
+        "manufacturing_mass_model": {
+            "fuselage_sections": [{"name": "nose", "length_m": 0.14, "diameter_m": 0.2}],
+            "main_wing": {"primary_spar": {"chord_fraction": 0.25}, "thickness_m": 0.028, "z_m": 0.09},
+            "landing_legs": {
+                "enabled": False,
+                "drag_CdA_m2": 0.0015,
+                "prop_ground_clearance_m": 0.02,
+                "minimum_leg_length_m": 0.06,
+                "tube": {"design_tube_od_m": 0.008},
+            },
+        },
+        "structures": {"structure": {"landing_leg_enabled": True}, "load_cases": {}},
+    }
+    assert resolve_landing_leg_layout(cfg) is None
+    assert landing_legs_cda_m2(cfg) == 0.0
+    from h2air.landing_legs import apply_landing_leg_layout
+    assert apply_landing_leg_layout(cfg) is None
+    assert cfg["structures"]["structure"]["landing_leg_enabled"] is False
+    assert cfg["design"]["landing_legs_CdA_m2"] == 0.0
+
+
 def test_sleeve_geometry_2mm_wall():
+    assert abs(sleeve_od_m(0.012, 0.002) - 0.016) < 1e-12
+    m = sleeve_mass_kg(tube_od_m=0.012, sleeve_wall_m=0.002, length_m=0.2, density_kg_m3=1200.0)
+    assert m > 0.0
+
+
+def test_horizontal_prop_blade_half_height_from_pitch_not_diameter():
+    # 22x6.6 class: half-height is a few mm from pitch, not ~R.
+    h = horizontal_prop_blade_half_height_m(0.5588, 0.16764)
+    assert 0.003 <= h < 0.03
+    # Doubling diameter at fixed pitch should not scale like R (0.5*D).
+    h2 = horizontal_prop_blade_half_height_m(1.1176, 0.16764)
+    assert h2 < 0.5 * 1.1176 * 0.2
+
+
+def test_landing_leg_ground_not_diameter_tip_drop():
+    cfg = {
+        "design": {
+            "fuselage_height_m": 0.22,
+            "wing_mac_m": 0.26,
+            "wing_ac_x_m": 0.39,
+            "lift_propeller_diameter_in": 22.0,
+        },
+        "hardware_selection_result": {
+            "selected_lift_combo": {
+                "prop_pitch_in": 6.6,
+                "motor_length_m": 0.027,
+            }
+        },
+        "geometry_mass": {
+            "geometry_model": {
+                "geometry": {
+                    "wing_lower_z_m": 0.07,
+                    "boom_center_y_m": [-0.37, 0.37],
+                    "lift_prop_centers_m": [
+                        [0.1, -0.37, 0.12], [0.1, 0.37, 0.12],
+                        [0.7, -0.37, 0.12], [0.7, 0.37, 0.12],
+                    ],
+                }
+            }
+        },
+        "aero_propulsion": {"lift_layout": {"z_m": 0.12}},
+        "manufacturing_mass_model": {
+            "fuselage_sections": [{"name": "nose", "length_m": 0.14, "diameter_m": 0.2}],
+            "main_wing": {"primary_spar": {"chord_fraction": 0.25}, "thickness_m": 0.028, "z_m": 0.09},
+            "landing_legs": {
+                "enabled": True,
+                "sleeve_wall_m": 0.002,
+                "drag_coefficient_screen": 1.0,
+                "prop_ground_clearance_m": 0.02,
+                "minimum_leg_length_m": 0.06,
+                "tube": {"design_tube_od_m": 0.008, "reference_tube_od_m": 0.012},
+            },
+        },
+        "structures": {"structure": {}, "load_cases": {}},
+    }
+    layout = resolve_landing_leg_layout(cfg)
+    assert layout is not None
+    # Old bug: tip = motor_z - R ≈ 0.12 - 0.279 = -0.159. Must not reappear.
+    assert layout["prop_tip_z_m"] > 0.0
+    assert layout["prop_blade_half_height_m"] < 0.05
+    # Belly at -0.11 is lower than prop band; ground tracks belly + clearance / min leg.
+    assert layout["ground_z_m"] < -0.05
+
     assert abs(sleeve_od_m(0.012, 0.002) - 0.016) < 1e-12
     m = sleeve_mass_kg(tube_od_m=0.012, sleeve_wall_m=0.002, length_m=0.2, density_kg_m3=1200.0)
     assert m > 0.0

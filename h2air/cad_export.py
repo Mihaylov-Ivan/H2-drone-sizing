@@ -166,6 +166,14 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     lift=hw.get('selected_lift_combo',{}); push=hw.get('selected_pusher_combo',{}); bat=hw.get('selected_battery',{})
     out += [_param('lift_motor_front_x',_mm(front)),_param('lift_motor_rear_x',_mm(rear)),_param('lift_motor_y_abs',_mm(yabs)),_param('lift_motor_z',_mm(z)),_param('lift_prop_diameter',float(d['lift_propeller_diameter_in'])*25.4),_param('lift_prop_pitch',float(lift.get('prop_pitch_in',0))*25.4),_param('lift_motor_name',str(lift.get('name','')),'String')]
     if lift.get('motor_diameter_m'): out += [_param('lift_motor_OD',_mm(lift['motor_diameter_m'])),_param('lift_motor_body_length',_mm(lift['motor_length_m']))]
+    from .landing_legs import lift_prop_vertical_extents_m
+    ext = lift_prop_vertical_extents_m(cfg)
+    out += [
+        _param('lift_prop_blade_half_height', _mm(float(ext['blade_half_height_m']))),
+        _param('lift_prop_disk_z', _mm(float(ext['disk_z_m']))),
+        _param('lift_prop_low_z', _mm(float(ext['low_z_m']))),
+        _param('lift_prop_high_z', _mm(float(ext['high_z_m']))),
+    ]
     pusher_station=cfg['sixdof_control']['aircraft']['pusher_station_m']
     out += [_param('pusher_motor_x',_mm(pusher_station[0])),_param('pusher_motor_y',_mm(pusher_station[1])),_param('pusher_motor_z',_mm(pusher_station[2])),_param('pusher_prop_diameter',float(d['pusher_propeller_diameter_in'])*25.4),_param('pusher_prop_pitch',float(push.get('prop_pitch_in',0))*25.4),_param('pusher_motor_name',str(push.get('name','')),'String')]
     if push.get('motor_diameter_m'): out += [_param('pusher_motor_OD',_mm(push['motor_diameter_m'])),_param('pusher_motor_body_length',_mm(push['motor_length_m']))]

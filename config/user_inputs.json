@@ -200,7 +200,7 @@
     "note": "Dedupe: spar joiners are separate carbon joiners; harness is wiring_harness_pdb."
   },
   "component_positions": {
-    "lift_row_center_x_m": 0.47574,
+    "lift_row_center_x_m": 0.40074,
     "battery_x_m": 0.330287,
     "battery_z_m": 0.0631,
     "fuel_cell_x_m": 0.15285,
@@ -218,7 +218,7 @@
     "clearances_m": {
       "fuselage_bottom_m": 0.003,
       "fuselage_wall_m": 0.01,
-      "aft_tail_beyond_motor_m": 0.02,
+      "aft_tail_beyond_motor_m": 0.04,
       "component_m": 0.003,
       "bottom_to_top_m": 0.01,
       "pdb_all_around_m": 0.02,
@@ -411,7 +411,7 @@
       "source": "kg/m calibrated at reference_tube_od_m (matches structures.reference_boom_*); structural sizing scales by tube area; replace with supplier tube kg/m"
     },
     "landing_legs": {
-      "enabled": true,
+      "enabled": false,
       "layout": "nose_plus_wing",
       "landing_load_factor": 3,
       "side_load_fraction": 0.28,
@@ -425,7 +425,7 @@
       "deflection_limit_fraction": 0.05,
       "slope_limit_deg": 3,
       "status": "engineering_assumption",
-      "source": "Tripod landing gear with streamlined sleeve fairings: Cd 0.15, total CdA 0.0015 m2 (was Cd 0.5 / ~0.0044 m2). CFRP tubes sized for 3g landing; mass floored at 3% of mtow_ceiling.",
+      "source": "User switch: enabled true/false. When false, legs are omitted from mass, drag, structures, CAD and the viewer (belly-land screening). When true: tripod gear with streamlined sleeve fairings; ground clears fuselage belly / horizontal-prop blade pitch band / motor body — NOT propeller diameter as a vertical tip drop.",
       "tube": {
         "mass_mode": "structural_linear",
         "specific_mass_kg_per_m": 0.05,
@@ -478,10 +478,10 @@
     }
   },
   "hardware_selection": {
-    "mode": "auto",
+    "mode": "hardcoded",
     "hardcoded": {
       "lift_combo_name": "Tmotor_U8Lite_150kV_P22x6p6_12S",
-      "pusher_combo_name": "Tmotor_MN501S_160kV_P18x10_12S",
+      "pusher_combo_name": "Tmotor_MN501S_240kV_P15x5_12S",
       "battery_name": "SeriesPair_12S_Lipo_Battery_Pack_5500mAh/22.2V_30/60C_177.6Wh"
     },
     "auto_criteria": {

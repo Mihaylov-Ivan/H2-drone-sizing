@@ -7,7 +7,7 @@ boom junction. Each leg is a CFRP tube inside a constant-thickness 3D-printed sl
 """
 
 from copy import deepcopy
-from math import pi
+from math import atan, pi, sin
 from typing import Any, Dict, Mapping, MutableMapping, Optional
 
 INCH_TO_M = 0.0254
@@ -18,6 +18,71 @@ def landing_legs_enabled(cfg: Mapping[str, Any]) -> bool:
     mm = cfg.get("manufacturing_mass_model") or {}
     legs = mm.get("landing_legs") or {}
     return bool(legs.get("enabled", False))
+
+
+def horizontal_prop_blade_half_height_m(
+    diameter_m: float,
+    pitch_m: float,
+    *,
+    chord_fraction_of_diameter: float = 0.055,
+    minimum_half_height_m: float = 0.003,
+) -> float:
+    """Vertical half-thickness of a *horizontal* lift-prop disk.
+
+    The disk lies in XY (spin about Z). Diameter sets the planform radius only.
+    Geometric pitch tilts the blade chord, so the airfoil projects a small height
+    ±h about the disk plane: ``h ≈ 0.5 * chord * sin(φ)`` with helix angle ``φ``
+    evaluated at 75% radius.
+    """
+    D = max(float(diameter_m), EPS)
+    P = max(0.0, float(pitch_m))
+    chord = max(EPS, float(chord_fraction_of_diameter) * D)
+    r75 = 0.75 * 0.5 * D
+    phi = atan(P / max(2.0 * pi * r75, EPS)) if P > 0.0 else 0.0
+    half = 0.5 * chord * sin(phi)
+    return max(float(minimum_half_height_m), half)
+
+
+def lift_prop_vertical_extents_m(cfg: Mapping[str, Any]) -> Dict[str, float]:
+    """Disk-plane z and blade/motor low/high z for horizontal lift props."""
+    d = cfg["design"]
+    gm = ((cfg.get("geometry_mass") or {}).get("geometry_model") or {}).get("geometry") or {}
+    legs = ((cfg.get("manufacturing_mass_model") or {}).get("landing_legs") or {})
+    hw = (cfg.get("hardware_selection_result") or {}).get("selected_lift_combo") or {}
+
+    dia_m = float(d.get("lift_propeller_diameter_in", 22.0)) * INCH_TO_M
+    pitch_in = float(hw.get("prop_pitch_in") or d.get("lift_propeller_pitch_in") or 0.0)
+    pitch_m = pitch_in * INCH_TO_M
+    chord_frac = float(legs.get("blade_chord_fraction_of_diameter", 0.055))
+    blade_half = horizontal_prop_blade_half_height_m(
+        dia_m,
+        pitch_m,
+        chord_fraction_of_diameter=chord_frac,
+        minimum_half_height_m=float(legs.get("blade_minimum_half_height_m", 0.003)),
+    )
+
+    centers = gm.get("lift_prop_centers_m") or []
+    if centers:
+        motor_z = min(float(p[2]) for p in centers if isinstance(p, (list, tuple)) and len(p) >= 3)
+    else:
+        motor_z = float(cfg.get("aero_propulsion", {}).get("lift_layout", {}).get("z_m", 0.12))
+
+    motor_len = float(hw.get("motor_length_m") or 0.0)
+    if motor_len <= 0.0:
+        motor_len = float(legs.get("lift_motor_body_length_fallback_m", 0.027))
+    # Motor body is modelled along Z, centred on the disk plane.
+    motor_half = 0.5 * motor_len
+    half_down = max(blade_half, motor_half)
+    half_up = max(blade_half, motor_half)
+    return {
+        "disk_z_m": motor_z,
+        "diameter_m": dia_m,
+        "pitch_m": pitch_m,
+        "blade_half_height_m": blade_half,
+        "motor_half_height_m": motor_half,
+        "low_z_m": motor_z - half_down,
+        "high_z_m": motor_z + half_up,
+    }
 
 
 def sleeve_od_m(tube_od_m: float, sleeve_wall_m: float) -> float:
@@ -47,6 +112,8 @@ def landing_legs_cda_m2(cfg: Mapping[str, Any]) -> float:
     each vertical leg is treated as a circular cylinder with frontal area
     ``sleeve_OD * exposed_length`` and a user Cd screen.
     """
+    if not landing_legs_enabled(cfg):
+        return 0.0
     legs_cfg = (cfg.get("manufacturing_mass_model") or {}).get("landing_legs") or {}
     if legs_cfg.get("drag_CdA_m2") is not None:
         return max(0.0, float(legs_cfg["drag_CdA_m2"]))
@@ -118,19 +185,18 @@ def resolve_landing_leg_layout(cfg: Mapping[str, Any]) -> Optional[Dict[str, Any
     boom_ys = gm.get("boom_center_y_m") or [-0.35, 0.35]
     y_abs = abs(float(boom_ys[1] if len(boom_ys) > 1 else boom_ys[0]))
 
-    # Ground plane clears the lowest lift-prop tip by the configured margin.
-    prop_dia_m = float(d.get("lift_propeller_diameter_in", 22.0)) * INCH_TO_M
-    centers = gm.get("lift_prop_centers_m") or []
-    if centers:
-        motor_z = min(float(p[2]) for p in centers if isinstance(p, (list, tuple)) and len(p) >= 3)
-    else:
-        motor_z = float(cfg.get("aero_propulsion", {}).get("lift_layout", {}).get("z_m", 0.12))
-    prop_tip_z = motor_z - 0.5 * prop_dia_m
+    # Ground clears the lowest of: fuselage belly, horizontal-prop blade band
+    # (pitch thickness — NOT diameter), and lift-motor body. Diameter only sets
+    # the planform disk; it must not be treated as a vertical tip drop.
+    extents = lift_prop_vertical_extents_m(cfg)
+    prop_low_z = float(extents["low_z_m"])
+    prop_tip_z = prop_low_z  # retained key name: lowest prop/motor z
     prop_clear = float(legs.get("prop_ground_clearance_m", 0.020))
+    lowest_airframe_z = min(fuse_bottom, prop_low_z)
     if legs.get("ground_z_m") is not None:
         ground_z = float(legs["ground_z_m"])
     else:
-        ground_z = prop_tip_z - prop_clear
+        ground_z = lowest_airframe_z - prop_clear
 
     # Optional extra drop so short nose legs remain printable / attachable.
     min_len = float(legs.get("minimum_leg_length_m", 0.060))
@@ -165,7 +231,11 @@ def resolve_landing_leg_layout(cfg: Mapping[str, Any]) -> Optional[Dict[str, Any
         "printed_density_kg_m3": float(legs.get("printed_density_kg_m3", 1200.0)),
         "ground_z_m": ground_z,
         "prop_tip_z_m": prop_tip_z,
+        "prop_disk_z_m": float(extents["disk_z_m"]),
+        "prop_blade_half_height_m": float(extents["blade_half_height_m"]),
+        "prop_high_z_m": float(extents["high_z_m"]),
         "prop_ground_clearance_m": prop_clear,
+        "lowest_airframe_z_m": lowest_airframe_z,
         "sizing_length_m": max(nose_len, wing_len),
         "legs": [
             {
@@ -213,6 +283,8 @@ def apply_landing_leg_layout(cfg: MutableMapping[str, Any]) -> Optional[Dict[str
     if layout is None:
         legs_cfg["resolved"] = {"enabled": False}
         geom.pop("landing_legs", None)
+        geom.pop("landing_ground_z_m", None)
+        st["landing_leg_enabled"] = False
         sync_landing_legs_drag(cfg)
         return None
 

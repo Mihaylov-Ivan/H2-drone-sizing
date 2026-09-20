@@ -31,6 +31,12 @@ The top-level `aerodynamic_derivatives` block selects how the 6-DOF stability/co
 - Elevator and rudder geometry can now be explicit optimizer variables. The AVL export uses the actual elevator span fraction and chord fraction plus rudder height fraction and chord fraction for every tail candidate.
 - AVL remains an inviscid lifting-surface model. It does **not** replace the direct CLmax/stall screen, viscous/parasite drag model, propeller/VTOL interaction models, fuel-cell cooling model, structural sizing, hinge-moment/servo sizing, flutter analysis, or separated-flow control authority. Fuselage/boom aerodynamic effects are not yet represented in the AVL derivative geometry.
 
+## Landing legs
+
+Under `manufacturing_mass_model.landing_legs`:
+
+- `enabled: true|false` — user switch. When **false**, landing legs are omitted from mass, CG, parasite drag, structural 3g sizing, CAD export and the viewer (belly-land screening). When **true**, the nose + wing tripod gear is included and sized as usual.
+
 ## Modes
 
 - Main wing: `"AutoSize Main Wing": true` jointly optimizes **span + root chord + taper ratio** inside the normal integrated run. The stall/transition area calculation uses the **current structurally closed iteration mass M2**, not the fixed 15 kg ceiling. The 15 kg value remains the hard final mass constraint and the structural design/load-case mass.

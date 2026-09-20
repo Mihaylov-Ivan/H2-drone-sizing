@@ -469,6 +469,44 @@ function propDisk(diameter, opacity = 0.22) {
   return new THREE.Mesh(geo, mat);
 }
 
+/**
+ * Vertical thickness cue for a horizontal lift disk (pitch/chord band only).
+ * Diameter is the planform radius — it must NOT be drawn as tip-to-tip height.
+ */
+function liftPropThicknessCue(x, y, zMotor, bladeHalfHeight) {
+  const g = new THREE.Group();
+  const h = Math.max(bladeHalfHeight, 0.003);
+  const cueMat = makeMaterial(0xffcc33, {
+    emissive: 0xffaa00,
+    emissiveIntensity: 0.45,
+    roughness: 0.4,
+    metalness: 0.1,
+    transparent: true,
+    opacity: 0.9,
+  });
+  // Short vertical band = blade "thickness" from pitch (not diameter).
+  const band = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.006, 0.006, 2 * h, 10),
+    cueMat,
+  );
+  band.rotation.x = Math.PI / 2;
+  band.position.set(x, y, zMotor);
+  g.add(band);
+  for (const zTip of [zMotor + h, zMotor - h]) {
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.008, 10, 10), cueMat);
+    tip.position.set(x, y, zTip);
+    g.add(tip);
+  }
+  return g;
+}
+
+/** Belly-land reference: depth below fuselage top (mm), positive downward. */
+function depthBelowFuselageTopMm(zModelM) {
+  const fuseH = mm('fuselage_height', mm('fuselage_max_diameter', 180));
+  const top = 0.5 * fuseH;
+  return (top - zModelM) * 1000;
+}
+
 /** CFRP-style tube between two aircraft points (x,y,z). */
 function tubeBetween(a, b, radius, material) {
   const pa = new THREE.Vector3(a[0], a[1], a[2]);
@@ -644,6 +682,11 @@ function propulsionMeshes() {
   const liftD = mm('lift_prop_diameter');
   const motorOd = mm('lift_motor_OD', 80);
   const motorLen = mm('lift_motor_body_length', 30);
+  // Blade vertical half-height from pitch (CAD); fallback ~0.4% of diameter.
+  const bladeHalf = Math.max(
+    mm('lift_prop_blade_half_height', 0.004 * liftD * 1000),
+    0.003,
+  );
 
   for (const x of [frontX, rearX]) {
     for (const y of [-yAbs, yAbs]) {
@@ -655,9 +698,11 @@ function propulsionMeshes() {
       body.rotation.x = Math.PI / 2;
       body.position.set(x, y, z);
       g.add(body);
-      const disk = propDisk(liftD);
-      disk.position.set(x, y, z + motorLen / 2 + 0.002);
+      // Horizontal disk in the motor plane (XY). Diameter = planform only.
+      const disk = propDisk(liftD, 0.28);
+      disk.position.set(x, y, z);
       g.add(disk);
+      g.add(liftPropThicknessCue(x, y, z, bladeHalf));
     }
   }
 
@@ -674,6 +719,7 @@ function propulsionMeshes() {
   pBody.rotation.z = Math.PI / 2;
   pBody.position.set(px, py, pz);
   g.add(pBody);
+  // Pusher disk is vertical (spin about X): diameter *does* set Y/Z extent.
   const pDisk = propDisk(pD, 0.28);
   pDisk.rotation.y = Math.PI / 2;
   pDisk.position.set(px + pLen / 2 + 0.01, py, pz);
@@ -1233,7 +1279,21 @@ function updateDims() {
     ['Boom length', fmt(mm('boom_length'))],
     ['HT span', fmt(mm('horizontal_tail_span'))],
     ['VT height (each)', fmt(mm('vertical_tail_height'))],
-    ['Lift prop ⌀', fmt(mm('lift_prop_diameter'))],
+    ['Lift prop ⌀', `${fmt(mm('lift_prop_diameter'))} (planform only — not Z height)`],
+    [
+      'Lift prop Z (disk / blade ±h)',
+      `${fmt(mm('lift_prop_disk_z', mm('lift_motor_z')))} · blade half-height ${fmt(mm('lift_prop_blade_half_height', 3))} from pitch`,
+    ],
+    [
+      'Lift prop low/high z',
+      `${fmt(mm('lift_prop_low_z', mm('lift_motor_z')))} / ${fmt(mm('lift_prop_high_z', mm('lift_motor_z')))}`,
+    ],
+    [
+      'Lift prop vs fuselage top (belly-land)',
+      `disk ${depthBelowFuselageTopMm(mm('lift_prop_disk_z', mm('lift_motor_z'))).toFixed(0)} mm below top · ` +
+        `low ${depthBelowFuselageTopMm(mm('lift_prop_low_z', mm('lift_motor_z'))).toFixed(0)} mm below top · ` +
+        `belly ${depthBelowFuselageTopMm(-0.5 * mm('fuselage_height', mm('fuselage_max_diameter'))).toFixed(0)} mm below top`,
+    ],
     ['Pusher prop ⌀', fmt(mm('pusher_prop_diameter'))],
   ];
   if (P.wing_primary_spar_OD != null) {

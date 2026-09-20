@@ -49,6 +49,10 @@ def _normalize_manufacturing_mass_model(mm_in: Mapping[str, Any]) -> Dict[str, A
             boom.pop("tube_od_m", None)
     legs = mm.get("landing_legs")
     if isinstance(legs, dict):
+        if "enabled" not in legs:
+            legs["enabled"] = False
+        if not isinstance(legs.get("enabled"), bool):
+            raise ValueError("manufacturing_mass_model.landing_legs.enabled must be true or false")
         tube = legs.get("tube")
         if isinstance(tube, dict):
             if tube.get("reference_tube_od_m") is None and tube.get("tube_od_m") is not None:
@@ -928,6 +932,7 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     cfg["manufacturing_mass_model"] = _normalize_manufacturing_mass_model(u["manufacturing_mass_model"])
     cfg["manufacturing_mass_model"]["fuselage_total_length_m"] = total_len
     cfg["manufacturing_mass_model"]["fuselage_sections"] = deepcopy(sections)
+    d["landing_legs_enabled"] = bool((cfg["manufacturing_mass_model"].get("landing_legs") or {}).get("enabled", False))
     if u.get("carbon_fiber_tubes"):
         apply_carbon_fiber_tubes(cfg, u["carbon_fiber_tubes"])
 
