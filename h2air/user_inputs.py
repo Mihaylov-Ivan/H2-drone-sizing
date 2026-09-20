@@ -369,6 +369,37 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     }
     cfg["sixdof_control"]["gates"]["maximum_gust_cl_utilization_fraction"] = gust_cl_util
 
+    # -------- Aerodynamic stability/control derivative model --------
+    der = deepcopy(u.get("aerodynamic_derivatives") or {})
+    mode = str(der.get("mode", "approximate")).lower().strip()
+    if mode not in {"avl", "approximate"}:
+        raise ValueError("aerodynamic_derivatives.mode must be 'AVL' or 'approximate'")
+    avl = deepcopy(der.get("avl") or {})
+    cfg["avl_derivatives"] = {
+        "mode": mode,
+        "required": bool(avl.get("required", False)),
+        "executable": avl.get("executable"),
+        "timeout_s": float(avl.get("timeout_s", 12.0)),
+        "cache": bool(avl.get("cache", True)),
+        "aileron_start_semispan_fraction": float(avl.get("aileron_start_semispan_fraction", 0.60)),
+        "aileron_hinge_fraction": float(avl.get("aileron_hinge_fraction", 0.70)),
+        "elevator_hinge_fraction": float(avl.get("elevator_hinge_fraction", 0.70)),
+        "rudder_hinge_fraction": float(avl.get("rudder_hinge_fraction", 0.70)),
+        "n_chordwise": int(avl.get("n_chordwise", 8)),
+        "n_spanwise_wing": int(avl.get("n_spanwise_wing", 16)),
+        "n_spanwise_tail": int(avl.get("n_spanwise_tail", 8)),
+        "source": str(avl.get("source", "RobotLocomotion/avl fork of MIT AVL")),
+        "version_commit": avl.get("version_commit"),
+    }
+    if cfg["avl_derivatives"]["timeout_s"] <= 0:
+        raise ValueError("aerodynamic_derivatives.avl.timeout_s must be > 0")
+    for key in ("aileron_start_semispan_fraction","aileron_hinge_fraction","elevator_hinge_fraction","rudder_hinge_fraction"):
+        if not (0.05 < float(cfg["avl_derivatives"][key]) < 0.95):
+            raise ValueError(f"aerodynamic_derivatives.avl.{key} must lie between 0.05 and 0.95")
+    if min(cfg["avl_derivatives"]["n_chordwise"], cfg["avl_derivatives"]["n_spanwise_wing"], cfg["avl_derivatives"]["n_spanwise_tail"]) < 4:
+        raise ValueError("AVL lattice counts must be >= 4")
+    d["aero_derivative_mode"] = mode
+
     # -------- Fuselage geometry (nose/tail lengths fixed; midbody/diameters may auto in packaging) --------
     fus = u["fuselage"]
     sections = fus["sections"]
