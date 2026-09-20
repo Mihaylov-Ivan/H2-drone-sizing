@@ -66,6 +66,19 @@ def test_hardcoded_span_is_fixed_and_removed_from_optimizer(tmp_path):
     assert 'main_wing_span_m' not in default_space_for_config(c)
 
 
+def test_avl_derivative_user_inputs_resolve():
+    c=load_model_config(ROOT/'config'/'user_inputs.json')
+    assert c['design']['aero_derivative_mode']=='avl'
+    a=c['avl_derivatives']
+    assert a['mode']=='avl'
+    assert a['required'] is True
+    assert a['cache'] is True
+    assert a['version_commit']=='b67837fa737afdf7a56655b044242619246b3ada'
+    assert a['n_chordwise']==8
+    assert a['n_spanwise_wing']==16
+    assert a['n_spanwise_tail']==8
+
+
 def test_auto_size_main_wing_trigger_and_bounds():
     c=load_model_config(ROOT/'config'/'user_inputs.json')
     d=c['design']

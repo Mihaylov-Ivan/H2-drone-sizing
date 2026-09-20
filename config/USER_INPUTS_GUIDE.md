@@ -17,6 +17,19 @@ The optional top-level `flight_envelope` block controls the non-aerobatic route-
 
 AutoSize Main Wing includes the +1.5 g accelerated-stall requirement using the current M2 iteration mass. The 15 kg ceiling remains a separate mass/stall robustness check and the +3 g structural case remains based on the 15 kg ceiling.
 
+## Automated AVL stability/control derivatives
+
+The top-level `aerodynamic_derivatives` block selects how the 6-DOF stability/control derivatives are obtained.
+
+- `mode: "AVL"` automatically exports the current main-wing, horizontal-tail, twin-vertical-tail and control-surface geometry to an AVL input file, runs AVL non-interactively, parses the stability/control derivative matrix, and feeds the results back into the coupled sizing loop.
+- Because the call is inside the common aerodynamic synchronization path, **main-wing and tail geometry candidates are evaluated with AVL automatically**. Results are cached by geometry + CG so repeated identical states do not rerun AVL.
+- `mode: "approximate"` retains the internal screening derivative assumptions and calibrated tail-effectiveness scaling.
+- `avl.required: true` makes a missing/failed AVL executable a hard model error. Set it false only when an explicit fallback to the approximate model is acceptable.
+- The executable is found from `aerodynamic_derivatives.avl.executable`, the `AVL_EXECUTABLE` environment variable, or `avl` on PATH.
+- CI builds the pinned RobotLocomotion AVL commit recorded in `version_commit`; local runs should install a compatible AVL executable.
+- Imported quantities include lift-curve slope, neutral point, lateral/directional derivatives, pitch/yaw damping, and aileron/elevator/rudder control derivatives. Control signs are normalized to the existing H2AIR convention.
+- AVL remains an inviscid lifting-surface model. It does **not** replace the direct CLmax/stall screen, viscous/parasite drag model, propeller/VTOL interaction models, fuel-cell cooling model, or structural sizing. Fuselage/boom aerodynamic effects are not yet represented in the AVL derivative geometry.
+
 ## Modes
 
 - Main wing: `"AutoSize Main Wing": true` jointly optimizes **span + root chord + taper ratio** inside the normal integrated run. The stall/transition area calculation uses the **current structurally closed iteration mass M2**, not the fixed 15 kg ceiling. The 15 kg value remains the hard final mass constraint and the structural design/load-case mass.

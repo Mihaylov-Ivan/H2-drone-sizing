@@ -27,6 +27,7 @@ from .flight_envelope import (
     required_area_for_positive_manoeuvre,
     required_area_for_vertical_gust,
 )
+from .avl_integration import evaluate_avl_derivatives
 
 G=9.80665
 
@@ -123,6 +124,42 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
         "vertical_effectiveness_scale":vt_scale,
         "status":"calibrated_screening_assumption",
     }
+
+    # Optional automated AVL replacement for the screening stability/control
+    # derivatives.  This is called from every coupled geometry state that passes
+    # through _sync_design, including main-wing and tail autosizing candidates.
+    avl_result={"status":"NOT_USED","mode":"approximate"}
+    if mass_result is not None:
+        avl_result=evaluate_avl_derivatives(cfg,mass_result)
+        if avl_result.get("status")=="PASS":
+            avld=avl_result["derivatives"]
+            for key in (
+                "CL_alpha_per_rad","wing_CL_alpha_per_rad","CY_beta","CY_p","CY_r",
+                "Cl_beta","Cl_p","Cl_r","Cl_da","Cl_dr",
+                "Cm_alpha_per_rad","Cm_q","Cm_de",
+                "Cn_beta","Cn_p","Cn_r","Cn_da","Cn_dr",
+                "CY_dr",
+            ):
+                if key in avld:
+                    ad6[key]=float(avld[key])
+            if avld.get("neutral_point_station_x_m") is not None:
+                xnp=float(avld["neutral_point_station_x_m"])
+                d["neutral_point_station_x_m"]=xnp
+                s6["aircraft"]["neutral_point_station_x_m"]=xnp
+            avl_trim=avl_result.get("trim") or {}
+            if avl_trim.get("alpha_deg") is not None and avl_trim.get("elevator_deg") is not None:
+                ad6["moment_reference_mode"]="AVL_trim"
+                ad6["avl_trim_alpha_deg"]=float(avl_trim["alpha_deg"])
+                ad6["avl_trim_elevator_deg"]=float(avl_trim["elevator_deg"])
+            ad6["derivative_status"]="AVL_automated_geometry_derived"
+            ad6["avl_result"]=deepcopy(avl_result)
+            ad6["tail_effectiveness_scaling"]["status"]="superseded_by_AVL"
+        else:
+            ad6["avl_result"]=deepcopy(avl_result)
+            ad6["derivative_status"]="engineering_assumption_AVL_fallback"
+        if isinstance(cfg,dict):
+            rt=cfg.setdefault("_runtime",{})
+            rt["avl_derivatives"]=deepcopy(avl_result)
 
     s6["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
     t["aerodynamics"]["CL_max"]=float(d["wing_CLmax"])
@@ -324,7 +361,7 @@ def _main_wing_candidate_metrics(
         rho_kg_m3=float(aero_cfg["atmosphere"]["rho_kg_m3"]),
         speed_mps=V,
         cl_max=float(d["wing_CLmax"]),
-        cl_alpha_per_rad=float(six_cfg["aerodynamics"]["CL_alpha_per_rad"]),
+        cl_alpha_per_rad=float(six_cfg["aerodynamics"].get("wing_CL_alpha_per_rad", six_cfg["aerodynamics"]["CL_alpha_per_rad"])),
         vertical_gust_mps=float(d.get("inspection_vertical_gust_mps", 2.0)),
         max_cl_utilization=float(d.get("maximum_gust_clmax_utilization", 0.95)),
     )
@@ -510,7 +547,16 @@ def _auto_size_main_wing(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[s
             raise RuntimeError("AutoSize Main Wing found no candidate inside the configured planform bounds")
 
         ranked = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
-        best = ranked[0]
+        feasible_ranked = [x for x in ranked if x["feasible"]]
+        if not feasible_ranked:
+            best0 = ranked[0]
+            raise RuntimeError(
+                "AutoSize Main Wing found no feasible planform inside the configured bounds; "
+                f"best violations={best0['violations']}; area={best0['wing_area_m2']:.4f} m2; "
+                f"required={best0['required_area_with_margin_m2']:.4f} m2 "
+                f"({best0['governing_area_constraint']}); mass={best0['closed_mass_kg']:.3f} kg."
+            )
+        best = feasible_ranked[0]
         vals = best["values"]
         new_mass = float(best["closed_mass_kg"])
         geom_delta = 0.0
@@ -622,10 +668,10 @@ def _tail_quasi_steady_authority(
          "value_deg":trim_e,"limit_deg":trim_limit_deg},
         {"name":"vertical_gust_elevator_reserve","pass":worst_e<=elevator_limit_deg+1e-9,
          "value_deg":worst_e,"limit_deg":elevator_limit_deg},
-        {"name":"lateral_gust_rudder_reserve","pass":rudder_req_deg<=rudder_limit_deg+1e-9,
-         "value_deg":rudder_req_deg,"limit_deg":rudder_limit_deg},
         {"name":"directional_static_stability","pass":cnb>0.0,
          "value":cnb,"limit":0.0},
+        {"name":"directional_yaw_damping","pass":float(ad["Cn_r"])<0.0,
+         "value":float(ad["Cn_r"]),"limit":0.0},
     ]
     return {
         "pass":all(bool(x["pass"]) for x in checks),
@@ -638,10 +684,59 @@ def _tail_quasi_steady_authority(
         "vertical_gust_total_elevator_up_deg":e_up,
         "vertical_gust_total_elevator_down_deg":e_down,
         "worst_abs_elevator_deg":worst_e,
-        "required_rudder_deg":rudder_req_deg,
+        "diagnostic_rudder_to_hold_full_sideslip_deg":rudder_req_deg,
         "limits":{"trim_elevator_deg":trim_limit_deg,"gust_elevator_deg":elevator_limit_deg,"gust_rudder_deg":rudder_limit_deg,"surface_fraction":surface_fraction},
         "checks":checks,
-        "note":"Linearized quasi-steady control-reserve screen using candidate-scaled derivatives. Vh/Vv are calibration references only. Final normal 6-DOF cases remain separate validation.",
+        "note":"Quasi-steady HT screen uses AVL cruise trim and vertical-gust elevator reserve. The rudder angle that would artificially hold the full crosswind sideslip at zero yaw moment is diagnostic only; VT sizing instead requires positive AVL directional static stability (Cn_beta > 0) and negative yaw damping (Cn_r < 0). Normal-run 6-DOF gust cases remain an independent dynamic validation.",
+    }
+
+
+def _tail_lateral_dynamic_authority(
+    six_cfg: Mapping[str, Any],
+    d: Mapping[str, Any],
+) -> Dict[str, Any]:
+    """Validate VT directional response in a surface-only cruise crosswind gust.
+
+    This credits passive weathercock stability and aerodynamic yaw damping,
+    unlike the nonphysical proxy that forced the rudder to cancel the entire
+    instantaneous sideslip at zero yaw moment.
+    """
+    sf=float(d.get("tail_control_safety_factor",1.10))
+    V=float(d["cruise_speed_mps"])
+    gates=six_cfg["gates"]; cs=six_cfg["control_surfaces"]
+    model=Model(six_cfg)
+    gust=[0.0,float(d.get("inspection_lateral_gust_mps",5.0)),0.0]
+    samples=simulate_cruise_gust(
+        model,speed_mps=V,stabilized=True,gust_ned_mps=gust,
+        disable_lift_rotors=True,
+    )
+    if not samples:
+        return {"pass":False,"reason":"no_samples","safety_factor":sf}
+    summary=summarize_samples(samples,model)
+    yaw_limit=float(gates["maximum_cruise_gust_yaw_deg"])/sf
+    rudder_fraction_limit=float(gates["maximum_surface_utilization_fraction"])/sf
+    rudder_limit_deg=float(cs["rudder_limit_deg"])
+    max_rudder_deg=max(abs(float(x.rudder_deg)) for x in samples)
+    max_rudder_fraction=max_rudder_deg/max(rudder_limit_deg,1e-9)
+    full_duration=float(six_cfg["simulation"]["cruise_disturbance_duration_s"])
+    duration_ok=float(samples[-1].time_s)>=full_duration-2.0*float(six_cfg["simulation"]["dt_s"])
+    checks=[
+        {"name":"lateral_gust_yaw_response","pass":float(summary["maximum_abs_yaw_deg"])<=yaw_limit+1e-9,
+         "value":float(summary["maximum_abs_yaw_deg"]),"limit":yaw_limit},
+        {"name":"lateral_gust_rudder_utilization","pass":max_rudder_fraction<=rudder_fraction_limit+1e-9,
+         "value":max_rudder_fraction,"limit":rudder_fraction_limit},
+        {"name":"lateral_gust_simulation_completion","pass":duration_ok,
+         "value":float(samples[-1].time_s),"limit":full_duration},
+    ]
+    return {
+        "pass":all(bool(x["pass"]) for x in checks),
+        "safety_factor":sf,
+        "method":"surface_only_6dof_lateral_gust",
+        "summary":summary,
+        "maximum_abs_rudder_deg":max_rudder_deg,
+        "maximum_rudder_utilization":max_rudder_fraction,
+        "checks":checks,
+        "note":"Lift rotors are disabled. Hard VT checks are yaw response, rudder utilization and full-duration completion; roll/altitude/pitch are reported but not used to size the vertical tail.",
     }
 
 
@@ -802,6 +897,8 @@ def _tail_planform_candidate_metrics(
         "vertical_tail_volume_coefficient": float(Vv),
         "vertical_tail_reference_volume_coefficient": float(d.get("vertical_tail_reference_volume_coefficient", 0.0255)),
         "vertical_tail_effectiveness_scale": float(scaling.get("vertical_effectiveness_scale", Vv/max(float(d.get("vertical_tail_reference_volume_coefficient",0.0255)),1e-9))),
+        "aero_derivative_source": str(six_cfg["aerodynamics"].get("derivative_status","unknown")),
+        "avl_result": deepcopy(six_cfg["aerodynamics"].get("avl_result",{})),
         "directional_Cn_beta": cn_beta,
         "directional_Cn_dr": float(six_cfg["aerodynamics"]["Cn_dr"]),
         "vertical_tail_aspect_ratio_each": float(vt_ar),
@@ -960,11 +1057,22 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     preliminary = sorted([x for x in evaluated if x["feasible"]], key=lambda x:x["score"])
     if not preliminary:
         best0=sorted(evaluated,key=lambda x:x["score"])[0]
-        raise RuntimeError(f"Tail planform autosizer found no preliminary feasible candidate; best violations: {best0['violations']}")
+        raise RuntimeError(
+            "Tail planform autosizer found no preliminary feasible candidate; "
+            f"best violations: {best0['violations']}; "
+            f"geometry={best0.get('resolved_values')}; "
+            f"AVL_raw={best0.get('avl_result',{}).get('raw_selected')}; "
+            f"AVL_mapped={best0.get('avl_result',{}).get('derivatives')}; "
+            f"trim={best0.get('cruise_trim')}; "
+            f"authority={best0.get('control_authority')}"
+        )
 
-    # The candidate-level quasi-steady authority screen already includes the
-    # 1.10x trim/elevator/rudder reserve. Normal-run 6-DOF remains an independent
-    # final validation rather than an optimizer inner loop.
+    # Select the lightest feasible AVL-constrained tail. Directional sizing
+    # uses AVL static stability and yaw damping here; the repository's normal
+    # 6-DOF current-layout/gust cases remain the independent dynamic validation.
+    # We do not use the fixed-wing "lift rotors disabled" helper as a hard gate,
+    # because the present cruise altitude controller is VTOL-thrust based and
+    # would confound tail authority with unrelated longitudinal altitude loss.
     best=preliminary[0]
     selected_cfg = _tail_design_overrides(clean, best["values"], lock_ht=auto_ht, lock_vt=auto_vt)
     sf=float(d0.get("tail_control_safety_factor",1.10))
@@ -989,9 +1097,9 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         },
         "evaluated_candidates": len(evaluated),
         "preliminary_feasible_candidates": len(preliminary),
-        "control_authority_method": "quasi_steady_linearized_surface_authority",
+        "control_authority_method": "AVL_trim_vertical_elevator_reserve_plus_directional_stability_and_damping",
         "selected": deepcopy(best),
-        "fidelity_note": "Tail control derivatives are scaled from calibrated reference Vh/Vv. Tail sizing uses quasi-steady elevator/rudder reserve plus static margin, trim and structural constraints; normal-run 6-DOF remains independent validation. Replace derivative scaling with AVL/CFD/wind-tunnel/flight correlation when available.",
+        "fidelity_note": "Tail stability/control derivatives are generated automatically by AVL for each candidate geometry. Tail sizing uses cruise trim, vertical-gust elevator reserve, directional static stability/yaw damping, static margin and structural/mass constraints; normal-run 6-DOF remains independent dynamic validation. AVL is inviscid and still requires later CFD/wind-tunnel/flight correlation.",
     }
     return selected_cfg, result
 
@@ -1139,7 +1247,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
         wing_area_m2=float(d["wing_area_m2"]),
         speed_mps=V,
         cl_max=float(d["wing_CLmax"]),
-        cl_alpha_per_rad=float(six_cfg["aerodynamics"]["CL_alpha_per_rad"]),
+        cl_alpha_per_rad=float(six_cfg["aerodynamics"].get("wing_CL_alpha_per_rad", six_cfg["aerodynamics"]["CL_alpha_per_rad"])),
         vertical_gust_mps=float(d.get("inspection_vertical_gust_mps",2.0)),
         max_cl_utilization=gust_cl_limit,
     )
@@ -1167,6 +1275,12 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     gate("cruise_power","PASS" if drag.total_cruise_bus_power_W<=float(cfg["power_system"]["requirements"]["representative_cruise_power_gate_W"]) else "FAIL",f"{drag.total_cruise_bus_power_W:.1f} W vs configured gate.")
     gate("mission_ems","PASS" if ems.feasible else "FAIL","Dynamic mission profile through hybrid H2/battery EMS.")
     gate("transition","PASS" if mission["forward_transition"].success and mission["reverse_transition"].success else "FAIL","Forward and reverse point-mass transition completion on closed mass.")
+    avl_final=deepcopy(six_cfg["aerodynamics"].get("avl_result",{"status":"NOT_USED","mode":"approximate"}))
+    if str((cfg.get("avl_derivatives") or {}).get("mode","approximate")).lower()=="avl":
+        gate("AVL_derivatives","PASS" if avl_final.get("status")=="PASS" else "FAIL",
+             f"Automated AVL stability/control derivative evaluation: {avl_final.get('status')}; cache_hit={avl_final.get('cache_hit',False)}.")
+    else:
+        gate("AVL_derivatives","NOT_EVALUATED","Approximate derivative mode selected.")
     gate("current_longitudinal_stability","PASS" if current_model.static_margin>=float(six_cfg["gates"]["minimum_static_margin"]) else "FAIL",f"Closed-aircraft static margin {100*current_model.static_margin:.2f}% MAC.")
     failed_tail_checks=[x["name"] for x in tail_control_authority["checks"] if not x["pass"]]
     gate("tail_control_authority","PASS" if tail_control_authority["pass"] else "FAIL",f"Tail trim/elevator/rudder reserve with {float(tail_control_authority['safety_factor']):.2f}x safety factor; failed checks: {failed_tail_checks if failed_tail_checks else 'none'}.")
@@ -1197,7 +1311,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
     cruise_bus_W=float(drag.total_cruise_bus_power_W)
     endurance_at_cruise_h=(usable_h2_Wh/cruise_bus_W) if cruise_bus_W>1e-9 else float("nan")
 
-    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"payload_off_static_margin":sm_payload_off,"post_structure_static_margin_if_np_fixed":post_static_margin,"positive_operational_load_factor_g":flight_envelope["positive_operational_limit_g"],"negative_operational_load_factor_g":flight_envelope["negative_operational_limit_g"],"maximum_bank_deg":flight_envelope["maximum_bank_deg"],"positive_manoeuvre_cl_utilization":flight_envelope["positive_manoeuvre_cl_utilization"],"negative_manoeuvre_cl_utilization":flight_envelope["negative_manoeuvre_cl_utilization"],"vertical_gust_cl_utilization":vertical_gust_screen["clmax_utilization"],"sixdof_worst_gust_cl_utilization":max_dynamic_gust_cl_util,"worst_gust_cl_utilization":max_gust_cl_util,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"endurance_at_cruise_h":endurance_at_cruise_h,"usable_h2_Wh":usable_h2_Wh,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"horizontal_tail_spar_od_mm":structure["summary"]["horizontal_tail_recommended_spar_od_mm"],"horizontal_tail_spar_id_mm":structure["summary"]["horizontal_tail_recommended_spar_id_mm"],"vertical_tail_spar_od_mm":structure["summary"]["vertical_tail_recommended_spar_od_mm"],"vertical_tail_spar_id_mm":structure["summary"]["vertical_tail_recommended_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"rear_thrust_recovery_factor":rear_recovery,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"flight_envelope":{**flight_envelope,"vertical_gust_screen":vertical_gust_screen,"sixdof_worst_clmax_utilization":max_dynamic_gust_cl_util},"tail_control_authority":tail_control_authority,"main_wing_autosizing":main_wing_autosizing,"tail_planform_autosizing":tail_planform_autosizing,"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
+    result={"model":cfg["model"],"config_hash":_sha(cfg),"summary":{"design_status":status,"reference_mass_kg":mass_pre.takeoff.total_mass_kg,"post_structure_mass_kg":mass_final.takeoff.total_mass_kg,"post_structure_cg_x_m":mass_final.takeoff.cg_m[0],"mass_margin_to_15kg_kg":float(d["mtow_ceiling_kg"])-mass_final.takeoff.total_mass_kg,"current_static_margin":current_model.static_margin,"payload_off_static_margin":sm_payload_off,"post_structure_static_margin_if_np_fixed":post_static_margin,"positive_operational_load_factor_g":flight_envelope["positive_operational_limit_g"],"negative_operational_load_factor_g":flight_envelope["negative_operational_limit_g"],"maximum_bank_deg":flight_envelope["maximum_bank_deg"],"positive_manoeuvre_cl_utilization":flight_envelope["positive_manoeuvre_cl_utilization"],"negative_manoeuvre_cl_utilization":flight_envelope["negative_manoeuvre_cl_utilization"],"vertical_gust_cl_utilization":vertical_gust_screen["clmax_utilization"],"sixdof_worst_gust_cl_utilization":max_dynamic_gust_cl_util,"worst_gust_cl_utilization":max_gust_cl_util,"cruise_drag_N":drag.total_drag_N,"cruise_bus_power_W":drag.total_cruise_bus_power_W,"endurance_at_cruise_h":endurance_at_cruise_h,"usable_h2_Wh":usable_h2_Wh,"landing_legs_CdA_m2":drag.landing_legs_CdA_m2,"landing_legs_drag_N":drag.landing_legs_drag_N,"forward_transition_duration_s":mission["forward_transition"].duration_s,"reverse_transition_duration_s":mission["reverse_transition"].duration_s,"mission_energy_Wh":mission["total_profile_energy_Wh"],"h2_used_kg":ems.summary.get("h2_used_kg"),"final_battery_soc":ems.summary.get("final_battery_soc"),"wing_spar_od_mm":structure["summary"]["recommended_wing_spar_od_mm"],"wing_spar_id_mm":structure["summary"]["recommended_wing_spar_id_mm"],"horizontal_tail_spar_od_mm":structure["summary"]["horizontal_tail_recommended_spar_od_mm"],"horizontal_tail_spar_id_mm":structure["summary"]["horizontal_tail_recommended_spar_id_mm"],"vertical_tail_spar_od_mm":structure["summary"]["vertical_tail_recommended_spar_od_mm"],"vertical_tail_spar_id_mm":structure["summary"]["vertical_tail_recommended_spar_id_mm"],"boom_od_mm":structure["summary"]["recommended_boom_od_mm"],"boom_id_mm":structure["summary"]["recommended_boom_id_mm"],"motor_mount_limit_thrust_N":structure["summary"]["required_motor_mount_limit_thrust_N"],"landing_leg_od_mm":structure["summary"].get("recommended_landing_leg_od_mm"),"landing_leg_id_mm":structure["summary"].get("recommended_landing_leg_id_mm"),"post_structure_15kg_zero_pitch_front_motor_N":front_each,"post_structure_15kg_zero_pitch_rear_motor_N":rear_each,"rear_thrust_recovery_factor":rear_recovery,"fuel_cell_cooling_required_airflow_cfm":cooling.required_airflow_cfm,"fuel_cell_cooling_estimated_airflow_cfm":cooling.estimated_operating_airflow_cfm,"fuel_cell_cooling_airflow_margin":cooling.airflow_margin_ratio,"fuel_cell_cooling_geometry_pass":cooling.overall_geometry_pass,"fuel_cell_cooling_drag_N":cooling.cooling_drag_at_cruise_N,"structural_closure_iterations":len(closure_history)},"mass_properties":{"pre_structure":mass_pre.to_dict(),"post_structure":mass_final.to_dict()},"coupled_closure":{"converged":bool(closure_history and closure_history[-1]["mass_residual_kg"]<=2e-4 and closure_history[-1]["cg_residual_m"]<=2e-5),"history":closure_history},"aero_propulsion":{"drag":drag.to_dict(),"layout":layout.to_dict(),"lift_reference":lift_ref.to_dict(),"lift_15kg":lift_ceiling.to_dict(),"wing_15kg":wing_ceiling},"mission":{"forward_transition":mission["forward_transition"].to_dict(include_samples=False),"reverse_transition":mission["reverse_transition"].to_dict(include_samples=False),"stage_energy_Wh":mission["stage_energy_Wh"],"total_profile_energy_Wh":mission["total_profile_energy_Wh"],"cruise_bus_power_W":mission["cruise_bus_power_W"]},"hybrid_power":{"feasible":ems.feasible,"failure_reasons":ems.failure_reasons,"warnings":ems.warnings,"summary":ems.summary,"gates":[x.__dict__ for x in ems.gates],"source_ledger":{k:v.__dict__ for k,v in reference_sources().items()}},"sixdof_control":control_cases,"structures":structure,"hardware_selection":cfg.get("hardware_selection_result"),"airfoil_model":cfg.get("airfoil_model"),"fuel_cell_cooling":cooling.to_dict(),"flight_envelope":{**flight_envelope,"vertical_gust_screen":vertical_gust_screen,"sixdof_worst_clmax_utilization":max_dynamic_gust_cl_util},"tail_control_authority":tail_control_authority,"aerodynamic_derivatives":{"mode":str((cfg.get("avl_derivatives") or {}).get("mode","approximate")),"status":six_cfg["aerodynamics"].get("derivative_status"),"AVL":avl_final,"active":{k:six_cfg["aerodynamics"].get(k) for k in ("CL_alpha_per_rad","wing_CL_alpha_per_rad","Cm_alpha_per_rad","CY_beta","CY_p","CY_r","Cl_beta","Cl_p","Cl_r","Cl_da","Cl_dr","Cm_q","Cm_de","Cn_beta","Cn_p","Cn_r","Cn_da","Cn_dr","CY_dr")}},"main_wing_autosizing":main_wing_autosizing,"tail_planform_autosizing":tail_planform_autosizing,"gates":gates,"fidelity_note":"Integrated-v4 closure/optimization is screening fidelity. Airfoil polars are used directly where supplied; missing airfoils retain explicit screening fallbacks. Selected motor/prop/battery data remain subject to supplier/bench validation and pusher forward-flight correlation.","run_environment":{"python":platform.python_version(),"platform":platform.platform()}}
 
     # Top-level: summary + configs. Supporting artifacts live under details/.
     details = out / "details"
@@ -1241,6 +1355,7 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
             "main_wing_autosizing": main_wing_autosizing,
             "tail_planform_autosizing": tail_planform_autosizing,
             "tail_control_authority": tail_control_authority,
+            "aerodynamic_derivatives": result.get("aerodynamic_derivatives", {}),
             "main_wing_span_m": float(d["wing_span_m"]),
             "main_wing_root_chord_m": float(d["main_wing_root_chord_m"]),
             "main_wing_taper_ratio": float(d["main_wing_taper_ratio"]),

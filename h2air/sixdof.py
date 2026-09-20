@@ -139,7 +139,10 @@ class Model:
         self.AR=self.b*self.b/self.S; self.k=1/(pi*self.AR*float(ad['oswald_efficiency']))
         cg=float(a['cg_station_x_m']); np_x=float(a['neutral_point_station_x_m'])
         self.static_margin=(np_x-cg)/self.c if static_margin_override is None else float(static_margin_override)
-        self.Cma=-self.CLalpha*self.static_margin
+        if static_margin_override is None and ad.get('Cm_alpha_per_rad') is not None:
+            self.Cma=float(ad['Cm_alpha_per_rad'])
+        else:
+            self.Cma=-self.CLalpha*self.static_margin
         self.motor_r=[phase3_station_to_body(s,cg,float(a['cg_z_up_m'])) for s in a['lift_motor_stations_m']]
         self.rotation=np.array(a['lift_motor_rotation_sign'],dtype=float)
         self.r_pusher=phase3_station_to_body(a['pusher_station_m'],cg,float(a['cg_z_up_m']))
@@ -168,8 +171,16 @@ class Model:
             CD=float(ad['CD0_folded'])+self.k*CL*CL+0.05*beta*beta
         CY=float(ad['CY_beta'])*beta+float(ad['CY_p'])*ph+float(ad['CY_r'])*rh+float(ad['CY_dr'])*dr
         Cl=float(ad['Cl_beta'])*beta+float(ad['Cl_p'])*ph+float(ad['Cl_r'])*rh+float(ad['Cl_da'])*da+float(ad['Cl_dr'])*dr
-        airfoil_cm=float(polar_point.get('CM',0.0)) if polar_point is not None else float(ad['Cm0'])
-        Cm=airfoil_cm+self.Cma*(alpha-self.alpha0)+float(ad['Cm_q'])*qh+float(ad['Cm_de'])*de
+        if str(ad.get('moment_reference_mode','legacy')).lower()=='avl_trim':
+            # Linearize total-aircraft pitching moment about AVL's trimmed
+            # cruise state. This avoids mixing total-aircraft AVL Cma/Cmde with
+            # a wing-only airfoil CM intercept.
+            a_ref=radians(float(ad['avl_trim_alpha_deg']))
+            de_ref=radians(float(ad['avl_trim_elevator_deg']))
+            Cm=self.Cma*(alpha-a_ref)+float(ad['Cm_q'])*qh+float(ad['Cm_de'])*(de-de_ref)
+        else:
+            airfoil_cm=float(polar_point.get('CM',0.0)) if polar_point is not None else float(ad['Cm0'])
+            Cm=airfoil_cm+self.Cma*(alpha-self.alpha0)+float(ad['Cm_q'])*qh+float(ad['Cm_de'])*de
         Cn=float(ad['Cn_beta'])*beta+float(ad['Cn_p'])*ph+float(ad['Cn_r'])*rh+float(ad['Cn_da'])*da+float(ad['Cn_dr'])*dr
         L=qbar*self.S*CL; D=qbar*self.S*CD; Y=qbar*self.S*CY
         ca,sa=cos(alpha),sin(alpha)
@@ -249,7 +260,10 @@ class Model:
             st=State(0,np.array([0,0,-30.0]),np.array([speed_mps*cos(alpha),0,speed_mps*sin(alpha)]),q,np.zeros(3),np.zeros(4),0,np.array([0,de,0]))
             ar=self.aero(st,np.zeros(3)); R=rot_body_to_ned(q); Fg=R.T@np.array([0,0,self.m*G]); F=ar.force_body+Fg+np.array([Tp,0,0]); M=ar.moment_body+np.cross(self.r_pusher,np.array([Tp,0,0]))
             return [F[0]/self.m,F[2]/self.m,M[1]/max(self.I[1,1],.1)]
-        sol=least_squares(fun,np.array([radians(6),radians(5),12.0]),bounds=([radians(-5),radians(-25),0],[radians(18),radians(25),80]))
+        ad=self.cfg['aerodynamics']
+        alpha_guess=radians(float(ad.get('avl_trim_alpha_deg',6.0)))
+        elevator_guess=radians(float(ad.get('avl_trim_elevator_deg',5.0)))
+        sol=least_squares(fun,np.array([alpha_guess,elevator_guess,12.0]),bounds=([radians(-5),radians(-25),0],[radians(18),radians(25),80]))
         alpha,de,Tp=sol.x
         return {'success':bool(sol.cost<1e-6),'alpha_deg':degrees(alpha),'elevator_deg':degrees(de),'pusher_thrust_N':Tp,'residual_norm':float(np.linalg.norm(fun(sol.x))),'static_margin':self.static_margin,'Cm_alpha_per_rad':self.Cma}
 
