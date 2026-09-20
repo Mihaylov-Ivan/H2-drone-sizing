@@ -298,37 +298,37 @@
     },
     {
       "name": "horizontal_tail_span",
-      "value": 829.6142227057785,
+      "value": 807.7104384866682,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_half_span",
-      "value": 414.80711135288925,
+      "value": 403.8552192433341,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_root_chord",
-      "value": 180.52781607106903,
+      "value": 266.5554666568577,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_tip_chord",
-      "value": 136.33101212887533,
+      "value": 150.37530389351022,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_mac",
-      "value": 159.4568734945347,
+      "value": 213.8610972946719,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_le_x",
-      "value": 1010.3617816263663,
+      "value": 996.7607256763321,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -346,13 +346,13 @@
     },
     {
       "name": "horizontal_tail_thickness",
-      "value": 21.66333792852828,
+      "value": 31.986655998822922,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "horizontal_tail_taper_ratio",
-      "value": 0.7551800885643319,
+      "value": 0.5641426371010857,
       "unit": "unitless",
       "comment": "H2AIR CAD export"
     },
@@ -360,6 +360,30 @@
       "name": "horizontal_tail_NACA",
       "value": "NACA0012",
       "unit": "String",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "elevator_span_fraction",
+      "value": 0.9053995115282626,
+      "unit": "unitless",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "elevator_total_span",
+      "value": 731.3006364621081,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "elevator_chord_fraction",
+      "value": 0.3372515808662865,
+      "unit": "unitless",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "elevator_hinge_x_over_c",
+      "value": 0.6627484191337135,
+      "unit": "unitless",
       "comment": "H2AIR CAD export"
     },
     {
@@ -388,25 +412,25 @@
     },
     {
       "name": "vertical_tail_height",
-      "value": 324.81121252293934,
+      "value": 328.9447151695792,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_root_chord",
-      "value": 161.203277498156,
+      "value": 175.40069766779143,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_tip_chord",
-      "value": 87.89222743549932,
+      "value": 131.06134342135067,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_le_x",
-      "value": 1078.255057626753,
+      "value": 1071.7159498877263,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
@@ -418,13 +442,13 @@
     },
     {
       "name": "vertical_tail_thickness",
-      "value": 19.34439329977872,
+      "value": 21.048083720134972,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "vertical_tail_taper_ratio",
-      "value": 0.5452260574323913,
+      "value": 0.747211072498586,
       "unit": "unitless",
       "comment": "H2AIR CAD export"
     },
@@ -432,6 +456,30 @@
       "name": "vertical_tail_NACA",
       "value": "NACA0012",
       "unit": "String",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "rudder_height_fraction",
+      "value": 0.6988840439468871,
+      "unit": "unitless",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "rudder_height",
+      "value": 229.89421277267243,
+      "unit": "mm",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "rudder_chord_fraction",
+      "value": 0.3131209828818489,
+      "unit": "unitless",
+      "comment": "H2AIR CAD export"
+    },
+    {
+      "name": "rudder_hinge_x_over_c",
+      "value": 0.6868790171181511,
+      "unit": "unitless",
       "comment": "H2AIR CAD export"
     },
     {
@@ -496,13 +544,13 @@
     },
     {
       "name": "boom_OD",
-      "value": 24.0,
+      "value": 26.000000000000004,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },
     {
       "name": "boom_ID",
-      "value": 22.0,
+      "value": 24.0,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },

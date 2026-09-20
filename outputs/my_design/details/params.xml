@@ -362,42 +362,42 @@
     <ParamWithValue>
       <name>horizontal_tail_span</name>
       <typeCode>mm</typeCode>
-      <value>829.614 mm</value>
+      <value>807.710 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_half_span</name>
       <typeCode>mm</typeCode>
-      <value>414.807 mm</value>
+      <value>403.855 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_root_chord</name>
       <typeCode>mm</typeCode>
-      <value>180.528 mm</value>
+      <value>266.555 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_tip_chord</name>
       <typeCode>mm</typeCode>
-      <value>136.331 mm</value>
+      <value>150.375 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_mac</name>
       <typeCode>mm</typeCode>
-      <value>159.457 mm</value>
+      <value>213.861 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_le_x</name>
       <typeCode>mm</typeCode>
-      <value>1010.362 mm</value>
+      <value>996.761 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -418,14 +418,14 @@
     <ParamWithValue>
       <name>horizontal_tail_thickness</name>
       <typeCode>mm</typeCode>
-      <value>21.663 mm</value>
+      <value>31.987 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>horizontal_tail_taper_ratio</name>
       <typeCode>unitless</typeCode>
-      <value>0.7551800885643319</value>
+      <value>0.5641426371010857</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -433,6 +433,34 @@
       <name>horizontal_tail_NACA</name>
       <typeCode>String</typeCode>
       <value>NACA0012</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>elevator_span_fraction</name>
+      <typeCode>unitless</typeCode>
+      <value>0.9053995115282626</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>elevator_total_span</name>
+      <typeCode>mm</typeCode>
+      <value>731.301 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>elevator_chord_fraction</name>
+      <typeCode>unitless</typeCode>
+      <value>0.3372515808662865</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>elevator_hinge_x_over_c</name>
+      <typeCode>unitless</typeCode>
+      <value>0.6627484191337135</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -467,28 +495,28 @@
     <ParamWithValue>
       <name>vertical_tail_height</name>
       <typeCode>mm</typeCode>
-      <value>324.811 mm</value>
+      <value>328.945 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>vertical_tail_root_chord</name>
       <typeCode>mm</typeCode>
-      <value>161.203 mm</value>
+      <value>175.401 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>vertical_tail_tip_chord</name>
       <typeCode>mm</typeCode>
-      <value>87.892 mm</value>
+      <value>131.061 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>vertical_tail_le_x</name>
       <typeCode>mm</typeCode>
-      <value>1078.255 mm</value>
+      <value>1071.716 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -502,14 +530,14 @@
     <ParamWithValue>
       <name>vertical_tail_thickness</name>
       <typeCode>mm</typeCode>
-      <value>19.344 mm</value>
+      <value>21.048 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>vertical_tail_taper_ratio</name>
       <typeCode>unitless</typeCode>
-      <value>0.5452260574323913</value>
+      <value>0.747211072498586</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -517,6 +545,34 @@
       <name>vertical_tail_NACA</name>
       <typeCode>String</typeCode>
       <value>NACA0012</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rudder_height_fraction</name>
+      <typeCode>unitless</typeCode>
+      <value>0.6988840439468871</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rudder_height</name>
+      <typeCode>mm</typeCode>
+      <value>229.894 mm</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rudder_chord_fraction</name>
+      <typeCode>unitless</typeCode>
+      <value>0.3131209828818489</value>
+      <comment>H2AIR CAD export</comment>
+      <isKey>false</isKey>
+    </ParamWithValue>
+    <ParamWithValue>
+      <name>rudder_hinge_x_over_c</name>
+      <typeCode>unitless</typeCode>
+      <value>0.6868790171181511</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
@@ -593,14 +649,14 @@
     <ParamWithValue>
       <name>boom_OD</name>
       <typeCode>mm</typeCode>
-      <value>24.000 mm</value>
+      <value>26.000 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>
     <ParamWithValue>
       <name>boom_ID</name>
       <typeCode>mm</typeCode>
-      <value>22.000 mm</value>
+      <value>24.000 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>

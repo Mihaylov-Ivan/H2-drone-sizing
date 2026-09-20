@@ -623,7 +623,37 @@
   },
   "tail_autosizing": {
     "control_safety_factor": 1.1,
-    "note": "A 10% control safety factor tightens trim and elevator/rudder reserve limits during tail optimization. Tail volume coefficients are calibration references only; selected Vh/Vv are outputs. Normal-run 6-DOF remains an independent validation layer."
+    "note": "A 10% control safety factor tightens trim and control-reserve limits during joint tail/control optimization. Tail volume coefficients are calibration references only; selected Vh/Vv and control-surface fractions are outputs. Normal-run 6-DOF remains an independent validation layer.",
+    "control_surfaces": {
+      "AutoSize Elevator": true,
+      "AutoSize Rudder": true,
+      "elevator_span_fraction": 0.85,
+      "elevator_span_fraction_bounds": [
+        0.65,
+        0.95
+      ],
+      "elevator_chord_fraction": 0.3,
+      "elevator_chord_fraction_bounds": [
+        0.22,
+        0.38
+      ],
+      "rudder_height_fraction": 0.85,
+      "rudder_height_fraction_bounds": [
+        0.65,
+        0.95
+      ],
+      "rudder_chord_fraction": 0.3,
+      "rudder_chord_fraction_bounds": [
+        0.22,
+        0.4
+      ],
+      "preferred_elevator_span_fraction": 0.85,
+      "preferred_elevator_chord_fraction": 0.3,
+      "preferred_rudder_height_fraction": 0.85,
+      "preferred_rudder_chord_fraction": 0.3,
+      "rudder_gust_compensation_fraction": 0.5,
+      "note": "Jointly optimize elevator span/chord and rudder height/chord with the HT/VT planforms using AVL-derived derivatives. The rudder reserve screen requires authority to compensate 50% of the configured lateral-gust sideslip moment; full sideslip cancellation remains diagnostic only."
+    }
   },
   "aerodynamic_derivatives": {
     "mode": "AVL",
@@ -642,7 +672,7 @@
       "n_spanwise_tail": 8,
       "source": "RobotLocomotion/avl fork of MIT AVL",
       "version_commit": "b67837fa737afdf7a56655b044242619246b3ada",
-      "fidelity_note": "AVL derivatives use the lifting surfaces and control surfaces. Stall, viscous drag, propeller/VTOL flow interaction and separated flow remain in the existing dedicated model/screening methods."
+      "fidelity_note": "AVL derivatives use the current lifting surfaces and explicit aileron/elevator/rudder extents. Elevator span/chord and rudder height/chord may be optimizer-owned. Stall, viscous drag, propeller/VTOL flow interaction, hinge moments, servo torque, flutter and separated flow remain in separate models or require later validation."
     }
   }
 }

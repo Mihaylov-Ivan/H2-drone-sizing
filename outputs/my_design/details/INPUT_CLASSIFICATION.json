@@ -14,7 +14,10 @@
     "cad_export",
     "optimizer",
     "packaging_layout",
-    "fuel_cell_cooling"
+    "fuel_cell_cooling",
+    "flight_envelope",
+    "tail_autosizing",
+    "aerodynamic_derivatives"
   ],
   "auto_calculated_examples": [
     "fuselage total length from section lengths",
@@ -25,6 +28,7 @@
     "fuel-cell waste heat, required airflow, duct pressure loss and cooling-airflow margin",
     "horizontal-tail span/root-chord/taper/area from AutoSize Horizontal Tail",
     "vertical-tail height/root-chord/taper/area from AutoSize Vertical Tail",
+    "elevator span/chord fractions and rudder height/chord fractions from AVL-coupled control-surface autosizing",
     "component masses in LINEAR mode from kg/m x length",
     "CG and inertia tensor",
     "neutral point and static margin",
