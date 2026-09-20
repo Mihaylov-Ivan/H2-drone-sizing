@@ -547,7 +547,16 @@ def _auto_size_main_wing(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], Dict[s
             raise RuntimeError("AutoSize Main Wing found no candidate inside the configured planform bounds")
 
         ranked = sorted(evaluated, key=lambda x: (not x["feasible"], x["score"]))
-        best = ranked[0]
+        feasible_ranked = [x for x in ranked if x["feasible"]]
+        if not feasible_ranked:
+            best0 = ranked[0]
+            raise RuntimeError(
+                "AutoSize Main Wing found no feasible planform inside the configured bounds; "
+                f"best violations={best0['violations']}; area={best0['wing_area_m2']:.4f} m2; "
+                f"required={best0['required_area_with_margin_m2']:.4f} m2 "
+                f"({best0['governing_area_constraint']}); mass={best0['closed_mass_kg']:.3f} kg."
+            )
+        best = feasible_ranked[0]
         vals = best["values"]
         new_mass = float(best["closed_mass_kg"])
         geom_delta = 0.0
@@ -941,7 +950,7 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         int(d0.get("vertical_tail_autosize_local_samples", 18)) if auto_vt else 0,
         0,
     )
-    n_dynamic=max(int(d0.get("tail_dynamic_validation_candidates",12)),1)
+    n_dynamic=max(int(d0.get("tail_dynamic_validation_candidates",24)),1)
 
     def valid_geom(hs: float, hc: float, ht: float, vh: float, vc: float, vt: float):
         Sh = hs * hc * (1.0 + ht) / 2.0
