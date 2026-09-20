@@ -1,10 +1,10 @@
 name,category,mass_kg,load_factor,wing_root_bending_Nm,wing_torsion_Nm,boom_root_bending_Nm,boom_axial_N,max_motor_thrust_N,max_motor_mount_bending_Nm,tail_force_N,landing_leg_axial_N,landing_leg_bending_Nm,note
-reference_trimmed_hover,VTOL,14.62700368648656,1.0,26.816464271004502,24.65084718322529,0.0,0.0,38.2562200127768,1.9128110006388401,0.0,0.0,0.0,6-DOF/control unequal rotor allocation at reference mass.
-15kg_zero_pitch_design_VTOL,VTOL,15.0,1.0,44.40522864375,40.865732684543886,23.558732724605953,0.0,63.34825424952731,3.1674127124763656,0.0,0.0,0.0,Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry.
-15kg_3g_wingborne_manoeuvre,wingborne,15.0,3.0,186.63765781421458,25.7,0.0,0.0,0.0,0.0,283.0643731428283,0.0,0.0,Symmetric wing-borne structural manoeuvre screen.
-dive_tail_download,tail/boom,15.0,1.0,0.0,0.0,107.56446179427475,0.0,0.0,0.0,283.0643731428283,0.0,0.0,Horizontal-tail absolute CL design screen at configured dive speed.
-dive_crosswind_fin_load,tail/boom,15.0,1.0,0.0,0.0,107.56446179427475,0.0,0.0,0.0,184.24000000000004,0.0,0.0,Twin-fin side-force structural screen at configured dive speed.
-combined_boom_tail_plus_rear_rotor,tail/boom,15.0,1.0,0.0,0.0,131.1231945188807,30.0,55.414058250472685,0.0,0.0,0.0,0.0,"Conservative envelope combining boom tail load with rear lift-rotor bending; simultaneous occurrence is a sizing envelope, not a trajectory claim."
+reference_trimmed_hover,VTOL,14.48192181534267,1.0,26.550477955741936,24.290056577891747,0.0,0.0,38.7733939126634,1.9386696956331702,0.0,0.0,0.0,6-DOF/control unequal rotor allocation at reference mass.
+15kg_zero_pitch_design_VTOL,VTOL,15.0,1.0,44.40522864375001,40.599584363343965,22.9211944257839,0.0,64.84785037979512,3.2423925189897562,0.0,0.0,0.0,Aero/propulsion total design thrust redistributed to zero pitch moment using 6-DOF/control CG/rotor geometry.
+15kg_3g_wingborne_manoeuvre,wingborne,15.0,3.0,184.1693371331733,25.7,0.0,0.0,0.0,0.0,201.26029582442925,0.0,0.0,Symmetric wing-borne structural manoeuvre screen.
+dive_tail_download,tail/boom,15.0,1.0,0.0,0.0,76.47891241328311,0.0,0.0,0.0,201.26029582442925,0.0,0.0,Horizontal-tail absolute CL design screen at configured dive speed.
+dive_crosswind_fin_load,tail/boom,15.0,1.0,0.0,0.0,76.47891241328311,0.0,0.0,0.0,184.24000000000004,0.0,0.0,Twin-fin side-force structural screen at configured dive speed.
+combined_boom_tail_plus_rear_rotor,tail/boom,15.0,1.0,0.0,0.0,99.400106839067,30.0,53.91446212020488,0.0,0.0,0.0,0.0,"Conservative envelope combining boom tail load with rear lift-rotor bending; simultaneous occurrence is a sizing envelope, not a trajectory claim."
 pusher_axial_design,propulsion,15.0,1.0,0.0,0.0,0.0,30.0,0.0,0.0,0.0,0.0,0.0,Pusher design thrust divided across two booms.
 single_motor_mount_limit,local,15.0,1.0,0.0,0.0,0.0,0.0,79.553113864,3.9776556932,0.0,0.0,0.0,"Local motor-mount load requirement. Geometry/material absent, so stress remains NOT_EVALUATED."
 one_motor_out_remaining_motor_peak,degraded,15.0,1.0,0.0,0.0,0.0,0.0,79.553113864,3.9776556932,0.0,0.0,0.0,Structural local envelope for a surviving motor during motor-out recovery; flight controllability remains a 6-DOF/control/8 problem.

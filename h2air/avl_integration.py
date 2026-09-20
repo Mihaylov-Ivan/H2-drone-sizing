@@ -199,13 +199,30 @@ def render_avl_geometry(cfg: Mapping[str, Any], mass_result: Any, *, wing_only: 
 
 def _parse_avl_output(text: str) -> Dict[str, float]:
     vals: Dict[str, float] = {}
+    # First assignment wins. Later summary lines such as
+    # "Clb Cnr / Clr Cnb = ..." must not overwrite the true Cnb derivative.
     pat = re.compile(r"\b([A-Za-z][A-Za-z0-9]*)\s*=\s*([-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[Ee][-+]?\d+)?)")
     for key, raw in pat.findall(text):
+        if key in vals:
+            continue
         try:
             vals[key] = float(raw)
         except ValueError:
             pass
     return vals
+
+
+def _avl_get(vals: Mapping[str, float], *names: str) -> Optional[float]:
+    """Return the first named AVL token present in a parsed ST dump."""
+    for name in names:
+        if name in vals:
+            return float(vals[name])
+    return None
+
+
+def _control_token_names(prefix: str, index: int) -> tuple[str, ...]:
+    """Accept both `Cld1` and MIT AVL 3.5x `Cld01` control-derivative labels."""
+    return (f"{prefix}{index}", f"{prefix}{index:02d}")
 
 
 def _normalize_controls(vals: Mapping[str, float]) -> Dict[str, float]:
@@ -234,30 +251,28 @@ def _normalize_controls(vals: Mapping[str, float]) -> Dict[str, float]:
     # Controls are defined in this exporter as d1 aileron, d2 elevator, d3 rudder.
     # Normalize sign to the existing H2AIR controller convention:
     # +aileron -> +Cl, +elevator -> -Cm, +rudder -> -Cn.
-    ail_sign = 1.0
-    if vals.get("Cld1") is not None and float(vals["Cld1"]) < 0.0:
-        ail_sign = -1.0
-    elev_sign = 1.0
-    if vals.get("Cmd2") is not None and float(vals["Cmd2"]) > 0.0:
-        elev_sign = -1.0
-    rud_sign = 1.0
-    if vals.get("Cnd3") is not None and float(vals["Cnd3"]) > 0.0:
-        rud_sign = -1.0
+    cld1 = _avl_get(vals, *_control_token_names("Cld", 1))
+    cmd2 = _avl_get(vals, *_control_token_names("Cmd", 2))
+    cnd3 = _avl_get(vals, *_control_token_names("Cnd", 3))
+    ail_sign = -1.0 if cld1 is not None and cld1 < 0.0 else 1.0
+    elev_sign = -1.0 if cmd2 is not None and cmd2 > 0.0 else 1.0
+    rud_sign = -1.0 if cnd3 is not None and cnd3 > 0.0 else 1.0
 
-    control_map = {
-        "Cld1": ("Cl_da", ail_sign),
-        "Cnd1": ("Cn_da", ail_sign),
-        "Cmd2": ("Cm_de", elev_sign),
-        "CYd3": ("CY_dr", rud_sign),
-        "Cld3": ("Cl_dr", rud_sign),
-        "Cnd3": ("Cn_dr", rud_sign),
-    }
+    control_map = (
+        ("Cl_da", ail_sign, _control_token_names("Cld", 1)),
+        ("Cn_da", ail_sign, _control_token_names("Cnd", 1)),
+        ("Cm_de", elev_sign, _control_token_names("Cmd", 2)),
+        ("CY_dr", rud_sign, _control_token_names("CYd", 3)),
+        ("Cl_dr", rud_sign, _control_token_names("Cld", 3)),
+        ("Cn_dr", rud_sign, _control_token_names("Cnd", 3)),
+    )
     # AVL's control variables/printed control sensitivities are per degree of
     # DELCON. H2AIR's 6-DOF uses control derivatives per radian, so convert.
     per_degree_to_per_radian = 180.0 / pi
-    for src, (dst, sign) in control_map.items():
-        if src in vals:
-            out[dst] = sign * float(vals[src]) * per_degree_to_per_radian
+    for dst, sign, names in control_map:
+        raw = _avl_get(vals, *names)
+        if raw is not None:
+            out[dst] = sign * raw * per_degree_to_per_radian
 
     if "Xnp" in vals:
         out["neutral_point_station_x_m"] = float(vals["Xnp"])
@@ -310,6 +325,12 @@ def find_avl_executable(avl_cfg: Mapping[str, Any]) -> Optional[str]:
         p = shutil.which(str(requested)) or (str(requested) if Path(str(requested)).exists() else None)
         if p:
             return str(Path(p).resolve())
+    # Prefer a repo-local Windows/Linux binary if present (tools/bin/avl[.exe]).
+    repo_bin = Path(__file__).resolve().parents[1] / "tools" / "bin"
+    for name in ("avl.exe", "avl"):
+        candidate = repo_bin / name
+        if candidate.exists():
+            return str(candidate.resolve())
     p = shutil.which("avl")
     return str(Path(p).resolve()) if p else None
 
@@ -416,7 +437,8 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
             mapped["wing_CL_alpha_per_rad"] = wing_cla
 
         # Normalize the trim elevator sign using the same convention as Cm_de.
-        elev_sign = -1.0 if vals.get("Cmd2") is not None and float(vals["Cmd2"]) > 0.0 else 1.0
+        cmd2 = _avl_get(vals, *_control_token_names("Cmd", 2))
+        elev_sign = -1.0 if cmd2 is not None and cmd2 > 0.0 else 1.0
         trim = {
             "target_CL": float(cl_target),
             "alpha_deg": float(vals["Alpha"]) if "Alpha" in vals else None,
@@ -447,7 +469,9 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
             "wing_cla_cache_hit": wing_cache_hit,
             "raw_selected": {k: vals[k] for k in sorted(vals) if k in {
                 "CLa","Cma","Xnp","CYb","CYp","CYr","Clb","Clp","Clr",
-                "Cmq","Cnb","Cnp","Cnr","Cld1","Cnd1","Cmd2","CYd3","Cld3","Cnd3"
+                "Cmq","Cnb","Cnp","Cnr",
+                "Cld1","Cld01","Cnd1","Cnd01","Cmd2","Cmd02",
+                "CYd3","CYd03","Cld3","Cld03","Cnd3","Cnd03",
             }},
             "missing_required": missing,
             "stdout_tail": proc.stdout[-3000:],

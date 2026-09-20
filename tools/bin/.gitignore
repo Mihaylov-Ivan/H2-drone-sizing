@@ -1,0 +1,6 @@
+# Local AVL binaries (not committed). Place `avl.exe` (Windows) or `avl` (Linux/macOS) here.
+# Windows: download MIT AVL 3.52 from https://web.mit.edu/drela/Public/web/avl/avl352.exe
+#          and save it as tools/bin/avl.exe
+# The model auto-discovers this path when aerodynamic_derivatives.mode is AVL.
+*
+!.gitignore

@@ -36,6 +36,33 @@ def test_avl_parser_and_control_convention_mapping():
     assert out["Cn_beta"] > 0
 
 
+def test_avl_parser_accepts_mit_zero_padded_control_labels():
+    # MIT AVL 3.5x Windows builds print d01/d02/d03 instead of d1/d2/d3.
+    text = """
+ z' force CL |    CLa =   5.740725
+ y  mom.  Cm |    Cma =  -1.353318
+ x' mom.  Cl'|   Cld01 =  -0.006154
+ y  mom.  Cm |   Cmd02 =  -0.020756
+ y  force CY |   CYd03 =  -0.005703
+ z' mom.  Cn'|   Cnd03 =   0.001121
+ Neutral point  Xnp =   0.509607
+ """
+    out = _normalize_controls(_parse_avl_output(text))
+    assert out["Cl_da"] > 0
+    assert out["Cm_de"] < 0
+    assert out["Cn_dr"] < 0
+    assert out["CY_dr"] > 0
+
+
+def test_avl_parser_keeps_first_cnb_not_spiral_ratio():
+    text = """
+ z' mom.  Cn'|    Cna =  -0.000000    Cnb =   0.096634
+ Clb Cnr / Clr Cnb  =   0.053422    (  > 1 if spirally stable )
+ """
+    vals = _parse_avl_output(text)
+    assert vals["Cnb"] == 0.096634
+
+
 def test_avl_geometry_export_contains_current_surfaces_and_controls(model_config):
     # A mass result is supplied by the normal mass-properties pipeline in real use.
     from h2air.pipeline import _components_with_power, _mass_result
