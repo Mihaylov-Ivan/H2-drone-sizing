@@ -19,6 +19,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+from math import pi
 
 
 _CACHE: Dict[str, Dict[str, Any]] = {}
@@ -241,9 +242,12 @@ def _normalize_controls(vals: Mapping[str, float]) -> Dict[str, float]:
         "Cld3": ("Cl_dr", rud_sign),
         "Cnd3": ("Cn_dr", rud_sign),
     }
+    # AVL's control variables/printed control sensitivities are per degree of
+    # DELCON. H2AIR's 6-DOF uses control derivatives per radian, so convert.
+    per_degree_to_per_radian = 180.0 / pi
     for src, (dst, sign) in control_map.items():
         if src in vals:
-            out[dst] = sign * float(vals[src])
+            out[dst] = sign * float(vals[src]) * per_degree_to_per_radian
 
     if "Xnp" in vals:
         out["neutral_point_station_x_m"] = float(vals["Xnp"])
@@ -309,9 +313,21 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
         deriv_path = td_path / "stability.txt"
         geom_path.write_text(geometry, encoding="utf-8")
 
+        rho = float(cfg["sixdof_control"]["aerodynamics"].get("rho_kg_m3", 1.225))
+        speed = float(cfg["design"]["cruise_speed_mps"])
+        area = float(cfg["design"]["wing_area_m2"])
+        weight = float(mass_result.takeoff.total_mass_kg) * 9.80665
+        q = 0.5 * rho * speed * speed
+        cl_target = weight / max(q * area, 1e-9)
+
+        # Solve the actual cruise lifting condition and trim d2 (elevator) to
+        # zero pitching moment before requesting the derivative matrix. This
+        # keeps the linearized derivatives and trim reference internally
+        # consistent for a cambered wing and changing tail geometry.
         commands = "\n".join([
             "OPER",
-            "A A 0.0",
+            f"A C {cl_target:.8f}",
+            "D2 PM 0.0",
             "X",
             "ST",
             deriv_path.name,
@@ -332,11 +348,24 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
         vals = _parse_avl_output(text)
         mapped = _normalize_controls(vals)
 
+        # Normalize the trim elevator sign using the same convention as Cm_de.
+        elev_sign = -1.0 if vals.get("Cmd2") is not None and float(vals["Cmd2"]) > 0.0 else 1.0
+        trim = {
+            "target_CL": float(cl_target),
+            "alpha_deg": float(vals["Alpha"]) if "Alpha" in vals else None,
+            "elevator_deg": elev_sign * float(vals["elevator"]) if "elevator" in vals else None,
+            "Cmtot": float(vals["Cmtot"]) if "Cmtot" in vals else None,
+        }
+
         required_keys = {
             "CL_alpha_per_rad", "Cm_alpha_per_rad", "neutral_point_station_x_m",
             "Cm_de", "Cn_beta", "Cn_dr", "Cl_da",
         }
         missing = sorted(required_keys - set(mapped))
+        if trim["alpha_deg"] is None:
+            missing.append("trim_alpha_deg")
+        if trim["elevator_deg"] is None:
+            missing.append("trim_elevator_deg")
         status = "PASS" if proc.returncode == 0 and not missing else "FAIL"
         result: Dict[str, Any] = {
             "status": status,
@@ -346,6 +375,7 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
             "cache_hit": False,
             "geometry_sha256": hashlib.sha256(geometry.encode()).hexdigest(),
             "derivatives": mapped,
+            "trim": trim,
             "raw_selected": {k: vals[k] for k in sorted(vals) if k in {
                 "CLa","Cma","Xnp","CYb","CYp","CYr","Clb","Clp","Clr",
                 "Cmq","Cnb","Cnp","Cnr","Cld1","Cnd1","Cmd2","CYd3","Cld3","Cnd3"
