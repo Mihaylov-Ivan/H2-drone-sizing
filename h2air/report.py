@@ -281,7 +281,7 @@ def write_markdown_report(
             else ""
         ),
         f"- Fuselage wall keepout: **{_f(1000 * float(pkg_env.get('wall_clearance_m') or 0), 1)} mm** "
-        f"(circular cross-section; packaging gate fails on radial protrusion)",
+        f"({d.get('fuselage_cross_section', 'unknown')} cross-section; enforced by the packaging containment/collision screen)",
         "",
         "## Mass & balance",
         "",
@@ -368,7 +368,8 @@ def write_markdown_report(
             f"with **{_f(_get(r,'tail_control_authority','safety_factor',default=None),2)}x** safety factor; "
             f"trim elevator **{_f(_get(r,'tail_control_authority','trim_elevator_deg',default=None),1)} deg**, "
             f"worst vertical-gust elevator **{_f(_get(r,'tail_control_authority','worst_abs_elevator_deg',default=None),1)} deg**, "
-            f"lateral-gust rudder **{_f(_get(r,'tail_control_authority','required_rudder_deg',default=None),1)} deg**"
+            f"directional Cnβ **{_f(_get(r,'tail_control_authority','derivatives','Cn_beta_per_rad',default=None),3)} /rad**, "
+            f"Cnr **{_f(_get(r,'aerodynamic_derivatives','active','Cn_r',default=None),3)} /rad**"
             if _get(r,'tail_control_authority',default=None) is not None else ""
         ),
         (
