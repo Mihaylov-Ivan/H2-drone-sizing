@@ -23,6 +23,7 @@ from math import pi
 
 
 _CACHE: Dict[str, Dict[str, Any]] = {}
+_WING_CLA_CACHE: Dict[str, float] = {}
 
 
 def _f(x: Any) -> float:
@@ -79,8 +80,12 @@ def _section(
     return "\n".join(lines)
 
 
-def render_avl_geometry(cfg: Mapping[str, Any], mass_result: Any) -> str:
-    """Render the current aircraft lifting-surface geometry as an AVL file."""
+def render_avl_geometry(cfg: Mapping[str, Any], mass_result: Any, *, wing_only: bool = False) -> str:
+    """Render the current aircraft lifting-surface geometry as an AVL file.
+
+    wing_only=True is used for main-wing gust/stall lift slope so whole-aircraft
+    tail lift is not incorrectly charged against the main-wing CLmax margin.
+    """
     d = cfg["design"]
     avl_cfg = cfg.get("avl_derivatives") or {}
 
@@ -164,6 +169,11 @@ def render_avl_geometry(cfg: Mapping[str, Any], mass_result: Any) -> str:
         _section(xle_ail, y_ail, wing_z, chord_ail, twist_ail, naca=wing_naca, control=aileron),
         _section(wing_xle_tip, wing_half, wing_z, wing_tip, wing_twist_tip, naca=wing_naca, control=aileron),
         "",
+    ]
+    if wing_only:
+        return "\n".join(lines).rstrip() + "\n"
+
+    lines += [
         "SURFACE",
         "HorizontalTail",
         f"{max(6,nch-2)} 1.0 {nspan_t} 1.0",
@@ -272,6 +282,28 @@ def _cache_key(geometry: str, executable: str, avl_cfg: Mapping[str, Any]) -> st
     return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
 
 
+def _wing_cache_key(cfg: Mapping[str, Any], executable: str) -> str:
+    d = cfg["design"]
+    avl_cfg = cfg.get("avl_derivatives") or {}
+    payload = {
+        "executable": executable,
+        "span": d.get("wing_span_m"),
+        "area": d.get("wing_area_m2"),
+        "root": d.get("main_wing_root_chord_m"),
+        "taper": d.get("main_wing_taper_ratio"),
+        "mac": d.get("wing_mac_m"),
+        "ac_x": d.get("wing_ac_x_m"),
+        "twist_root": d.get("main_wing_twist_root_deg"),
+        "twist_tip": d.get("main_wing_twist_tip_deg"),
+        "sweep": d.get("main_wing_sweep_deg"),
+        "naca": d.get("main_wing_naca_code"),
+        "n_chordwise": avl_cfg.get("n_chordwise"),
+        "n_spanwise_wing": avl_cfg.get("n_spanwise_wing"),
+        "aileron_start": avl_cfg.get("aileron_start_semispan_fraction"),
+        "aileron_hinge": avl_cfg.get("aileron_hinge_fraction"),
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
+
 def find_avl_executable(avl_cfg: Mapping[str, Any]) -> Optional[str]:
     requested = avl_cfg.get("executable") or os.environ.get("AVL_EXECUTABLE")
     if requested:
@@ -348,6 +380,41 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
         vals = _parse_avl_output(text)
         mapped = _normalize_controls(vals)
 
+        # Main-wing-only CLa is used by the main-wing CLmax gust/stall screen.
+        # Whole-aircraft CLa remains the correct value for rigid-body dynamics.
+        wing_key = _wing_cache_key(cfg, exe)
+        wing_cache_hit = False
+        if bool(avl_cfg.get("cache", True)) and wing_key in _WING_CLA_CACHE:
+            wing_cla = float(_WING_CLA_CACHE[wing_key])
+            wing_cache_hit = True
+        else:
+            wing_geom = render_avl_geometry(cfg, mass_result, wing_only=True)
+            wing_geom_path = td_path / "h2air_wing_only.avl"
+            wing_deriv_path = td_path / "wing_stability.txt"
+            wing_geom_path.write_text(wing_geom, encoding="utf-8")
+            wing_commands = "\n".join([
+                "OPER",
+                "A A 0.0",
+                "X",
+                "ST",
+                wing_deriv_path.name,
+                "",
+                "QUIT",
+                "",
+            ])
+            wing_proc = subprocess.run(
+                [exe, wing_geom_path.name],
+                input=wing_commands, text=True, capture_output=True,
+                cwd=td, timeout=timeout_s, check=False,
+            )
+            wing_text = wing_deriv_path.read_text(encoding="utf-8", errors="ignore") if wing_deriv_path.exists() else wing_proc.stdout
+            wing_vals = _parse_avl_output(wing_text)
+            wing_cla = float(wing_vals["CLa"]) if "CLa" in wing_vals else float("nan")
+            if wing_proc.returncode == 0 and wing_cla > 0.0 and bool(avl_cfg.get("cache", True)):
+                _WING_CLA_CACHE[wing_key] = wing_cla
+        if wing_cla > 0.0:
+            mapped["wing_CL_alpha_per_rad"] = wing_cla
+
         # Normalize the trim elevator sign using the same convention as Cm_de.
         elev_sign = -1.0 if vals.get("Cmd2") is not None and float(vals["Cmd2"]) > 0.0 else 1.0
         trim = {
@@ -358,7 +425,7 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
         }
 
         required_keys = {
-            "CL_alpha_per_rad", "Cm_alpha_per_rad", "neutral_point_station_x_m",
+            "CL_alpha_per_rad", "wing_CL_alpha_per_rad", "Cm_alpha_per_rad", "neutral_point_station_x_m",
             "Cm_de", "Cn_beta", "Cn_dr", "Cl_da",
         }
         missing = sorted(required_keys - set(mapped))
@@ -376,6 +443,8 @@ def evaluate_avl_derivatives(cfg: Mapping[str, Any], mass_result: Any) -> Dict[s
             "geometry_sha256": hashlib.sha256(geometry.encode()).hexdigest(),
             "derivatives": mapped,
             "trim": trim,
+            "wing_CL_alpha_per_rad": mapped.get("wing_CL_alpha_per_rad"),
+            "wing_cla_cache_hit": wing_cache_hit,
             "raw_selected": {k: vals[k] for k in sorted(vals) if k in {
                 "CLa","Cma","Xnp","CYb","CYp","CYr","Clb","Clp","Clr",
                 "Cmq","Cnb","Cnp","Cnr","Cld1","Cnd1","Cmd2","CYd3","Cld3","Cnd3"
