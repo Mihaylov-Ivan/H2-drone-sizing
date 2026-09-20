@@ -624,5 +624,25 @@
   "tail_autosizing": {
     "control_safety_factor": 1.1,
     "note": "A 10% control safety factor tightens trim and elevator/rudder reserve limits during tail optimization. Tail volume coefficients are calibration references only; selected Vh/Vv are outputs. Normal-run 6-DOF remains an independent validation layer."
+  },
+  "aerodynamic_derivatives": {
+    "mode": "AVL",
+    "note": "AVL mode automatically exports the current wing/HT/VT geometry and runs AVL for every geometry/mass state requested by the coupled sizing model. Set mode='approximate' to use the internal screening derivative assumptions only.",
+    "avl": {
+      "required": true,
+      "executable": null,
+      "timeout_s": 12,
+      "cache": true,
+      "aileron_start_semispan_fraction": 0.6,
+      "aileron_hinge_fraction": 0.7,
+      "elevator_hinge_fraction": 0.7,
+      "rudder_hinge_fraction": 0.7,
+      "n_chordwise": 8,
+      "n_spanwise_wing": 16,
+      "n_spanwise_tail": 8,
+      "source": "RobotLocomotion/avl fork of MIT AVL",
+      "version_commit": "b67837fa737afdf7a56655b044242619246b3ada",
+      "fidelity_note": "AVL derivatives use the lifting surfaces and control surfaces. Stall, viscous drag, propeller/VTOL flow interaction and separated flow remain in the existing dedicated model/screening methods."
+    }
   }
 }
