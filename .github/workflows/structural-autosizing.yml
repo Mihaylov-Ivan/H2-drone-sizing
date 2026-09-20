@@ -33,7 +33,7 @@ jobs:
           which avl
           test -x "$(which avl)"
       - name: Focused regression tests
-        run: pytest -q tests/test_cots_tubes.py tests/test_recommended_structure_gate.py tests/test_integrated_model.py tests/test_v3_user_inputs.py::test_default_primary_structure_is_solver_owned
+        run: pytest -q tests/test_cots_tubes.py tests/test_recommended_structure_gate.py tests/test_avl_integration.py tests/test_integrated_model.py tests/test_v3_user_inputs.py::test_default_primary_structure_is_solver_owned
       - name: Generate structurally closed design
         run: python run_model.py --config config/user_inputs.json --output ci_structural --no-histories
       - uses: actions/upload-artifact@v4
