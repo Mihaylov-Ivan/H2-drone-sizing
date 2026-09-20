@@ -136,7 +136,7 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
             for key in (
                 "CL_alpha_per_rad","CY_beta","CY_p","CY_r",
                 "Cl_beta","Cl_p","Cl_r","Cl_da","Cl_dr",
-                "Cm_q","Cm_de",
+                "Cm_alpha_per_rad","Cm_q","Cm_de",
                 "Cn_beta","Cn_p","Cn_r","Cn_da","Cn_dr",
                 "CY_dr",
             ):
@@ -146,6 +146,11 @@ def _sync_design(cfg: Mapping[str,Any], mass_result=None):
                 xnp=float(avld["neutral_point_station_x_m"])
                 d["neutral_point_station_x_m"]=xnp
                 s6["aircraft"]["neutral_point_station_x_m"]=xnp
+            avl_trim=avl_result.get("trim") or {}
+            if avl_trim.get("alpha_deg") is not None and avl_trim.get("elevator_deg") is not None:
+                ad6["moment_reference_mode"]="AVL_trim"
+                ad6["avl_trim_alpha_deg"]=float(avl_trim["alpha_deg"])
+                ad6["avl_trim_elevator_deg"]=float(avl_trim["elevator_deg"])
             ad6["derivative_status"]="AVL_automated_geometry_derived"
             ad6["avl_result"]=deepcopy(avl_result)
             ad6["tail_effectiveness_scaling"]["status"]="superseded_by_AVL"
