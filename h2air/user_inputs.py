@@ -399,6 +399,8 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     if min(cfg["avl_derivatives"]["n_chordwise"], cfg["avl_derivatives"]["n_spanwise_wing"], cfg["avl_derivatives"]["n_spanwise_tail"]) < 4:
         raise ValueError("AVL lattice counts must be >= 4")
     d["aero_derivative_mode"] = mode
+    if (d.get("auto_size_elevator") or d.get("auto_size_rudder")) and mode != "avl":
+        raise ValueError("AutoSize Elevator/Rudder requires aerodynamic_derivatives.mode='AVL' so control-surface geometry affects the derivatives")
 
     # -------- Fuselage geometry (nose/tail lengths fixed; midbody/diameters may auto in packaging) --------
     fus = u["fuselage"]
@@ -611,6 +613,58 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     if not (1.0 <= tail_control_sf <= 1.30):
         raise ValueError("tail_autosizing control_safety_factor must be between 1.0 and 1.30")
     d["tail_control_safety_factor"] = tail_control_sf
+
+    # Control-surface geometry can be optimized together with the HT/VT planforms.
+    # Defaults preserve the historical full-span/full-height 30%-chord controls
+    # for configs that do not opt in.
+    control_cfg = tail_auto_cfg.get("control_surfaces") or {}
+    auto_size_elevator = bool(control_cfg.get("AutoSize Elevator", control_cfg.get("auto_size_elevator", False)))
+    auto_size_rudder = bool(control_cfg.get("AutoSize Rudder", control_cfg.get("auto_size_rudder", False)))
+    d["auto_size_elevator"] = auto_size_elevator
+    d["auto_size_rudder"] = auto_size_rudder
+    d["elevator_span_fraction"] = float(control_cfg.get("elevator_span_fraction", 1.0))
+    d["elevator_chord_fraction"] = float(control_cfg.get("elevator_chord_fraction", 0.30))
+    d["rudder_height_fraction"] = float(control_cfg.get("rudder_height_fraction", 1.0))
+    d["rudder_chord_fraction"] = float(control_cfg.get("rudder_chord_fraction", 0.30))
+    d["elevator_span_fraction_bounds"] = [float(x) for x in control_cfg.get("elevator_span_fraction_bounds", [0.65, 0.95])]
+    d["elevator_chord_fraction_bounds"] = [float(x) for x in control_cfg.get("elevator_chord_fraction_bounds", [0.22, 0.38])]
+    d["rudder_height_fraction_bounds"] = [float(x) for x in control_cfg.get("rudder_height_fraction_bounds", [0.65, 0.95])]
+    d["rudder_chord_fraction_bounds"] = [float(x) for x in control_cfg.get("rudder_chord_fraction_bounds", [0.22, 0.40])]
+    d["preferred_elevator_span_fraction"] = float(control_cfg.get("preferred_elevator_span_fraction", 0.85))
+    d["preferred_elevator_chord_fraction"] = float(control_cfg.get("preferred_elevator_chord_fraction", 0.30))
+    d["preferred_rudder_height_fraction"] = float(control_cfg.get("preferred_rudder_height_fraction", 0.85))
+    d["preferred_rudder_chord_fraction"] = float(control_cfg.get("preferred_rudder_chord_fraction", 0.30))
+    for label, value in (
+        ("elevator_span_fraction", d["elevator_span_fraction"]),
+        ("rudder_height_fraction", d["rudder_height_fraction"]),
+    ):
+        if not (0.20 <= value <= 1.0):
+            raise ValueError(f"tail_autosizing control_surfaces {label} must be between 0.20 and 1.0")
+    for label, value in (
+        ("elevator_chord_fraction", d["elevator_chord_fraction"]),
+        ("rudder_chord_fraction", d["rudder_chord_fraction"]),
+    ):
+        if not (0.10 <= value <= 0.50):
+            raise ValueError(f"tail_autosizing control_surfaces {label} must be between 0.10 and 0.50")
+    for label, bounds in (
+        ("elevator_span_fraction_bounds", d["elevator_span_fraction_bounds"]),
+        ("elevator_chord_fraction_bounds", d["elevator_chord_fraction_bounds"]),
+        ("rudder_height_fraction_bounds", d["rudder_height_fraction_bounds"]),
+        ("rudder_chord_fraction_bounds", d["rudder_chord_fraction_bounds"]),
+    ):
+        if len(bounds) != 2 or bounds[0] >= bounds[1]:
+            raise ValueError(f"tail_autosizing control_surfaces {label} must be [low, high] with low < high")
+    if auto_size_elevator:
+        if not (d["elevator_span_fraction_bounds"][0] <= d["elevator_span_fraction"] <= d["elevator_span_fraction_bounds"][1]):
+            raise ValueError("elevator_span_fraction must lie inside elevator_span_fraction_bounds when AutoSize Elevator=true")
+        if not (d["elevator_chord_fraction_bounds"][0] <= d["elevator_chord_fraction"] <= d["elevator_chord_fraction_bounds"][1]):
+            raise ValueError("elevator_chord_fraction must lie inside elevator_chord_fraction_bounds when AutoSize Elevator=true")
+    if auto_size_rudder:
+        if not (d["rudder_height_fraction_bounds"][0] <= d["rudder_height_fraction"] <= d["rudder_height_fraction_bounds"][1]):
+            raise ValueError("rudder_height_fraction must lie inside rudder_height_fraction_bounds when AutoSize Rudder=true")
+        if not (d["rudder_chord_fraction_bounds"][0] <= d["rudder_chord_fraction"] <= d["rudder_chord_fraction_bounds"][1]):
+            raise ValueError("rudder_chord_fraction must lie inside rudder_chord_fraction_bounds when AutoSize Rudder=true")
+
     ht_auto_raw = htail.get("AutoSize Horizontal Tail", htail.get("auto_size_horizontal_tail"))
     if ht_auto_raw is None:
         auto_size_ht = str(htail.get("span_mode", "auto")).lower() == "auto"
