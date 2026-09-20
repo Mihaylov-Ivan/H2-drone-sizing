@@ -85,7 +85,7 @@ def test_auto_size_main_wing_trigger_and_bounds():
     assert d['auto_size_main_wing'] is True
     assert d['main_wing_span_mode']=='auto'
     assert d['main_wing_span_bounds_m']==[3.15,3.7]
-    assert d['main_wing_root_chord_bounds_m']==[0.27,0.35]
+    assert d['main_wing_root_chord_bounds_m']==[0.27,0.4]
     assert d['main_wing_taper_ratio_bounds']==[0.45,0.75]
     assert 'main_wing_span_m' not in default_space_for_config(c)
 
@@ -102,6 +102,13 @@ def test_auto_size_tail_triggers_and_bounds():
     assert d['vertical_tail_root_chord_bounds_m']==[0.12,0.26]
     assert d['vertical_tail_taper_ratio_bounds']==[0.4,0.8]
     assert abs(d['tail_control_safety_factor']-1.10)<1e-12
+    assert d['auto_size_elevator'] is True
+    assert d['auto_size_rudder'] is True
+    assert d['elevator_span_fraction_bounds']==[0.65,0.95]
+    assert d['elevator_chord_fraction_bounds']==[0.22,0.38]
+    assert d['rudder_height_fraction_bounds']==[0.65,0.95]
+    assert d['rudder_chord_fraction_bounds']==[0.22,0.4]
+    assert abs(d['rudder_gust_compensation_fraction']-0.50)<1e-12
     assert abs(d['horizontal_tail_reference_volume_coefficient']-0.44)<1e-12
     assert abs(d['vertical_tail_reference_volume_coefficient']-0.0255)<1e-12
     assert 'horizontal_tail_minimum_volume_coefficient' not in d
@@ -109,6 +116,14 @@ def test_auto_size_tail_triggers_and_bounds():
     space=default_space_for_config(c)
     assert 'horizontal_tail_span_m' not in space
     assert 'vertical_tail_height_m' not in space
+
+
+def test_tail_control_surface_autosizing_requires_avl(tmp_path):
+    import pytest
+    u=json.loads((ROOT/'config'/'user_inputs.json').read_text())
+    u['aerodynamic_derivatives']['mode']='approximate'
+    with pytest.raises(ValueError, match='AutoSize Elevator/Rudder requires'):
+        load_model_config(_write(tmp_path,u))
 
 
 def test_hardcoded_tail_planforms_are_preserved(tmp_path):
@@ -191,6 +206,8 @@ def test_user_inputs_from_design_values_locks_spans(tmp_path):
         'horizontal_tail_root_chord_m':0.24,'horizontal_tail_taper_ratio':0.62,
         'vertical_tail_ac_x_m':1.02,'vertical_tail_height_m':0.3,
         'vertical_tail_root_chord_m':0.19,'vertical_tail_taper_ratio':0.55,
+        'elevator_span_fraction':0.82,'elevator_chord_fraction':0.31,
+        'rudder_height_fraction':0.88,'rudder_chord_fraction':0.34,
         'lift_row_center_x_m':0.43,'battery_x_m':0.38,'fuel_cell_x_m':0.15,
         'hydrogen_cylinder_x_m':0.53,
     })
@@ -204,6 +221,13 @@ def test_user_inputs_from_design_values_locks_spans(tmp_path):
     assert abs(out['lifting_surfaces']['horizontal_tail']['taper_ratio']-0.62)<1e-9
     assert abs(out['lifting_surfaces']['vertical_tail']['root_chord_m']-0.19)<1e-9
     assert abs(out['lifting_surfaces']['vertical_tail']['taper_ratio']-0.55)<1e-9
+    ctrl=out['tail_autosizing']['control_surfaces']
+    assert ctrl['AutoSize Elevator'] is False
+    assert ctrl['AutoSize Rudder'] is False
+    assert abs(ctrl['elevator_span_fraction']-0.82)<1e-9
+    assert abs(ctrl['elevator_chord_fraction']-0.31)<1e-9
+    assert abs(ctrl['rudder_height_fraction']-0.88)<1e-9
+    assert abs(ctrl['rudder_chord_fraction']-0.34)<1e-9
     assert abs(out['component_positions']['battery_x_m']-0.38)<1e-9
     path=tmp_path/'u.json'
     path.write_text(json.dumps(out))
