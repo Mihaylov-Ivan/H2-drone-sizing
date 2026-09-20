@@ -687,7 +687,7 @@ def _tail_quasi_steady_authority(
         "diagnostic_rudder_to_hold_full_sideslip_deg":rudder_req_deg,
         "limits":{"trim_elevator_deg":trim_limit_deg,"gust_elevator_deg":elevator_limit_deg,"gust_rudder_deg":rudder_limit_deg,"surface_fraction":surface_fraction},
         "checks":checks,
-        "note":"Quasi-steady HT screen uses trim and vertical-gust elevator reserve. The rudder angle that would artificially hold the full crosswind sideslip at zero yaw moment is diagnostic only; VT sizing uses a surface-only lateral 6-DOF gust response so passive directional stability is credited correctly.",
+        "note":"Quasi-steady HT screen uses AVL cruise trim and vertical-gust elevator reserve. The rudder angle that would artificially hold the full crosswind sideslip at zero yaw moment is diagnostic only; VT sizing instead requires positive AVL directional static stability (Cn_beta > 0) and negative yaw damping (Cn_r < 0). Normal-run 6-DOF gust cases remain an independent dynamic validation.",
     }
 
 
