@@ -634,6 +634,9 @@ def build_internal_config(user: Mapping[str, Any], *, root: Path) -> Dict[str, A
     d["preferred_elevator_chord_fraction"] = float(control_cfg.get("preferred_elevator_chord_fraction", 0.30))
     d["preferred_rudder_height_fraction"] = float(control_cfg.get("preferred_rudder_height_fraction", 0.85))
     d["preferred_rudder_chord_fraction"] = float(control_cfg.get("preferred_rudder_chord_fraction", 0.30))
+    d["rudder_gust_compensation_fraction"] = float(control_cfg.get("rudder_gust_compensation_fraction", 0.50))
+    if not (0.0 < d["rudder_gust_compensation_fraction"] <= 1.0):
+        raise ValueError("tail_autosizing control_surfaces rudder_gust_compensation_fraction must be in (0, 1]")
     for label, value in (
         ("elevator_span_fraction", d["elevator_span_fraction"]),
         ("rudder_height_fraction", d["rudder_height_fraction"]),
