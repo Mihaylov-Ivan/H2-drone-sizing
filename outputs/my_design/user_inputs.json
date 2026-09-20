@@ -128,7 +128,28 @@
       ],
       "hardcoded_span_m": 0.828897,
       "target_tail_volume_coefficient": 0.44,
-      "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+      "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback",
+      "AutoSize Horizontal Tail": true,
+      "root_chord_bounds_m": [
+        0.18,
+        0.32
+      ],
+      "taper_ratio_bounds": [
+        0.45,
+        0.85
+      ],
+      "aspect_ratio_bounds": [
+        3.5,
+        6.5
+      ],
+      "minimum_tip_chord_m": 0.1,
+      "autosize_samples": 72,
+      "autosize_local_samples": 20,
+      "note": "AutoSize Horizontal Tail=true: jointly optimize span, root chord and taper from actual aircraft stability/control/structural requirements. target_tail_volume_coefficient is now a calibration reference for the screening aerodynamic derivatives, not a hard minimum. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+      "preferred_aspect_ratio": 4.5,
+      "preferred_taper_ratio": 0.6,
+      "profile_cd0_screen": 0.01,
+      "reference_tail_volume_coefficient": 0.44
     },
     "vertical_tail": {
       "count": 2,
@@ -143,7 +164,28 @@
       ],
       "hardcoded_span_m": 0.327641,
       "target_vertical_tail_volume_coefficient": 0.0255,
-      "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback"
+      "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback",
+      "AutoSize Vertical Tail": true,
+      "root_chord_bounds_m": [
+        0.12,
+        0.26
+      ],
+      "taper_ratio_bounds": [
+        0.4,
+        0.8
+      ],
+      "aspect_ratio_bounds": [
+        2,
+        4.5
+      ],
+      "minimum_tip_chord_m": 0.075,
+      "autosize_samples": 72,
+      "autosize_local_samples": 20,
+      "note": "AutoSize Vertical Tail=true: jointly optimize fin height, root chord and taper from actual directional stability/control/structural requirements. target_vertical_tail_volume_coefficient is now a calibration reference for the screening aerodynamic derivatives, not a hard minimum. Set false to use hardcoded_span_m, root_chord_m and taper_ratio exactly.",
+      "preferred_aspect_ratio": 2.5,
+      "preferred_taper_ratio": 0.6,
+      "profile_cd0_screen": 0.01,
+      "reference_vertical_tail_volume_coefficient": 0.0255
     }
   },
   "propulsion": {
@@ -565,5 +607,22 @@
       "removable_exhaust_grille_fastener": "M3",
       "note": "Drawing-only cooling details exported with the calculated inlet/exhaust positions and flow areas."
     }
+  },
+  "flight_envelope": {
+    "role": "inspection_route_following",
+    "maximum_bank_deg": 45,
+    "positive_manoeuvre_load_factor_g": 1.5,
+    "negative_manoeuvre_load_factor_g": -0.5,
+    "maximum_manoeuvre_clmax_utilization": 0.9,
+    "lateral_gust_mps": 5,
+    "vertical_gust_mps": 2,
+    "gust_duration_s": 2,
+    "maximum_gust_clmax_utilization": 0.95,
+    "structural_design_positive_load_factor_g": 3,
+    "note": "Non-aerobatic inspection-aircraft screen: 45 deg bank corresponds to ~1.41 g, so +1.5 g provides operational manoeuvre margin. -0.5 g covers unloading/gust response without implying aerobatics. Structure remains screened at +3.0 g. Gust screen uses 5 m/s lateral and +/-2 m/s vertical step gusts for 2 s, including a combined lateral+upward case."
+  },
+  "tail_autosizing": {
+    "control_safety_factor": 1.1,
+    "note": "A 10% control safety factor tightens trim and elevator/rudder reserve limits during tail optimization. Tail volume coefficients are calibration references only; selected Vh/Vv are outputs. Normal-run 6-DOF remains an independent validation layer."
   }
 }
