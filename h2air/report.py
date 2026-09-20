@@ -186,6 +186,18 @@ def write_markdown_report(
         f"- Vertical tails: **twin fins**, height **{_f(hv, 3)} m** each, total area **{_f(Sv, 3)} m²**, "
         f"root/tip **{_f(cvr, 3)}/{_f(_tip_chord(cvr, lamv), 3)} m**, "
         f"**{d.get('vertical_tail_naca_code', '—')}**, AC **x = {_f(d.get('vertical_tail_ac_x_m'), 4)} m**",
+        (
+            f"- Elevator: **{_f(100*float(d.get('elevator_span_fraction',1.0)),1)}% tail span**, "
+            f"**{_f(100*float(d.get('elevator_chord_fraction',0.30)),1)}% local chord** "
+            f"(hinge x/c **{_f(1.0-float(d.get('elevator_chord_fraction',0.30)),3)}**)"
+            + (" — **auto-sized with AVL**" if bool(_get(r,'tail_planform_autosizing','elevator',default=False)) else "")
+        ),
+        (
+            f"- Rudders: **{_f(100*float(d.get('rudder_height_fraction',1.0)),1)}% fin height**, "
+            f"**{_f(100*float(d.get('rudder_chord_fraction',0.30)),1)}% local chord** "
+            f"(hinge x/c **{_f(1.0-float(d.get('rudder_chord_fraction',0.30)),3)}**)"
+            + (" — **auto-sized with AVL**" if bool(_get(r,'tail_planform_autosizing','rudder',default=False)) else "")
+        ),
         "",
         "### Aerodynamic stability/control derivatives",
         f"- Derivative model: **{str(_get(r,'aerodynamic_derivatives','status',default='screening')).replace('_',' ')}** "
