@@ -187,6 +187,21 @@ def write_markdown_report(
         f"root/tip **{_f(cvr, 3)}/{_f(_tip_chord(cvr, lamv), 3)} m**, "
         f"**{d.get('vertical_tail_naca_code', '—')}**, AC **x = {_f(d.get('vertical_tail_ac_x_m'), 4)} m**",
         "",
+        "### Aerodynamic stability/control derivatives",
+        f"- Derivative model: **{str(_get(r,'aerodynamic_derivatives','status',default='screening')).replace('_',' ')}** "
+        f"(mode **{_get(r,'aerodynamic_derivatives','mode',default='approximate')}**)",
+        (
+            f"- AVL: **{_get(r,'aerodynamic_derivatives','AVL','status',default='—')}**, "
+            f"neutral point **x = {_f(_get(r,'aerodynamic_derivatives','AVL','derivatives','neutral_point_station_x_m',default=None),4)} m**, "
+            f"CLa **{_f(_get(r,'aerodynamic_derivatives','active','CL_alpha_per_rad',default=None),3)} /rad**, "
+            f"Cmde **{_f(_get(r,'aerodynamic_derivatives','active','Cm_de',default=None),3)} /rad**, "
+            f"Cnb **{_f(_get(r,'aerodynamic_derivatives','active','Cn_beta',default=None),3)} /rad**, "
+            f"Cndr **{_f(_get(r,'aerodynamic_derivatives','active','Cn_dr',default=None),3)} /rad**"
+            if _get(r,'aerodynamic_derivatives','mode',default='approximate') == 'avl'
+            else "- AVL not selected; internal screening derivatives active"
+        ),
+        "- AVL scope: inviscid lifting-surface stability/control derivatives; stall, viscous drag, propeller interaction and separated flow remain separate model/screening calculations.",
+        "",
         "### Booms & lift layout",
         (
             f"- Twin boom spacing (centre-to-centre): **{_f(boom_span, 3)} m**"
