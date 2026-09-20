@@ -18,6 +18,20 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install --upgrade pip
       - run: pip install -r requirements.txt pytest
+      - name: Build pinned AVL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran libx11-dev
+          git clone https://github.com/RobotLocomotion/avl.git /tmp/avl
+          git -C /tmp/avl checkout b67837fa737afdf7a56655b044242619246b3ada
+          cmake -S /tmp/avl -B /tmp/avl/build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+          cmake --build /tmp/avl/build -j2
+          cmake --install /tmp/avl/build
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Verify AVL executable
+        run: |
+          which avl
+          test -x "$(which avl)"
       - name: Focused regression tests
         run: pytest -q tests/test_cots_tubes.py tests/test_recommended_structure_gate.py tests/test_integrated_model.py tests/test_v3_user_inputs.py::test_default_primary_structure_is_solver_owned
       - name: Generate structurally closed design
