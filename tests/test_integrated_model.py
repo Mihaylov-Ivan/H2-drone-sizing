@@ -39,18 +39,26 @@ def test_tail_planform_autosizing_joint_geometry(integrated_result):
     assert a['enabled'] is True
     assert a['horizontal_tail'] is True
     assert a['vertical_tail'] is True
-    assert a['mode']=='performance_constrained_ht_vt_span_root_chord_taper'
+    assert a['elevator'] is True
+    assert a['rudder'] is True
+    assert a['mode']=='performance_constrained_tail_and_control_surface_geometry'
     assert a['tail_volume_role']=='calibration_reference_and_output_not_hard_constraint'
     assert abs(a['control_safety_factor']-1.10)<1e-12
     assert a['evaluated_candidates'] >= 2
     assert a['preliminary_feasible_candidates'] >= 1
-    assert a['control_authority_method']=='AVL_trim_vertical_elevator_reserve_plus_directional_stability_and_damping'
+    assert a['control_authority_method']=='AVL_trim_vertical_elevator_reserve_partial_lateral_gust_rudder_reserve_plus_directional_stability_and_damping'
     sel=a['selected']
     assert sel['feasible'] is True
     assert sel['control_authority']['pass'] is True
     vals=sel['resolved_values']
     assert {'horizontal_tail_span_m','horizontal_tail_root_chord_m','horizontal_tail_taper_ratio',
-            'vertical_tail_height_m','vertical_tail_root_chord_m','vertical_tail_taper_ratio'} <= set(vals)
+            'vertical_tail_height_m','vertical_tail_root_chord_m','vertical_tail_taper_ratio',
+            'elevator_span_fraction','elevator_chord_fraction',
+            'rudder_height_fraction','rudder_chord_fraction'} <= set(vals)
+    assert a['constraints']['elevator_span_fraction_bounds'][0] <= vals['elevator_span_fraction'] <= a['constraints']['elevator_span_fraction_bounds'][1]
+    assert a['constraints']['elevator_chord_fraction_bounds'][0] <= vals['elevator_chord_fraction'] <= a['constraints']['elevator_chord_fraction_bounds'][1]
+    assert a['constraints']['rudder_height_fraction_bounds'][0] <= vals['rudder_height_fraction'] <= a['constraints']['rudder_height_fraction_bounds'][1]
+    assert a['constraints']['rudder_chord_fraction_bounds'][0] <= vals['rudder_chord_fraction'] <= a['constraints']['rudder_chord_fraction_bounds'][1]
     assert sel['loaded_static_margin'] + 1e-9 >= a['constraints']['loaded_static_margin_target']
     # Vh/Vv are now outcomes, not hard floors.
     assert sel['horizontal_tail_volume_coefficient'] > 0
@@ -67,7 +75,7 @@ def test_tail_control_authority_has_quasi_steady_safety_margin(integrated_result
     assert s['pass'] is True
     assert all(x['pass'] for x in s['checks'])
     names={x['name'] for x in s['checks']}
-    assert {'cruise_trim_elevator','vertical_gust_elevator_reserve','directional_static_stability','directional_yaw_damping'} <= names
+    assert {'cruise_trim_elevator','vertical_gust_elevator_reserve','lateral_gust_rudder_reserve','directional_static_stability','directional_yaw_damping'} <= names
     assert next(g for g in r['gates'] if g['name']=='tail_control_authority')['status']=='PASS'
     assert s['worst_abs_elevator_deg'] <= s['limits']['gust_elevator_deg'] + 1e-9
 
