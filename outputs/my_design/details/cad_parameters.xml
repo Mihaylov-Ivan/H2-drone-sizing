@@ -1293,7 +1293,7 @@
     <ParamWithValue>
       <name>fc_cooling_inlet_center_x</name>
       <typeCode>mm</typeCode>
-      <value>255.250 mm</value>
+      <value>170.250 mm</value>
       <comment>H2AIR CAD export</comment>
       <isKey>false</isKey>
     </ParamWithValue>

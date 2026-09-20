@@ -687,29 +687,91 @@ function coolingSideSign(sideName, fallback = 'left') {
   return String(sideName || fallback).toLowerCase() === 'right' ? 1 : -1;
 }
 
-/** NACA-style side-inlet ramp face: flush at −x, full recess depth at +x. */
-function nacaRampGeometry(length, height, recess, outSign) {
+/**
+ * Classic NACA submerged-inlet silhouette in the skin plane (X–Z).
+ * Narrow forward lip, diverging sidewalls, wide aft throat — not a grille.
+ */
+function nacaInletPlanOutline(length, height, sidewallDeg, segments = 10) {
   const hx = 0.5 * length;
-  const hz = 0.5 * height;
-  const dy = -outSign * recess; // inward (toward fuselage centreline)
-  const positions = new Float32Array([
-    // ramp face
-    -hx, 0, -hz, hx, dy, -hz, hx, dy, hz, -hx, 0, hz,
-    // −z wall
-    -hx, 0, -hz, hx, 0, -hz, hx, dy, -hz,
-    // +z wall
-    -hx, 0, hz, hx, dy, hz, hx, 0, hz,
-    // aft face
-    hx, 0, -hz, hx, 0, hz, hx, dy, hz, hx, dy, -hz,
-  ]);
-  const indices = [
-    0, 1, 2, 0, 2, 3,
-    4, 5, 6,
-    7, 8, 9,
-    10, 11, 12, 10, 12, 13,
-  ];
+  const hzA = 0.5 * height;
+  const flare = Math.tan((Math.max(2, sidewallDeg) * Math.PI) / 180);
+  const hzF = Math.max(0.12 * hzA, hzA - flare * length);
+  const pts = [];
+  // Lower wall: forward → aft
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const x = -hx + t * length;
+    const z = -(hzF + (hzA - hzF) * t * t);
+    pts.push(new THREE.Vector2(x, z));
+  }
+  // Rounded aft throat (outside)
+  for (let i = 1; i <= 6; i++) {
+    const a = -Math.PI / 2 + (i / 6) * Math.PI;
+    pts.push(new THREE.Vector2(hx + 0.04 * length * Math.max(0, Math.cos(a)), hzA * Math.sin(a)));
+  }
+  // Upper wall: aft → forward
+  for (let i = segments; i >= 0; i--) {
+    const t = i / segments;
+    const x = -hx + t * length;
+    const z = hzF + (hzA - hzF) * t * t;
+    pts.push(new THREE.Vector2(x, z));
+  }
+  // Rounded forward tip
+  for (let i = 1; i <= 5; i++) {
+    const a = Math.PI / 2 + (i / 5) * Math.PI;
+    pts.push(new THREE.Vector2(-hx + 0.035 * length * Math.min(0, Math.cos(a)), hzF * Math.sin(a)));
+  }
+  return pts;
+}
+
+/** Diverging NACA ramp floor + sidewalls (recess grows aft). */
+function nacaInletRampGeometry(length, height, recess, sidewallDeg, outSign) {
+  const hx = 0.5 * length;
+  const hzA = 0.5 * height;
+  const flare = Math.tan((Math.max(2, sidewallDeg) * Math.PI) / 180);
+  const hzF = Math.max(0.12 * hzA, hzA - flare * length);
+  const dy = -outSign * recess;
+  const n = 8;
+  const positions = [];
+  const indices = [];
+  // Ramp floor strip
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    const x = -hx + t * length;
+    const y = t * dy;
+    const hz = hzF + (hzA - hzF) * t * t;
+    positions.push(x, y, -hz, x, y, hz);
+  }
+  for (let i = 0; i < n; i++) {
+    const a = i * 2;
+    indices.push(a, a + 2, a + 3, a, a + 3, a + 1);
+  }
+  // Sidewall skirts (flush skin y=0 down to ramp)
+  let base = positions.length / 3;
+  for (const sz of [-1, 1]) {
+    for (let i = 0; i <= n; i++) {
+      const t = i / n;
+      const x = -hx + t * length;
+      const y = t * dy;
+      const hz = hzF + (hzA - hzF) * t * t;
+      positions.push(x, 0, sz * hz, x, y, sz * hz);
+    }
+    for (let i = 0; i < n; i++) {
+      const a = base + i * 2;
+      if (sz < 0) indices.push(a, a + 1, a + 3, a, a + 3, a + 2);
+      else indices.push(a, a + 2, a + 3, a, a + 3, a + 1);
+    }
+    base += (n + 1) * 2;
+  }
+  // Aft throat face (opening into the plenum)
+  const th = positions.length / 3;
+  positions.push(
+    hx, 0, -hzA, hx, 0, hzA, hx, dy, hzA, hx, dy, -hzA,
+  );
+  indices.push(th, th + 1, th + 2, th, th + 2, th + 3);
+
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geo.setIndex(indices);
   geo.computeVertexNormals();
   return geo;
@@ -814,7 +876,7 @@ function coolingMeshes() {
     g.add(plenum);
   }
 
-  // --- Inlet (NACA-style flush side opening) ---
+  // --- Inlet (classic NACA submerged duct — single opening, no grille) ---
   {
     const side = str('fc_cooling_inlet_side', 'left');
     const outSign = coolingSideSign(side, 'left');
@@ -825,37 +887,64 @@ function coolingMeshes() {
     const panelH = mm('fc_cooling_inlet_panel_height');
     const recess = Math.max(mm('fc_cooling_inlet_recess_depth', 8), 0.002);
     const rampL = Math.max(mm('fc_cooling_inlet_ramp_length', panelL * 1000), 0.01);
+    const ductL = Math.min(panelL, rampL);
     const sidewallDeg = num('fc_cooling_inlet_sidewall_angle', 7);
-    const n = Math.max(1, Math.round(num('fc_cooling_inlet_slot_count', 1)));
-    const slotL = mm('fc_cooling_inlet_slot_length', panelL * 1000);
-    const slotW = mm('fc_cooling_inlet_slot_width', 6);
-    const slotGap = mm('fc_cooling_inlet_slot_gap', 3);
+    const lipR = Math.max(mm('fc_cooling_inlet_lip_radius', 2), 0.001);
+    // ExtrudeGeometry depth is +Z local; Rx(±90°) maps that onto ±Y (side-skin normal).
+    const rxInward = outSign > 0 ? -Math.PI / 2 : Math.PI / 2;
+    const rxOutward = -rxInward;
 
-    panelPlate(cx, cy, cz, panelL, panelH, inletMat, outSign);
-
+    // Dark cavity under the divergent planform (into the fuselage)
+    const cavityShape = new THREE.Shape(nacaInletPlanOutline(ductL * 0.98, panelH * 0.96, sidewallDeg));
     const cavity = new THREE.Mesh(
-      new THREE.BoxGeometry(panelL * 0.98, recess, panelH * 0.96),
+      new THREE.ExtrudeGeometry(cavityShape, {
+        depth: recess,
+        bevelEnabled: false,
+        curveSegments: 8,
+      }),
       voidMat,
     );
-    cavity.position.set(cx, cy - outSign * (0.5 * recess + skinEps * 0.5), cz);
+    cavity.rotation.x = rxInward;
+    cavity.position.set(cx, cy - outSign * skinEps, cz);
     g.add(cavity);
 
-    const ramp = new THREE.Mesh(nacaRampGeometry(rampL, panelH * 0.94, recess, outSign), inletMat);
+    const ramp = new THREE.Mesh(
+      nacaInletRampGeometry(ductL, panelH * 0.94, recess, sidewallDeg, outSign),
+      inletMat,
+    );
     ramp.position.set(cx, cy - outSign * skinEps, cz);
     g.add(ramp);
 
-    const wallAng = (sidewallDeg * Math.PI) / 180;
-    for (const sz of [-1, 1]) {
-      const wall = new THREE.Mesh(
-        new THREE.BoxGeometry(rampL * 0.9, recess * 0.95, 0.0015),
-        inletMat,
-      );
-      wall.position.set(cx, cy - outSign * 0.45 * recess, cz + sz * (0.5 * panelH - 0.002));
-      wall.rotation.x = sz * wallAng;
-      g.add(wall);
-    }
+    // Flush lip outline — the recognisable NACA duct mouth on the skin
+    const lipShape = new THREE.Shape(nacaInletPlanOutline(ductL, panelH, sidewallDeg));
+    const lipHolePts = nacaInletPlanOutline(ductL * 0.9, panelH * 0.82, sidewallDeg).slice().reverse();
+    lipShape.holes.push(new THREE.Path(lipHolePts));
+    const lip = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(lipShape, {
+        depth: Math.max(0.0018, lipR * 0.6),
+        bevelEnabled: true,
+        bevelThickness: Math.min(0.0012, lipR * 0.4),
+        bevelSize: Math.min(0.001, lipR * 0.35),
+        bevelSegments: 2,
+        curveSegments: 10,
+      }),
+      inletMat,
+    );
+    lip.rotation.x = rxOutward;
+    lip.position.set(cx, cy + outSign * skinEps, cz);
+    g.add(lip);
 
-    stackedSlots(cx, cy, cz, n, slotL, slotW, slotGap, inletMat, 0.0025, outSign, 0);
+    // Soft edge highlight so the divergent silhouette reads clearly
+    const edgePts = nacaInletPlanOutline(ductL, panelH, sidewallDeg).map(
+      (p) => new THREE.Vector3(cx + p.x, cy + outSign * (skinEps + 0.0015), cz + p.y),
+    );
+    edgePts.push(edgePts[0].clone());
+    const edge = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(edgePts),
+      new THREE.LineBasicMaterial({ color: COLORS.coolingInlet, transparent: true, opacity: 0.95 }),
+    );
+    g.add(edge);
+
     addPlenum(outSign, panelL, panelH, cx, cz, 'fc_cooling_inlet_plenum_gap_actual');
   }
 
@@ -1172,7 +1261,7 @@ function updateDims() {
     rows.push(['FC cooling arch.', str('fc_cooling_architecture', 'cross_fuselage')]);
     rows.push([
       'FC cooling inlet',
-      `${fmt(mm('fc_cooling_inlet_panel_length'))} × ${fmt(mm('fc_cooling_inlet_panel_height'))} · ${str('fc_cooling_inlet_side', 'left')} · ${Math.round(num('fc_cooling_inlet_slot_count', 0))} slots · recess ${fmt(mm('fc_cooling_inlet_recess_depth'))}`,
+      `${fmt(mm('fc_cooling_inlet_panel_length'))} × ${fmt(mm('fc_cooling_inlet_panel_height'))} · ${str('fc_cooling_inlet_side', 'left')} · NACA submerged duct · recess ${fmt(mm('fc_cooling_inlet_recess_depth'))}`,
     ]);
     rows.push([
       'FC cooling exhaust',

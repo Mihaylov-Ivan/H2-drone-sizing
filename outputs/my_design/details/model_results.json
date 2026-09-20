@@ -8674,7 +8674,7 @@
       "open_fraction": 0.6857142857142857,
       "type": "naca_style_flush_side_inlet",
       "side": "left",
-      "center_x_m": 0.25525000000000003,
+      "center_x_m": 0.17025,
       "center_z_m": -0.03310930732488546,
       "recess_depth_y_m": 0.008,
       "ramp_length_x_m": 0.17,

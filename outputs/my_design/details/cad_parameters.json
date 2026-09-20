@@ -1096,7 +1096,7 @@
     },
     {
       "name": "fc_cooling_inlet_center_x",
-      "value": 255.25000000000003,
+      "value": 170.25,
       "unit": "mm",
       "comment": "H2AIR CAD export"
     },

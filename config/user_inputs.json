@@ -572,11 +572,11 @@
       "ramp_length_x_m": 0.17,
       "sidewall_angle_deg": 7,
       "lip_radius_m": 0.002,
-      "center_x_offset_from_fc_m": 0,
+      "center_x_offset_from_fc_m": -0.085,
       "center_z_offset_from_fc_m": 0,
       "external_drag_coefficient_screen": 0.03,
       "cruise_pressure_recovery_fraction_screen": 0.15,
-      "note": "NACA-style shallow side inlet used as a fan-suction opening in hover. The cooling gate does not credit ram-air recovery."
+      "note": "NACA-style shallow side inlet used as a fan-suction opening in hover. center_x_offset_from_fc_m = -ramp_length/2 so the aft throat dumps at mid fuel-cell face. The cooling gate does not credit ram-air recovery."
     },
     "exhaust": {
       "type": "flush_fan_exhaust_grille",
