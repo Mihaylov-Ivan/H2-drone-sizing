@@ -44,10 +44,14 @@ def test_tail_planform_autosizing_joint_geometry(integrated_result):
     assert abs(a['control_safety_factor']-1.10)<1e-12
     assert a['evaluated_candidates'] >= 2
     assert a['preliminary_feasible_candidates'] >= 1
-    assert a['control_authority_method']=='quasi_steady_linearized_surface_authority'
+    assert a['control_authority_method']=='AVL_trim_vertical_elevator_reserve_plus_surface_only_6dof_lateral_gust'
+    assert a['dynamic_validation_candidates'] >= 1
+    assert a['dynamic_feasible_candidates'] >= 1
     sel=a['selected']
     assert sel['feasible'] is True
     assert sel['control_authority']['pass'] is True
+    assert sel['lateral_dynamic_authority']['pass'] is True
+    assert all(x['pass'] for x in sel['lateral_dynamic_authority']['checks'])
     vals=sel['resolved_values']
     assert {'horizontal_tail_span_m','horizontal_tail_root_chord_m','horizontal_tail_taper_ratio',
             'vertical_tail_height_m','vertical_tail_root_chord_m','vertical_tail_taper_ratio'} <= set(vals)
@@ -67,10 +71,13 @@ def test_tail_control_authority_has_quasi_steady_safety_margin(integrated_result
     assert s['pass'] is True
     assert all(x['pass'] for x in s['checks'])
     names={x['name'] for x in s['checks']}
-    assert {'cruise_trim_elevator','vertical_gust_elevator_reserve','lateral_gust_rudder_reserve','directional_static_stability'} <= names
+    assert {'cruise_trim_elevator','vertical_gust_elevator_reserve','directional_static_stability','directional_yaw_damping'} <= names
     assert next(g for g in r['gates'] if g['name']=='tail_control_authority')['status']=='PASS'
-    assert s['required_rudder_deg'] <= s['limits']['gust_rudder_deg'] + 1e-9
     assert s['worst_abs_elevator_deg'] <= s['limits']['gust_elevator_deg'] + 1e-9
+    dyn=r['tail_planform_autosizing']['selected']['lateral_dynamic_authority']
+    dnames={x['name'] for x in dyn['checks']}
+    assert {'lateral_gust_yaw_response','lateral_gust_rudder_utilization','lateral_gust_simulation_completion'} <= dnames
+    assert dyn['maximum_rudder_utilization'] <= dyn['checks'][1]['limit'] + 1e-9
 
 
 def test_automated_avl_derivatives_are_active(integrated_result):
