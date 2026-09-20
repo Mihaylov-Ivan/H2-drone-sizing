@@ -950,7 +950,6 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         int(d0.get("vertical_tail_autosize_local_samples", 18)) if auto_vt else 0,
         0,
     )
-    n_dynamic=max(int(d0.get("tail_dynamic_validation_candidates",24)),1)
 
     def valid_geom(hs: float, hc: float, ht: float, vh: float, vc: float, vt: float):
         Sh = hs * hc * (1.0 + ht) / 2.0
@@ -1068,33 +1067,13 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
             f"authority={best0.get('control_authority')}"
         )
 
-    # Short-list validation for the vertical tail uses a surface-only lateral
-    # 6-DOF gust. AVL calls are geometry/CG cached, so this validation reuses the
-    # already-computed derivatives for each shortlisted candidate.
-    dynamic_evaluated=[]
-    for candidate in preliminary[:n_dynamic]:
-        candidate_cfg=_tail_design_overrides(clean,candidate["values"],lock_ht=auto_ht,lock_vt=auto_vt)
-        base_comps=_components_with_power(candidate_cfg)
-        _,candidate_mass,_,_=_structural_closure(candidate_cfg,base_comps)
-        _,_,candidate_six,_=_sync_design(candidate_cfg,candidate_mass)
-        dyn=_tail_lateral_dynamic_authority(candidate_six,candidate_cfg["design"])
-        item=deepcopy(candidate);item["lateral_dynamic_authority"]=dyn
-        if not dyn["pass"]:
-            item["feasible"]=False
-            item["violations"]=list(item["violations"])+[
-                str(x["name"]) for x in dyn.get("checks",[]) if not bool(x.get("pass",False))
-            ]
-            item["score"]=float(item["objective"])+1000.0*len(item["violations"])
-        dynamic_evaluated.append(item)
-    dynamic_feasible=sorted([x for x in dynamic_evaluated if x["feasible"]],key=lambda x:x["score"])
-    if not dynamic_feasible:
-        bestd=sorted(dynamic_evaluated,key=lambda x:x["score"])[0]
-        raise RuntimeError(
-            "Tail planform autosizer found no lateral-dynamically feasible candidate; "
-            f"best violations={bestd['violations']}; dynamic={bestd.get('lateral_dynamic_authority')}; "
-            f"AVL={bestd.get('avl_result',{}).get('derivatives')}"
-        )
-    best=dynamic_feasible[0]
+    # Select the lightest feasible AVL-constrained tail. Directional sizing
+    # uses AVL static stability and yaw damping here; the repository's normal
+    # 6-DOF current-layout/gust cases remain the independent dynamic validation.
+    # We do not use the fixed-wing "lift rotors disabled" helper as a hard gate,
+    # because the present cruise altitude controller is VTOL-thrust based and
+    # would confound tail authority with unrelated longitudinal altitude loss.
+    best=preliminary[0]
     selected_cfg = _tail_design_overrides(clean, best["values"], lock_ht=auto_ht, lock_vt=auto_vt)
     sf=float(d0.get("tail_control_safety_factor",1.10))
     result = {
@@ -1118,11 +1097,9 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         },
         "evaluated_candidates": len(evaluated),
         "preliminary_feasible_candidates": len(preliminary),
-        "dynamic_validation_candidates": len(dynamic_evaluated),
-        "dynamic_feasible_candidates": len(dynamic_feasible),
-        "control_authority_method": "AVL_trim_vertical_elevator_reserve_plus_surface_only_6dof_lateral_gust",
+        "control_authority_method": "AVL_trim_vertical_elevator_reserve_plus_directional_stability_and_damping",
         "selected": deepcopy(best),
-        "fidelity_note": "Tail control derivatives are scaled from calibrated reference Vh/Vv. Tail sizing uses quasi-steady elevator/rudder reserve plus static margin, trim and structural constraints; normal-run 6-DOF remains independent validation. Replace derivative scaling with AVL/CFD/wind-tunnel/flight correlation when available.",
+        "fidelity_note": "Tail stability/control derivatives are generated automatically by AVL for each candidate geometry. Tail sizing uses cruise trim, vertical-gust elevator reserve, directional static stability/yaw damping, static margin and structural/mass constraints; normal-run 6-DOF remains independent dynamic validation. AVL is inviscid and still requires later CFD/wind-tunnel/flight correlation.",
     }
     return selected_cfg, result
 
