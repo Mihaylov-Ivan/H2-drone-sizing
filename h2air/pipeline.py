@@ -994,7 +994,15 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     preliminary = sorted([x for x in evaluated if x["feasible"]], key=lambda x:x["score"])
     if not preliminary:
         best0=sorted(evaluated,key=lambda x:x["score"])[0]
-        raise RuntimeError(f"Tail planform autosizer found no preliminary feasible candidate; best violations: {best0['violations']}")
+        raise RuntimeError(
+            "Tail planform autosizer found no preliminary feasible candidate; "
+            f"best violations: {best0['violations']}; "
+            f"geometry={best0.get('resolved_values')}; "
+            f"AVL_raw={best0.get('avl_result',{}).get('raw_selected')}; "
+            f"AVL_mapped={best0.get('avl_result',{}).get('derivatives')}; "
+            f"trim={best0.get('cruise_trim')}; "
+            f"authority={best0.get('control_authority')}"
+        )
 
     # The candidate-level quasi-steady authority screen already includes the
     # 1.10x trim/elevator/rudder reserve. Normal-run 6-DOF remains an independent
