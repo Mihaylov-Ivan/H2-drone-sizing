@@ -98,11 +98,11 @@
       "minimum_transition_speed_over_stall": 1.3,
       "auto_area_margin_factor": 1.04,
       "airfoil_data_mode": "database_polar_if_available_else_explicit_screening_fallback",
-      "note": "AutoSize Main Wing=true: jointly optimize span, root chord and taper using the current structurally closed iteration mass M2 for stall/transition sizing. The 1.30 V/Vstall requirement is the primary stall margin; auto_area_margin_factor=1.04 adds a modest area contingency. hardcoded_span_m, root_chord_m and taper_ratio are the seed/fallback values. Set false to use them exactly.",
+      "note": "AutoSize Main Wing=true: jointly optimize span, root chord and taper using the current structurally closed iteration mass M2. Sizing enforces transition/stall, +1.5 g manoeuvre stall, and the configured sharp-edge vertical-gust stall screen. The upper root-chord bound is intentionally wide enough for the AVL-derived lift-curve slope to satisfy the gust screen. hardcoded_span_m, root_chord_m and taper_ratio remain the seed/fallback values. Set false to use them exactly.",
       "AutoSize Main Wing": true,
       "root_chord_bounds_m": [
         0.27,
-        0.35
+        0.4
       ],
       "taper_ratio_bounds": [
         0.45,
