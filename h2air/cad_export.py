@@ -102,7 +102,11 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     out += [
         _param('horizontal_tail_span',_mm(hb)),_param('horizontal_tail_half_span',_mm(hb/2)),_param('horizontal_tail_root_chord',_mm(hr)),_param('horizontal_tail_tip_chord',_mm(_tip(hr,hl))),_param('horizontal_tail_mac',_mm(hm)),
         _param('horizontal_tail_le_x',_mm(hle)),_param('horizontal_tail_ac_x',_mm(hx)),_param('horizontal_tail_z',_mm(float(ht.get('z_m',0.03)))),_param('horizontal_tail_thickness',_mm(float(ht.get('thickness_m',0.022)))),
-        _param('horizontal_tail_taper_ratio',hl,'unitless'),_param('horizontal_tail_NACA',str(d.get('horizontal_tail_naca_code','')),'String')]
+        _param('horizontal_tail_taper_ratio',hl,'unitless'),_param('horizontal_tail_NACA',str(d.get('horizontal_tail_naca_code','')),'String'),
+        _param('elevator_span_fraction',float(d.get('elevator_span_fraction',1.0)),'unitless'),
+        _param('elevator_total_span',_mm(hb*float(d.get('elevator_span_fraction',1.0)))),
+        _param('elevator_chord_fraction',float(d.get('elevator_chord_fraction',0.30)),'unitless'),
+        _param('elevator_hinge_x_over_c',1.0-float(d.get('elevator_chord_fraction',0.30)),'unitless')]
     hsec=structure['structural_checks']['tails']['horizontal_recommended_screen']['section']
     out += [_param('horizontal_tail_primary_spar_OD',_mm(hsec['od_m'])),_param('horizontal_tail_primary_spar_ID',_mm(hsec['id_m']))]
     if ht:
@@ -114,7 +118,11 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
     out += [
         _param('vertical_tail_count',int(vt.get('count',2)),'unitless'),_param('vertical_tail_height',_mm(vh)),_param('vertical_tail_root_chord',_mm(vr)),_param('vertical_tail_tip_chord',_mm(_tip(vr,vl))),
         _param('vertical_tail_le_x',_mm(vle)),_param('vertical_tail_ac_x',_mm(vx)),_param('vertical_tail_thickness',_mm(float(vt.get('thickness_m',0.012)))),
-        _param('vertical_tail_taper_ratio',vl,'unitless'),_param('vertical_tail_NACA',str(d.get('vertical_tail_naca_code','')),'String')]
+        _param('vertical_tail_taper_ratio',vl,'unitless'),_param('vertical_tail_NACA',str(d.get('vertical_tail_naca_code','')),'String'),
+        _param('rudder_height_fraction',float(d.get('rudder_height_fraction',1.0)),'unitless'),
+        _param('rudder_height',_mm(vh*float(d.get('rudder_height_fraction',1.0)))),
+        _param('rudder_chord_fraction',float(d.get('rudder_chord_fraction',0.30)),'unitless'),
+        _param('rudder_hinge_x_over_c',1.0-float(d.get('rudder_chord_fraction',0.30)),'unitless')]
     vsec=structure['structural_checks']['tails']['vertical_recommended_screen']['section']
     out += [_param('vertical_tail_primary_spar_OD',_mm(vsec['od_m'])),_param('vertical_tail_primary_spar_ID',_mm(vsec['id_m']))]
     if vt:

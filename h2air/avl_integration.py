@@ -131,9 +131,18 @@ def render_avl_geometry(cfg: Mapping[str, Any], mass_result: Any, *, wing_only: 
     ht_naca = _naca_digits(d.get("horizontal_tail_naca_code"), "0012")
     ht_twist_root = _f(d.get("horizontal_tail_twist_root_deg", 0.0))
     ht_twist_tip = _f(d.get("horizontal_tail_twist_tip_deg", 0.0))
-    elev_hinge = float(avl_cfg.get("elevator_hinge_fraction", 0.70))
-    # d2 = elevator.
+    elev_span_fraction = float(d.get("elevator_span_fraction", 1.0))
+    elev_chord_fraction = float(
+        d.get("elevator_chord_fraction", 1.0 - float(avl_cfg.get("elevator_hinge_fraction", 0.70)))
+    )
+    elev_hinge = 1.0 - elev_chord_fraction
+    # d2 = elevator. The controlled region is centered about the aircraft
+    # centerline and extends to elevator_span_fraction of each semispan.
     elevator = ("elevator", 1.0, elev_hinge, (0.0, 1.0, 0.0), 1.0)
+    elev_y = min(max(elev_span_fraction, 0.0), 1.0) * ht_half
+    elev_frac = elev_y / max(ht_half, 1e-9)
+    elev_chord = ht_root + elev_frac * (ht_tip - ht_root)
+    elev_twist = ht_twist_root + elev_frac * (ht_twist_tip - ht_twist_root)
 
     vt_h = _f(d["vertical_tail_height_m"])
     vt_root = _f(d["vertical_tail_root_chord_m"])
@@ -144,9 +153,17 @@ def render_avl_geometry(cfg: Mapping[str, Any], mass_result: Any, *, wing_only: 
     vt_y = _boom_y(cfg)
     vt_z0 = ht_z
     vt_naca = _naca_digits(d.get("vertical_tail_naca_code"), "0012")
-    rud_hinge = float(avl_cfg.get("rudder_hinge_fraction", 0.70))
-    # d3 = rudder. Both explicit fins use the same control variable.
+    rud_height_fraction = float(d.get("rudder_height_fraction", 1.0))
+    rud_chord_fraction = float(
+        d.get("rudder_chord_fraction", 1.0 - float(avl_cfg.get("rudder_hinge_fraction", 0.70)))
+    )
+    rud_hinge = 1.0 - rud_chord_fraction
+    # d3 = rudder. Both explicit fins use the same control variable and the
+    # controlled region extends upward from the fin root.
     rudder = ("rudder", 1.0, rud_hinge, (0.0, 0.0, 1.0), 1.0)
+    rud_h = min(max(rud_height_fraction, 0.0), 1.0) * vt_h
+    rud_frac = rud_h / max(vt_h, 1e-9)
+    rud_chord = vt_root + rud_frac * (vt_tip - vt_root)
 
     nch = int(avl_cfg.get("n_chordwise", 8))
     nspan_w = int(avl_cfg.get("n_spanwise_wing", 16))
@@ -173,24 +190,43 @@ def render_avl_geometry(cfg: Mapping[str, Any], mass_result: Any, *, wing_only: 
     if wing_only:
         return "\n".join(lines).rstrip() + "\n"
 
+    ht_sections = [
+        _section(ht_xle, 0.0, ht_z, ht_root, ht_twist_root, naca=ht_naca, control=elevator),
+    ]
+    if elev_span_fraction < 0.999:
+        ht_sections += [
+            _section(ht_xle, elev_y, ht_z, elev_chord, elev_twist, naca=ht_naca, control=elevator),
+            _section(ht_xle, ht_half, ht_z, ht_tip, ht_twist_tip, naca=ht_naca),
+        ]
+    else:
+        ht_sections.append(_section(ht_xle, ht_half, ht_z, ht_tip, ht_twist_tip, naca=ht_naca, control=elevator))
+
     lines += [
         "SURFACE",
         "HorizontalTail",
         f"{max(6,nch-2)} 1.0 {nspan_t} 1.0",
         "YDUPLICATE",
         "0.0",
-        _section(ht_xle, 0.0, ht_z, ht_root, ht_twist_root, naca=ht_naca, control=elevator),
-        _section(ht_xle, ht_half, ht_z, ht_tip, ht_twist_tip, naca=ht_naca, control=elevator),
+        *ht_sections,
         "",
     ]
 
     for side, y in (("LeftVerticalTail", -vt_y), ("RightVerticalTail", vt_y)):
+        vt_sections = [
+            _section(vt_xle, y, vt_z0, vt_root, 0.0, naca=vt_naca, control=rudder),
+        ]
+        if rud_height_fraction < 0.999:
+            vt_sections += [
+                _section(vt_xle, y, vt_z0 + rud_h, rud_chord, 0.0, naca=vt_naca, control=rudder),
+                _section(vt_xle, y, vt_z0 + vt_h, vt_tip, 0.0, naca=vt_naca),
+            ]
+        else:
+            vt_sections.append(_section(vt_xle, y, vt_z0 + vt_h, vt_tip, 0.0, naca=vt_naca, control=rudder))
         lines += [
             "SURFACE",
             side,
             f"{max(6,nch-2)} 1.0 {nspan_t} 1.0",
-            _section(vt_xle, y, vt_z0, vt_root, 0.0, naca=vt_naca, control=rudder),
-            _section(vt_xle, y, vt_z0 + vt_h, vt_tip, 0.0, naca=vt_naca, control=rudder),
+            *vt_sections,
             "",
         ]
 

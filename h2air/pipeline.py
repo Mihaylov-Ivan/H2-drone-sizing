@@ -657,6 +657,8 @@ def _tail_quasi_steady_authority(
     e_down=trim_e-delta_e_deg
     worst_e=max(abs(e_up),abs(e_down))
     rudder_req_deg=abs(degrees(-cnb/cndr*beta))
+    rudder_gust_compensation=float(d.get("rudder_gust_compensation_fraction",0.50))
+    rudder_command_deg=rudder_req_deg*rudder_gust_compensation
 
     surface_fraction=float(gates["maximum_surface_utilization_fraction"])/sf
     elevator_limit_deg=float(cs["elevator_limit_deg"])*surface_fraction
@@ -668,6 +670,9 @@ def _tail_quasi_steady_authority(
          "value_deg":trim_e,"limit_deg":trim_limit_deg},
         {"name":"vertical_gust_elevator_reserve","pass":worst_e<=elevator_limit_deg+1e-9,
          "value_deg":worst_e,"limit_deg":elevator_limit_deg},
+        {"name":"lateral_gust_rudder_reserve","pass":rudder_command_deg<=rudder_limit_deg+1e-9,
+         "value_deg":rudder_command_deg,"limit_deg":rudder_limit_deg,
+         "gust_compensation_fraction":rudder_gust_compensation},
         {"name":"directional_static_stability","pass":cnb>0.0,
          "value":cnb,"limit":0.0},
         {"name":"directional_yaw_damping","pass":float(ad["Cn_r"])<0.0,
@@ -685,9 +690,11 @@ def _tail_quasi_steady_authority(
         "vertical_gust_total_elevator_down_deg":e_down,
         "worst_abs_elevator_deg":worst_e,
         "diagnostic_rudder_to_hold_full_sideslip_deg":rudder_req_deg,
+        "required_rudder_for_configured_gust_fraction_deg":rudder_command_deg,
+        "rudder_gust_compensation_fraction":rudder_gust_compensation,
         "limits":{"trim_elevator_deg":trim_limit_deg,"gust_elevator_deg":elevator_limit_deg,"gust_rudder_deg":rudder_limit_deg,"surface_fraction":surface_fraction},
         "checks":checks,
-        "note":"Quasi-steady HT screen uses AVL cruise trim and vertical-gust elevator reserve. The rudder angle that would artificially hold the full crosswind sideslip at zero yaw moment is diagnostic only; VT sizing instead requires positive AVL directional static stability (Cn_beta > 0) and negative yaw damping (Cn_r < 0). Normal-run 6-DOF gust cases remain an independent dynamic validation.",
+        "note":"Quasi-steady tail screen uses AVL cruise trim, vertical-gust elevator reserve, and a configurable fraction of the full lateral-gust sideslip-cancellation rudder demand. The default 50% compensation avoids the nonphysical requirement to hold the complete crosswind sideslip at zero yaw moment while still sizing real rudder authority. Positive Cn_beta and negative Cn_r remain hard directional-stability checks; normal-run 6-DOF gust cases remain independent validation.",
     }
 
 
@@ -785,6 +792,10 @@ def _tail_planform_candidate_metrics(
     Vv = Sv_total * vt_arm / max(S * b, 1e-9)
     vt_ar = hv * hv / max(Sv_each, 1e-9)
     vt_tip = cvr * lamv
+    elev_span_fraction = float(d.get("elevator_span_fraction", 1.0))
+    elev_chord_fraction = float(d.get("elevator_chord_fraction", 0.30))
+    rud_height_fraction = float(d.get("rudder_height_fraction", 1.0))
+    rud_chord_fraction = float(d.get("rudder_chord_fraction", 0.30))
 
     sm = (float(d["neutral_point_station_x_m"]) - mass.takeoff.cg_m[0]) / max(mac, 1e-9)
     design_sm = max(
@@ -851,16 +862,32 @@ def _tail_planform_candidate_metrics(
     pref_vt_ar = float(d.get("vertical_tail_preferred_aspect_ratio", 2.5))
     pref_ht_taper = float(d.get("horizontal_tail_preferred_taper_ratio", 0.60))
     pref_vt_taper = float(d.get("vertical_tail_preferred_taper_ratio", 0.60))
+    pref_es = float(d.get("preferred_elevator_span_fraction", 0.85))
+    pref_ec = float(d.get("preferred_elevator_chord_fraction", 0.30))
+    pref_rh = float(d.get("preferred_rudder_height_fraction", 0.85))
+    pref_rc = float(d.get("preferred_rudder_chord_fraction", 0.30))
     shape_regularizer = (
         0.015 * abs(ht_ar - pref_ht_ar)
         + 0.010 * abs(vt_ar - pref_vt_ar)
         + 0.006 * abs(lamh - pref_ht_taper)
         + 0.006 * abs(lamv - pref_vt_taper)
     )
+    # Moving-surface area does not change the current shell-area mass model.
+    # Keep only a very weak tie-breaker so the optimizer does not select
+    # unnecessarily large controls when aerodynamic authority is equivalent.
+    control_area_proxy = elev_span_fraction*elev_chord_fraction + rud_height_fraction*rud_chord_fraction
+    control_regularizer = (
+        0.010 * control_area_proxy
+        + 0.003 * abs(elev_span_fraction-pref_es)
+        + 0.003 * abs(elev_chord_fraction-pref_ec)
+        + 0.003 * abs(rud_height_fraction-pref_rh)
+        + 0.003 * abs(rud_chord_fraction-pref_rc)
+    )
     objective = (
         float(mass.takeoff.total_mass_kg)
         + 0.0005 * tail_profile_bus_power_W
         + shape_regularizer
+        + control_regularizer
     )
     score = objective + 1000.0 * len(violations)
 
@@ -874,6 +901,10 @@ def _tail_planform_candidate_metrics(
             "vertical_tail_height_m": hv,
             "vertical_tail_root_chord_m": cvr,
             "vertical_tail_taper_ratio": lamv,
+            "elevator_span_fraction": elev_span_fraction,
+            "elevator_chord_fraction": elev_chord_fraction,
+            "rudder_height_fraction": rud_height_fraction,
+            "rudder_chord_fraction": rud_chord_fraction,
         },
         "score": float(score),
         "objective": float(objective),
@@ -903,6 +934,14 @@ def _tail_planform_candidate_metrics(
         "directional_Cn_dr": float(six_cfg["aerodynamics"]["Cn_dr"]),
         "vertical_tail_aspect_ratio_each": float(vt_ar),
         "vertical_tail_tip_chord_m": float(vt_tip),
+        "elevator_span_fraction": elev_span_fraction,
+        "elevator_chord_fraction": elev_chord_fraction,
+        "elevator_hinge_fraction": 1.0-elev_chord_fraction,
+        "rudder_height_fraction": rud_height_fraction,
+        "rudder_chord_fraction": rud_chord_fraction,
+        "rudder_hinge_fraction": 1.0-rud_chord_fraction,
+        "control_surface_area_proxy": float(control_area_proxy),
+        "control_surface_regularizer": float(control_regularizer),
         "tail_profile_drag_proxy_N": float(tail_profile_drag_N),
         "tail_profile_bus_power_proxy_W": float(tail_profile_bus_power_W),
         "tail_structure_mass_kg": float((mass.mass_groups_takeoff_kg or {}).get("tail_structure", 0.0)),
@@ -924,8 +963,13 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     d0 = clean["design"]
     auto_ht = bool(d0.get("auto_size_horizontal_tail", False))
     auto_vt = bool(d0.get("auto_size_vertical_tail", False))
-    if not (auto_ht or auto_vt):
-        return clean, {"enabled": False, "horizontal_tail": auto_ht, "vertical_tail": auto_vt, "mode": "hardcoded"}
+    auto_elev = bool(d0.get("auto_size_elevator", False))
+    auto_rudder = bool(d0.get("auto_size_rudder", False))
+    if not (auto_ht or auto_vt or auto_elev or auto_rudder):
+        return clean, {
+            "enabled": False, "horizontal_tail": auto_ht, "vertical_tail": auto_vt,
+            "elevator": auto_elev, "rudder": auto_rudder, "mode": "hardcoded"
+        }
 
     ht_span_lo, ht_span_hi = [float(x) for x in d0["horizontal_tail_span_bounds_m"]]
     ht_chord_lo, ht_chord_hi = [float(x) for x in d0["horizontal_tail_root_chord_bounds_m"]]
@@ -939,6 +983,10 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     vt_ar_lo, vt_ar_hi = [float(x) for x in d0["vertical_tail_aspect_ratio_bounds"]]
     vt_tip_min = float(d0["vertical_tail_minimum_tip_chord_m"])
     nfin = max(int(d0.get("vertical_tail_count", 2)), 1)
+    es_lo, es_hi = [float(x) for x in d0.get("elevator_span_fraction_bounds", [0.65,0.95])]
+    ec_lo, ec_hi = [float(x) for x in d0.get("elevator_chord_fraction_bounds", [0.22,0.38])]
+    rh_lo, rh_hi = [float(x) for x in d0.get("rudder_height_fraction_bounds", [0.65,0.95])]
+    rc_lo, rc_hi = [float(x) for x in d0.get("rudder_chord_fraction_bounds", [0.22,0.40])]
 
     n_global = max(
         int(d0.get("horizontal_tail_autosize_samples", 64)) if auto_ht else 0,
@@ -951,7 +999,10 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         0,
     )
 
-    def valid_geom(hs: float, hc: float, ht: float, vh: float, vc: float, vt: float):
+    def valid_geom(
+        hs: float, hc: float, ht: float, vh: float, vc: float, vt: float,
+        es: float, ec: float, rh: float, rc: float,
+    ):
         Sh = hs * hc * (1.0 + ht) / 2.0
         Sv_each = vh * vc * (1.0 + vt) / 2.0
         ht_ar = hs * hs / max(Sh, 1e-9)
@@ -966,6 +1017,10 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
                 return False
             if vc*vt + 1e-9 < vt_tip_min or not (vt_ar_lo <= vt_ar <= vt_ar_hi):
                 return False
+        if auto_elev and not (es_lo <= es <= es_hi and ec_lo <= ec <= ec_hi):
+            return False
+        if auto_rudder and not (rh_lo <= rh <= rh_hi and rc_lo <= rc <= rc_hi):
+            return False
         return True
 
     seed = (
@@ -975,6 +1030,10 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         float(d0["vertical_tail_height_m"]),
         float(d0["vertical_tail_root_chord_m"]),
         float(d0["vertical_tail_taper_ratio"]),
+        float(d0.get("elevator_span_fraction", 1.0)),
+        float(d0.get("elevator_chord_fraction", 0.30)),
+        float(d0.get("rudder_height_fraction", 1.0)),
+        float(d0.get("rudder_chord_fraction", 0.30)),
     )
     tuples = [seed] if valid_geom(*seed) else []
 
@@ -988,13 +1047,17 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         vh = float(rng.uniform(vt_h_lo, vt_h_hi)) if auto_vt else seed[3]
         vc = float(rng.uniform(vt_chord_lo, vt_chord_hi)) if auto_vt else seed[4]
         vt = float(rng.uniform(vt_taper_lo, vt_taper_hi)) if auto_vt else seed[5]
-        if valid_geom(hs,hc,ht,vh,vc,vt):
-            tuples.append((hs,hc,ht,vh,vc,vt))
+        es = float(rng.uniform(es_lo, es_hi)) if auto_elev else seed[6]
+        ec = float(rng.uniform(ec_lo, ec_hi)) if auto_elev else seed[7]
+        rh = float(rng.uniform(rh_lo, rh_hi)) if auto_rudder else seed[8]
+        rc = float(rng.uniform(rc_lo, rc_hi)) if auto_rudder else seed[9]
+        if valid_geom(hs,hc,ht,vh,vc,vt,es,ec,rh,rc):
+            tuples.append((hs,hc,ht,vh,vc,vt,es,ec,rh,rc))
 
     evaluated = []
     seen = set()
     def evaluate_tuple(tup):
-        hs,hc,ht,vh,vc,vt = tup
+        hs,hc,ht,vh,vc,vt,es,ec,rh,rc = tup
         key = tuple(round(float(x), 6) for x in tup)
         if key in seen:
             return None
@@ -1011,6 +1074,16 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
                 "vertical_tail_height_m": vh,
                 "vertical_tail_root_chord_m": vc,
                 "vertical_tail_taper_ratio": vt,
+            })
+        if auto_elev:
+            values.update({
+                "elevator_span_fraction": es,
+                "elevator_chord_fraction": ec,
+            })
+        if auto_rudder:
+            values.update({
+                "rudder_height_fraction": rh,
+                "rudder_chord_fraction": rc,
             })
         try:
             return _tail_planform_candidate_metrics(
@@ -1033,6 +1106,7 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     widths = (
         ht_span_hi-ht_span_lo, ht_chord_hi-ht_chord_lo, ht_taper_hi-ht_taper_lo,
         vt_h_hi-vt_h_lo, vt_chord_hi-vt_chord_lo, vt_taper_hi-vt_taper_lo,
+        es_hi-es_lo, ec_hi-ec_lo, rh_hi-rh_lo, rc_hi-rc_lo,
     )
     for j in range(n_local):
         if not parents:
@@ -1041,13 +1115,17 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         vals = [
             float(p["horizontal_tail_span_m"]), float(p["horizontal_tail_root_chord_m"]), float(p["horizontal_tail_taper_ratio"]),
             float(p["vertical_tail_height_m"]), float(p["vertical_tail_root_chord_m"]), float(p["vertical_tail_taper_ratio"]),
+            float(p["elevator_span_fraction"]), float(p["elevator_chord_fraction"]),
+            float(p["rudder_height_fraction"]), float(p["rudder_chord_fraction"]),
         ]
-        for k in range(6):
-            if (k < 3 and not auto_ht) or (k >= 3 and not auto_vt):
+        for k in range(10):
+            if (k < 3 and not auto_ht) or (3 <= k < 6 and not auto_vt) or (6 <= k < 8 and not auto_elev) or (8 <= k < 10 and not auto_rudder):
                 continue
             vals[k] += float(rng.normal(0.0, 0.035*widths[k]))
         vals[0]=float(np.clip(vals[0],ht_span_lo,ht_span_hi)); vals[1]=float(np.clip(vals[1],ht_chord_lo,ht_chord_hi)); vals[2]=float(np.clip(vals[2],ht_taper_lo,ht_taper_hi))
         vals[3]=float(np.clip(vals[3],vt_h_lo,vt_h_hi)); vals[4]=float(np.clip(vals[4],vt_chord_lo,vt_chord_hi)); vals[5]=float(np.clip(vals[5],vt_taper_lo,vt_taper_hi))
+        vals[6]=float(np.clip(vals[6],es_lo,es_hi)); vals[7]=float(np.clip(vals[7],ec_lo,ec_hi))
+        vals[8]=float(np.clip(vals[8],rh_lo,rh_hi)); vals[9]=float(np.clip(vals[9],rc_lo,rc_hi))
         tup=tuple(vals)
         if valid_geom(*tup):
             m=evaluate_tuple(tup)
@@ -1078,10 +1156,12 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
     sf=float(d0.get("tail_control_safety_factor",1.10))
     result = {
         "enabled": True,
-        "mode": "performance_constrained_ht_vt_span_root_chord_taper",
+        "mode": "performance_constrained_tail_and_control_surface_geometry",
         "horizontal_tail": auto_ht,
         "vertical_tail": auto_vt,
-        "objective": "minimum_closed_mtow_with_secondary_profile_drag_and_shape_regularization",
+        "elevator": auto_elev,
+        "rudder": auto_rudder,
+        "objective": "minimum_closed_mtow_with_secondary_profile_drag_shape_and_control_area_regularization",
         "tail_volume_role": "calibration_reference_and_output_not_hard_constraint",
         "control_safety_factor": sf,
         "constraints": {
@@ -1094,12 +1174,17 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
             "surface_utilization_limit_with_safety": float(selected_cfg["sixdof_control"]["gates"]["maximum_surface_utilization_fraction"])/sf,
             "horizontal_tail_reference_volume_coefficient": float(d0.get("horizontal_tail_reference_volume_coefficient",0.44)),
             "vertical_tail_reference_volume_coefficient": float(d0.get("vertical_tail_reference_volume_coefficient",0.0255)),
+            "elevator_span_fraction_bounds": [es_lo, es_hi],
+            "elevator_chord_fraction_bounds": [ec_lo, ec_hi],
+            "rudder_height_fraction_bounds": [rh_lo, rh_hi],
+            "rudder_chord_fraction_bounds": [rc_lo, rc_hi],
+            "rudder_gust_compensation_fraction": float(d0.get("rudder_gust_compensation_fraction",0.50)),
         },
         "evaluated_candidates": len(evaluated),
         "preliminary_feasible_candidates": len(preliminary),
-        "control_authority_method": "AVL_trim_vertical_elevator_reserve_plus_directional_stability_and_damping",
+        "control_authority_method": "AVL_trim_vertical_elevator_reserve_partial_lateral_gust_rudder_reserve_plus_directional_stability_and_damping",
         "selected": deepcopy(best),
-        "fidelity_note": "Tail stability/control derivatives are generated automatically by AVL for each candidate geometry. Tail sizing uses cruise trim, vertical-gust elevator reserve, directional static stability/yaw damping, static margin and structural/mass constraints; normal-run 6-DOF remains independent dynamic validation. AVL is inviscid and still requires later CFD/wind-tunnel/flight correlation.",
+        "fidelity_note": "Tail and control-surface stability/control derivatives are generated automatically by AVL for every candidate. Elevator span/chord and rudder height/chord fractions are coupled optimizer variables. Tail sizing uses cruise trim, vertical-gust elevator reserve, partial lateral-gust rudder reserve, directional static stability/yaw damping, static margin and structural/mass constraints. AVL is inviscid; hinge moments, servo torque, flutter and nonlinear/separated-flow authority still require later engineering/CFD/wind-tunnel/flight validation.",
     }
     return selected_cfg, result
 
@@ -1125,7 +1210,9 @@ def run_model(raw_cfg:Mapping[str,Any], output_dir:str|Path, *, write_histories:
         cfg, main_wing_autosizing = _auto_size_main_wing(cfg)
 
     tail_planform_autosizing = {"enabled": False, "mode": "hardcoded"}
-    if bool(cfg["design"].get("auto_size_horizontal_tail", False)) or bool(cfg["design"].get("auto_size_vertical_tail", False)):
+    if any(bool(cfg["design"].get(k, False)) for k in (
+        "auto_size_horizontal_tail", "auto_size_vertical_tail", "auto_size_elevator", "auto_size_rudder"
+    )):
         cfg, tail_planform_autosizing = _auto_size_tail_planforms(cfg)
     d=cfg["design"]
 
