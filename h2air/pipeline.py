@@ -682,6 +682,55 @@ def _tail_quasi_steady_authority(
     }
 
 
+def _tail_lateral_dynamic_authority(
+    six_cfg: Mapping[str, Any],
+    d: Mapping[str, Any],
+) -> Dict[str, Any]:
+    """Validate VT directional response in a surface-only cruise crosswind gust.
+
+    This credits passive weathercock stability and aerodynamic yaw damping,
+    unlike the nonphysical proxy that forced the rudder to cancel the entire
+    instantaneous sideslip at zero yaw moment.
+    """
+    sf=float(d.get("tail_control_safety_factor",1.10))
+    V=float(d["cruise_speed_mps"])
+    gates=six_cfg["gates"]; cs=six_cfg["control_surfaces"]
+    model=Model(six_cfg)
+    gust=[0.0,float(d.get("inspection_lateral_gust_mps",5.0)),0.0]
+    samples=simulate_cruise_gust(
+        model,speed_mps=V,stabilized=True,gust_ned_mps=gust,
+        disable_lift_rotors=True,
+    )
+    if not samples:
+        return {"pass":False,"reason":"no_samples","safety_factor":sf}
+    summary=summarize_samples(samples,model)
+    yaw_limit=float(gates["maximum_cruise_gust_yaw_deg"])/sf
+    rudder_fraction_limit=float(gates["maximum_surface_utilization_fraction"])/sf
+    rudder_limit_deg=float(cs["rudder_limit_deg"])
+    max_rudder_deg=max(abs(float(x.rudder_deg)) for x in samples)
+    max_rudder_fraction=max_rudder_deg/max(rudder_limit_deg,1e-9)
+    full_duration=float(six_cfg["simulation"]["cruise_disturbance_duration_s"])
+    duration_ok=float(samples[-1].time_s)>=full_duration-2.0*float(six_cfg["simulation"]["dt_s"])
+    checks=[
+        {"name":"lateral_gust_yaw_response","pass":float(summary["maximum_abs_yaw_deg"])<=yaw_limit+1e-9,
+         "value":float(summary["maximum_abs_yaw_deg"]),"limit":yaw_limit},
+        {"name":"lateral_gust_rudder_utilization","pass":max_rudder_fraction<=rudder_fraction_limit+1e-9,
+         "value":max_rudder_fraction,"limit":rudder_fraction_limit},
+        {"name":"lateral_gust_simulation_completion","pass":duration_ok,
+         "value":float(samples[-1].time_s),"limit":full_duration},
+    ]
+    return {
+        "pass":all(bool(x["pass"]) for x in checks),
+        "safety_factor":sf,
+        "method":"surface_only_6dof_lateral_gust",
+        "summary":summary,
+        "maximum_abs_rudder_deg":max_rudder_deg,
+        "maximum_rudder_utilization":max_rudder_fraction,
+        "checks":checks,
+        "note":"Lift rotors are disabled. Hard VT checks are yaw response, rudder utilization and full-duration completion; roll/altitude/pitch are reported but not used to size the vertical tail.",
+    }
+
+
 def _tail_planform_candidate_metrics(
     base_cfg: Mapping[str, Any],
     values: Mapping[str, float],
@@ -892,6 +941,7 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         int(d0.get("vertical_tail_autosize_local_samples", 18)) if auto_vt else 0,
         0,
     )
+    n_dynamic=max(int(d0.get("tail_dynamic_validation_candidates",12)),1)
 
     def valid_geom(hs: float, hc: float, ht: float, vh: float, vc: float, vt: float):
         Sh = hs * hc * (1.0 + ht) / 2.0
@@ -1009,10 +1059,33 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
             f"authority={best0.get('control_authority')}"
         )
 
-    # The candidate-level quasi-steady authority screen already includes the
-    # 1.10x trim/elevator/rudder reserve. Normal-run 6-DOF remains an independent
-    # final validation rather than an optimizer inner loop.
-    best=preliminary[0]
+    # Short-list validation for the vertical tail uses a surface-only lateral
+    # 6-DOF gust. AVL calls are geometry/CG cached, so this validation reuses the
+    # already-computed derivatives for each shortlisted candidate.
+    dynamic_evaluated=[]
+    for candidate in preliminary[:n_dynamic]:
+        candidate_cfg=_tail_design_overrides(clean,candidate["values"],lock_ht=auto_ht,lock_vt=auto_vt)
+        base_comps=_components_with_power(candidate_cfg)
+        _,candidate_mass,_,_=_structural_closure(candidate_cfg,base_comps)
+        _,_,candidate_six,_=_sync_design(candidate_cfg,candidate_mass)
+        dyn=_tail_lateral_dynamic_authority(candidate_six,candidate_cfg["design"])
+        item=deepcopy(candidate);item["lateral_dynamic_authority"]=dyn
+        if not dyn["pass"]:
+            item["feasible"]=False
+            item["violations"]=list(item["violations"])+[
+                str(x["name"]) for x in dyn.get("checks",[]) if not bool(x.get("pass",False))
+            ]
+            item["score"]=float(item["objective"])+1000.0*len(item["violations"])
+        dynamic_evaluated.append(item)
+    dynamic_feasible=sorted([x for x in dynamic_evaluated if x["feasible"]],key=lambda x:x["score"])
+    if not dynamic_feasible:
+        bestd=sorted(dynamic_evaluated,key=lambda x:x["score"])[0]
+        raise RuntimeError(
+            "Tail planform autosizer found no lateral-dynamically feasible candidate; "
+            f"best violations={bestd['violations']}; dynamic={bestd.get('lateral_dynamic_authority')}; "
+            f"AVL={bestd.get('avl_result',{}).get('derivatives')}"
+        )
+    best=dynamic_feasible[0]
     selected_cfg = _tail_design_overrides(clean, best["values"], lock_ht=auto_ht, lock_vt=auto_vt)
     sf=float(d0.get("tail_control_safety_factor",1.10))
     result = {
@@ -1036,7 +1109,9 @@ def _auto_size_tail_planforms(cfg: Mapping[str, Any]) -> tuple[Dict[str, Any], D
         },
         "evaluated_candidates": len(evaluated),
         "preliminary_feasible_candidates": len(preliminary),
-        "control_authority_method": "quasi_steady_linearized_surface_authority",
+        "dynamic_validation_candidates": len(dynamic_evaluated),
+        "dynamic_feasible_candidates": len(dynamic_feasible),
+        "control_authority_method": "AVL_trim_vertical_elevator_reserve_plus_surface_only_6dof_lateral_gust",
         "selected": deepcopy(best),
         "fidelity_note": "Tail control derivatives are scaled from calibrated reference Vh/Vv. Tail sizing uses quasi-steady elevator/rudder reserve plus static margin, trim and structural constraints; normal-run 6-DOF remains independent validation. Replace derivative scaling with AVL/CFD/wind-tunnel/flight correlation when available.",
     }
