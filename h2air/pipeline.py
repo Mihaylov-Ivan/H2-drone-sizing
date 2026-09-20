@@ -659,10 +659,10 @@ def _tail_quasi_steady_authority(
          "value_deg":trim_e,"limit_deg":trim_limit_deg},
         {"name":"vertical_gust_elevator_reserve","pass":worst_e<=elevator_limit_deg+1e-9,
          "value_deg":worst_e,"limit_deg":elevator_limit_deg},
-        {"name":"lateral_gust_rudder_reserve","pass":rudder_req_deg<=rudder_limit_deg+1e-9,
-         "value_deg":rudder_req_deg,"limit_deg":rudder_limit_deg},
         {"name":"directional_static_stability","pass":cnb>0.0,
          "value":cnb,"limit":0.0},
+        {"name":"directional_yaw_damping","pass":float(ad["Cn_r"])<0.0,
+         "value":float(ad["Cn_r"]),"limit":0.0},
     ]
     return {
         "pass":all(bool(x["pass"]) for x in checks),
@@ -675,10 +675,10 @@ def _tail_quasi_steady_authority(
         "vertical_gust_total_elevator_up_deg":e_up,
         "vertical_gust_total_elevator_down_deg":e_down,
         "worst_abs_elevator_deg":worst_e,
-        "required_rudder_deg":rudder_req_deg,
+        "diagnostic_rudder_to_hold_full_sideslip_deg":rudder_req_deg,
         "limits":{"trim_elevator_deg":trim_limit_deg,"gust_elevator_deg":elevator_limit_deg,"gust_rudder_deg":rudder_limit_deg,"surface_fraction":surface_fraction},
         "checks":checks,
-        "note":"Linearized quasi-steady control-reserve screen using candidate-scaled derivatives. Vh/Vv are calibration references only. Final normal 6-DOF cases remain separate validation.",
+        "note":"Quasi-steady HT screen uses trim and vertical-gust elevator reserve. The rudder angle that would artificially hold the full crosswind sideslip at zero yaw moment is diagnostic only; VT sizing uses a surface-only lateral 6-DOF gust response so passive directional stability is credited correctly.",
     }
 
 
