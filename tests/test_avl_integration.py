@@ -48,8 +48,13 @@ def test_avl_geometry_export_contains_current_surfaces_and_controls(model_config
     assert "CONTROL\naileron" in text
     assert "CONTROL\nelevator" in text
     assert "CONTROL\nrudder" in text
+    assert text.count("CONTROL\nelevator") == 2
+    assert text.count("CONTROL\nrudder") == 4
+    # Default user design opts into partial-span/height controls at 30% chord.
+    assert "elevator 1.000000 0.700000" in text
+    assert "rudder 1.000000 0.700000" in text
     assert "NACA\n6415" in text
-    assert text.count("NACA\n0012") >= 4
+    assert text.count("NACA\n0012") >= 7
 
 
 def test_pinned_ci_avl_is_available():

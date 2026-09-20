@@ -171,6 +171,16 @@ def build_aircraft_specification(
                 "ac_x_m": _f(d.get("vertical_tail_ac_x_m")),
                 "naca_code": d.get("vertical_tail_naca_code") or _get(airfoils, "vertical_tail", "code"),
             },
+            "control_surfaces": {
+                "elevator_span_fraction": _f(d.get("elevator_span_fraction")),
+                "elevator_total_span_m": _f(float(d.get("horizontal_tail_span_m") or 0.0) * float(d.get("elevator_span_fraction") or 0.0)),
+                "elevator_chord_fraction": _f(d.get("elevator_chord_fraction")),
+                "elevator_hinge_x_over_c": _f(1.0-float(d.get("elevator_chord_fraction") or 0.0)),
+                "rudder_height_fraction": _f(d.get("rudder_height_fraction")),
+                "rudder_height_m": _f(float(d.get("vertical_tail_height_m") or 0.0) * float(d.get("rudder_height_fraction") or 0.0)),
+                "rudder_chord_fraction": _f(d.get("rudder_chord_fraction")),
+                "rudder_hinge_x_over_c": _f(1.0-float(d.get("rudder_chord_fraction") or 0.0)),
+            },
             "booms_and_lift": {
                 "boom_spacing_m": boom_span,
                 "boom_x_start_m": _f(geom.get("boom_x_start_m")),
