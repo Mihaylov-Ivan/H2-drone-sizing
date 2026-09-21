@@ -1058,7 +1058,7 @@ function coolingMeshes() {
 }
 
 /**
- * Wing primary/secondary spars (spanwise tubes at chord fractions) and
+ * Wing / HT / VT primary+secondary spars (tubes at chord fractions) and
  * top/bottom fuselage longeron CFRP tubes (printed sleeve keepout is modelled, not drawn).
  */
 function structureMeshes() {
@@ -1071,7 +1071,10 @@ function structureMeshes() {
   function addPolylineTube(pts, radius, material) {
     for (let i = 0; i < pts.length - 1; i++) {
       const mesh = tubeBetween(pts[i], pts[i + 1], radius, material);
-      if (mesh) g.add(mesh);
+      if (mesh) {
+        mesh.renderOrder = 2;
+        g.add(mesh);
+      }
     }
   }
 
@@ -1114,6 +1117,80 @@ function structureMeshes() {
     if (secondaryOd > 0) {
       const yMax = Math.max(half - Math.max(secondaryOd / 2, 0.012), 0.5 * half);
       addPolylineTube(sparStations(secondaryFrac, yMax), secondaryOd / 2, sparMat);
+    }
+  }
+
+  // --- Horizontal-tail spars (spanwise, same waterline as HT skin) ---
+  if (P.horizontal_tail_primary_spar_OD != null || P.horizontal_tail_secondary_spar_OD != null) {
+    const le = mm('horizontal_tail_le_x');
+    const span = mm('horizontal_tail_span');
+    const rootChord = mm('horizontal_tail_root_chord');
+    const tipChord = mm('horizontal_tail_tip_chord');
+    const zHt = mm('horizontal_tail_z', 30);
+    const half = Math.max(span / 2, 1e-6);
+    const stations = 20;
+
+    function htSparStations(chordFrac, yAbsMax) {
+      const pts = [];
+      for (let i = 0; i <= stations; i++) {
+        const y = -yAbsMax + (i / stations) * (2 * yAbsMax);
+        const chord = rootChord + (tipChord - rootChord) * (Math.abs(y) / half);
+        pts.push([le + chordFrac * chord, y, zHt]);
+      }
+      return pts;
+    }
+
+    const htPriOd = mm('horizontal_tail_primary_spar_OD', 10);
+    const htPriFrac = num('horizontal_tail_primary_spar_chord_fraction', 0.25);
+    if (htPriOd > 0) {
+      const yMax = Math.max(half - Math.max(htPriOd / 2, 0.008), 0.5 * half);
+      // Floor radius so thin recommended tubes still read as spars next to the 28 mm wing spar.
+      addPolylineTube(htSparStations(htPriFrac, yMax), Math.max(htPriOd / 2, 0.0045), sparMat);
+    }
+
+    const htSecOd = mm('horizontal_tail_secondary_spar_OD', 0);
+    const htSecFrac = num('horizontal_tail_secondary_spar_chord_fraction', 0.65);
+    if (htSecOd > 0) {
+      const yMax = Math.max(half - Math.max(htSecOd / 2, 0.008), 0.5 * half);
+      addPolylineTube(htSparStations(htSecFrac, yMax), Math.max(htSecOd / 2, 0.003), sparMat);
+    }
+  }
+
+  // --- Vertical-tail spars (one primary+secondary per fin, root on boom waterline) ---
+  if (P.vertical_tail_primary_spar_OD != null || P.vertical_tail_secondary_spar_OD != null) {
+    const le = mm('vertical_tail_le_x');
+    const height = mm('vertical_tail_height');
+    const rootChord = mm('vertical_tail_root_chord');
+    const tipChord = mm('vertical_tail_tip_chord');
+    const boomZ = mm('boom_z', mm('wing_z', 100));
+    const boomYs = [mm('boom_left_y', -350), mm('boom_right_y', 350)];
+    const stations = 16;
+
+    function vtSparStations(y, chordFrac, zMax) {
+      const pts = [];
+      for (let i = 0; i <= stations; i++) {
+        const eta = i / stations;
+        const z = boomZ + eta * zMax;
+        const chord = rootChord + (tipChord - rootChord) * eta;
+        pts.push([le + chordFrac * chord, y, z]);
+      }
+      return pts;
+    }
+
+    const vtPriOd = mm('vertical_tail_primary_spar_OD', 10);
+    const vtPriFrac = num('vertical_tail_primary_spar_chord_fraction', 0.25);
+    const vtSecOd = mm('vertical_tail_secondary_spar_OD', 0);
+    const vtSecFrac = num('vertical_tail_secondary_spar_chord_fraction', 0.65);
+
+    for (const y of boomYs) {
+      if (vtPriOd > 0) {
+        const zMax = Math.max(height - Math.max(vtPriOd / 2, 0.008), 0.5 * height);
+        addPolylineTube(vtSparStations(y, vtPriFrac, zMax), Math.max(vtPriOd / 2, 0.0045), sparMat);
+      }
+      if (vtSecOd > 0) {
+        const zMax = Math.max(height - Math.max(vtSecOd / 2, 0.008), 0.5 * height);
+        addPolylineTube(vtSparStations(y, vtSecFrac, zMax), Math.max(vtSecOd / 2, 0.003), sparMat);
+      }
     }
   }
 
@@ -1305,6 +1382,24 @@ function updateDims() {
           : ''),
     ]);
   }
+  if (P.horizontal_tail_primary_spar_OD != null) {
+    rows.push([
+      'HT spars ⌀',
+      `pri ${fmt(mm('horizontal_tail_primary_spar_OD'))} @ ${(100 * num('horizontal_tail_primary_spar_chord_fraction', 0.25)).toFixed(0)}%c` +
+        (P.horizontal_tail_secondary_spar_OD != null
+          ? ` · sec ${fmt(mm('horizontal_tail_secondary_spar_OD'))} @ ${(100 * num('horizontal_tail_secondary_spar_chord_fraction', 0.65)).toFixed(0)}%c`
+          : ''),
+    ]);
+  }
+  if (P.vertical_tail_primary_spar_OD != null) {
+    rows.push([
+      'VT spars ⌀ (each)',
+      `pri ${fmt(mm('vertical_tail_primary_spar_OD'))} @ ${(100 * num('vertical_tail_primary_spar_chord_fraction', 0.25)).toFixed(0)}%c` +
+        (P.vertical_tail_secondary_spar_OD != null
+          ? ` · sec ${fmt(mm('vertical_tail_secondary_spar_OD'))} @ ${(100 * num('vertical_tail_secondary_spar_chord_fraction', 0.65)).toFixed(0)}%c`
+          : ''),
+    ]);
+  }
   if (P.fuselage_longeron_OD != null) {
     rows.push([
       'Fuselage longerons',
@@ -1404,11 +1499,14 @@ function applyMaterials() {
   const wire = document.getElementById('toggle-wire').checked;
   const soft = document.getElementById('toggle-transparent').checked;
   const showInternals = document.getElementById('toggle-internals').checked;
+  const showStructure = document.getElementById('toggle-structure').checked;
   if (!aircraft) return;
   aircraft.traverse((obj) => {
     if (!obj.isMesh || !obj.material) return;
     const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-    const inFuselage = obj.parent === groups.fuselage || (obj.parent && obj.parent.parent === groups.fuselage);
+    const inFuselage = obj === groups.fuselage || obj.parent === groups.fuselage || obj.parent?.parent === groups.fuselage;
+    const inHt = obj === groups.ht || obj.parent === groups.ht || obj.parent?.parent === groups.ht;
+    const inVt = obj === groups.vt || obj.parent === groups.vt || obj.parent?.parent === groups.vt;
     const inPropsDisk = obj.parent?.name === 'props' || obj.parent?.parent?.name === 'props';
     for (const m of mats) {
       m.wireframe = wire;
@@ -1418,6 +1516,11 @@ function applyMaterials() {
       if (inFuselage && showInternals) {
         m.transparent = true;
         m.opacity = 0.28;
+        m.depthWrite = false;
+      } else if ((inHt || inVt) && showStructure) {
+        // Ghost HT/VT skins so the thinner tail spars read through the loft.
+        m.transparent = true;
+        m.opacity = soft ? 0.28 : 0.4;
         m.depthWrite = false;
       } else {
         m.transparent = soft || (m.opacity < 1 && m.transparent);
@@ -1468,13 +1571,13 @@ for (const id of [
   'toggle-props',
   'toggle-internals',
   'toggle-cooling',
-  'toggle-structure',
   'toggle-landing',
   'toggle-grid',
   'toggle-axes',
 ]) {
   document.getElementById(id).addEventListener('change', applyVisibility);
 }
+document.getElementById('toggle-structure').addEventListener('change', applyMaterials);
 document.getElementById('toggle-wire').addEventListener('change', applyMaterials);
 document.getElementById('toggle-transparent').addEventListener('change', applyMaterials);
 document.getElementById('btn-reset').addEventListener('click', fitCamera);

@@ -108,9 +108,18 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
         _param('elevator_chord_fraction',float(d.get('elevator_chord_fraction',0.30)),'unitless'),
         _param('elevator_hinge_x_over_c',1.0-float(d.get('elevator_chord_fraction',0.30)),'unitless')]
     hsec=structure['structural_checks']['tails']['horizontal_recommended_screen']['section']
-    out += [_param('horizontal_tail_primary_spar_OD',_mm(hsec['od_m'])),_param('horizontal_tail_primary_spar_ID',_mm(hsec['id_m']))]
+    hps=ht.get('primary_spar') or {}
+    hss=ht.get('secondary_spar') or {}
+    out += [
+        _param('horizontal_tail_primary_spar_OD',_mm(hsec['od_m'])),
+        _param('horizontal_tail_primary_spar_ID',_mm(hsec['id_m'])),
+        _param('horizontal_tail_primary_spar_chord_fraction',float(hps.get('chord_fraction',0.25)),'unitless'),
+    ]
     if ht:
-        out += [_param('horizontal_tail_secondary_spar_OD',_mm(ht['secondary_spar'].get('tube_od_m',0.0)))]
+        out += [
+            _param('horizontal_tail_secondary_spar_OD',_mm(hss.get('tube_od_m',0.0))),
+            _param('horizontal_tail_secondary_spar_chord_fraction',float(hss.get('chord_fraction',0.65)),'unitless'),
+        ]
 
     # Vertical tails.
     vr=float(d['vertical_tail_root_chord_m']); vl=float(d['vertical_tail_taper_ratio']); vh=float(d['vertical_tail_height_m']); vx=float(d.get('vertical_tail_ac_x_m',d['horizontal_tail_ac_x_m'])); vm=(2/3)*vr*(1+vl+vl*vl)/(1+vl); vle=vx-0.25*vm
@@ -124,9 +133,18 @@ def build_cad_parameters(cfg: Mapping[str,Any], structure: Mapping[str,Any]) -> 
         _param('rudder_chord_fraction',float(d.get('rudder_chord_fraction',0.30)),'unitless'),
         _param('rudder_hinge_x_over_c',1.0-float(d.get('rudder_chord_fraction',0.30)),'unitless')]
     vsec=structure['structural_checks']['tails']['vertical_recommended_screen']['section']
-    out += [_param('vertical_tail_primary_spar_OD',_mm(vsec['od_m'])),_param('vertical_tail_primary_spar_ID',_mm(vsec['id_m']))]
+    vps=vt.get('primary_spar') or {}
+    vss=vt.get('secondary_spar') or {}
+    out += [
+        _param('vertical_tail_primary_spar_OD',_mm(vsec['od_m'])),
+        _param('vertical_tail_primary_spar_ID',_mm(vsec['id_m'])),
+        _param('vertical_tail_primary_spar_chord_fraction',float(vps.get('chord_fraction',0.25)),'unitless'),
+    ]
     if vt:
-        out += [_param('vertical_tail_secondary_spar_OD',_mm(vt['secondary_spar'].get('tube_od_m',0.0)))]
+        out += [
+            _param('vertical_tail_secondary_spar_OD',_mm(vss.get('tube_od_m',0.0))),
+            _param('vertical_tail_secondary_spar_chord_fraction',float(vss.get('chord_fraction',0.65)),'unitless'),
+        ]
 
     # Twin booms.
     bs=structure['structural_checks']['booms']['recommended_screen']['section']; bx0=float(gm['boom_x_start_m']); bx1=float(gm['boom_x_end_m']); ys=gm['boom_center_y_m']
